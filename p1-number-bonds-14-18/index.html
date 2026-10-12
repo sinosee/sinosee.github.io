@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex">
+<title>數的分解與合成（14至18）</title>
+<style>
+:root{
+  --vh:100vh;
+  --bg:#fff4e0; --ink:#2a2a3a; --card:#ffffff;
+  --orange:#ff8c1a; --green:#2fb35a; --blue:#3b82f6; --purple:#7c4dff;
+  --pink:#ff6b9d; --red:#e53935; --teal:#14b8a6;
+  --cA:#3b82f6; --cB:#ff8c1a;
+  --qfs:clamp(24px,4.6vmin,54px);
+  --abfs:clamp(26px,4.4vmin,50px);
+  --abh:clamp(68px,11vmin,118px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);
+  font-family:"PingFang HK","PingFang TC","Noto Sans CJK HK","Noto Sans CJK TC","Microsoft JhengHei","Heiti TC",sans-serif;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation;-webkit-text-size-adjust:100%}
+button{font-family:inherit;touch-action:manipulation;cursor:pointer;border:none;color:inherit;background:none;padding:0}
+button:focus-visible{outline:4px solid #7c4dff;outline-offset:3px}
+.screen{position:fixed;left:0;top:0;width:100%;height:var(--vh);display:none;flex-direction:column;overflow:hidden}
+.screen.on{display:flex}
+
+/* ---------- start ---------- */
+#start{overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;align-items:center}
+.startInner{width:min(1080px,94vw);margin:auto;padding:16px 0 28px;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2vmin,22px)}
+h1.title{margin:0;font-size:clamp(32px,6.5vmin,72px);font-weight:900;letter-spacing:2px;text-align:center;line-height:1.2}
+h1.title .emoji{display:inline-block;margin:0 .15em}
+.sub{margin:0;font-size:clamp(18px,3vmin,32px);text-align:center;color:#5a5a6e;line-height:1.45}
+.modes{display:flex;gap:clamp(10px,2vmin,24px);width:100%}
+.mode{flex:1 1 0;background:var(--card);border-radius:24px;padding:clamp(12px,2vmin,24px);box-shadow:0 6px 0 #e7d7ad;border:5px solid transparent;text-align:center;min-height:100px}
+.mode.sel{border-color:#ff9f1c;background:#fffbea}
+.mode .mi{font-size:clamp(36px,6.5vmin,68px);line-height:1.1}
+.mode .mt{font-size:clamp(24px,4.2vmin,48px);font-weight:900;margin:.1em 0}
+.mode .md{font-size:clamp(15px,2.4vmin,26px);line-height:1.35;color:#5a5a6e}
+.sec{width:100%;display:flex;flex-direction:column;align-items:center;gap:8px}
+.seclabel{font-size:clamp(18px,3vmin,30px);font-weight:800;color:#5a5a6e}
+.segs{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.seg{min-width:88px;min-height:58px;padding:0 14px;border-radius:16px;background:#fff;box-shadow:0 4px 0 #e2d3aa;font-size:clamp(18px,2.8vmin,30px);font-weight:800;border:4px solid transparent}
+.seg.sel{border-color:#ff9f1c;background:#fff1c9}
+.seg.chip{min-width:110px}
+.toggles{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.toggle{display:flex;align-items:center;gap:8px;background:#fff;padding:8px 16px;border-radius:16px;box-shadow:0 3px 0 #e2d3aa;font-size:clamp(16px,2.6vmin,26px);font-weight:700}
+.toggle input{width:22px;height:22px;accent-color:var(--orange)}
+.bigbtn{min-width:240px;min-height:clamp(68px,10vmin,104px);padding:0 36px;border-radius:999px;background:var(--orange);color:#fff;font-size:clamp(28px,5vmin,54px);font-weight:900;box-shadow:0 7px 0 #c9620b;letter-spacing:3px}
+.bigbtn:active,.ans:active,.seg:active,.iconbtn:active,.nb:active{transform:translateY(3px)}
+.bigbtn.green{background:var(--green);box-shadow:0 7px 0 #1d7e3d}
+.bigbtn.blue{background:var(--blue);box-shadow:0 7px 0 #1e56b5}
+.bigbtn.purple{background:var(--purple);box-shadow:0 7px 0 #5430b0}
+.note{font-size:clamp(13px,2vmin,18px);color:#8a7f66;text-align:center}
+
+/* ---------- game ---------- */
+.topbar{flex:none;display:flex;align-items:center;gap:10px;padding:8px 12px 2px;flex-wrap:wrap}
+.iconbtn{min-width:58px;height:58px;border-radius:16px;background:#fff;box-shadow:0 4px 0 #e2d3aa;font-size:28px;display:flex;align-items:center;justify-content:center}
+.pill{font-size:clamp(18px,3vmin,34px);font-weight:800;background:#fff;padding:6px 16px;border-radius:999px;white-space:nowrap}
+#starbox{background:#fff1b8}
+#modeTag{font-size:clamp(14px,2.2vmin,24px);background:#ede7ff;color:#5b3fc4}
+.spacer{flex:1}
+#qline{flex:none;text-align:center;font-weight:900;font-size:var(--qfs);padding:4px 14px;line-height:1.35;min-height:1.35em}
+#qline .ok{color:#1d8a45}#qline .no{color:#d0442c}#qline .info{color:#3355aa}
+#qline .eq{letter-spacing:.06em}
+
+/* visual board */
+#visWrap{flex:1 1 0;min-height:80px;display:flex;align-items:center;justify-content:center;padding:4px 10px;overflow:hidden}
+#vis{background:#fffdf6;border-radius:20px;box-shadow:0 5px 0 #eadcb8,inset 0 0 0 3px #f1e5c4;padding:clamp(8px,1.5vmin,18px);max-width:100%;max-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(6px,1.2vmin,14px)}
+.visRow{display:flex;align-items:center;justify-content:center;gap:clamp(8px,2vmin,20px);flex-wrap:wrap}
+.groupBox{display:flex;flex-direction:column;align-items:center;gap:4px}
+.groupLabel{font-size:clamp(16px,2.6vmin,28px);font-weight:800;color:#5a5a6e}
+.counters{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;max-width:min(520px,86vw)}
+.dot{width:clamp(18px,3.6vmin,36px);height:clamp(18px,3.6vmin,36px);border-radius:50%;box-shadow:inset 0 -3px 0 rgba(0,0,0,.15),0 2px 0 rgba(0,0,0,.12)}
+.dot.a{background:var(--cA)}.dot.b{background:var(--cB)}.dot.grey{background:#d0c8b0}
+.dot.pop{animation:pop .28s ease-out}
+@keyframes pop{0%{transform:scale(.4)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.tfWrap{display:flex;flex-direction:column;align-items:center;gap:4px}
+.tfHint{font-size:clamp(14px,2.4vmin,24px);font-weight:800;color:#5b3fc4;background:#ede7ff;padding:2px 12px;border-radius:999px}
+.tenframe{display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(2,1fr);gap:2px;padding:5px;background:#fff;border:3px solid #cbb98a;border-radius:10px}
+.tenframe .cell{width:clamp(16px,3.2vmin,34px);height:clamp(16px,3.2vmin,34px);border-radius:50%;background:#f0e8d0;display:flex;align-items:center;justify-content:center}
+.tenframe .cell .dot{width:85%;height:85%;margin:0}
+.bondBoxes{display:flex;align-items:center;justify-content:center;gap:clamp(8px,2vmin,18px);flex-wrap:wrap}
+.bbox{min-width:clamp(70px,12vmin,120px);min-height:clamp(70px,12vmin,120px);border-radius:18px;border:5px dashed #cbb98a;background:#fff;display:flex;align-items:center;justify-content:center;font-size:clamp(36px,7vmin,72px);font-weight:900;color:var(--ink)}
+.bbox.filled{border-style:solid;border-color:var(--cA);background:#eef5ff}
+.bbox.filled.b{border-color:var(--cB);background:#fff4e8}
+.bbox.slot{animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{border-color:#cbb98a}50%{border-color:#ff9f1c}}
+.op{font-size:clamp(32px,6vmin,60px);font-weight:900;color:#8a7f66}
+.totalBadge{min-width:clamp(64px,11vmin,110px);min-height:clamp(64px,11vmin,110px);border-radius:50%;background:var(--purple);color:#fff;display:flex;align-items:center;justify-content:center;font-size:clamp(32px,6.5vmin,64px);font-weight:900;box-shadow:0 5px 0 #5430b0}
+.partBadge{min-width:clamp(56px,9vmin,96px);min-height:clamp(56px,9vmin,96px);border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:clamp(28px,5.5vmin,56px);font-weight:900}
+.partBadge.a{background:var(--cA);box-shadow:0 4px 0 #1e56b5}
+.partBadge.b{background:var(--cB);box-shadow:0 4px 0 #c9620b}
+
+/* answer area */
+#ansArea{flex:none;padding:6px 10px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;max-height:42%;overflow-y:auto;-webkit-overflow-scrolling:touch}
+#hintLine{font-size:clamp(16px,2.6vmin,28px);font-weight:700;color:#5a5a6e;text-align:center;min-height:1.3em}
+.numpad{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:min(900px,96vw)}
+.nb{min-width:clamp(48px,7.5vmin,84px);min-height:clamp(48px,7.5vmin,84px);border-radius:16px;background:#fff;box-shadow:0 5px 0 #e2d3aa;font-size:clamp(24px,4.4vmin,46px);font-weight:900;border:4px solid transparent}
+.nb.sel{border-color:#ff9f1c;background:#fff1c9;transform:translateY(2px);box-shadow:0 2px 0 #e2d3aa}
+.nb.correct{border-color:#2fb35a;background:#d8f5e3}
+.nb.wrong{border-color:#e53935;background:#ffe0dc;animation:shake .4s}
+.nb:disabled{opacity:.45}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.ansRow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:min(900px,96vw)}
+.ans{min-width:clamp(100px,18vmin,200px);min-height:var(--abh);padding:0 18px;border-radius:20px;background:#fff;box-shadow:0 5px 0 #e2d3aa;font-size:var(--abfs);font-weight:900;border:4px solid transparent;display:flex;align-items:center;justify-content:center}
+.ans.correct{border-color:#2fb35a;background:#d8f5e3}
+.ans.wrong{border-color:#e53935;background:#ffe0dc;animation:shake .4s}
+.ans:disabled{opacity:.5}
+.actionRow{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;padding-top:2px}
+.teacherHint{font-size:clamp(16px,2.6vmin,26px);font-weight:700;color:#5b3fc4;background:#ede7ff;padding:6px 16px;border-radius:14px}
+
+/* end screen */
+#end{align-items:center;justify-content:center;background:linear-gradient(160deg,#fff4e0 0%,#ffe0b8 50%,#ffd0e8 100%)}
+.endInner{text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(12px,2.5vmin,28px);padding:20px}
+.endStars{font-size:clamp(48px,10vmin,100px);letter-spacing:6px}
+.endTitle{font-size:clamp(36px,7vmin,72px);font-weight:900;margin:0}
+.endScore{font-size:clamp(24px,4vmin,42px);font-weight:800;color:#5a5a6e}
+.endBtns{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+
+.fb{position:fixed;left:50%;top:42%;transform:translate(-50%,-50%) scale(.6);opacity:0;pointer-events:none;z-index:80;font-size:clamp(48px,10vmin,100px);font-weight:900;text-shadow:0 4px 0 rgba(0,0,0,.15)}
+.fb.show{animation:fbIn .7s ease-out forwards}
+@keyframes fbIn{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}30%{opacity:1;transform:translate(-50%,-55%) scale(1.15)}70%{opacity:1;transform:translate(-50%,-55%) scale(1)}100%{opacity:0;transform:translate(-50%,-70%) scale(.9)}}
+
+@media (max-height:500px){
+  .topbar{padding:4px 8px}.iconbtn{min-width:48px;height:48px;font-size:22px}
+  #visWrap{min-height:60px}
+  .nb{min-width:48px;min-height:48px}
+}
+</style>
+</head>
+<body>
+<div id="fb" class="fb" aria-hidden="true"></div>
+
+<!-- START -->
+<section id="start" class="screen on" aria-label="開始畫面">
+  <div class="startInner">
+    <h1 class="title"><span class="emoji">🔢</span>數的分解與合成<span class="emoji">✨</span><br><small style="font-size:.55em;color:var(--purple)">（14至18）</small></h1>
+    <p class="sub">小一 · <b style="color:var(--purple)">14 至 18</b> · 點選作答<br><span style="font-size:.85em;color:#8a7f66">（唔係 4至13 嗰個遊戲）</span></p>
+
+    <div class="modes" role="group" aria-label="模式">
+      <button type="button" class="mode sel" id="modeStudent" data-mode="student">
+        <div class="mi">📱</div>
+        <div class="mt">學生模式</div>
+        <div class="md">自己點選答案<br>即時知道對錯</div>
+      </button>
+      <button type="button" class="mode" id="modeTeacher" data-mode="teacher">
+        <div class="mi">📺</div>
+        <div class="mt">老師模式</div>
+        <div class="md">投影全班玩<br>㩒顯示答案</div>
+      </button>
+    </div>
+
+    <div class="sec">
+      <div class="seclabel">數目範圍</div>
+      <div class="segs" id="rangeSegs" role="group">
+        <button type="button" class="seg" data-range="14-15">14–15</button>
+        <button type="button" class="seg" data-range="16-18">16–18</button>
+        <button type="button" class="seg sel" data-range="14-18">14–18</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="seclabel">題數</div>
+      <div class="segs" id="countSegs" role="group">
+        <button type="button" class="seg sel" data-count="8">8 題</button>
+        <button type="button" class="seg" data-count="10">10 題</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="seclabel">題型（可多選）</div>
+      <div class="segs" id="typeSegs" role="group">
+        <button type="button" class="seg chip sel" data-type="split">分解</button>
+        <button type="button" class="seg chip sel" data-type="join">合成</button>
+        <button type="button" class="seg chip sel" data-type="friend">找朋友</button>
+      </div>
+    </div>
+
+    <div class="toggles">
+      <label class="toggle"><input type="checkbox" id="optSound" checked> 音效</label>
+      <label class="toggle"><input type="checkbox" id="optSpeech"> 讀題（粵語）</label>
+    </div>
+
+    <button type="button" class="bigbtn" id="btnStart">開始玩！</button>
+    <p class="note">唔使登入 · 唔會收集資料 · 適合 iPad</p>
+  </div>
+</section>
+
+<!-- GAME -->
+<section id="game" class="screen" aria-label="遊戲">
+  <div class="topbar">
+    <button type="button" class="iconbtn" id="btnHome" aria-label="返回">🏠</button>
+    <button type="button" class="iconbtn" id="btnSpeak" aria-label="讀題">🔊</button>
+    <span class="pill" id="progPill">1 / 8</span>
+    <span class="pill" id="starbox">⭐ 0</span>
+    <span class="spacer"></span>
+    <span class="pill" id="modeTag">學生</span>
+  </div>
+  <div id="qline"></div>
+  <div id="visWrap"><div id="vis"></div></div>
+  <div id="ansArea">
+    <div id="hintLine"></div>
+    <div id="padOrChoices"></div>
+    <div class="actionRow" id="actionRow"></div>
+  </div>
+</section>
+
+<!-- END -->
+<section id="end" class="screen" aria-label="完成">
+  <div class="endInner">
+    <div class="endStars" id="endStars">⭐⭐⭐</div>
+    <h2 class="endTitle" id="endTitle">做得好！</h2>
+    <p class="endScore" id="endScore">答對 8 / 8 題</p>
+    <div class="endBtns">
+      <button type="button" class="bigbtn green" id="btnAgain">再玩一次</button>
+      <button type="button" class="bigbtn blue" id="btnMenu">返回選單</button>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- utils ---------- */
+const $ = (s, r) => (r||document).querySelector(s);
+const $$ = (s, r) => [...(r||document).querySelectorAll(s)];
+const clamp = (n,a,b)=>Math.max(a,Math.min(b,n));
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function randInt(a,b){return a+Math.floor(Math.random()*(b-a+1));}
+function uniq(arr){return [...new Set(arr)];}
+
+/* ---------- settings persistence ---------- */
+const SETTINGS_KEY = "p1nb1418_settings_v1";
+function loadSettings(){
+  try{
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if(!raw) return null;
+    return JSON.parse(raw);
+  }catch(e){return null;}
+}
+function saveSettings(obj){
+  try{localStorage.setItem(SETTINGS_KEY, JSON.stringify(obj));}catch(e){}
+}
+
+/* ---------- audio ---------- */
+let audioCtx = null;
+function ensureAudio(){
+  if(!audioCtx){
+    try{audioCtx = new (window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}
+  }
+  if(audioCtx.state==="suspended") audioCtx.resume().catch(()=>{});
+  return audioCtx;
+}
+function beep(freq, dur, type, vol){
+  if(!S.sound) return;
+  const ctx = ensureAudio(); if(!ctx) return;
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = type||"sine";
+  o.frequency.value = freq;
+  g.gain.value = vol||0.12;
+  o.connect(g); g.connect(ctx.destination);
+  const t = ctx.currentTime;
+  g.gain.setValueAtTime(vol||0.12, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t+(dur||0.2));
+  o.start(t); o.stop(t+(dur||0.2)+0.02);
+}
+function sfxOk(){beep(523,0.12,"sine",0.14); setTimeout(()=>beep(659,0.12,"sine",0.14),90); setTimeout(()=>beep(784,0.18,"sine",0.14),180);}
+function sfxNo(){beep(220,0.25,"triangle",0.12);}
+function sfxTap(){beep(440,0.06,"sine",0.06);}
+function sfxReveal(){beep(392,0.1,"sine",0.1); setTimeout(()=>beep(523,0.15,"sine",0.12),100);}
+function sfxWin(){ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,0.18,"sine",0.13), i*120)); }
+
+function speak(text){
+  if(!S.speech) return;
+  try{
+    if(!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "zh-HK";
+    u.rate = 0.9;
+    const voices = window.speechSynthesis.getVoices();
+    const pref = voices.find(v=>/zh[-_]HK|yue|Cantonese/i.test(v.lang+v.name))
+      || voices.find(v=>/zh[-_]TW|zh[-_]CN|Chinese/i.test(v.lang+v.name));
+    if(pref) u.voice = pref;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- state ---------- */
+const S = {
+  mode: "student",
+  range: "14-18",
+  count: 8,
+  types: {split:true, join:true, friend:true},
+  sound: true,
+  speech: false,
+  qIndex: 0,
+  stars: 0,
+  questions: [],
+  answered: false,
+  // split picking state
+  pickA: null,
+  pickB: null,
+  pickStep: 0, // 0=pick first, 1=pick second
+};
+
+function parseRange(r){
+  const allowed = {"14-15":1,"16-18":1,"14-18":1};
+  if(!allowed[r]) r = "14-18";
+  let [a,b] = r.split("-").map(Number);
+  if(!Number.isFinite(a) || !Number.isFinite(b)){ a=14; b=18; }
+  a = Math.max(14, Math.min(18, a));
+  b = Math.max(a, Math.min(18, b));
+  return {lo:a, hi:b};
+}
+
+const MIN_PART = 2; // never use 0 or 1 as a part
+
+/* ---------- question generation ---------- */
+/** Valid bonds for n: both parts ≥ MIN_PART. */
+function allBonds(n){
+  const out=[];
+  for(let a=MIN_PART; a<=n-MIN_PART; a++) out.push([a, n-a]);
+  return out;
+}
+
+function validPartChoices(total){
+  // Numbers a student may tap for a part when splitting `total`
+  const out=[];
+  for(let n=MIN_PART; n<=total-MIN_PART; n++) out.push(n);
+  return out;
+}
+
+function isValidBond(a,b,total){
+  return a>=MIN_PART && b>=MIN_PART && a+b===total;
+}
+
+function uniqueUnorderedBonds(n){
+  // One entry per pair with a<=b (avoid listing 3+6 and 6+3 twice)
+  return allBonds(n).filter(([a,b]) => a <= b);
+}
+
+function makeDistractorPair(total, used){
+  // Wrong pair: parts ≥2 but a+b !== total
+  for(let t=0;t<40;t++){
+    const a = randInt(MIN_PART, Math.max(MIN_PART, total-MIN_PART));
+    const b = randInt(MIN_PART, Math.max(MIN_PART, total-MIN_PART));
+    if(a + b === total) continue;
+    const key = a<=b ? a+","+b : b+","+a;
+    if(used.has(key)) continue;
+    used.add(key);
+    return [a,b];
+  }
+  // fallback
+  const a = MIN_PART, b = MIN_PART;
+  if(a+b !== total) return [a,b];
+  return [MIN_PART, MIN_PART+1];
+}
+
+function makeSplit(total){
+  // Vary which valid pairs appear as choices each question — never lock to one canonical pair (e.g. always 4+5).
+  const valid = uniqueUnorderedBonds(total);
+  shuffle(valid);
+  // Show several different valid bonds when possible (up to 3), plus distractors → 4 choices
+  const nValidShow = Math.min(valid.length, valid.length <= 2 ? valid.length : 3);
+  const used = new Set(valid.slice(0,nValidShow).map(([a,b])=>a+","+b));
+  const options = valid.slice(0,nValidShow).map(([a,b]) => ({a,b,ok:true}));
+  while(options.length < 4){
+    const [a,b] = makeDistractorPair(total, used);
+    options.push({a,b,ok:false});
+  }
+  shuffle(options);
+  return {
+    type: "split",
+    total,
+    options,
+    speak: `把 ${total} 分成兩部分`,
+    prompt: `把 <span style="color:var(--purple)">${total}</span> 分成兩部分`,
+  };
+}
+
+function makeJoin(total){
+  // Both parts ≥2 (e.g. 14 = 6+8, 10+4 …)
+  const a = randInt(MIN_PART, total-MIN_PART);
+  const b = total - a;
+  // Answer options are totals in 14–18 band — never 0 or 1
+  let opts = [total];
+  for(const d of [14,15,16,17,18]){
+    if(d!==total && !opts.includes(d)) opts.push(d);
+    if(opts.length>=4) break;
+  }
+  // if still short (shouldn't), pad with nearby ≥2
+  let k=12;
+  while(opts.length<4){ if(k>=2 && !opts.includes(k)) opts.push(k); k++; }
+  shuffle(opts);
+  return {
+    type: "join",
+    total, a, b,
+    options: opts,
+    speak: `${a} 和 ${b} 合起來是多少？`,
+    prompt: `<span style="color:var(--cA)">${a}</span> 和 <span style="color:var(--cB)">${b}</span> 合起來是多少？`,
+  };
+}
+
+function makeFriend(total){
+  // known and missing both ≥2
+  const known = randInt(MIN_PART, total-MIN_PART);
+  const missing = total - known;
+  const leftMissing = Math.random()<0.5;
+  let opts = [missing];
+  let guard=0;
+  while(opts.length<4 && guard++<40){
+    const d = randInt(MIN_PART, Math.max(MIN_PART, total-MIN_PART));
+    if(!opts.includes(d)) opts.push(d);
+  }
+  // pad with other ≥2 values up to 16, never 0/1
+  let k=MIN_PART;
+  while(opts.length<4){ if(!opts.includes(k)) opts.push(k); k++; if(k>16) break; }
+  shuffle(opts);
+  const speak = leftMissing
+    ? `幾多加 ${known} 等於 ${total}？`
+    : `${known} 加幾多等於 ${total}？`;
+  const prompt = leftMissing
+    ? `<span class="eq">？ + ${known} = ${total}</span>`
+    : `<span class="eq">${known} + ？ = ${total}</span>`;
+  return {
+    type: "friend",
+    total, known, missing, leftMissing,
+    options: opts,
+    speak, prompt,
+  };
+}
+
+function buildRound(){
+  const {lo,hi} = parseRange(S.range);
+  const types = [];
+  if(S.types.split) types.push("split");
+  if(S.types.join) types.push("join");
+  if(S.types.friend) types.push("friend");
+  if(!types.length) types.push("split","join","friend");
+
+  const qs = [];
+  for(let i=0;i<S.count;i++){
+    const total = randInt(lo, hi);
+    const t = types[i % types.length];
+    const typ = (i < types.length) ? t : types[randInt(0, types.length-1)];
+    if(typ==="split") qs.push(makeSplit(total));
+    else if(typ==="join") qs.push(makeJoin(total));
+    else qs.push(makeFriend(total));
+  }
+  shuffle(qs);
+  return qs;
+}
+
+/* ---------- visuals ---------- */
+function dotsHTML(n, cls){
+  if(n<=0) return `<div class="counters" aria-hidden="true"></div>`;
+  let h = `<div class="counters" aria-hidden="true">`;
+  for(let i=0;i<n;i++) h += `<div class="dot ${cls} pop" style="animation-delay:${i*25}ms"></div>`;
+  h += `</div>`;
+  return h;
+}
+
+function tenFrameHTML(n, cls, showHint){
+  // Always use ten-frames for n>10 (two frames). For 1–10 one frame.
+  n = Math.max(0, n|0);
+  const frames = n>10 ? 2 : 1;
+  let h = `<div class="tfWrap">`;
+  h += `<div class="visRow">`;
+  let left = n;
+  for(let f=0;f<frames;f++){
+    const take = Math.min(10, left);
+    left -= take;
+    h += `<div class="tenframe">`;
+    for(let i=0;i<10;i++){
+      if(i<take) h += `<div class="cell"><div class="dot ${cls}"></div></div>`;
+      else h += `<div class="cell"></div>`;
+    }
+    h += `</div>`;
+  }
+  h += `</div>`;
+  if(showHint && n>10){
+    h += `<div class="tfHint">${n} = 10 + ${n-10}</div>`;
+  } else if(showHint && n===10){
+    h += `<div class="tfHint">10</div>`;
+  }
+  h += `</div>`;
+  return h;
+}
+
+/** Prefer ten-frames for n>10; for smaller n use dots (compact). */
+function partVisual(n, cls, showHint){
+  if(n > 10) return tenFrameHTML(n, cls, !!showHint);
+  if(n >= 6) return tenFrameHTML(n, cls, false);
+  return dotsHTML(n, cls);
+}
+
+function renderCounters(n, cls, preferFrame){
+  if(preferFrame || n>10) return tenFrameHTML(n, cls, n>10);
+  if(n>=6) return tenFrameHTML(n, cls, false);
+  return dotsHTML(n, cls);
+}
+
+function renderSplitVisual(total, a, b){
+  // If a,b chosen: show two coloured groups. Else: all grey ten-frames with 10+n hint.
+  const vis = $("#vis");
+  if(a==null && b==null){
+    vis.innerHTML = `
+      <div class="visRow"><div class="totalBadge">${total}</div></div>
+      ${renderCounters(total,"grey", true)}
+      <div class="bondBoxes">
+        <div class="bbox slot" id="boxA">?</div>
+        <span class="op">+</span>
+        <div class="bbox slot" id="boxB">?</div>
+        <span class="op">=</span>
+        <div class="totalBadge">${total}</div>
+      </div>`;
+  } else if(a!=null && b==null){
+    const rest = Math.max(0, total-a);
+    vis.innerHTML = `
+      <div class="visRow">
+        <div class="groupBox"><div class="groupLabel" style="color:var(--cA)">${a}</div>${partVisual(a,"a",a>10)}</div>
+        <div class="groupBox"><div class="groupLabel">?</div>${partVisual(rest,"grey",rest>10)}</div>
+      </div>
+      <div class="bondBoxes">
+        <div class="bbox filled" id="boxA">${a}</div>
+        <span class="op">+</span>
+        <div class="bbox slot" id="boxB">?</div>
+        <span class="op">=</span>
+        <div class="totalBadge">${total}</div>
+      </div>`;
+  } else {
+    vis.innerHTML = `
+      <div class="visRow">
+        <div class="groupBox"><div class="groupLabel" style="color:var(--cA)">${a}</div>${partVisual(a,"a",a>10)}</div>
+        <div class="groupBox"><div class="groupLabel" style="color:var(--cB)">${b}</div>${partVisual(b,"b",b>10)}</div>
+      </div>
+      <div class="bondBoxes">
+        <div class="bbox filled" id="boxA">${a}</div>
+        <span class="op">+</span>
+        <div class="bbox filled b" id="boxB">${b}</div>
+        <span class="op">=</span>
+        <div class="totalBadge">${total}</div>
+      </div>`;
+  }
+}
+
+function renderJoinVisual(a, b){
+  const vis = $("#vis");
+  vis.innerHTML = `
+    <div class="visRow">
+      <div class="groupBox">
+        <div class="partBadge a">${a}</div>
+        ${partVisual(a,"a",a>10)}
+      </div>
+      <span class="op">+</span>
+      <div class="groupBox">
+        <div class="partBadge b">${b}</div>
+        ${partVisual(b,"b",b>10)}
+      </div>
+      <span class="op">=</span>
+      <div class="totalBadge">?</div>
+    </div>`;
+}
+
+function renderFriendVisual(q){
+  const vis = $("#vis");
+  const known = q.known, missing = q.missing, total = q.total;
+  // show known part filled, missing as grey outline count, total as badge
+  if(q.leftMissing){
+    vis.innerHTML = `
+      <div class="visRow">
+        <div class="groupBox">
+          <div class="groupLabel">？</div>
+          ${partVisual(missing,"grey",missing>10)}
+        </div>
+        <span class="op">+</span>
+        <div class="groupBox">
+          <div class="partBadge b">${known}</div>
+          ${partVisual(known,"b",known>10)}
+        </div>
+        <span class="op">=</span>
+        <div class="totalBadge">${total}</div>
+      </div>
+      <div class="bondBoxes">
+        <div class="bbox slot">?</div>
+        <span class="op">+</span>
+        <div class="bbox filled b">${known}</div>
+        <span class="op">=</span>
+        <div class="totalBadge">${total}</div>
+      </div>`;
+  } else {
+    vis.innerHTML = `
+      <div class="visRow">
+        <div class="groupBox">
+          <div class="partBadge a">${known}</div>
+          ${partVisual(known,"a",known>10)}
+        </div>
+        <span class="op">+</span>
+        <div class="groupBox">
+          <div class="groupLabel">？</div>
+          ${partVisual(missing,"grey",missing>10)}
+        </div>
+        <span class="op">=</span>
+        <div class="totalBadge">${total}</div>
+      </div>
+      <div class="bondBoxes">
+        <div class="bbox filled">${known}</div>
+        <span class="op">+</span>
+        <div class="bbox slot">?</div>
+        <span class="op">=</span>
+        <div class="totalBadge">${total}</div>
+      </div>`;
+  }
+}
+
+function renderFriendReveal(q){
+  const vis = $("#vis");
+  const {known, missing, total, leftMissing} = q;
+  if(leftMissing){
+    vis.innerHTML = `
+      <div class="visRow">
+        <div class="groupBox"><div class="partBadge a">${missing}</div>${partVisual(missing,"a",missing>10)}</div>
+        <span class="op">+</span>
+        <div class="groupBox"><div class="partBadge b">${known}</div>${partVisual(known,"b",known>10)}</div>
+        <span class="op">=</span>
+        <div class="totalBadge">${total}</div>
+      </div>
+      <div class="bondBoxes">
+        <div class="bbox filled">${missing}</div>
+        <span class="op">+</span>
+        <div class="bbox filled b">${known}</div>
+        <span class="op">=</span>
+        <div class="totalBadge">${total}</div>
+      </div>`;
+  } else {
+    vis.innerHTML = `
+      <div class="visRow">
+        <div class="groupBox"><div class="partBadge a">${known}</div>${partVisual(known,"a",known>10)}</div>
+        <span class="op">+</span>
+        <div class="groupBox"><div class="partBadge b">${missing}</div>${partVisual(missing,"b",missing>10)}</div>
+        <span class="op">=</span>
+        <div class="totalBadge">${total}</div>
+      </div>
+      <div class="bondBoxes">
+        <div class="bbox filled">${known}</div>
+        <span class="op">+</span>
+        <div class="bbox filled b">${missing}</div>
+        <span class="op">=</span>
+        <div class="totalBadge">${total}</div>
+      </div>`;
+  }
+}
+
+function renderJoinReveal(q){
+  const vis = $("#vis");
+  vis.innerHTML = `
+    <div class="visRow">
+      <div class="groupBox"><div class="partBadge a">${q.a}</div>${partVisual(q.a,"a",q.a>10)}</div>
+      <span class="op">+</span>
+      <div class="groupBox"><div class="partBadge b">${q.b}</div>${partVisual(q.b,"b",q.b>10)}</div>
+      <span class="op">=</span>
+      <div class="totalBadge">${q.total}</div>
+    </div>`;
+}
+
+/* ---------- UI flow ---------- */
+function showScreen(id){
+  $$(".screen").forEach(s=>s.classList.remove("on"));
+  $("#"+id).classList.add("on");
+}
+
+function updateVH(){
+  const h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  document.documentElement.style.setProperty("--vh", h+"px");
+}
+updateVH();
+window.addEventListener("resize", updateVH);
+if(window.visualViewport) window.visualViewport.addEventListener("resize", updateVH);
+
+function flash(msg, ok){
+  const fb = $("#fb");
+  fb.textContent = msg;
+  fb.style.color = ok ? "#1d8a45" : "#d0442c";
+  fb.classList.remove("show");
+  void fb.offsetWidth;
+  fb.classList.add("show");
+}
+
+function persist(){
+  saveSettings({
+    mode:S.mode, range:S.range, count:S.count, types:S.types,
+    sound:S.sound, speech:S.speech
+  });
+}
+
+function applySaved(){
+  const s = loadSettings();
+  if(!s) return;
+  if(s.mode) S.mode = s.mode;
+  if(s.range){
+    const allowed = {"14-15":1,"16-18":1,"14-18":1};
+    S.range = allowed[s.range] ? s.range : "14-18";
+  }
+  if(s.count) S.count = s.count;
+  if(s.types) S.types = Object.assign(S.types, s.types);
+  if(typeof s.sound==="boolean") S.sound = s.sound;
+  if(typeof s.speech==="boolean") S.speech = s.speech;
+
+  $$(".mode").forEach(m=>m.classList.toggle("sel", m.dataset.mode===S.mode));
+  $$("#rangeSegs .seg").forEach(b=>b.classList.toggle("sel", b.dataset.range===S.range));
+  $$("#countSegs .seg").forEach(b=>b.classList.toggle("sel", +b.dataset.count===S.count));
+  $$("#typeSegs .seg").forEach(b=>b.classList.toggle("sel", !!S.types[b.dataset.type]));
+  $("#optSound").checked = S.sound;
+  $("#optSpeech").checked = S.speech;
+}
+
+/* start screen handlers */
+$$(".mode").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    $$(".mode").forEach(m=>m.classList.remove("sel"));
+    btn.classList.add("sel");
+    S.mode = btn.dataset.mode;
+    persist(); sfxTap();
+  });
+});
+$$("#rangeSegs .seg").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    $$("#rangeSegs .seg").forEach(b=>b.classList.remove("sel"));
+    btn.classList.add("sel");
+    S.range = btn.dataset.range;
+    persist(); sfxTap();
+  });
+});
+$$("#countSegs .seg").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    $$("#countSegs .seg").forEach(b=>b.classList.remove("sel"));
+    btn.classList.add("sel");
+    S.count = +btn.dataset.count;
+    persist(); sfxTap();
+  });
+});
+$$("#typeSegs .seg").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const t = btn.dataset.type;
+    S.types[t] = !S.types[t];
+    // ensure at least one
+    if(!S.types.split && !S.types.join && !S.types.friend){
+      S.types[t] = true;
+    }
+    btn.classList.toggle("sel", S.types[t]);
+    persist(); sfxTap();
+  });
+});
+$("#optSound").addEventListener("change", e=>{ S.sound=e.target.checked; persist(); if(S.sound){ensureAudio();sfxTap();} });
+$("#optSpeech").addEventListener("change", e=>{ S.speech=e.target.checked; persist(); });
+
+$("#btnStart").addEventListener("click", ()=>{
+  ensureAudio();
+  startGame();
+});
+
+function startGame(){
+  S.questions = buildRound();
+  S.qIndex = 0;
+  S.stars = 0;
+  showScreen("game");
+  $("#modeTag").textContent = S.mode==="teacher" ? "老師模式" : "學生模式";
+  $("#starbox").textContent = "⭐ 0";
+  showQuestion();
+}
+
+function showQuestion(){
+  S.answered = false;
+  S.pickA = null; S.pickB = null; S.pickStep = 0;
+  const q = S.questions[S.qIndex];
+  $("#progPill").textContent = `${S.qIndex+1} / ${S.questions.length}`;
+  $("#qline").innerHTML = q.prompt;
+  $("#hintLine").textContent = "";
+  $("#actionRow").innerHTML = "";
+  const pad = $("#padOrChoices");
+  pad.innerHTML = "";
+
+  if(q.type==="split"){
+    renderSplitVisual(q.total, null, null);
+    if(S.mode==="teacher"){
+      $("#hintLine").innerHTML = `<span class="teacherHint">請學生口頭說出兩個數（唔止一種分法）</span>`;
+      $("#actionRow").innerHTML = `<button type="button" class="bigbtn purple" id="btnReveal">顯示答案</button>`;
+      $("#btnReveal").onclick = ()=> teacherReveal();
+    } else {
+      $("#hintLine").textContent = "揀一組啱嘅分法（兩邊加起來等於總數）";
+      const row = document.createElement("div");
+      row.className = "ansRow";
+      row.id = "splitChoices";
+      (q.options || []).forEach((opt,i)=>{
+        const b = document.createElement("button");
+        b.type="button"; b.className="ans";
+        b.textContent = opt.a + " + " + opt.b;
+        b.dataset.a = opt.a; b.dataset.b = opt.b; b.dataset.ok = opt.ok ? "1" : "0";
+        b.dataset.i = i;
+        b.addEventListener("click", ()=> onSplitPair(opt, b));
+        row.appendChild(b);
+      });
+      pad.appendChild(row);
+    }
+  } else if(q.type==="join"){
+    renderJoinVisual(q.a, q.b);
+    if(S.mode==="teacher"){
+      $("#hintLine").innerHTML = `<span class="teacherHint">請學生口頭作答</span>`;
+      $("#actionRow").innerHTML = `<button type="button" class="bigbtn purple" id="btnReveal">顯示答案</button>`;
+      $("#btnReveal").onclick = ()=> teacherReveal();
+    } else {
+      $("#hintLine").textContent = "揀正確嘅總數";
+      const row = document.createElement("div");
+      row.className = "ansRow";
+      q.options.forEach(opt=>{
+        const b = document.createElement("button");
+        b.type="button"; b.className="ans"; b.textContent=String(opt); b.dataset.v=opt;
+        b.addEventListener("click", ()=> onChoice(+b.dataset.v, b, q.total));
+        row.appendChild(b);
+      });
+      pad.appendChild(row);
+    }
+  } else { // friend
+    renderFriendVisual(q);
+    if(S.mode==="teacher"){
+      $("#hintLine").innerHTML = `<span class="teacherHint">請學生口頭作答</span>`;
+      $("#actionRow").innerHTML = `<button type="button" class="bigbtn purple" id="btnReveal">顯示答案</button>`;
+      $("#btnReveal").onclick = ()=> teacherReveal();
+    } else {
+      $("#hintLine").textContent = "揀缺少嘅數目";
+      const row = document.createElement("div");
+      row.className = "ansRow";
+      q.options.forEach(opt=>{
+        const b = document.createElement("button");
+        b.type="button"; b.className="ans"; b.textContent=String(opt); b.dataset.v=opt;
+        b.addEventListener("click", ()=> onChoice(+b.dataset.v, b, q.missing));
+        row.appendChild(b);
+      });
+      pad.appendChild(row);
+    }
+  }
+
+  if(S.speech) speak(q.speak);
+}
+
+function onSplitPair(opt, btn){
+  if(S.answered) return;
+  const q = S.questions[S.qIndex];
+  sfxTap();
+  S.pickA = opt.a; S.pickB = opt.b; S.pickStep = 2;
+  // Accept any mathematically valid bond (≥2 parts summing to total), not only the flagged option
+  const ok = isValidBond(opt.a, opt.b, q.total);
+  $$("#splitChoices .ans").forEach(b=>b.disabled=true);
+  if(ok){
+    btn.classList.add("correct");
+  } else {
+    btn.classList.add("wrong");
+    // highlight every valid pair shown
+    $$("#splitChoices .ans").forEach(b=>{
+      if(isValidBond(+b.dataset.a, +b.dataset.b, q.total)) b.classList.add("correct");
+    });
+  }
+  renderSplitVisual(q.total, opt.a, opt.b);
+  finishAnswer(ok, ok ? `${opt.a} + ${opt.b} = ${q.total}` : `正確可以係 ${uniqueUnorderedBonds(q.total).map(([a,b])=>a+"+"+b).slice(0,3).join("、")}`);
+}
+
+function onChoice(val, btn, correct){
+  if(S.answered) return;
+  sfxTap();
+  const ok = val === correct;
+  $$(".ans").forEach(b=>b.disabled=true);
+  if(ok){
+    btn.classList.add("correct");
+  } else {
+    btn.classList.add("wrong");
+    // highlight correct
+    $$(".ans").forEach(b=>{ if(+b.dataset.v===correct) b.classList.add("correct"); });
+  }
+  const q = S.questions[S.qIndex];
+  if(q.type==="join") renderJoinReveal(q);
+  if(q.type==="friend") renderFriendReveal(q);
+  finishAnswer(ok, ok ? "答對喇！" : `正確答案係 ${correct}`);
+}
+
+function finishAnswer(ok, msg){
+  S.answered = true;
+  if(ok){
+    S.stars++;
+    $("#starbox").textContent = `⭐ ${S.stars}`;
+    sfxOk();
+    flash("★ 答對！", true);
+    $("#qline").innerHTML = `<span class="ok">✓ ${msg}</span>`;
+  } else {
+    sfxNo();
+    flash("再試過！", false);
+    $("#qline").innerHTML = `<span class="no">✗ ${msg}</span>`;
+    // for split wrong, mark buttons
+    if(S.questions[S.qIndex].type==="split"){
+      $$("#splitChoices .ans").forEach(b=>{ b.disabled = true; });
+    }
+  }
+  $("#hintLine").textContent = "";
+  $("#actionRow").innerHTML = `<button type="button" class="bigbtn green" id="btnNext">${S.qIndex+1>=S.questions.length?"睇成績":"下一題"}</button>`;
+  $("#btnNext").onclick = ()=> nextQ();
+}
+
+function teacherReveal(){
+  if(S.answered) return;
+  const q = S.questions[S.qIndex];
+  sfxReveal();
+  S.answered = true;
+
+  if(q.type==="split"){
+    // Random valid bond each time — never always floor(total/2) (that made 9 always 4+5)
+    const ordered = uniqueUnorderedBonds(q.total);
+    const pick = ordered.length ? ordered[randInt(0, ordered.length-1)] : [MIN_PART, q.total-MIN_PART];
+    const a = pick[0], b = pick[1];
+    S.pickA=a; S.pickB=b;
+    renderSplitVisual(q.total, a, b);
+    $("#qline").innerHTML = `<span class="info">${a} + ${b} = ${q.total}</span>`;
+    const others = ordered.filter(([x,y])=>!(x===a&&y===b))
+      .map(([x,y])=>`${x}+${y}`).slice(0,6).join("、");
+    $("#hintLine").textContent = others ? `其他分法：${others}` : "";
+  } else if(q.type==="join"){
+    renderJoinReveal(q);
+    $("#qline").innerHTML = `<span class="info">${q.a} + ${q.b} = ${q.total}</span>`;
+  } else {
+    renderFriendReveal(q);
+    $("#qline").innerHTML = `<span class="info">${q.leftMissing? q.missing+" + "+q.known : q.known+" + "+q.missing} = ${q.total}</span>`;
+  }
+
+  // teacher can mark correct team mentally — award star when revealing (counts as shown)
+  S.stars++;
+  $("#starbox").textContent = `⭐ ${S.stars}`;
+  $("#actionRow").innerHTML = `<button type="button" class="bigbtn green" id="btnNext">${S.qIndex+1>=S.questions.length?"睇成績":"下一題"}</button>`;
+  $("#btnNext").onclick = ()=> nextQ();
+}
+
+function nextQ(){
+  S.qIndex++;
+  if(S.qIndex >= S.questions.length){
+    showEnd();
+  } else {
+    showQuestion();
+  }
+}
+
+function showEnd(){
+  showScreen("end");
+  const total = S.questions.length;
+  const stars = S.stars;
+  const ratio = stars/total;
+  let title, starStr;
+  if(ratio>=1){ title="完美！好叻呀！"; starStr="⭐⭐⭐"; }
+  else if(ratio>=0.7){ title="做得好！"; starStr="⭐⭐✨"; }
+  else if(ratio>=0.4){ title="繼續加油！"; starStr="⭐✨✨"; }
+  else { title="再試多次啦！"; starStr="💪"; }
+  $("#endStars").textContent = starStr;
+  $("#endTitle").textContent = title;
+  $("#endScore").textContent = S.mode==="teacher"
+    ? `完成 ${total} 題`
+    : `答對 ${stars} / ${total} 題`;
+  sfxWin();
+}
+
+$("#btnAgain").addEventListener("click", ()=>{ ensureAudio(); startGame(); });
+$("#btnMenu").addEventListener("click", ()=>{ showScreen("start"); });
+$("#btnHome").addEventListener("click", ()=>{
+  try{window.speechSynthesis&&window.speechSynthesis.cancel();}catch(e){}
+  showScreen("start");
+});
+$("#btnSpeak").addEventListener("click", ()=>{
+  const q = S.questions[S.qIndex];
+  if(q){
+    const was = S.speech; S.speech = true; speak(q.speak); S.speech = was;
+  }
+});
+
+/* unlock audio on first gesture */
+["pointerdown","touchstart","click"].forEach(ev=>{
+  document.addEventListener(ev, ()=>ensureAudio(), {once:true, passive:true});
+});
+
+applySaved();
+
+/* ---------- test hooks ---------- */
+window.__NB = {
+  get state(){ return {
+    mode:S.mode, range:S.range, count:S.count, types:{...S.types},
+    sound:S.sound, speech:S.speech,
+    qIndex:S.qIndex, stars:S.stars, answered:S.answered,
+    pickA:S.pickA, pickB:S.pickB, pickStep:S.pickStep,
+    question: S.questions[S.qIndex] ? JSON.parse(JSON.stringify(S.questions[S.qIndex])) : null,
+    totalQ: S.questions.length,
+  };},
+  startGame,
+  buildRound,
+  allBonds, uniqueUnorderedBonds, validPartChoices, isValidBond, MIN_PART, partVisual, tenFrameHTML,
+  persist,
+  setTypes(t){ Object.assign(S.types,t); persist(); },
+  setRange(r){ S.range=r; persist(); },
+  setCount(c){ S.count=c; persist(); },
+  setMode(m){ S.mode=m; persist(); },
+  forceQuestion(q){ S.questions=[q]; S.qIndex=0; S.stars=0; S.answered=false; showScreen("game"); showQuestion(); },
+  nextQ, teacherReveal,
+  checkSplit(a,b){ const q=S.questions[S.qIndex]; return q&&q.type==="split"&&(a+b===q.total); },
+};
+
+})();
+</script>
+</body>
+</html>
