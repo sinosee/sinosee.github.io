@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex">
+<title>整除掉落挑戰</title>
+<style>
+:root{
+  --vh:100vh;
+  --bg:#e8f4ff; --ink:#2a2a3a; --card:#ffffff;
+  --orange:#ff8c1a; --green:#2fb35a; --blue:#3b82f6; --purple:#7c4dff;
+  --pink:#ff6b9d; --red:#e53935; --teal:#14b8a6; --sky:#5bb8ff;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);
+  font-family:"PingFang HK","PingFang TC","Noto Sans CJK HK","Noto Sans CJK TC","Microsoft JhengHei","Heiti TC",sans-serif;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation;-webkit-text-size-adjust:100%}
+button{font-family:inherit;touch-action:manipulation;cursor:pointer;border:none;color:inherit;background:none;padding:0}
+button:focus-visible{outline:4px solid #7c4dff;outline-offset:3px}
+.screen{position:fixed;left:0;top:0;width:100%;height:var(--vh);display:none;flex-direction:column;overflow:hidden}
+.screen.on{display:flex}
+
+/* ---------- start ---------- */
+#start{overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;align-items:center;
+  background:linear-gradient(165deg,#e8f4ff 0%,#d4ecff 40%,#ffe8f0 100%)}
+.startInner{width:min(1080px,94vw);margin:auto;padding:16px 0 28px;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2vmin,20px)}
+h1.title{margin:0;font-size:clamp(30px,6vmin,68px);font-weight:900;letter-spacing:2px;text-align:center;line-height:1.2}
+h1.title .emoji{display:inline-block;margin:0 .12em}
+.sub{margin:0;font-size:clamp(16px,2.8vmin,28px);text-align:center;color:#5a5a6e;line-height:1.45}
+.modes{display:flex;gap:clamp(10px,2vmin,20px);width:100%}
+.mode{flex:1 1 0;background:var(--card);border-radius:22px;padding:clamp(12px,2vmin,22px);box-shadow:0 6px 0 #b8d4e8;border:5px solid transparent;text-align:center;min-height:90px}
+.mode.sel{border-color:#ff9f1c;background:#fffbea}
+.mode .mi{font-size:clamp(32px,5.5vmin,60px);line-height:1.1}
+.mode .mt{font-size:clamp(22px,3.8vmin,42px);font-weight:900;margin:.1em 0}
+.mode .md{font-size:clamp(14px,2.2vmin,24px);line-height:1.35;color:#5a5a6e}
+.sec{width:100%;display:flex;flex-direction:column;align-items:center;gap:8px}
+.seclabel{font-size:clamp(17px,2.8vmin,28px);font-weight:800;color:#5a5a6e}
+.segs{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.seg{min-width:min(140px,42vw);min-height:62px;padding:8px 14px;border-radius:18px;background:#fff;box-shadow:0 4px 0 #b8d4e8;font-size:clamp(16px,2.6vmin,26px);font-weight:800;border:4px solid transparent;line-height:1.25}
+.seg.sel{border-color:#ff9f1c;background:#fff1c9}
+.seg.chip{min-width:min(160px,46vw);background:#f0e8ff}
+.seg .sd{display:block;font-size:clamp(12px,1.8vmin,18px);font-weight:600;color:#7a7088;margin-top:2px}
+.toggles{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.toggle{display:flex;align-items:center;gap:8px;background:#fff;padding:8px 16px;border-radius:16px;box-shadow:0 3px 0 #b8d4e8;font-size:clamp(15px,2.4vmin,24px);font-weight:700}
+.toggle input{width:22px;height:22px;accent-color:var(--orange)}
+.bigbtn{min-width:240px;min-height:clamp(68px,10vmin,100px);padding:0 36px;border-radius:999px;background:var(--orange);color:#fff;font-size:clamp(26px,4.8vmin,50px);font-weight:900;box-shadow:0 7px 0 #c9620b;letter-spacing:3px}
+.bigbtn:active,.seg:active,.iconbtn:active,.mode:active,.fallNum:active{transform:translateY(3px)}
+.bigbtn.green{background:var(--green);box-shadow:0 7px 0 #1d7e3d}
+.bigbtn.blue{background:var(--blue);box-shadow:0 7px 0 #1e56b5}
+.bigbtn.purple{background:var(--purple);box-shadow:0 7px 0 #5430b0}
+.bigbtn:disabled{opacity:.45;transform:none}
+.note{font-size:clamp(13px,2vmin,18px);color:#7a8a9a;text-align:center}
+
+/* ---------- tip ---------- */
+#tip{align-items:center;justify-content:center;background:rgba(40,60,90,.45);z-index:20}
+.tipCard{width:min(640px,92vw);background:#fff;border-radius:28px;padding:clamp(20px,3vmin,36px);box-shadow:0 12px 40px rgba(0,0,0,.25);text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2vmin,18px)}
+.tipEmoji{width:clamp(72px,12vmin,110px);height:clamp(72px,12vmin,110px);border-radius:28px;display:flex;align-items:center;justify-content:center;
+  font-size:clamp(36px,7vmin,64px);font-weight:900;color:#fff;background:linear-gradient(160deg,#5bb8ff,#3b82f6);box-shadow:0 6px 0 #1e56b5}
+.tipTitle{margin:0;font-size:clamp(28px,5vmin,48px);font-weight:900}
+.tipBody{margin:0;font-size:clamp(18px,3.2vmin,32px);line-height:1.55;color:#3a3a4a;font-weight:700}
+.tipRule{background:#eef6ff;border-radius:18px;padding:14px 18px;font-size:clamp(18px,3vmin,30px);font-weight:800;color:#1e56b5;line-height:1.5;width:100%}
+.tipHow{font-size:clamp(15px,2.4vmin,24px);color:#5a5a6e;font-weight:700;line-height:1.45}
+
+/* ---------- play ---------- */
+#play{background:linear-gradient(180deg,#87ceeb 0%,#b8e0f8 35%,#d4f0ff 70%,#e8f8e0 100%)}
+.topbar{flex:none;display:flex;align-items:center;gap:8px;padding:8px 10px 4px;flex-wrap:wrap;z-index:5}
+.iconbtn{min-width:54px;height:54px;border-radius:16px;background:#fff;box-shadow:0 4px 0 #a8c8e0;font-size:26px;display:flex;align-items:center;justify-content:center}
+.pill{font-size:clamp(16px,2.6vmin,28px);font-weight:800;background:#fff;padding:6px 14px;border-radius:999px;white-space:nowrap;box-shadow:0 3px 0 #a8c8e0}
+#hearts{letter-spacing:2px;background:#ffe8e8;color:#c62828}
+#scorePill{background:#fff1b8}
+#rulePill{background:#e8f5e9;color:#1b7a3a}
+#modeTag{font-size:clamp(13px,2vmin,22px);background:#ede7ff;color:#5b3fc4}
+.spacer{flex:1}
+.banner{flex:none;text-align:center;font-weight:900;font-size:clamp(18px,3vmin,32px);padding:4px 12px;color:#1e4a7a;min-height:1.3em}
+#sky{flex:1 1 0;position:relative;overflow:hidden;margin:0 6px 6px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.15),rgba(255,255,255,.35));box-shadow:inset 0 0 0 3px rgba(255,255,255,.5);touch-action:manipulation}
+.ground{position:absolute;left:0;right:0;bottom:0;height:18%;background:linear-gradient(180deg,#7ec850 0%,#5a9e35 100%);border-radius:0 0 18px 18px;pointer-events:none;z-index:1}
+.ground::before{content:"";position:absolute;top:-8px;left:0;right:0;height:16px;background:repeating-linear-gradient(90deg,#6bb83e 0 20px,#5aa832 20px 40px);border-radius:8px 8px 0 0;opacity:.7}
+.cloud{position:absolute;background:#fff;border-radius:50px;opacity:.75;pointer-events:none;z-index:0}
+.cloud::before,.cloud::after{content:"";position:absolute;background:#fff;border-radius:50%}
+.fallNum{position:absolute;z-index:3;min-width:clamp(64px,12vmin,110px);min-height:clamp(64px,12vmin,110px);padding:4px 10px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:clamp(28px,5.5vmin,52px);font-weight:900;color:#fff;box-shadow:0 5px 0 rgba(0,0,0,.2),inset 0 -4px 0 rgba(0,0,0,.12);
+  transition:transform .12s,opacity .2s;will-change:transform;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.fallNum.n0{background:linear-gradient(160deg,#5bb8ff,#3b82f6)}.fallNum.n1{background:linear-gradient(160deg,#ff9f4a,#ff6b1a)}
+.fallNum.n2{background:linear-gradient(160deg,#a78bfa,#7c4dff)}.fallNum.n3{background:linear-gradient(160deg,#34d399,#10b981)}
+.fallNum.n4{background:linear-gradient(160deg,#f472b6,#ec4899)}.fallNum.n5{background:linear-gradient(160deg,#fbbf24,#f59e0b)}
+.fallNum.hitGood{transform:scale(1.25)!important;background:linear-gradient(160deg,#6ee7a0,#22c55e)!important;opacity:0;pointer-events:none}
+.fallNum.hitBad{animation:shake .35s;background:linear-gradient(160deg,#fca5a5,#ef4444)!important}
+.fallNum.reveal{box-shadow:0 0 0 5px #ffd700,0 5px 0 rgba(0,0,0,.2),inset 0 -4px 0 rgba(0,0,0,.12)!important}
+.fallNum.missed{opacity:.35;filter:grayscale(.4);pointer-events:none}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}
+.fx{position:absolute;z-index:10;pointer-events:none;font-weight:900;font-size:clamp(22px,4vmin,40px);animation:floatUp .7s ease-out forwards}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-50px) scale(1.2)}}
+.pausedOverlay{position:absolute;inset:0;background:rgba(30,50,80,.55);z-index:15;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;border-radius:20px}
+.pausedOverlay.on{display:flex}
+.pausedOverlay .pt{font-size:clamp(32px,6vmin,56px);font-weight:900;color:#fff;text-shadow:0 3px 8px rgba(0,0,0,.3)}
+.teachBar{flex:none;display:none;justify-content:center;gap:12px;padding:4px 10px 10px;flex-wrap:wrap}
+.teachBar.on{display:flex}
+.tbtn{min-height:52px;padding:0 20px;border-radius:16px;background:#fff;box-shadow:0 4px 0 #a8c8e0;font-size:clamp(16px,2.6vmin,24px);font-weight:800}
+
+/* ---------- end ---------- */
+#end{align-items:center;justify-content:center;background:linear-gradient(160deg,#e8f4ff 0%,#ffe0b8 50%,#ffd0e8 100%)}
+.endInner{text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(12px,2.5vmin,26px);padding:20px}
+.endStars{font-size:clamp(44px,9vmin,96px);letter-spacing:6px}
+.endTitle{font-size:clamp(32px,6.5vmin,68px);font-weight:900;margin:0}
+.endScore{font-size:clamp(22px,3.8vmin,40px);font-weight:800;color:#5a5a6e}
+.endDetail{font-size:clamp(16px,2.6vmin,26px);color:#6a6a7e;font-weight:700;line-height:1.5}
+.endBtns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+
+/* landscape / small height */
+@media (max-height:500px){
+  .fallNum{min-width:52px;min-height:52px;font-size:clamp(22px,4.5vmin,36px)}
+  .iconbtn{min-width:44px;height:44px;font-size:22px}
+  .ground{height:14%}
+}
+</style>
+</head>
+<body>
+<div id="start" class="screen on">
+  <div class="startInner">
+    <h1 class="title"><span class="emoji">🎯</span>整除掉落挑戰<span class="emoji">✨</span></h1>
+    <p class="sub">數字從天上掉下來！點擊「能被整除」的數字，不要點錯喔！</p>
+
+    <div class="modes">
+      <button type="button" class="mode sel" data-mode="student" id="modeStudent">
+        <div class="mi">🧒</div>
+        <div class="mt">學生模式</div>
+        <div class="md">自己點選數字練習</div>
+      </button>
+      <button type="button" class="mode" data-mode="teacher" id="modeTeacher">
+        <div class="mi">👩‍🏫</div>
+        <div class="mt">老師模式</div>
+        <div class="md">投影全班：可暫停、顯示答案</div>
+      </button>
+    </div>
+
+    <div class="sec">
+      <div class="seclabel">選擇關卡</div>
+      <div class="segs" id="secPick">
+        <button type="button" class="seg sel" data-sec="2">被 2 整除<span class="sd">個位是雙數</span></button>
+        <button type="button" class="seg" data-sec="5">被 5 整除<span class="sd">個位是 0 或 5</span></button>
+        <button type="button" class="seg" data-sec="10">被 10 整除<span class="sd">個位是 0</span></button>
+        <button type="button" class="seg" data-sec="3">被 3 整除<span class="sd">各位數字和是 3 的倍數</span></button>
+        <button type="button" class="seg chip" data-sec="mix">全部關卡<span class="sd">四關混合挑戰</span></button>
+      </div>
+    </div>
+
+    <div class="toggles">
+      <label class="toggle"><input type="checkbox" id="chkSound" checked> 音效</label>
+      <label class="toggle"><input type="checkbox" id="chkHard"> 較難（多三位數）</label>
+    </div>
+
+    <button type="button" class="bigbtn" id="btnStart">開始遊戲</button>
+    <p class="note">適合小四至小六 · 唔使登入 · iPad 用手指點選</p>
+  </div>
+</div>
+
+<div id="tip" class="screen">
+  <div class="tipCard">
+    <div class="tipEmoji" id="tipEmoji">2</div>
+    <h2 class="tipTitle" id="tipTitle">被 2 整除</h2>
+    <div class="tipRule" id="tipRule">個位是 0、2、4、6、8 → 能被 2 整除</div>
+    <p class="tipBody" id="tipBody">點擊能被 2 整除的數字！點錯或漏掉正確的，會失去一顆心 ❤️</p>
+    <p class="tipHow">你有 3 顆心 · 盡量多得分！</p>
+    <button type="button" class="bigbtn green" id="btnTipGo">知道了，開始！</button>
+  </div>
+</div>
+
+<div id="play" class="screen">
+  <div class="topbar">
+    <button type="button" class="iconbtn" id="btnHome" title="返回">🏠</button>
+    <button type="button" class="iconbtn" id="btnPause" title="暫停">⏸</button>
+    <span class="pill" id="hearts">❤️❤️❤️</span>
+    <span class="pill" id="scorePill">⭐ 0</span>
+    <span class="pill" id="rulePill">被 2 整除</span>
+    <span class="spacer"></span>
+    <span class="pill" id="modeTag">學生</span>
+  </div>
+  <div class="banner" id="banner">點擊能被 <b>2</b> 整除的數字！</div>
+  <div id="sky">
+    <div class="cloud" style="width:70px;height:28px;top:8%;left:8%"></div>
+    <div class="cloud" style="width:90px;height:34px;top:18%;right:12%"></div>
+    <div class="cloud" style="width:60px;height:24px;top:28%;left:35%"></div>
+    <div class="ground"></div>
+    <div class="pausedOverlay" id="pausedOv">
+      <div class="pt">⏸ 暫停</div>
+      <button type="button" class="bigbtn blue" id="btnResume">繼續</button>
+    </div>
+  </div>
+  <div class="teachBar" id="teachBar">
+    <button type="button" class="tbtn" id="btnReveal">💡 顯示正確數字</button>
+    <button type="button" class="tbtn" id="btnClearReveal">清除提示</button>
+  </div>
+</div>
+
+<div id="end" class="screen">
+  <div class="endInner">
+    <div class="endStars" id="endStars">⭐⭐⭐</div>
+    <h2 class="endTitle" id="endTitle">太棒了！</h2>
+    <div class="endScore" id="endScore">得分：0</div>
+    <div class="endDetail" id="endDetail"></div>
+    <div class="endBtns">
+      <button type="button" class="bigbtn green" id="btnAgain">再玩一次</button>
+      <button type="button" class="bigbtn purple" id="btnMenu">返回主選單</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+function setVH(){
+  var h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  document.documentElement.style.setProperty('--vh', h + 'px');
+}
+setVH();
+window.addEventListener('resize', setVH);
+if(window.visualViewport) window.visualViewport.addEventListener('resize', setVH);
+
+var SECTIONS = {
+  '2': {
+    id:'2', name:'被 2 整除', emoji:'2',
+    tip:'個位是 0、2、4、6、8 → 能被 2 整除',
+    banner:'點擊能被 <b>2</b> 整除的數字！',
+    check:function(n){ return n % 2 === 0; },
+    duration:55, spawnMs:1100, fallSec:[5.5, 8.5]
+  },
+  '5': {
+    id:'5', name:'被 5 整除', emoji:'5',
+    tip:'個位是 0 或 5 → 能被 5 整除',
+    banner:'點擊能被 <b>5</b> 整除的數字！',
+    check:function(n){ return n % 5 === 0; },
+    duration:55, spawnMs:1150, fallSec:[5.5, 8.5]
+  },
+  '10': {
+    id:'10', name:'被 10 整除', emoji:'10',
+    tip:'個位是 0 → 能被 10 整除',
+    banner:'點擊能被 <b>10</b> 整除的數字！',
+    check:function(n){ return n % 10 === 0; },
+    duration:55, spawnMs:1200, fallSec:[5.8, 9]
+  },
+  '3': {
+    id:'3', name:'被 3 整除', emoji:'3',
+    tip:'把各位數字相加，和是 3 的倍數 → 能被 3 整除<br>例如 27：2＋7＝9，9 是 3 的倍數',
+    banner:'點擊能被 <b>3</b> 整除的數字！（試試加各位）',
+    check:function(n){ return n % 3 === 0; },
+    duration:60, spawnMs:1200, fallSec:[6, 9]
+  }
+};
+
+var state = {
+  mode:'student',
+  section:'2',
+  sound:true,
+  hard:false,
+  lives:3,
+  score:0,
+  hits:0,
+  wrongs:0,
+  misses:0,
+  queue:[], // remaining section ids for mix
+  current:null,
+  playing:false,
+  paused:false,
+  revealing:false,
+  spawnTimer:null,
+  raf:null,
+  lastTs:0,
+  numbers:[], // active falling items
+  nextId:1,
+  sectionEndAt:0,
+  colorIdx:0
+};
+
+var el = {
+  start:document.getElementById('start'),
+  tip:document.getElementById('tip'),
+  play:document.getElementById('play'),
+  end:document.getElementById('end'),
+  sky:document.getElementById('sky'),
+  hearts:document.getElementById('hearts'),
+  scorePill:document.getElementById('scorePill'),
+  rulePill:document.getElementById('rulePill'),
+  modeTag:document.getElementById('modeTag'),
+  banner:document.getElementById('banner'),
+  pausedOv:document.getElementById('pausedOv'),
+  teachBar:document.getElementById('teachBar'),
+  tipEmoji:document.getElementById('tipEmoji'),
+  tipTitle:document.getElementById('tipTitle'),
+  tipRule:document.getElementById('tipRule'),
+  tipBody:document.getElementById('tipBody'),
+  endStars:document.getElementById('endStars'),
+  endTitle:document.getElementById('endTitle'),
+  endScore:document.getElementById('endScore'),
+  endDetail:document.getElementById('endDetail')
+};
+
+function show(screen){
+  ['start','tip','play','end'].forEach(function(id){
+    document.getElementById(id).classList.toggle('on', id===screen);
+  });
+}
+
+/* ---------- audio (optional WebAudio beeps) ---------- */
+var audioCtx = null;
+function ensureAudio(){
+  if(!state.sound) return null;
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended') audioCtx.resume();
+    return audioCtx;
+  }catch(e){ return null; }
+}
+function beep(freq, dur, type, vol){
+  var ctx = ensureAudio();
+  if(!ctx) return;
+  var o = ctx.createOscillator();
+  var g = ctx.createGain();
+  o.type = type||'sine';
+  o.frequency.value = freq;
+  g.gain.value = vol||0.08;
+  o.connect(g); g.connect(ctx.destination);
+  o.start();
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (dur||0.15));
+  o.stop(ctx.currentTime + (dur||0.15) + 0.02);
+}
+function sfxGood(){ beep(660,.1,'triangle',.1); setTimeout(function(){ beep(880,.12,'triangle',.08); },80); }
+function sfxBad(){ beep(220,.18,'sawtooth',.07); }
+function sfxMiss(){ beep(180,.12,'square',.05); }
+function sfxStar(){ beep(523,.08); setTimeout(function(){ beep(659,.08); },70); setTimeout(function(){ beep(784,.14); },140); }
+
+/* ---------- helpers ---------- */
+function rand(a,b){ return a + Math.random()*(b-a); }
+function randInt(a,b){ return Math.floor(rand(a,b+1)); }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+function genNumber(div, wantYes){
+  var hard = state.hard;
+  var digits = hard ? (Math.random()<0.45 ? 3 : 2) : (Math.random()<0.18 ? 3 : 2);
+  var min = digits===2 ? 10 : 100;
+  var max = digits===2 ? 99 : 999;
+  var n, tries=0;
+  do{
+    if(wantYes){
+      var kMin = Math.ceil(min/div);
+      var kMax = Math.floor(max/div);
+      n = randInt(kMin, kMax) * div;
+    } else {
+      n = randInt(min, max);
+      if(n % div === 0){
+        n = n + 1;
+        if(n > max) n = min + (n % (max-min+1));
+        if(n % div === 0) n++;
+      }
+    }
+    tries++;
+  } while(tries < 20 && ((wantYes && n%div!==0) || (!wantYes && n%div===0) || n<min || n>max));
+  if(wantYes && n%div!==0) n = Math.floor(min/div)*div + div;
+  if(!wantYes && n%div===0) n = n+1;
+  return n;
+}
+
+function updateHUD(){
+  var h = '';
+  for(var i=0;i<3;i++) h += i < state.lives ? '❤️' : '🖤';
+  el.hearts.textContent = h;
+  el.scorePill.textContent = '⭐ ' + state.score;
+}
+
+function fxAt(x,y,text,color){
+  var d = document.createElement('div');
+  d.className = 'fx';
+  d.textContent = text;
+  d.style.left = x + 'px';
+  d.style.top = y + 'px';
+  d.style.color = color||'#fff';
+  el.sky.appendChild(d);
+  setTimeout(function(){ d.remove(); },700);
+}
+
+/* ---------- falling system ---------- */
+function clearNumbers(){
+  state.numbers.forEach(function(it){ if(it.el && it.el.parentNode) it.el.remove(); });
+  state.numbers = [];
+}
+
+function spawnOne(){
+  if(!state.playing || state.paused || !state.current) return;
+  var sec = state.current;
+  var div = +sec.id;
+  // ~45% correct targets so game is fair
+  var wantYes = Math.random() < 0.42;
+  var n = genNumber(div, wantYes);
+  var isGood = sec.check(n);
+  var skyW = el.sky.clientWidth || 300;
+  var skyH = el.sky.clientHeight || 400;
+  var size = Math.min(110, Math.max(64, skyW * 0.12));
+  var x = rand(8, Math.max(10, skyW - size - 8));
+  var fallDur = rand(sec.fallSec[0], sec.fallSec[1]) * 1000;
+  // ground is ~18% — miss when center reaches ground top
+  var groundY = skyH * 0.82 - size;
+  var color = state.colorIdx++ % 6;
+
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'fallNum n' + color;
+  btn.textContent = String(n);
+  btn.setAttribute('aria-label', String(n));
+  btn.style.left = x + 'px';
+  btn.style.top = (-size) + 'px';
+  btn.style.width = size + 'px';
+  btn.style.height = size + 'px';
+  btn.style.fontSize = (size * 0.42) + 'px';
+
+  var item = {
+    id: state.nextId++,
+    n: n,
+    good: isGood,
+    el: btn,
+    x: x,
+    y: -size,
+    size: size,
+    speed: (groundY - (-size)) / fallDur, // px per ms
+    groundY: groundY,
+    alive: true,
+    hit: false
+  };
+
+  btn.addEventListener('pointerdown', function(ev){
+    ev.preventDefault();
+    ev.stopPropagation();
+    onTap(item);
+  }, {passive:false});
+
+  if(state.revealing && isGood) btn.classList.add('reveal');
+  el.sky.appendChild(btn);
+  state.numbers.push(item);
+}
+
+function onTap(item){
+  if(!state.playing || state.paused || !item.alive || item.hit) return;
+  item.hit = true;
+  item.alive = false;
+  var rect = item.el.getBoundingClientRect();
+  var skyRect = el.sky.getBoundingClientRect();
+  var cx = rect.left - skyRect.left + rect.width/2;
+  var cy = rect.top - skyRect.top;
+
+  if(item.good){
+    item.el.classList.add('hitGood');
+    state.score += 10;
+    state.hits++;
+    fxAt(cx-20, cy, '+10', '#166534');
+    sfxGood();
+    setTimeout(function(){ removeItem(item); }, 220);
+  } else {
+    item.el.classList.add('hitBad');
+    state.wrongs++;
+    loseLife();
+    fxAt(cx-10, cy, '×', '#b91c1c');
+    sfxBad();
+    setTimeout(function(){ removeItem(item); }, 280);
+  }
+  updateHUD();
+}
+
+function removeItem(item){
+  var i = state.numbers.indexOf(item);
+  if(i>=0) state.numbers.splice(i,1);
+  if(item.el && item.el.parentNode) item.el.remove();
+}
+
+function loseLife(){
+  if(state.lives <= 0) return;
+  state.lives--;
+  updateHUD();
+  if(state.lives <= 0){
+    endGame(false);
+  }
+}
+
+function tick(ts){
+  if(!state.playing){ state.raf = null; return; }
+  if(!state.lastTs) state.lastTs = ts;
+  var dt = Math.min(50, ts - state.lastTs);
+  state.lastTs = ts;
+
+  if(!state.paused){
+    var toRemove = [];
+    for(var i=0;i<state.numbers.length;i++){
+      var it = state.numbers[i];
+      if(!it.alive) continue;
+      it.y += it.speed * dt;
+      it.el.style.top = it.y + 'px';
+      if(it.y >= it.groundY){
+        it.alive = false;
+        it.el.classList.add('missed');
+        if(it.good){
+          state.misses++;
+          loseLife();
+          sfxMiss();
+          fxAt(it.x + it.size/2 - 10, it.groundY - 10, '漏了!', '#b45309');
+          updateHUD();
+          if(!state.playing) return;
+        }
+        toRemove.push(it);
+      }
+    }
+    toRemove.forEach(function(it){
+      setTimeout(function(){ removeItem(it); }, 200);
+    });
+
+    if(Date.now() >= state.sectionEndAt && state.numbers.filter(function(n){return n.alive;}).length===0){
+      finishSection();
+      return;
+    }
+  }
+  state.raf = requestAnimationFrame(tick);
+}
+
+function startSpawning(){
+  stopSpawning();
+  spawnOne();
+  state.spawnTimer = setInterval(function(){
+    if(!state.playing || state.paused) return;
+    if(Date.now() >= state.sectionEndAt) return;
+    // limit concurrent
+    var alive = state.numbers.filter(function(n){return n.alive;}).length;
+    if(alive < 6) spawnOne();
+  }, state.current.spawnMs);
+}
+function stopSpawning(){
+  if(state.spawnTimer){ clearInterval(state.spawnTimer); state.spawnTimer = null; }
+}
+
+/* ---------- flow ---------- */
+function beginFromStart(){
+  ensureAudio();
+  state.lives = 3;
+  state.score = 0;
+  state.hits = 0;
+  state.wrongs = 0;
+  state.misses = 0;
+  state.revealing = false;
+  if(state.section === 'mix'){
+    state.queue = ['2','5','10','3'];
+  } else {
+    state.queue = [state.section];
+  }
+  nextSectionOrEnd();
+}
+
+function nextSectionOrEnd(){
+  clearNumbers();
+  stopSpawning();
+  if(state.raf){ cancelAnimationFrame(state.raf); state.raf = null; }
+  state.playing = false;
+  state.paused = false;
+  el.pausedOv.classList.remove('on');
+
+  if(state.lives <= 0){ endGame(false); return; }
+  if(!state.queue.length){ endGame(true); return; }
+
+  var id = state.queue.shift();
+  state.current = SECTIONS[id];
+  showTip(state.current);
+}
+
+function showTip(sec){
+  el.tipEmoji.textContent = sec.emoji;
+  var colors = {
+    '2':['#5bb8ff','#3b82f6','#1e56b5'],
+    '5':['#ff9f4a','#ff6b1a','#c9620b'],
+    '10':['#a78bfa','#7c4dff','#5430b0'],
+    '3':['#34d399','#10b981','#047857']
+  };
+  var c = colors[sec.id] || colors['2'];
+  el.tipEmoji.style.background = 'linear-gradient(160deg,'+c[0]+','+c[1]+')';
+  el.tipEmoji.style.boxShadow = '0 6px 0 '+c[2];
+  el.tipTitle.textContent = sec.name;
+  el.tipRule.innerHTML = sec.tip;
+  el.tipBody.textContent = '點擊能被 ' + sec.id + ' 整除的數字！點錯或漏掉正確的，會失去一顆心 ❤️';
+  show('tip');
+}
+
+function startPlay(){
+  var sec = state.current;
+  el.rulePill.textContent = sec.name;
+  el.banner.innerHTML = sec.banner;
+  el.modeTag.textContent = state.mode === 'teacher' ? '老師' : '學生';
+  el.teachBar.classList.toggle('on', state.mode === 'teacher');
+  updateHUD();
+  clearNumbers();
+  state.playing = true;
+  state.paused = false;
+  state.revealing = false;
+  state.lastTs = 0;
+  state.sectionEndAt = Date.now() + sec.duration * 1000;
+  show('play');
+  startSpawning();
+  state.raf = requestAnimationFrame(tick);
+}
+
+function finishSection(){
+  stopSpawning();
+  state.playing = false;
+  if(state.raf){ cancelAnimationFrame(state.raf); state.raf = null; }
+  // small bonus for surviving section
+  state.score += 20;
+  updateHUD();
+  sfxStar();
+  setTimeout(nextSectionOrEnd, 600);
+}
+
+function endGame(cleared){
+  state.playing = false;
+  stopSpawning();
+  if(state.raf){ cancelAnimationFrame(state.raf); state.raf = null; }
+  clearNumbers();
+
+  var stars = 1;
+  if(state.lives >= 2 && state.score >= 80) stars = 2;
+  if(state.lives >= 3 && state.score >= 150) stars = 3;
+  if(!cleared && state.lives <= 0) stars = Math.max(1, stars - 1);
+  if(state.score >= 200 && state.lives >= 2) stars = 3;
+
+  var starStr = '';
+  for(var i=0;i<3;i++) starStr += i < stars ? '⭐' : '☆';
+  el.endStars.textContent = starStr;
+
+  if(state.lives <= 0){
+    el.endTitle.textContent = '再試一次！';
+  } else if(stars >= 3){
+    el.endTitle.textContent = '太棒了！';
+  } else if(stars === 2){
+    el.endTitle.textContent = '做得好！';
+  } else {
+    el.endTitle.textContent = '繼續加油！';
+  }
+  el.endScore.textContent = '得分：' + state.score;
+  el.endDetail.innerHTML =
+    '點中正確：' + state.hits + '　點錯：' + state.wrongs + '　漏掉：' + state.misses +
+    '<br>剩餘愛心：' + '❤️'.repeat(Math.max(0,state.lives)) + (state.lives?'' : '（用完了）');
+  show('end');
+  if(stars>=2) sfxStar();
+}
+
+function setPaused(p){
+  if(!state.playing && !p) return;
+  state.paused = p;
+  el.pausedOv.classList.toggle('on', p);
+  document.getElementById('btnPause').textContent = p ? '▶' : '⏸';
+}
+
+function toggleReveal(){
+  state.revealing = !state.revealing;
+  state.numbers.forEach(function(it){
+    if(!it.alive) return;
+    it.el.classList.toggle('reveal', state.revealing && it.good);
+  });
+}
+function clearReveal(){
+  state.revealing = false;
+  state.numbers.forEach(function(it){ it.el.classList.remove('reveal'); });
+}
+
+/* ---------- UI bindings ---------- */
+document.querySelectorAll('.mode').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.mode').forEach(function(b){ b.classList.remove('sel'); });
+    btn.classList.add('sel');
+    state.mode = btn.getAttribute('data-mode');
+  });
+});
+document.querySelectorAll('#secPick .seg').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('#secPick .seg').forEach(function(b){ b.classList.remove('sel'); });
+    btn.classList.add('sel');
+    state.section = btn.getAttribute('data-sec');
+  });
+});
+document.getElementById('chkSound').addEventListener('change', function(){ state.sound = this.checked; });
+document.getElementById('chkHard').addEventListener('change', function(){ state.hard = this.checked; });
+
+document.getElementById('btnStart').addEventListener('click', function(){
+  ensureAudio();
+  beginFromStart();
+});
+document.getElementById('btnTipGo').addEventListener('click', startPlay);
+document.getElementById('btnHome').addEventListener('click', function(){
+  if(!confirm('返回主選單？目前進度會消失。')) return;
+  state.playing = false;
+  stopSpawning();
+  if(state.raf){ cancelAnimationFrame(state.raf); state.raf = null; }
+  clearNumbers();
+  show('start');
+});
+document.getElementById('btnPause').addEventListener('click', function(){
+  if(!el.play.classList.contains('on')) return;
+  setPaused(!state.paused);
+});
+document.getElementById('btnResume').addEventListener('click', function(){ setPaused(false); });
+document.getElementById('btnReveal').addEventListener('click', function(){
+  if(!state.revealing) toggleReveal();
+  else clearReveal();
+});
+document.getElementById('btnClearReveal').addEventListener('click', clearReveal);
+document.getElementById('btnAgain').addEventListener('click', beginFromStart);
+document.getElementById('btnMenu').addEventListener('click', function(){ show('start'); });
+
+
+/* Delegated hit-test: more reliable on moving targets / iPad */
+el.sky.addEventListener('pointerdown', function(ev){
+  if(!state.playing || state.paused) return;
+  if(ev.target && ev.target.classList && ev.target.classList.contains('fallNum')) return; // already handled
+  var x = ev.clientX, y = ev.clientY;
+  var hit = null, best = Infinity;
+  for(var i=0;i<state.numbers.length;i++){
+    var it = state.numbers[i];
+    if(!it.alive || it.hit || !it.el) continue;
+    var r = it.el.getBoundingClientRect();
+    var cx = r.left + r.width/2, cy = r.top + r.height/2;
+    var dx = x - cx, dy = y - cy;
+    var dist = dx*dx + dy*dy;
+    var rad = Math.max(r.width, r.height) * 0.65;
+    if(dist <= rad*rad && dist < best){ best = dist; hit = it; }
+  }
+  if(hit){
+    ev.preventDefault();
+    onTap(hit);
+  }
+}, {passive:false});
+
+// expose for tests
+window.__DIVDROP = {
+  state: state,
+  SECTIONS: SECTIONS,
+  beginFromStart: beginFromStart,
+  startPlay: startPlay,
+  show: show,
+  spawnOne: spawnOne,
+  genNumber: genNumber,
+  setPaused: setPaused,
+  endGame: endGame,
+  onTap: function(id){
+    var it = state.numbers.find(function(n){ return n.id===id; });
+    if(it) onTap(it);
+  }
+};
+})();
+</script>
+</body>
+</html>
