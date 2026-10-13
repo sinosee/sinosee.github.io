@@ -598,7 +598,12 @@ function startPlay(){
   state.paused = false;
   state.revealing = false;
   state.lastTs = 0;
-  state.sectionEndAt = Date.now() + sec.duration * 1000;
+  var dur = sec.duration;
+  // 全部關卡：2 / 5 / 10 各縮短至 30 秒；被 3 整除維持原時間
+  if(state.section === 'mix' && (sec.id === '2' || sec.id === '5' || sec.id === '10')){
+    dur = 30;
+  }
+  state.sectionEndAt = Date.now() + dur * 1000;
   show('play');
   startSpawning();
   state.raf = requestAnimationFrame(tick);
