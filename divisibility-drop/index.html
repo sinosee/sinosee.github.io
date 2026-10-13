@@ -143,7 +143,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
         <button type="button" class="seg" data-sec="5">被 5 整除<span class="sd">個位是 0 或 5</span></button>
         <button type="button" class="seg" data-sec="10">被 10 整除<span class="sd">個位是 0</span></button>
         <button type="button" class="seg" data-sec="3">被 3 整除<span class="sd">各位數字和是 3 的倍數</span></button>
-        <button type="button" class="seg chip" data-sec="mix">全部關卡<span class="sd">四關混合挑戰</span></button>
+        <button type="button" class="seg chip" data-sec="mix">全部關卡<span class="sd">2／5／10 各 30 秒 · 3 約 60 秒</span></button>
       </div>
     </div>
 
@@ -391,8 +391,9 @@ function spawnOne(){
   if(!state.playing || state.paused || !state.current) return;
   var sec = state.current;
   var div = +sec.id;
-  // ~45% correct targets so game is fair
-  var wantYes = Math.random() < 0.42;
+  // ~42% correct; 被 5 整除略高，正確答案唔好太少
+  var yesRate = (sec.id === '5') ? 0.58 : 0.42;
+  var wantYes = Math.random() < yesRate;
   var n = genNumber(div, wantYes);
   var isGood = sec.check(n);
   var skyW = el.sky.clientWidth || 300;
@@ -569,6 +570,11 @@ function nextSectionOrEnd(){
   showTip(state.current);
 }
 
+function sectionDuration(sec){
+  if(state.section === 'mix' && (sec.id === '2' || sec.id === '5' || sec.id === '10')) return 30;
+  return sec.duration;
+}
+
 function showTip(sec){
   el.tipEmoji.textContent = sec.emoji;
   var colors = {
@@ -583,6 +589,15 @@ function showTip(sec){
   el.tipTitle.textContent = sec.name;
   el.tipRule.innerHTML = sec.tip;
   el.tipBody.textContent = '點擊能被 ' + sec.id + ' 整除的數字！點錯或漏掉正確的，會失去一顆心 ❤️';
+  var dur = sectionDuration(sec);
+  var how = document.querySelector('#tip .tipHow');
+  if(how){
+    if(state.section === 'mix'){
+      how.textContent = '本關約 ' + dur + ' 秒 · 你有 3 顆心（四關共用）· 盡量多得分！';
+    } else {
+      how.textContent = '本關約 ' + dur + ' 秒 · 你有 3 顆心 · 盡量多得分！';
+    }
+  }
   show('tip');
 }
 
@@ -598,12 +613,7 @@ function startPlay(){
   state.paused = false;
   state.revealing = false;
   state.lastTs = 0;
-  var dur = sec.duration;
-  // 全部關卡：2 / 5 / 10 各縮短至 30 秒；被 3 整除維持原時間
-  if(state.section === 'mix' && (sec.id === '2' || sec.id === '5' || sec.id === '10')){
-    dur = 30;
-  }
-  state.sectionEndAt = Date.now() + dur * 1000;
+  state.sectionEndAt = Date.now() + sectionDuration(sec) * 1000;
   show('play');
   startSpawning();
   state.raf = requestAnimationFrame(tick);
