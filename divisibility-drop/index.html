@@ -71,6 +71,9 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 .pill{font-size:clamp(16px,2.6vmin,28px);font-weight:800;background:#fff;padding:6px 14px;border-radius:999px;white-space:nowrap;box-shadow:0 3px 0 #a8c8e0}
 #hearts{letter-spacing:2px;background:#ffe8e8;color:#c62828}
 #scorePill{background:#fff1b8}
+#timerPill{background:#ffe8d6;color:#c2410c;min-width:4.2em;font-variant-numeric:tabular-nums}
+#timerPill.urgent{background:#ffe0e0;color:#c62828;animation:pulseT .7s ease-in-out infinite}
+@keyframes pulseT{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 #rulePill{background:#e8f5e9;color:#1b7a3a}
 #modeTag{font-size:clamp(13px,2vmin,22px);background:#ede7ff;color:#5b3fc4}
 .spacer{flex:1}
@@ -174,6 +177,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
     <button type="button" class="iconbtn" id="btnPause" title="暫停">⏸</button>
     <span class="pill" id="hearts">❤️❤️❤️</span>
     <span class="pill" id="scorePill">⭐ 0</span>
+    <span class="pill" id="timerPill">⏱ 0</span>
     <span class="pill" id="rulePill">被 2 整除</span>
     <span class="spacer"></span>
     <span class="pill" id="modeTag">學生</span>
@@ -272,6 +276,7 @@ var state = {
   numbers:[], // active falling items
   nextId:1,
   sectionEndAt:0,
+  pauseLeftMs:0,
   colorIdx:0
 };
 
@@ -283,6 +288,7 @@ var el = {
   sky:document.getElementById('sky'),
   hearts:document.getElementById('hearts'),
   scorePill:document.getElementById('scorePill'),
+  timerPill:document.getElementById('timerPill'),
   rulePill:document.getElementById('rulePill'),
   modeTag:document.getElementById('modeTag'),
   banner:document.getElementById('banner'),
@@ -368,6 +374,22 @@ function updateHUD(){
   for(var i=0;i<3;i++) h += i < state.lives ? '❤️' : '🖤';
   el.hearts.textContent = h;
   el.scorePill.textContent = '⭐ ' + state.score;
+  updateTimer();
+}
+
+function updateTimer(){
+  if(!el.timerPill) return;
+  var leftMs;
+  if(state.paused){
+    leftMs = state.pauseLeftMs;
+  } else if(state.playing && state.sectionEndAt){
+    leftMs = Math.max(0, state.sectionEndAt - Date.now());
+  } else {
+    leftMs = 0;
+  }
+  var sec = Math.ceil(leftMs / 1000);
+  el.timerPill.textContent = '⏱ ' + sec;
+  el.timerPill.classList.toggle('urgent', state.playing && sec > 0 && sec <= 5);
 }
 
 function fxAt(x,y,text,color){
@@ -514,10 +536,13 @@ function tick(ts){
       setTimeout(function(){ removeItem(it); }, 200);
     });
 
+    updateTimer();
     if(Date.now() >= state.sectionEndAt && state.numbers.filter(function(n){return n.alive;}).length===0){
       finishSection();
       return;
     }
+  } else {
+    updateTimer();
   }
   state.raf = requestAnimationFrame(tick);
 }
@@ -613,7 +638,9 @@ function startPlay(){
   state.paused = false;
   state.revealing = false;
   state.lastTs = 0;
+  state.pauseLeftMs = 0;
   state.sectionEndAt = Date.now() + sectionDuration(sec) * 1000;
+  updateTimer();
   show('play');
   startSpawning();
   state.raf = requestAnimationFrame(tick);
@@ -665,9 +692,15 @@ function endGame(cleared){
 
 function setPaused(p){
   if(!state.playing && !p) return;
+  if(p && !state.paused){
+    state.pauseLeftMs = Math.max(0, state.sectionEndAt - Date.now());
+  } else if(!p && state.paused){
+    state.sectionEndAt = Date.now() + state.pauseLeftMs;
+  }
   state.paused = p;
   el.pausedOv.classList.toggle('on', p);
   document.getElementById('btnPause').textContent = p ? '▶' : '⏸';
+  updateTimer();
 }
 
 function toggleReveal(){
