@@ -85,9 +85,16 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 .ld .blank.bad{background:#fee2e2;border-color:#ef4444;border-style:solid;color:#991b1b;animation:shake .35s}
 .ld .blank.reveal{background:#fef3c7;border-color:#f59e0b;border-style:solid;color:#92400e}
 .ld .empty{visibility:hidden}
-.ld .divisorCell{background:#f0e8ff;border-radius:10px;color:#5b3fc4;font-size:clamp(24px,5vmin,40px);margin-right:8px}
+.ld .place{height:auto;min-height:0;width:clamp(36px,8vmin,52px);padding:0 0 1px;border-radius:0;
+  font-size:clamp(12px,1.9vmin,16px);font-weight:800;line-height:1.05;color:#6a5a4a}
+.ld .divSign{width:auto;background:none;border-radius:0;color:#2a2a3a;margin:0;padding:0 0 0 2px;gap:1px;
+  justify-content:flex-end;align-items:stretch}
+.ld .divSign .num{font-weight:900;padding:0 2px 0 2px;display:flex;align-items:center}
+.ld .divSign .paren{width:15px;align-self:stretch;display:block;position:relative;
+  border-top:4px solid #2a2a3a;padding:0;margin:0;color:#2a2a3a;box-sizing:border-box}
+.ld .divSign .paren svg{position:absolute;left:0;right:0;top:-1px;bottom:0;width:100%;height:calc(100% + 1px);display:block}
+.ld .divSign .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .ld .barLine{border-radius:0;border-top:4px solid #2a2a3a}
-.ld .barLine.firstDig{border-left:4px solid #2a2a3a;border-top-left-radius:16px}
 .ld .ruleRow{height:12px;min-height:12px;border-radius:0}
 .ld .ruleRow.ink{border-top:3px solid #2a2a3a}
 .ld .label{font-size:clamp(11px,1.6vmin,14px);font-weight:700;color:#9aa;position:absolute;top:1px;right:3px;line-height:1}
@@ -325,7 +332,7 @@ function beep(freq, dur, type, vol){
 /* ---------- problem generation ----------
    Hong Kong P4 long division (直式):
    商 sits above the dividend, in the column that was just divided.
-   The division sign brackets the dividend (line above it, stroke on its left).
+   The division sign is 除數)被除數: the ) meets a line above the dividend.
    Each step is 乘 then 減. Digits stay in their place-value columns.
    A remainder of 0 is not written. The next dividend digit is brought down
    into its own column. A quotient of 0 is written, but 0×除數 is not. */
@@ -522,8 +529,16 @@ function renderProblem(prob){
     }
   }
 
+  var places = ['個','十','百','千'];
   var row = 1;
-  // 商：對齊除到的那一位
+  // 百位／十位／個位，對齊直式數位
+  addCell('', 'place', 1, row);
+  for(var p = 0; p < cols; p++){
+    addCell(places[cols - 1 - p] + '<br>位', 'place', p + 2, row);
+  }
+  row++;
+
+  // 商：不夠除的最高位不寫商，商寫在除到的那一位
   addCell('', 'empty', 1, row);
   var qByCol = {};
   ld.qDigits.forEach(function(qd, idx){ qByCol[qd.atCol] = {digit: qd.digit, idx: idx}; });
@@ -536,11 +551,18 @@ function renderProblem(prob){
   }
   row++;
 
-  // 除數 ) 被除數 — 橫線在被除數上面，豎線在左
-  addCell(String(ld.d), 'divisorCell', 1, row);
+  // 除數 ) 被除數，橫線在商下面、被除數上面
+  var sign = document.createElement('div');
+  sign.className = 'c divSign';
+  sign.style.gridColumn = '1';
+  sign.style.gridRow = String(row);
+  sign.innerHTML = '<span class="num">' + ld.d + '</span><span class="paren" aria-hidden="true">' +
+    '<svg viewBox="0 0 18 40" preserveAspectRatio="none" focusable="false">' +
+    '<path d="M16.5 0.8C6.2 2.2 2.2 10 2.2 20C2.2 30 6.2 37.8 16.5 39.2" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>' +
+    '</svg><span class="sr">)</span></span>';
+  el.appendChild(sign);
   for(var c2 = 0; c2 < cols; c2++){
-    var cls = 'fixed barLine' + (c2 === 0 ? ' firstDig' : '');
-    addCell(ld.nStr[c2], cls, c2 + 2, row);
+    addCell(ld.nStr[c2], 'fixed barLine', c2 + 2, row);
   }
   row++;
 
@@ -580,6 +602,22 @@ function renderProblem(prob){
       addCell('', 'ruleRow' + (onLine ? ' ink' : ''), c4 + 2, row);
     }
     row++;
+
+    // 餘數不是 0 先寫在積的下一行。整除就唔寫 0。
+    if(sIdx === ld.steps.length - 1 && st.rem > 0){
+      var remStr = String(st.rem);
+      var remStart = st.atCol - remStr.length + 1;
+      addCell('', 'empty', 1, row);
+      for(var cr = 0; cr < cols; cr++){
+        var rAt = cr - remStart;
+        if(rAt >= 0 && rAt < remStr.length){
+          addCell(remStr.charAt(rAt), 'fixed remFinal', cr + 2, row);
+        } else {
+          addCell('', 'empty', cr + 2, row);
+        }
+      }
+      row++;
+    }
   });
 
   $('eqLine').textContent = ld.nStr + ' ÷ ' + ld.d + ' = ？';
