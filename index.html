@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Sinosee 數學遊戲站：小一和小四課堂小遊戲，打開連結即可玩，唔使登入。">
+<title>Sinosee 數學遊戲站</title>
+<style>
+  :root {
+    --ink: #2c241c;
+    --muted: #6f655b;
+    --card: #fffdf8;
+    --line: rgba(44, 36, 28, .08);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    min-height: 100dvh;
+    color: var(--ink);
+    font-family: "PingFang HK", "PingFang TC", "Noto Sans CJK HK", "Microsoft JhengHei", sans-serif;
+    background:
+      radial-gradient(circle at 8% -10%, #fff7cf 0, transparent 36%),
+      radial-gradient(circle at 100% 0%, #c8ecff 0, transparent 34%),
+      linear-gradient(180deg, #fff3df 0%, #ffe4c6 42%, #e5f6ff 100%);
+  }
+  .wrap {
+    width: min(980px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 28px 0 48px;
+  }
+  header { text-align: center; margin-bottom: 28px; }
+  .kicker {
+    display: inline-block;
+    margin: 0 0 10px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: #fff;
+    color: #0f6e8c;
+    font-weight: 800;
+    letter-spacing: .04em;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(40px, 7vw, 68px);
+    line-height: 1.1;
+    letter-spacing: .04em;
+  }
+  .site {
+    margin: 8px 0 0;
+    font-size: clamp(18px, 2.4vw, 24px);
+    color: var(--muted);
+    font-weight: 700;
+  }
+  h2 {
+    margin: 28px 0 12px;
+    font-size: clamp(22px, 3vw, 28px);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  @media (min-width: 720px) {
+    .grid { grid-template-columns: 1fr 1fr; }
+  }
+  a.card {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    min-height: 112px;
+    padding: 18px 18px 18px 16px;
+    text-decoration: none;
+    color: inherit;
+    background: var(--card);
+    border: 3px solid transparent;
+    border-radius: 24px;
+    box-shadow: 0 8px 0 rgba(44, 36, 28, .08);
+  }
+  a.card:hover, a.card:focus-visible {
+    transform: translateY(-2px);
+    border-color: #ffb703;
+    outline: none;
+  }
+  a.card:active { transform: translateY(1px); box-shadow: 0 4px 0 rgba(44, 36, 28, .08); }
+  .mark {
+    flex: 0 0 auto;
+    width: 72px;
+    height: 72px;
+    display: grid;
+    place-items: center;
+    border-radius: 22px;
+    font-size: 36px;
+    background: #fff4d8;
+  }
+  .p1 .mark { background: #ffe8cc; }
+  .p4 .mark { background: #efe7ff; }
+  .up .mark { background: #e3f4ff; }
+  .body { min-width: 0; }
+  .tag {
+    display: inline-block;
+    margin-bottom: 4px;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: .04em;
+  }
+  .p1 .tag { background: #ff8a3d; color: #fff; }
+  .p4 .tag { background: #7c4dff; color: #fff; }
+  .up .tag { background: #1e88e5; color: #fff; }
+  h3 {
+    margin: 0;
+    font-size: clamp(22px, 3vw, 28px);
+    line-height: 1.25;
+  }
+  p.blurb {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: clamp(16px, 2vw, 18px);
+    font-weight: 650;
+    line-height: 1.4;
+  }
+  footer {
+    margin-top: 36px;
+    padding: 16px 18px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, .72);
+    color: #5c5348;
+    font-size: 16px;
+    line-height: 1.55;
+    font-weight: 700;
+  }
+  footer p { margin: 0; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <p class="kicker">唔使登入 · iPad 打開就玩</p>
+      <h1>數學小遊戲</h1>
+      <p class="site">Sinosee 數學遊戲站</p>
+    </header>
+
+    <section aria-labelledby="g1">
+      <h2 id="g1">小一</h2>
+      <div class="grid">
+        <a class="card p1" href="p1-cm-estimate/">
+          <span class="mark" aria-hidden="true">📏</span>
+          <span class="body">
+            <span class="tag">小一</span>
+            <h3>估量長度（厘米）</h3>
+            <p class="blurb">用紙條估一估，有幾厘米。</p>
+          </span>
+        </a>
+        <a class="card p1" href="p1-cm-estimate-no-strip/">
+          <span class="mark" aria-hidden="true">👀</span>
+          <span class="body">
+            <span class="tag">小一</span>
+            <h3>估量長度（無紙條）</h3>
+            <p class="blurb">沒有紙條，直接估長度。</p>
+          </span>
+        </a>
+        <a class="card p1" href="p1-number-bonds/">
+          <span class="mark" aria-hidden="true">🔢</span>
+          <span class="body">
+            <span class="tag">小一</span>
+            <h3>數的分解與合成（4–13）</h3>
+            <p class="blurb">點選作答，湊出 4 至 13。</p>
+          </span>
+        </a>
+        <a class="card p1" href="p1-number-bonds-14-18/">
+          <span class="mark" aria-hidden="true">🔢</span>
+          <span class="body">
+            <span class="tag">小一</span>
+            <h3>數的分解與合成（14至18）</h3>
+            <p class="blurb">點選作答，湊出 14 至 18。</p>
+          </span>
+        </a>
+        <a class="card p1" href="p1-number-bonds-2-18/">
+          <span class="mark" aria-hidden="true">✨</span>
+          <span class="body">
+            <span class="tag">小一</span>
+            <h3>數的分解與合成（2至18）</h3>
+            <p class="blurb">由 2 玩到 18，點選作答。</p>
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <section aria-labelledby="g4">
+      <h2 id="g4">小四</h2>
+      <div class="grid">
+        <a class="card up" href="divisibility-drop/">
+          <span class="mark" aria-hidden="true">🎯</span>
+          <span class="body">
+            <span class="tag">小四至小六</span>
+            <h3>整除掉落挑戰</h3>
+            <p class="blurb">點擊能被 2、5、10 或 3 整除的數。</p>
+          </span>
+        </a>
+        <a class="card p4" href="p4-division-spot-error/">
+          <span class="mark" aria-hidden="true">✏️</span>
+          <span class="body">
+            <span class="tag">小四</span>
+            <h3>除法直式填空</h3>
+            <p class="blurb">填好直式，用畫面上的鍵盤。</p>
+          </span>
+        </a>
+        <a class="card p4" href="p4-division-missing/">
+          <span class="mark" aria-hidden="true">🧩</span>
+          <span class="body">
+            <span class="tag">小四</span>
+            <h3>除法缺漏謎題</h3>
+            <p class="blurb">找出直式裡缺了的數。</p>
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <footer>
+      <p>舊網址 stephaniesincc.github.io 改名後可能打不開，請改用 sinosee.github.io。</p>
+    </footer>
+  </div>
+</body>
+</html>
