@@ -4,66 +4,101 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Sinosee 數學遊戲站：按年級和課題打開課堂小遊戲，唔使登入。">
+<meta name="theme-color" content="#ffe4f0">
 <title>Sinosee 數學遊戲站</title>
 <style>
   :root {
     --ink: #5c2440;
-    --muted: #8a4d66;
-    --card: #fff7fb;
+    --muted: #7a3d5c;
+    --card: #fff;
     --pink: #ff7eae;
-    --deep: #e4568c;
+    --deep: #c73b74;
     --blush: #ffe4f0;
+    --line: #ffd3e4;
+    --shadow: #f3b7d0;
   }
   * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
   html, body { margin: 0; }
   body {
     min-height: 100dvh;
     color: var(--ink);
     font-family: "PingFang HK", "PingFang TC", "Noto Sans CJK HK", "Microsoft JhengHei", sans-serif;
     background:
-      radial-gradient(circle at 0 0, #fff 0, transparent 28%),
-      radial-gradient(circle at 100% 8%, #ffd0e4 0, transparent 32%),
-      linear-gradient(180deg, #fff0f6 0%, #ffd9ea 48%, #ffeef6 100%);
+      radial-gradient(circle at 0 0, #fff 0, transparent 26%),
+      radial-gradient(circle at 100% 0, #ffd0e4 0, transparent 30%),
+      linear-gradient(180deg, #fff5f9 0%, #ffe3ef 42%, #fff7fb 100%);
+    padding:
+      env(safe-area-inset-top)
+      env(safe-area-inset-right)
+      env(safe-area-inset-bottom)
+      env(safe-area-inset-left);
   }
-  .wrap { width: min(920px, calc(100% - 28px)); margin: 0 auto; padding: 24px 0 48px; }
+  .wrap {
+    width: min(860px, calc(100% - 28px));
+    margin: 0 auto;
+    padding: 22px 0 40px;
+  }
   header {
     display: flex;
-    gap: 16px;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    text-align: left;
-    margin-bottom: 8px;
+    gap: 14px;
+    text-align: center;
+    margin-bottom: 6px;
   }
-  .hero-art { width: min(168px, 34vw); height: auto; flex: 0 0 auto; }
-  h1 { margin: 0; font-size: clamp(36px, 6vw, 60px); line-height: 1.05; letter-spacing: .04em; }
-  .site { margin: 6px 0 0; color: var(--muted); font-weight: 800; font-size: clamp(16px, 2.2vw, 22px); }
-  a.home-link { color: inherit; text-decoration: none; }
-  a.home-link:hover h1, a.home-link:focus-visible h1 { color: var(--deep); }
-  a.home-link:focus-visible { outline: 3px solid var(--pink); outline-offset: 4px; border-radius: 12px; }
-  .slug {
-    display: inline-block;
-    padding: 1px 8px;
-    border-radius: 999px;
-    background: #fff;
-    color: var(--deep);
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-    font-size: 13px;
-    font-weight: 800;
-    letter-spacing: 0;
-    line-height: 1.45;
-    vertical-align: 2px;
-    overflow-wrap: anywhere;
+  .mascot-frame {
+    width: min(156px, 44vw);
+    aspect-ratio: 45 / 68;
+    flex: 0 0 auto;
+    overflow: hidden;
+    border: 4px solid #fff;
+    border-radius: 32px;
+    background: var(--blush);
+    box-shadow: 0 8px 0 var(--shadow);
   }
-  .site .en { white-space: nowrap; }
-  .site .slug { margin-left: 6px; }
+  .mascot {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+  .hero-copy { min-width: 0; }
   .kicker {
     display: inline-block;
     margin: 0 0 8px;
-    padding: 4px 12px;
+    padding: 5px 12px;
     border-radius: 999px;
     background: #fff;
     color: var(--deep);
+    font-size: 14px;
     font-weight: 800;
+    line-height: 1.3;
+  }
+  h1 {
+    margin: 0;
+    font-size: 36px;
+    line-height: 1.15;
+    letter-spacing: 0.04em;
+  }
+  a.home-link { color: inherit; text-decoration: none; }
+  a.home-link:hover h1, a.home-link:focus-visible h1 { color: var(--deep); }
+  a.home-link:focus-visible { outline: 3px solid var(--pink); outline-offset: 4px; border-radius: 12px; }
+  .site {
+    margin: 8px 0 0;
+    color: var(--muted);
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.45;
+  }
+  .domain {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0;
   }
   .grade { margin-top: 26px; }
   .grade > h2 {
@@ -73,207 +108,223 @@
     border-radius: 999px;
     background: var(--deep);
     color: #fff;
-    font-size: clamp(22px, 3vw, 28px);
+    font-size: 20px;
+    line-height: 1.3;
   }
-  .topic { margin: 0 0 18px; }
+  .topics { display: grid; gap: 12px; }
+  .topic {
+    margin: 0;
+    padding: 12px 12px 14px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.72);
+  }
   .topic h3 {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin: 14px 0 10px;
-    font-size: clamp(20px, 2.6vw, 26px);
+    margin: 2px 2px 10px;
+    color: var(--deep);
+    font-size: 18px;
+    line-height: 1.3;
   }
-  .topic h3 svg { width: 36px; height: 36px; flex: 0 0 auto; }
-  .links { display: grid; grid-template-columns: 1fr; gap: 12px; }
-  @media (min-width: 720px) { .links { grid-template-columns: 1fr 1fr; } }
+  .topic h3 svg { width: 28px; height: 28px; flex: 0 0 auto; }
+  .links { display: grid; grid-template-columns: 1fr; gap: 10px; }
   a.link {
     display: flex;
-    align-items: center;
-    gap: 14px;
-    min-height: 92px;
-    padding: 14px 16px;
+    align-items: flex-start;
+    gap: 12px;
+    min-height: 72px;
+    padding: 14px;
     text-decoration: none;
     color: inherit;
     background: var(--card);
-    border: 3px solid #ffd0e3;
-    border-radius: 22px;
-    box-shadow: 0 7px 0 #f3b5ce;
+    border: 2px solid var(--line);
+    border-radius: 18px;
+    box-shadow: 0 4px 0 var(--shadow);
   }
-  a.link:hover, a.link:focus-visible { border-color: var(--pink); transform: translateY(-2px); outline: none; }
-  a.link:active { transform: translateY(2px); box-shadow: 0 3px 0 #f3b5ce; }
+  a.link:hover, a.link:focus-visible {
+    border-color: var(--pink);
+    transform: translateY(-1px);
+    outline: none;
+  }
+  a.link:focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; }
+  a.link:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--shadow); }
   .badge {
     flex: 0 0 auto;
-    min-width: 64px;
-    padding: 6px 8px;
-    border-radius: 14px;
+    min-width: 52px;
+    margin-top: 1px;
+    padding: 6px 7px;
+    border-radius: 12px;
     background: var(--blush);
     color: var(--deep);
-    font-weight: 900;
+    font-size: 13px;
+    font-weight: 800;
     text-align: center;
-    line-height: 1.15;
+    line-height: 1.25;
   }
-  a.link > span:last-child { min-width: 0; }
-  a.link strong { display: block; font-size: clamp(18px, 2.3vw, 24px); line-height: 1.3; }
-  a.link span.sub { display: block; margin-top: 2px; color: var(--muted); font-weight: 700; font-size: 15px; }
-  a.link .slug { display: table; margin-top: 6px; background: var(--blush); }
+  a.link .copy { min-width: 0; }
+  a.link strong {
+    display: block;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.35;
+  }
+  a.link .sub {
+    display: block;
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  a.link .slug {
+    display: inline-block;
+    max-width: 100%;
+    margin-top: 7px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--blush);
+    color: var(--muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
   footer {
-    margin-top: 28px;
+    margin-top: 22px;
     padding: 14px 16px;
     border-radius: 18px;
-    background: rgba(255,255,255,.78);
-    color: #7a4560;
-    font-weight: 800;
+    background: rgba(255, 255, 255, 0.82);
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 700;
     line-height: 1.55;
   }
   footer p { margin: 0; }
+  @media (min-width: 720px) {
+    .wrap { padding-top: 32px; }
+    header {
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 22px;
+      text-align: left;
+    }
+    .mascot-frame { width: 150px; }
+    h1 { font-size: 48px; }
+    .grade > h2 { font-size: 22px; }
+    .topic { padding: 16px 16px 18px; }
+    .topic h3 { font-size: 20px; }
+    .links { grid-template-columns: 1fr 1fr; gap: 12px; }
+    a.link strong { font-size: 20px; }
+  }
 </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <svg class="hero-art" viewBox="0 0 200 168" role="img" aria-label="原創白色松鼠狗，毛茸茸坐着">
-        <ellipse cx="96" cy="158" rx="54" ry="7" fill="#f7b7d0"/>
-        <!-- bushy squirrel plume, curled over the back -->
-        <path d="M118 126
-                 C138 142 184 132 184 100
-                 C184 72 156 58 142 72
-                 C132 82 146 96 160 90
-                 C172 84 174 104 160 114
-                 C146 124 128 114 122 104
-                 C116 96 112 112 118 126Z" fill="#fff" stroke="#e4568c" stroke-width="4" stroke-linejoin="round"/>
-        <path d="M150 78c8 2 14 10 12 18" fill="none" stroke="#f6d5e4" stroke-width="3" stroke-linecap="round"/>
-        <!-- body -->
-        <ellipse cx="88" cy="118" rx="44" ry="32" fill="#fff" stroke="#e4568c" stroke-width="4"/>
-        <ellipse cx="72" cy="128" rx="16" ry="12" fill="#fff7fb"/>
-        <ellipse cx="104" cy="126" rx="14" ry="11" fill="#fff7fb"/>
-        <!-- paws -->
-        <ellipse cx="66" cy="146" rx="16" ry="9" fill="#fff" stroke="#e4568c" stroke-width="3.5"/>
-        <ellipse cx="102" cy="146" rx="16" ry="9" fill="#fff" stroke="#e4568c" stroke-width="3.5"/>
-        <path d="M58 146 q3 4 0 6 M66 147 q3 4 0 6 M74 146 q3 4 0 6" fill="none" stroke="#f0b4cc" stroke-width="1.6" stroke-linecap="round"/>
-        <path d="M94 146 q3 4 0 6 M102 147 q3 4 0 6 M110 146 q3 4 0 6" fill="none" stroke="#f0b4cc" stroke-width="1.6" stroke-linecap="round"/>
-        <!-- ears sit behind the head -->
-        <path d="M58 58 L40 16 Q62 30 78 50Z" fill="#fff" stroke="#e4568c" stroke-width="4" stroke-linejoin="round"/>
-        <path d="M104 52 L128 12 Q112 30 118 58Z" fill="#fff" stroke="#e4568c" stroke-width="4" stroke-linejoin="round"/>
-        <!-- head and cheek fluff -->
-        <circle cx="86" cy="70" r="36" fill="#fff" stroke="#e4568c" stroke-width="4"/>
-        <circle cx="54" cy="82" r="12" fill="#fff" stroke="#e4568c" stroke-width="3.5"/>
-        <circle cx="118" cy="78" r="11" fill="#fff" stroke="#e4568c" stroke-width="3.5"/>
-        <path d="M62 52 L50 26 Q64 34 74 48Z" fill="#ffc2da"/>
-        <path d="M108 50 L122 22 Q112 32 112 50Z" fill="#ffc2da"/>
-        <path d="M78 40 q8 -12 16 0 q-4 8 -16 0" fill="#fff" stroke="#e4568c" stroke-width="3" stroke-linejoin="round"/>
-        <!-- face -->
-        <ellipse cx="72" cy="70" rx="7" ry="8" fill="#5c2440"/>
-        <ellipse cx="104" cy="70" rx="7" ry="8" fill="#5c2440"/>
-        <circle cx="74.4" cy="67" r="2.5" fill="#fff"/>
-        <circle cx="106.4" cy="67" r="2.5" fill="#fff"/>
-        <circle cx="70.2" cy="73" r="1.15" fill="#fff"/>
-        <circle cx="102.2" cy="73" r="1.15" fill="#fff"/>
-        <ellipse cx="86" cy="90" rx="14" ry="11" fill="#fff" stroke="#f3c3d6" stroke-width="2"/>
-        <ellipse cx="86" cy="86" rx="5" ry="3.8" fill="#5c2440"/>
-        <ellipse cx="84.4" cy="84.8" rx="1.5" ry="1" fill="#fff"/>
-        <path d="M86 90 v5" stroke="#5c2440" stroke-width="1.8" stroke-linecap="round"/>
-        <path d="M77 96 q9 8 18 0" fill="none" stroke="#5c2440" stroke-width="2.2" stroke-linecap="round"/>
-        <ellipse cx="58" cy="84" rx="7" ry="4" fill="#ffb3d0"/>
-        <ellipse cx="114" cy="82" rx="7" ry="4" fill="#ffb3d0"/>
-        <!-- pink collar keeps the hub colour on the white dog -->
-        <path d="M62 102 q24 16 50 2" fill="none" stroke="#ff7eae" stroke-width="5" stroke-linecap="round"/>
-        <circle cx="88" cy="112" r="5.5" fill="#ffe07a" stroke="#e0a43a" stroke-width="2"/>
-      </svg>
-      <div>
-        <p class="kicker">唔使登入 · iPad 打開就玩</p>
+      <div class="mascot-frame">
+        <img class="mascot" src="assets/mascot.jpg" width="720" height="1088" alt="毛茸茸的白色小狗，坐着望住鏡頭" fetchpriority="high" decoding="async">
+      </div>
+      <div class="hero-copy">
+        <p class="kicker">唔使登入 · 打開就玩</p>
         <a class="home-link" href="./">
           <h1>數學小遊戲</h1>
-          <p class="site">Sinosee 數學遊戲站 <span class="en">sinosee.github.io <span class="slug">mathsgame</span></span></p>
+          <p class="site">Sinosee 數學遊戲站<span class="domain">sinosee.github.io</span></p>
         </a>
       </div>
     </header>
 
     <section class="grade" aria-labelledby="p1">
       <h2 id="p1">小一</h2>
-
-      <div class="topic">
-        <h3>
-          <svg viewBox="0 0 36 36" aria-hidden="true">
-            <rect x="6" y="8" width="24" height="20" rx="4" fill="#fff" stroke="#e4568c" stroke-width="3"/>
-            <path d="M10 14 h16 M10 18 h16 M10 22 h10" stroke="#ff7eae" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          長度
-        </h3>
-        <div class="links">
-          <a class="link" href="p1-cm-estimate/">
-            <span class="badge">小一</span>
-            <span><strong>估量長度（厘米）</strong><span class="sub">用紙條估一估</span><span class="slug">p1-cm-estimate</span></span>
-          </a>
-          <a class="link" href="p1-cm-estimate-no-strip/">
-            <span class="badge">小一</span>
-            <span><strong>估量長度（無紙條）</strong><span class="sub">沒有紙條，直接估</span><span class="slug">p1-cm-estimate-no-strip</span></span>
-          </a>
+      <div class="topics">
+        <div class="topic">
+          <h3>
+            <svg viewBox="0 0 36 36" aria-hidden="true">
+              <rect x="6" y="8" width="24" height="20" rx="4" fill="#fff" stroke="#c73b74" stroke-width="3"/>
+              <path d="M10 14 h16 M10 18 h16 M10 22 h10" stroke="#ff7eae" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            長度
+          </h3>
+          <div class="links">
+            <a class="link" href="p1-cm-estimate/">
+              <span class="badge">小一</span>
+              <span class="copy"><strong>估量長度（厘米）</strong><span class="sub">用紙條估一估</span><span class="slug">p1-<wbr>cm-<wbr>estimate</span></span>
+            </a>
+            <a class="link" href="p1-cm-estimate-no-strip/">
+              <span class="badge">小一</span>
+              <span class="copy"><strong>估量長度（無紙條）</strong><span class="sub">沒有紙條，直接估</span><span class="slug">p1-<wbr>cm-<wbr>estimate-<wbr>no-<wbr>strip</span></span>
+            </a>
+          </div>
         </div>
-      </div>
 
-      <div class="topic">
-        <h3>
-          <svg viewBox="0 0 36 36" aria-hidden="true">
-            <circle cx="12" cy="18" r="7" fill="#ff8fb8"/>
-            <circle cx="24" cy="12" r="5" fill="#ffd0e4" stroke="#e4568c" stroke-width="2"/>
-            <circle cx="25" cy="25" r="6" fill="#ffe07a" stroke="#e0a43a" stroke-width="2"/>
-          </svg>
-          數
-        </h3>
-        <div class="links">
-          <a class="link" href="p1-number-bonds/">
-            <span class="badge">小一</span>
-            <span><strong>數的分解與合成（4–13）</strong><span class="sub">點選，湊出 4 至 13</span><span class="slug">p1-number-bonds</span></span>
-          </a>
-          <a class="link" href="p1-number-bonds-14-18/">
-            <span class="badge">小一</span>
-            <span><strong>數的分解與合成（14至18）</strong><span class="sub">點選，湊出 14 至 18</span><span class="slug">p1-number-bonds-14-18</span></span>
-          </a>
-          <a class="link" href="p1-number-bonds-2-18/">
-            <span class="badge">小一</span>
-            <span><strong>數的分解與合成（2至18）</strong><span class="sub">由 2 玩到 18</span><span class="slug">p1-number-bonds-2-18</span></span>
-          </a>
+        <div class="topic">
+          <h3>
+            <svg viewBox="0 0 36 36" aria-hidden="true">
+              <circle cx="12" cy="18" r="7" fill="#ff8fb8"/>
+              <circle cx="24" cy="12" r="5" fill="#ffd0e4" stroke="#c73b74" stroke-width="2"/>
+              <circle cx="25" cy="25" r="6" fill="#ffe07a" stroke="#e0a43a" stroke-width="2"/>
+            </svg>
+            數
+          </h3>
+          <div class="links">
+            <a class="link" href="p1-number-bonds/">
+              <span class="badge">小一</span>
+              <span class="copy"><strong>數的分解與合成（4–13）</strong><span class="sub">點選，湊出 4 至 13</span><span class="slug">p1-<wbr>number-<wbr>bonds</span></span>
+            </a>
+            <a class="link" href="p1-number-bonds-14-18/">
+              <span class="badge">小一</span>
+              <span class="copy"><strong>數的分解與合成（14至18）</strong><span class="sub">點選，湊出 14 至 18</span><span class="slug">p1-<wbr>number-<wbr>bonds-<wbr>14-<wbr>18</span></span>
+            </a>
+            <a class="link" href="p1-number-bonds-2-18/">
+              <span class="badge">小一</span>
+              <span class="copy"><strong>數的分解與合成（2至18）</strong><span class="sub">由 2 玩到 18</span><span class="slug">p1-<wbr>number-<wbr>bonds-<wbr>2-<wbr>18</span></span>
+            </a>
+          </div>
         </div>
       </div>
     </section>
 
     <section class="grade" aria-labelledby="p4">
       <h2 id="p4">小四</h2>
-
-      <div class="topic">
-        <h3>
-          <svg viewBox="0 0 36 36" aria-hidden="true">
-            <path d="M10 8 h16 v4 H16 v16" fill="none" stroke="#e4568c" stroke-width="3" stroke-linejoin="round"/>
-            <circle cx="24" cy="24" r="5" fill="#ff8fb8"/>
-          </svg>
-          除法
-        </h3>
-        <div class="links">
-          <a class="link" href="p4-division-spot-error/">
-            <span class="badge">小四</span>
-            <span><strong>除法直式填空</strong><span class="sub">用畫面上的鍵盤填空</span><span class="slug">p4-division-spot-error</span></span>
-          </a>
-          <a class="link" href="p4-division-missing/">
-            <span class="badge">小四</span>
-            <span><strong>除法缺漏謎題</strong><span class="sub">找出直式裡缺了的數</span><span class="slug">p4-division-missing</span></span>
-          </a>
+      <div class="topics">
+        <div class="topic">
+          <h3>
+            <svg viewBox="0 0 36 36" aria-hidden="true">
+              <path d="M10 8 h16 v4 H16 v16" fill="none" stroke="#c73b74" stroke-width="3" stroke-linejoin="round"/>
+              <circle cx="24" cy="24" r="5" fill="#ff8fb8"/>
+            </svg>
+            除法
+          </h3>
+          <div class="links">
+            <a class="link" href="p4-division-spot-error/">
+              <span class="badge">小四</span>
+              <span class="copy"><strong>除法直式填空</strong><span class="sub">用畫面上的鍵盤填空</span><span class="slug">p4-<wbr>division-<wbr>spot-<wbr>error</span></span>
+            </a>
+            <a class="link" href="p4-division-missing/">
+              <span class="badge">小四</span>
+              <span class="copy"><strong>除法缺漏謎題</strong><span class="sub">找出直式裡缺了的數</span><span class="slug">p4-<wbr>division-<wbr>missing</span></span>
+            </a>
+          </div>
         </div>
-      </div>
 
-      <div class="topic">
-        <h3>
-          <svg viewBox="0 0 36 36" aria-hidden="true">
-            <circle cx="12" cy="10" r="5" fill="#ff8fb8"/>
-            <circle cx="22" cy="18" r="5" fill="#ffd56a" stroke="#e0a43a" stroke-width="2"/>
-            <circle cx="16" cy="27" r="5" fill="#ffb3cf" stroke="#e4568c" stroke-width="2"/>
-          </svg>
-          整除
-        </h3>
-        <div class="links">
-          <a class="link" href="divisibility-drop/">
-            <span class="badge">小四至<br>小六</span>
-            <span><strong>整除掉落挑戰</strong><span class="sub">點擊能被 2、5、10 或 3 整除的數</span><span class="slug">divisibility-drop</span></span>
-          </a>
+        <div class="topic">
+          <h3>
+            <svg viewBox="0 0 36 36" aria-hidden="true">
+              <circle cx="12" cy="10" r="5" fill="#ff8fb8"/>
+              <circle cx="22" cy="18" r="5" fill="#ffd56a" stroke="#e0a43a" stroke-width="2"/>
+              <circle cx="16" cy="27" r="5" fill="#ffb3cf" stroke="#c73b74" stroke-width="2"/>
+            </svg>
+            整除
+          </h3>
+          <div class="links">
+            <a class="link" href="divisibility-drop/">
+              <span class="badge">小四至<br>小六</span>
+              <span class="copy"><strong>整除掉落挑戰</strong><span class="sub">點擊能被 2、5、10 或 3 整除的數</span><span class="slug">divisibility-<wbr>drop</span></span>
+            </a>
+          </div>
         </div>
       </div>
     </section>
