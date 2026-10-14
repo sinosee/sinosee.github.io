@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex">
+<title>除法缺漏謎題</title>
+<style>
+:root{
+  --vh:100vh;
+  --bg:#e8f4ff; --ink:#2a2a3a; --card:#ffffff;
+  --orange:#ff8c1a; --green:#2fb35a; --blue:#3b82f6; --purple:#7c4dff;
+  --pink:#ff6b9d; --red:#e53935; --teal:#14b8a6; --sky:#5bb8ff;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);
+  font-family:"PingFang HK","PingFang TC","Noto Sans CJK HK","Noto Sans CJK TC","Microsoft JhengHei","Heiti TC",sans-serif;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation;-webkit-text-size-adjust:100%}
+button{font-family:inherit;touch-action:manipulation;cursor:pointer;border:none;color:inherit;background:none;padding:0}
+button:focus-visible{outline:4px solid #7c4dff;outline-offset:3px}
+.screen{position:fixed;left:0;top:0;width:100%;height:var(--vh);display:none;flex-direction:column;overflow:hidden}
+.screen.on{display:flex}
+
+#start{overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;align-items:center;
+  background:linear-gradient(165deg,#e8f4ff 0%,#d4ecff 40%,#ffe8f0 100%)}
+.startInner{width:min(1080px,94vw);margin:auto;padding:16px 0 28px;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2vmin,20px)}
+h1.title{margin:0;font-size:clamp(28px,5.5vmin,64px);font-weight:900;letter-spacing:2px;text-align:center;line-height:1.2}
+h1.title .emoji{display:inline-block;margin:0 .12em}
+.sub{margin:0;font-size:clamp(16px,2.8vmin,28px);text-align:center;color:#5a5a6e;line-height:1.45}
+.modes{display:flex;gap:clamp(10px,2vmin,20px);width:100%}
+.mode{flex:1 1 0;background:var(--card);border-radius:22px;padding:clamp(12px,2vmin,22px);box-shadow:0 6px 0 #b8d4e8;border:5px solid transparent;text-align:center;min-height:90px}
+.mode.sel{border-color:#ff9f1c;background:#fffbea}
+.mode .mi{font-size:clamp(32px,5.5vmin,60px);line-height:1.1}
+.mode .mt{font-size:clamp(22px,3.8vmin,42px);font-weight:900;margin:.1em 0}
+.mode .md{font-size:clamp(14px,2.2vmin,24px);line-height:1.35;color:#5a5a6e}
+.sec{width:100%;display:flex;flex-direction:column;align-items:center;gap:8px}
+.seclabel{font-size:clamp(17px,2.8vmin,28px);font-weight:800;color:#5a5a6e}
+.examples{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;width:100%}
+.exCard{flex:1 1 140px;max-width:220px;background:#fff;border-radius:18px;padding:12px 14px;box-shadow:0 4px 0 #b8d4e8;text-align:center}
+.exCard .exEq{font-size:clamp(20px,3.5vmin,32px);font-weight:900;color:#1e56b5;margin:.2em 0}
+.exCard .exLab{font-size:clamp(13px,2vmin,18px);font-weight:700;color:#5a5a6e}
+.toggles{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.toggle{display:flex;align-items:center;gap:8px;background:#fff;padding:8px 16px;border-radius:16px;box-shadow:0 3px 0 #b8d4e8;font-size:clamp(15px,2.4vmin,24px);font-weight:700}
+.toggle input{width:22px;height:22px;accent-color:var(--orange)}
+.bigbtn{min-width:240px;min-height:clamp(68px,10vmin,100px);padding:0 36px;border-radius:999px;background:var(--orange);color:#fff;font-size:clamp(26px,4.8vmin,50px);font-weight:900;box-shadow:0 7px 0 #c9620b;letter-spacing:3px}
+.bigbtn:active,.iconbtn:active,.mode:active,.padbtn:active,.tbtn:active{transform:translateY(3px)}
+.bigbtn.green{background:var(--green);box-shadow:0 7px 0 #1d7e3d}
+.bigbtn.blue{background:var(--blue);box-shadow:0 7px 0 #1e56b5}
+.bigbtn.purple{background:var(--purple);box-shadow:0 7px 0 #5430b0}
+.bigbtn:disabled{opacity:.45;transform:none}
+.note{font-size:clamp(13px,2vmin,18px);color:#7a8a9a;text-align:center}
+
+#tip{align-items:center;justify-content:center;background:rgba(40,60,90,.45);z-index:20}
+.tipCard{width:min(640px,92vw);background:#fff;border-radius:28px;padding:clamp(20px,3vmin,36px);box-shadow:0 12px 40px rgba(0,0,0,.25);text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2vmin,18px)}
+.tipEmoji{width:clamp(72px,12vmin,110px);height:clamp(72px,12vmin,110px);border-radius:28px;display:flex;align-items:center;justify-content:center;
+  font-size:clamp(36px,7vmin,64px);font-weight:900;color:#fff;background:linear-gradient(160deg,#a78bfa,#7c4dff);box-shadow:0 6px 0 #5430b0}
+.tipTitle{margin:0;font-size:clamp(28px,5vmin,48px);font-weight:900}
+.tipBody{margin:0;font-size:clamp(18px,3.2vmin,32px);line-height:1.55;color:#3a3a4a;font-weight:700}
+.tipRule{background:#eef6ff;border-radius:18px;padding:14px 18px;font-size:clamp(16px,2.8vmin,26px);font-weight:800;color:#1e56b5;line-height:1.55;width:100%;text-align:left}
+.tipHow{font-size:clamp(15px,2.4vmin,24px);color:#5a5a6e;font-weight:700;line-height:1.45}
+
+#play{background:linear-gradient(180deg,#d4ecff 0%,#e8f4ff 40%,#fff0f5 100%)}
+.topbar{flex:none;display:flex;align-items:center;gap:8px;padding:8px 10px 4px;flex-wrap:wrap;z-index:5}
+.iconbtn{min-width:54px;height:54px;border-radius:16px;background:#fff;box-shadow:0 4px 0 #a8c8e0;font-size:26px;display:flex;align-items:center;justify-content:center}
+.pill{font-size:clamp(16px,2.6vmin,28px);font-weight:800;background:#fff;padding:6px 14px;border-radius:999px;white-space:nowrap;box-shadow:0 3px 0 #a8c8e0}
+#hearts{letter-spacing:2px;background:#ffe8e8;color:#c62828}
+#scorePill{background:#fff1b8}
+#qPill{background:#e8f5e9;color:#1b7a3a}
+#modeTag{font-size:clamp(13px,2vmin,22px);background:#ede7ff;color:#5b3fc4}
+.spacer{flex:1}
+.playMain{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(10px,2vmin,20px);padding:8px 12px 12px;overflow:hidden;min-height:0}
+.typeBadge{font-size:clamp(14px,2.2vmin,22px);font-weight:800;background:#ede7ff;color:#5b3fc4;padding:6px 16px;border-radius:999px}
+.eqBox{background:#fff;border-radius:28px;padding:clamp(18px,3vmin,36px) clamp(20px,4vmin,48px);box-shadow:0 8px 0 #b8d4e8;min-width:min(92vw,520px);text-align:center}
+.eqText{font-size:clamp(36px,8vmin,72px);font-weight:900;letter-spacing:2px;line-height:1.3;font-variant-numeric:tabular-nums}
+.blank{display:inline-block;min-width:1.4em;padding:0 .15em;border-bottom:5px solid var(--orange);color:var(--orange);margin:0 2px}
+.blank.filled{border-bottom-color:var(--blue);color:var(--blue)}
+.blank.correct{border-bottom-color:var(--green);color:var(--green)}
+.blank.wrong{border-bottom-color:var(--red);color:var(--red)}
+.feedback{min-height:1.4em;font-size:clamp(18px,3vmin,30px);font-weight:900;text-align:center}
+.feedback.ok{color:var(--green)}.feedback.bad{color:var(--red)}.feedback.hint{color:#5a5a6e}
+.answerRow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
+.answerShow{font-size:clamp(22px,4vmin,36px);font-weight:900;background:#fff;padding:8px 20px;border-radius:16px;box-shadow:0 4px 0 #b8d4e8;min-width:3.5em;text-align:center;min-height:52px}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:min(340px,92vw);max-width:360px}
+.padbtn{min-height:clamp(52px,9vmin,72px);border-radius:18px;background:#fff;box-shadow:0 5px 0 #b8d4e8;font-size:clamp(24px,4.5vmin,40px);font-weight:900}
+.padbtn.act{background:var(--orange);color:#fff;box-shadow:0 5px 0 #c9620b}
+.padbtn.del{background:#ffe8e8;color:#c62828;font-size:clamp(18px,3vmin,26px)}
+.padbtn.ok{background:var(--green);color:#fff;box-shadow:0 5px 0 #1d7e3d;grid-column:span 1}
+.teachBar{flex:none;display:none;justify-content:center;gap:12px;padding:4px 10px 12px;flex-wrap:wrap}
+.teachBar.on{display:flex}
+.tbtn{min-height:52px;padding:0 20px;border-radius:16px;background:#fff;box-shadow:0 4px 0 #a8c8e0;font-size:clamp(16px,2.6vmin,24px);font-weight:800}
+.pausedOverlay{position:absolute;inset:0;background:rgba(30,50,80,.55);z-index:15;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.pausedOverlay.on{display:flex}
+.pausedOverlay .pt{font-size:clamp(32px,6vmin,56px);font-weight:900;color:#fff;text-shadow:0 3px 8px rgba(0,0,0,.3)}
+#playWrap{position:relative;flex:1 1 0;display:flex;flex-direction:column;min-height:0}
+
+#end{align-items:center;justify-content:center;background:linear-gradient(160deg,#e8f4ff 0%,#ffe0b8 50%,#ffd0e8 100%)}
+.endInner{text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(12px,2.5vmin,26px);padding:20px}
+.endStars{font-size:clamp(44px,9vmin,96px);letter-spacing:6px}
+.endTitle{font-size:clamp(32px,6.5vmin,68px);font-weight:900;margin:0}
+.endScore{font-size:clamp(22px,3.8vmin,40px);font-weight:800;color:#5a5a6e}
+.endDetail{font-size:clamp(16px,2.6vmin,26px);color:#6a6a7e;font-weight:700;line-height:1.5}
+.endBtns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+
+@media (max-height:560px){
+  .padbtn{min-height:44px;font-size:clamp(20px,3.5vmin,28px)}
+  .eqText{font-size:clamp(28px,6vmin,48px)}
+  .iconbtn{min-width:44px;height:44px;font-size:22px}
+}
+</style>
+</head>
+<body>
+<div id="start" class="screen on">
+  <div class="startInner">
+    <h1 class="title"><span class="emoji">🧩</span>除法缺漏謎題<span class="emoji">✨</span></h1>
+    <p class="sub">算式少咗一個數！搵出 □ 入面應該係幾多。</p>
+
+    <div class="modes">
+      <button type="button" class="mode sel" data-mode="student" id="modeStudent">
+        <div class="mi">🧒</div>
+        <div class="mt">學生模式</div>
+        <div class="md">自己用數字鍵填答案</div>
+      </button>
+      <button type="button" class="mode" data-mode="teacher" id="modeTeacher">
+        <div class="mi">👩‍🏫</div>
+        <div class="mt">老師模式</div>
+        <div class="md">投影全班：可暫停、顯示答案</div>
+      </button>
+    </div>
+
+    <div class="sec">
+      <div class="seclabel">三種缺漏類型</div>
+      <div class="examples">
+        <div class="exCard"><div class="exLab">搵被除數</div><div class="exEq">□ ÷ 6 = 8</div></div>
+        <div class="exCard"><div class="exLab">搵除數</div><div class="exEq">48 ÷ □ = 6</div></div>
+        <div class="exCard"><div class="exLab">搵商</div><div class="exEq">56 ÷ 7 = □</div></div>
+      </div>
+    </div>
+
+    <div class="toggles">
+      <label class="toggle"><input type="checkbox" id="chkSound" checked> 音效</label>
+      <label class="toggle"><input type="checkbox" id="chkHard"> 較難（較大數／混合快啲）</label>
+    </div>
+
+    <button type="button" class="bigbtn" id="btnStart">開始遊戲</button>
+    <p class="note">適合小四 · 整除無餘數 · 唔使登入 · iPad 用手指點選</p>
+  </div>
+</div>
+
+<div id="tip" class="screen">
+  <div class="tipCard">
+    <div class="tipEmoji">□</div>
+    <h2 class="tipTitle">點樣玩？</h2>
+    <div class="tipRule">
+      • □ ÷ 6 = 8 → 用 6 × 8 搵被除數<br>
+      • 48 ÷ □ = 6 → 諗「幾多乘 6 = 48」<br>
+      • 56 ÷ 7 = □ → 直接計商
+    </div>
+    <p class="tipBody">每題填一個數字，答啱加分；答錯扣一顆心 ❤️</p>
+    <p class="tipHow">一局約 12 題 · 你有 3 顆心 · 較難模式數字會大啲</p>
+    <button type="button" class="bigbtn green" id="btnTipGo">知道了，開始！</button>
+  </div>
+</div>
+
+<div id="play" class="screen">
+  <div class="topbar">
+    <button type="button" class="iconbtn" id="btnHome" title="返回">🏠</button>
+    <button type="button" class="iconbtn" id="btnPause" title="暫停">⏸</button>
+    <span class="pill" id="hearts">❤️❤️❤️</span>
+    <span class="pill" id="scorePill">⭐ 0</span>
+    <span class="pill" id="qPill">第 1／12 題</span>
+    <span class="spacer"></span>
+    <span class="pill" id="modeTag">學生</span>
+  </div>
+  <div id="playWrap">
+    <div class="playMain">
+      <div class="typeBadge" id="typeBadge">搵商</div>
+      <div class="eqBox"><div class="eqText" id="eqText">56 ÷ 7 = <span class="blank">□</span></div></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="answerRow">
+        <span style="font-weight:800;font-size:clamp(16px,2.5vmin,24px)">你的答案</span>
+        <div class="answerShow" id="answerShow">—</div>
+      </div>
+      <div class="pad" id="pad">
+        <button type="button" class="padbtn" data-k="1">1</button>
+        <button type="button" class="padbtn" data-k="2">2</button>
+        <button type="button" class="padbtn" data-k="3">3</button>
+        <button type="button" class="padbtn" data-k="4">4</button>
+        <button type="button" class="padbtn" data-k="5">5</button>
+        <button type="button" class="padbtn" data-k="6">6</button>
+        <button type="button" class="padbtn" data-k="7">7</button>
+        <button type="button" class="padbtn" data-k="8">8</button>
+        <button type="button" class="padbtn" data-k="9">9</button>
+        <button type="button" class="padbtn del" data-k="del">刪除</button>
+        <button type="button" class="padbtn" data-k="0">0</button>
+        <button type="button" class="padbtn ok" data-k="ok">✓</button>
+      </div>
+    </div>
+    <div class="teachBar" id="teachBar">
+      <button type="button" class="tbtn" id="btnReveal">💡 顯示答案</button>
+      <button type="button" class="tbtn" id="btnNextTeach">下一題 →</button>
+    </div>
+    <div class="pausedOverlay" id="pausedOv">
+      <div class="pt">⏸ 暫停</div>
+      <button type="button" class="bigbtn blue" id="btnResume">繼續</button>
+    </div>
+  </div>
+</div>
+
+<div id="end" class="screen">
+  <div class="endInner">
+    <div class="endStars" id="endStars">⭐⭐⭐</div>
+    <h2 class="endTitle" id="endTitle">太棒了！</h2>
+    <div class="endScore" id="endScore">得分：0</div>
+    <div class="endDetail" id="endDetail"></div>
+    <div class="endBtns">
+      <button type="button" class="bigbtn green" id="btnAgain">再玩一次</button>
+      <button type="button" class="bigbtn purple" id="btnMenu">返回主選單</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+function setVH(){
+  var h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  document.documentElement.style.setProperty('--vh', h + 'px');
+}
+setVH();
+window.addEventListener('resize', setVH);
+if(window.visualViewport) window.visualViewport.addEventListener('resize', setVH);
+
+var TOTAL_Q = 12;
+var TYPE_LABEL = { dividend:'搵被除數', divisor:'搵除數', quotient:'搵商' };
+
+var state = {
+  mode:'student',
+  sound:true,
+  hard:false,
+  lives:3,
+  score:0,
+  correct:0,
+  wrongs:0,
+  qIndex:0,
+  questions:[],
+  current:null,
+  answer:'',
+  playing:false,
+  paused:false,
+  locked:false,
+  revealed:false
+};
+
+var el = {
+  hearts:document.getElementById('hearts'),
+  scorePill:document.getElementById('scorePill'),
+  qPill:document.getElementById('qPill'),
+  modeTag:document.getElementById('modeTag'),
+  typeBadge:document.getElementById('typeBadge'),
+  eqText:document.getElementById('eqText'),
+  feedback:document.getElementById('feedback'),
+  answerShow:document.getElementById('answerShow'),
+  teachBar:document.getElementById('teachBar'),
+  pausedOv:document.getElementById('pausedOv'),
+  endStars:document.getElementById('endStars'),
+  endTitle:document.getElementById('endTitle'),
+  endScore:document.getElementById('endScore'),
+  endDetail:document.getElementById('endDetail')
+};
+
+function show(screen){
+  ['start','tip','play','end'].forEach(function(id){
+    document.getElementById(id).classList.toggle('on', id===screen);
+  });
+}
+
+var audioCtx = null;
+function ensureAudio(){
+  if(!state.sound) return null;
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended') audioCtx.resume();
+    return audioCtx;
+  }catch(e){ return null; }
+}
+function beep(freq, dur, type, vol){
+  var ctx = ensureAudio();
+  if(!ctx) return;
+  var o = ctx.createOscillator();
+  var g = ctx.createGain();
+  o.type = type||'sine';
+  o.frequency.value = freq;
+  g.gain.value = vol||0.08;
+  o.connect(g); g.connect(ctx.destination);
+  o.start();
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (dur||0.15));
+  o.stop(ctx.currentTime + (dur||0.15) + 0.02);
+}
+function sfxGood(){ beep(660,.1,'triangle',.1); setTimeout(function(){ beep(880,.12,'triangle',.08); },80); }
+function sfxBad(){ beep(220,.18,'sawtooth',.07); }
+function sfxStar(){ beep(523,.08); setTimeout(function(){ beep(659,.08); },70); setTimeout(function(){ beep(784,.14); },140); }
+
+function randInt(a,b){ return a + Math.floor(Math.random()*(b-a+1)); }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function shuffle(arr){
+  for(var i=arr.length-1;i>0;i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var t = arr[i]; arr[i]=arr[j]; arr[j]=t;
+  }
+  return arr;
+}
+
+function makePuzzle(type, hard){
+  var divisor, quotient, dividend;
+  if(hard){
+    divisor = randInt(2,9);
+    quotient = randInt(12, 45);
+    if(Math.random() < 0.35){
+      divisor = randInt(2,9);
+      quotient = randInt(20, 80);
+    }
+  } else {
+    divisor = randInt(2,9);
+    quotient = randInt(2,12);
+  }
+  dividend = divisor * quotient;
+  // keep P4-ish: prefer 2-digit dividend in easy
+  if(!hard && dividend > 99){
+    quotient = randInt(2, Math.floor(99/divisor));
+    if(quotient < 2) quotient = 2;
+    dividend = divisor * quotient;
+  }
+  if(hard && dividend < 100 && Math.random() < 0.5){
+    quotient = randInt(12, Math.min(99, Math.floor(999/divisor)));
+    dividend = divisor * quotient;
+  }
+  return {
+    type: type,
+    dividend: dividend,
+    divisor: divisor,
+    quotient: quotient,
+    answer: type==='dividend' ? dividend : (type==='divisor' ? divisor : quotient)
+  };
+}
+
+function buildRound(){
+  var types = [];
+  var n = TOTAL_Q;
+  // balanced mix
+  for(var i=0;i<n;i++){
+    types.push(['dividend','divisor','quotient'][i % 3]);
+  }
+  shuffle(types);
+  var qs = [];
+  for(var j=0;j<n;j++){
+    qs.push(makePuzzle(types[j], state.hard));
+  }
+  return qs;
+}
+
+function updateHUD(){
+  var h = '';
+  for(var i=0;i<3;i++) h += i < state.lives ? '❤️' : '🖤';
+  el.hearts.textContent = h;
+  el.scorePill.textContent = '⭐ ' + state.score;
+  el.qPill.textContent = '第 ' + Math.min(state.qIndex+1, TOTAL_Q) + '／' + TOTAL_Q + ' 題';
+  el.modeTag.textContent = state.mode==='teacher' ? '老師' : '學生';
+}
+
+function renderEq(){
+  var q = state.current;
+  if(!q) return;
+  el.typeBadge.textContent = TYPE_LABEL[q.type];
+  var blankCls = 'blank';
+  if(state.locked && state.revealed) blankCls += ' correct';
+  var blankHtml = '<span class="' + blankCls + '" id="blankSpan">' +
+    (state.answer !== '' ? state.answer : '□') + '</span>';
+  var html;
+  if(q.type === 'dividend'){
+    html = blankHtml + ' ÷ ' + q.divisor + ' = ' + q.quotient;
+  } else if(q.type === 'divisor'){
+    html = q.dividend + ' ÷ ' + blankHtml + ' = ' + q.quotient;
+  } else {
+    html = q.dividend + ' ÷ ' + q.divisor + ' = ' + blankHtml;
+  }
+  el.eqText.innerHTML = html;
+  el.answerShow.textContent = state.answer === '' ? '—' : state.answer;
+}
+
+function setFeedback(text, cls){
+  el.feedback.textContent = text || '';
+  el.feedback.className = 'feedback' + (cls ? ' ' + cls : '');
+}
+
+function startRound(){
+  state.lives = 3;
+  state.score = 0;
+  state.correct = 0;
+  state.wrongs = 0;
+  state.qIndex = 0;
+  state.questions = buildRound();
+  state.playing = true;
+  state.paused = false;
+  state.locked = false;
+  state.revealed = false;
+  state.answer = '';
+  el.pausedOv.classList.remove('on');
+  el.teachBar.classList.toggle('on', state.mode === 'teacher');
+  show('play');
+  loadQuestion();
+}
+
+function loadQuestion(){
+  if(state.qIndex >= state.questions.length || state.lives <= 0){
+    finish();
+    return;
+  }
+  state.current = state.questions[state.qIndex];
+  state.answer = '';
+  state.locked = false;
+  state.revealed = false;
+  setFeedback('', '');
+  updateHUD();
+  renderEq();
+  setPadEnabled(true);
+}
+
+function setPadEnabled(on){
+  document.querySelectorAll('.padbtn').forEach(function(b){
+    b.disabled = !on;
+    b.style.opacity = on ? '1' : '.5';
+  });
+}
+
+function onPad(k){
+  if(!state.playing || state.paused || state.locked) return;
+  if(k === 'del'){
+    state.answer = state.answer.slice(0, -1);
+    renderEq();
+    return;
+  }
+  if(k === 'ok'){
+    submitAnswer();
+    return;
+  }
+  if(state.answer.length >= 3) return;
+  if(k === '0' && state.answer === '') return;
+  state.answer += k;
+  renderEq();
+}
+
+function submitAnswer(){
+  if(state.locked) return;
+  if(state.answer === ''){
+    setFeedback('請先輸入數字', 'hint');
+    return;
+  }
+  var val = parseInt(state.answer, 10);
+  var q = state.current;
+  state.locked = true;
+  setPadEnabled(false);
+  if(val === q.answer){
+    state.correct++;
+    state.score += state.hard ? 15 : 10;
+    setFeedback('正確！🎉', 'ok');
+    sfxGood();
+    var span = document.getElementById('blankSpan');
+    if(span){ span.className = 'blank correct'; span.textContent = String(q.answer); }
+    updateHUD();
+    setTimeout(function(){
+      state.qIndex++;
+      loadQuestion();
+    }, state.mode==='teacher' ? 1200 : 900);
+  } else {
+    state.wrongs++;
+    state.lives--;
+    updateHUD();
+    sfxBad();
+    var span2 = document.getElementById('blankSpan');
+    if(span2){ span2.className = 'blank wrong'; }
+    setFeedback('再諗諗！正確是 ' + q.answer, 'bad');
+    state.revealed = true;
+    if(span2){ span2.className = 'blank correct'; span2.textContent = String(q.answer); }
+    if(state.lives <= 0){
+      setTimeout(finish, 1400);
+    } else {
+      setTimeout(function(){
+        state.qIndex++;
+        loadQuestion();
+      }, 1600);
+    }
+  }
+}
+
+function revealAnswer(){
+  if(!state.playing || !state.current) return;
+  state.revealed = true;
+  state.locked = true;
+  state.answer = String(state.current.answer);
+  setPadEnabled(false);
+  setFeedback('答案：' + state.current.answer + '（課堂討論用）', 'hint');
+  renderEq();
+  var span = document.getElementById('blankSpan');
+  if(span){ span.className = 'blank correct'; span.textContent = String(state.current.answer); }
+}
+
+function nextTeach(){
+  if(!state.playing) return;
+  state.qIndex++;
+  loadQuestion();
+}
+
+function finish(){
+  state.playing = false;
+  var stars = 1;
+  if(state.correct >= 10 && state.lives >= 2) stars = 3;
+  else if(state.correct >= 7 || state.lives >= 1) stars = 2;
+  var starStr = '';
+  for(var i=0;i<3;i++) starStr += i < stars ? '⭐' : '☆';
+  el.endStars.textContent = starStr;
+  el.endTitle.textContent = stars === 3 ? '太棒了！' : (stars === 2 ? '做得好！' : '繼續加油！');
+  el.endScore.textContent = '得分：' + state.score;
+  el.endDetail.textContent = '答對 ' + state.correct + ' 題 · 答錯 ' + state.wrongs + ' 題 · 剩餘 ' + state.lives + ' 心';
+  sfxStar();
+  show('end');
+}
+
+function goHome(){
+  state.playing = false;
+  state.paused = false;
+  el.pausedOv.classList.remove('on');
+  show('start');
+}
+
+function togglePause(){
+  if(!state.playing) return;
+  state.paused = !state.paused;
+  el.pausedOv.classList.toggle('on', state.paused);
+}
+
+/* UI bindings */
+document.querySelectorAll('.mode').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.mode').forEach(function(b){ b.classList.remove('sel'); });
+    btn.classList.add('sel');
+    state.mode = btn.getAttribute('data-mode');
+  });
+});
+document.getElementById('chkSound').addEventListener('change', function(){ state.sound = this.checked; });
+document.getElementById('chkHard').addEventListener('change', function(){ state.hard = this.checked; });
+document.getElementById('btnStart').addEventListener('click', function(){
+  state.sound = document.getElementById('chkSound').checked;
+  state.hard = document.getElementById('chkHard').checked;
+  ensureAudio();
+  show('tip');
+});
+document.getElementById('btnTipGo').addEventListener('click', startRound);
+document.getElementById('btnHome').addEventListener('click', goHome);
+document.getElementById('btnPause').addEventListener('click', togglePause);
+document.getElementById('btnResume').addEventListener('click', function(){ state.paused=false; el.pausedOv.classList.remove('on'); });
+document.getElementById('btnReveal').addEventListener('click', revealAnswer);
+document.getElementById('btnNextTeach').addEventListener('click', nextTeach);
+document.getElementById('btnAgain').addEventListener('click', function(){ show('tip'); });
+document.getElementById('btnMenu').addEventListener('click', goHome);
+
+document.getElementById('pad').addEventListener('click', function(e){
+  var btn = e.target.closest('.padbtn');
+  if(!btn || btn.disabled) return;
+  onPad(btn.getAttribute('data-k'));
+});
+
+document.addEventListener('keydown', function(e){
+  if(!document.getElementById('play').classList.contains('on')) return;
+  if(state.paused || state.locked) return;
+  if(e.key >= '0' && e.key <= '9'){ onPad(e.key); e.preventDefault(); }
+  else if(e.key === 'Backspace'){ onPad('del'); e.preventDefault(); }
+  else if(e.key === 'Enter'){ onPad('ok'); e.preventDefault(); }
+});
+
+})();
+</script>
+</body>
+</html>

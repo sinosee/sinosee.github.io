@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="robots" content="noindex">
-<title>除法錯中找錯</title>
+<title>除法直式填空</title>
 <style>
 :root{
   --vh:100vh;
@@ -24,23 +24,24 @@ button:focus-visible{outline:4px solid #7c4dff;outline-offset:3px}
 .screen.on{display:flex}
 
 #start{overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;align-items:center;
-  background:linear-gradient(165deg,#fff4e8 0%,#ffe8f0 40%,#e8f4ff 100%)}
+  background:linear-gradient(165deg,#e8f4ff 0%,#d4ecff 40%,#ffe8f0 100%)}
 .startInner{width:min(1080px,94vw);margin:auto;padding:16px 0 28px;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2vmin,20px)}
 h1.title{margin:0;font-size:clamp(28px,5.5vmin,64px);font-weight:900;letter-spacing:2px;text-align:center;line-height:1.2}
 h1.title .emoji{display:inline-block;margin:0 .12em}
 .sub{margin:0;font-size:clamp(16px,2.8vmin,28px);text-align:center;color:#5a5a6e;line-height:1.45}
 .modes{display:flex;gap:clamp(10px,2vmin,20px);width:100%}
-.mode{flex:1 1 0;background:var(--card);border-radius:22px;padding:clamp(12px,2vmin,22px);box-shadow:0 6px 0 #e0c8b0;border:5px solid transparent;text-align:center;min-height:90px}
+.mode{flex:1 1 0;background:var(--card);border-radius:22px;padding:clamp(12px,2vmin,22px);box-shadow:0 6px 0 #b8d4e8;border:5px solid transparent;text-align:center;min-height:90px}
 .mode.sel{border-color:#ff9f1c;background:#fffbea}
 .mode .mi{font-size:clamp(32px,5.5vmin,60px);line-height:1.1}
 .mode .mt{font-size:clamp(22px,3.8vmin,42px);font-weight:900;margin:.1em 0}
 .mode .md{font-size:clamp(14px,2.2vmin,24px);line-height:1.35;color:#5a5a6e}
-.infoCard{width:100%;background:#fff;border-radius:20px;padding:14px 18px;box-shadow:0 4px 0 #e0c8b0;font-size:clamp(15px,2.4vmin,24px);font-weight:700;line-height:1.5;color:#3a3a4a;text-align:center}
+.infoCard{width:100%;background:#fff;border-radius:20px;padding:14px 18px;box-shadow:0 4px 0 #b8d4e8;font-size:clamp(15px,2.4vmin,24px);font-weight:700;line-height:1.55;color:#3a3a4a;text-align:left}
+.infoCard strong{color:#1e56b5}
 .toggles{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
-.toggle{display:flex;align-items:center;gap:8px;background:#fff;padding:8px 16px;border-radius:16px;box-shadow:0 3px 0 #e0c8b0;font-size:clamp(15px,2.4vmin,24px);font-weight:700}
+.toggle{display:flex;align-items:center;gap:8px;background:#fff;padding:8px 16px;border-radius:16px;box-shadow:0 3px 0 #b8d4e8;font-size:clamp(15px,2.4vmin,24px);font-weight:700}
 .toggle input{width:22px;height:22px;accent-color:var(--orange)}
 .bigbtn{min-width:240px;min-height:clamp(68px,10vmin,100px);padding:0 36px;border-radius:999px;background:var(--orange);color:#fff;font-size:clamp(26px,4.8vmin,50px);font-weight:900;box-shadow:0 7px 0 #c9620b;letter-spacing:3px}
-.bigbtn:active,.iconbtn:active,.mode:active,.stepCard:active,.tbtn:active{transform:translateY(3px)}
+.bigbtn:active,.iconbtn:active,.mode:active,.blank:active,.key:active,.tbtn:active{transform:translateY(3px)}
 .bigbtn.green{background:var(--green);box-shadow:0 7px 0 #1d7e3d}
 .bigbtn.blue{background:var(--blue);box-shadow:0 7px 0 #1e56b5}
 .bigbtn.purple{background:var(--purple);box-shadow:0 7px 0 #5430b0}
@@ -50,54 +51,72 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 #tip{align-items:center;justify-content:center;background:rgba(40,60,90,.45);z-index:20}
 .tipCard{width:min(640px,92vw);background:#fff;border-radius:28px;padding:clamp(20px,3vmin,36px);box-shadow:0 12px 40px rgba(0,0,0,.25);text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2vmin,18px)}
 .tipEmoji{width:clamp(72px,12vmin,110px);height:clamp(72px,12vmin,110px);border-radius:28px;display:flex;align-items:center;justify-content:center;
-  font-size:clamp(36px,7vmin,64px);font-weight:900;color:#fff;background:linear-gradient(160deg,#ff9f4a,#ff6b1a);box-shadow:0 6px 0 #c9620b}
+  font-size:clamp(36px,7vmin,64px);font-weight:900;color:#fff;background:linear-gradient(160deg,#5bb8ff,#3b82f6);box-shadow:0 6px 0 #1e56b5}
 .tipTitle{margin:0;font-size:clamp(28px,5vmin,48px);font-weight:900}
-.tipBody{margin:0;font-size:clamp(18px,3.2vmin,32px);line-height:1.55;color:#3a3a4a;font-weight:700}
-.tipRule{background:#fff4e8;border-radius:18px;padding:14px 18px;font-size:clamp(16px,2.8vmin,26px);font-weight:800;color:#c2410c;line-height:1.55;width:100%;text-align:left}
+.tipBody{margin:0;font-size:clamp(17px,3vmin,30px);line-height:1.55;color:#3a3a4a;font-weight:700;text-align:left;width:100%}
+.tipRule{background:#eef6ff;border-radius:18px;padding:14px 18px;font-size:clamp(16px,2.8vmin,26px);font-weight:800;color:#1e56b5;line-height:1.55;width:100%;text-align:left}
 .tipHow{font-size:clamp(15px,2.4vmin,24px);color:#5a5a6e;font-weight:700;line-height:1.45}
 
-#play{background:linear-gradient(180deg,#ffe8d6 0%,#fff4e8 35%,#e8f4ff 100%)}
+#play{background:linear-gradient(180deg,#87ceeb 0%,#b8e0f8 30%,#e8f4ff 70%,#ffe8f0 100%)}
 .topbar{flex:none;display:flex;align-items:center;gap:8px;padding:8px 10px 4px;flex-wrap:wrap;z-index:5}
-.iconbtn{min-width:54px;height:54px;border-radius:16px;background:#fff;box-shadow:0 4px 0 #e0c8b0;font-size:26px;display:flex;align-items:center;justify-content:center}
-.pill{font-size:clamp(16px,2.6vmin,28px);font-weight:800;background:#fff;padding:6px 14px;border-radius:999px;white-space:nowrap;box-shadow:0 3px 0 #e0c8b0}
+.iconbtn{min-width:54px;height:54px;border-radius:16px;background:#fff;box-shadow:0 4px 0 #a8c8e0;font-size:26px;display:flex;align-items:center;justify-content:center}
+.pill{font-size:clamp(16px,2.6vmin,28px);font-weight:800;background:#fff;padding:6px 14px;border-radius:999px;white-space:nowrap;box-shadow:0 3px 0 #a8c8e0}
 #hearts{letter-spacing:2px;background:#ffe8e8;color:#c62828}
 #scorePill{background:#fff1b8}
 #qPill{background:#e8f5e9;color:#1b7a3a}
 #modeTag{font-size:clamp(13px,2vmin,22px);background:#ede7ff;color:#5b3fc4}
 .spacer{flex:1}
+
 #playWrap{position:relative;flex:1 1 0;display:flex;flex-direction:column;min-height:0;overflow:hidden}
-.playMain{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:clamp(8px,1.5vmin,14px);padding:6px 12px 8px;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0}
-.prompt{font-size:clamp(18px,3vmin,30px);font-weight:900;text-align:center;color:#1e4a7a}
-.problemBox{background:#fff;border-radius:22px;padding:clamp(12px,2vmin,22px) clamp(16px,3vmin,28px);box-shadow:0 6px 0 #e0c8b0;text-align:center;width:min(92vw,560px)}
-.problemEq{font-size:clamp(28px,6vmin,52px);font-weight:900;color:#2a2a3a;letter-spacing:1px}
-.problemHint{font-size:clamp(14px,2.2vmin,20px);color:#7a7088;font-weight:700;margin-top:4px}
-.steps{display:flex;flex-direction:column;gap:10px;width:min(92vw,560px)}
-.stepCard{display:flex;align-items:stretch;gap:0;background:#fff;border-radius:18px;box-shadow:0 5px 0 #e0c8b0;border:4px solid transparent;overflow:hidden;text-align:left;min-height:64px}
-.stepCard.sel{border-color:#ff9f1c;background:#fffbea}
-.stepCard.wrongPick{border-color:var(--red);background:#ffe8e8}
-.stepCard.rightPick{border-color:var(--green);background:#e8f8e8}
-.stepCard.dim{opacity:.55}
-.stepNum{flex:none;width:clamp(48px,8vmin,64px);display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#5bb8ff,#3b82f6);color:#fff;font-size:clamp(22px,4vmin,36px);font-weight:900}
-.stepCard.rightPick .stepNum{background:linear-gradient(160deg,#6ee7a0,#22c55e)}
-.stepCard.wrongPick .stepNum{background:linear-gradient(160deg,#fca5a5,#ef4444)}
-.stepBody{flex:1;padding:12px 14px;font-size:clamp(16px,2.8vmin,26px);font-weight:800;line-height:1.4;display:flex;align-items:center}
-.feedback{min-height:1.3em;font-size:clamp(17px,2.8vmin,28px);font-weight:900;text-align:center;width:min(92vw,560px)}
+.playMain{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:clamp(6px,1.2vmin,12px);padding:4px 10px 6px;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0}
+.prompt{font-size:clamp(16px,2.6vmin,26px);font-weight:900;text-align:center;color:#1e4a7a}
+.eqLine{font-size:clamp(20px,3.5vmin,34px);font-weight:900;color:#5a5a6e;text-align:center}
+
+.board{background:#fff;border-radius:22px;padding:clamp(12px,2.2vmin,24px) clamp(14px,2.5vmin,28px);
+  box-shadow:0 6px 0 #a8c8e0;width:min(94vw,420px);display:flex;flex-direction:column;align-items:center;gap:8px}
+.ld{display:grid;gap:2px;justify-content:center;font-variant-numeric:tabular-nums;align-items:center}
+.ld .c{width:clamp(36px,8vmin,52px);height:clamp(40px,8.5vmin,56px);display:flex;align-items:center;justify-content:center;
+  font-size:clamp(22px,4.5vmin,36px);font-weight:900;border-radius:10px;position:relative}
+.ld .fixed{color:#2a2a3a}
+.ld .blank{background:#d6ebff;border:3px dashed #3b82f6;color:#1e56b5;box-shadow:inset 0 0 0 1px rgba(59,130,246,.25)}
+.ld .blank.filled{background:#c8e0ff;border-style:solid;color:#1e3a8a}
+.ld .blank.sel{background:#fff1c9;border-color:#ff9f1c;border-style:solid;box-shadow:0 0 0 3px rgba(255,159,28,.35);transform:scale(1.06)}
+.ld .blank.ok{background:#d1fae5;border-color:#22c55e;border-style:solid;color:#166534}
+.ld .blank.bad{background:#fee2e2;border-color:#ef4444;border-style:solid;color:#991b1b;animation:shake .35s}
+.ld .blank.reveal{background:#fef3c7;border-color:#f59e0b;border-style:solid;color:#92400e}
+.ld .empty{visibility:hidden}
+.ld .divisorCell{background:#f0e8ff;border-radius:10px;color:#5b3fc4;font-size:clamp(24px,5vmin,40px)}
+.ld .barLine{border-bottom:4px solid #2a2a3a}
+.ld .barLine.firstDig{border-left:4px solid #2a2a3a;border-radius:0 0 0 6px}
+.ld .subLine{height:3px;background:#2a2a3a;border-radius:2px;grid-column:1 / -1;margin:2px 0;opacity:.85}
+.ld .label{font-size:clamp(11px,1.6vmin,14px);font-weight:700;color:#9aa;position:absolute;top:1px;right:3px;line-height:1}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+.feedback{min-height:1.4em;font-size:clamp(16px,2.6vmin,26px);font-weight:900;text-align:center;width:min(94vw,420px)}
 .feedback.ok{color:var(--green)}.feedback.bad{color:var(--red)}.feedback.hint{color:#5a5a6e}
-.explainBox{display:none;width:min(92vw,560px);background:#eef6ff;border-radius:18px;padding:14px 16px;text-align:left}
-.explainBox.on{display:block}
-.explainBox h3{margin:0 0 6px;font-size:clamp(16px,2.6vmin,24px);font-weight:900;color:#1e56b5}
-.explainBox p{margin:0;font-size:clamp(15px,2.4vmin,22px);font-weight:700;line-height:1.5;color:#3a3a4a}
-.correctWay{margin-top:8px;background:#e8f8e8;border-radius:12px;padding:10px 12px;font-size:clamp(15px,2.4vmin,22px);font-weight:800;color:#1b7a3a;line-height:1.45}
-.nextRow{display:none;justify-content:center;padding:4px 0 8px}
+
+.keypadWrap{flex:none;width:100%;max-width:380px;margin:0 auto;padding:0 10px 6px;display:flex;flex-direction:column;gap:8px}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.key{min-height:clamp(48px,9vmin,64px);border-radius:16px;background:#fff;box-shadow:0 4px 0 #a8c8e0;
+  font-size:clamp(24px,4.5vmin,36px);font-weight:900;color:#2a2a3a}
+.key:active{box-shadow:0 1px 0 #a8c8e0;transform:translateY(3px)}
+.key.util{background:#f0e8ff;color:#5b3fc4;font-size:clamp(18px,3.2vmin,26px)}
+.key.zero{grid-column:1}
+.key.del{background:#ffe8e8;color:#c62828}
+.key.next{background:#e8f5e9;color:#1b7a3a}
+.actionRow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.actionRow .bigbtn{min-width:0;flex:1 1 140px;min-height:clamp(52px,8vmin,72px);font-size:clamp(20px,3.5vmin,32px);letter-spacing:1px}
+
+.nextRow{display:none;justify-content:center;padding:2px 0 6px}
 .nextRow.on{display:flex}
-.teachBar{flex:none;display:none;justify-content:center;gap:12px;padding:4px 10px 12px;flex-wrap:wrap}
+.teachBar{flex:none;display:none;justify-content:center;gap:12px;padding:4px 10px 10px;flex-wrap:wrap}
 .teachBar.on{display:flex}
-.tbtn{min-height:52px;padding:0 20px;border-radius:16px;background:#fff;box-shadow:0 4px 0 #e0c8b0;font-size:clamp(16px,2.6vmin,24px);font-weight:800}
+.tbtn{min-height:52px;padding:0 20px;border-radius:16px;background:#fff;box-shadow:0 4px 0 #a8c8e0;font-size:clamp(16px,2.6vmin,24px);font-weight:800}
 .pausedOverlay{position:absolute;inset:0;background:rgba(30,50,80,.55);z-index:15;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px}
 .pausedOverlay.on{display:flex}
 .pausedOverlay .pt{font-size:clamp(32px,6vmin,56px);font-weight:900;color:#fff;text-shadow:0 3px 8px rgba(0,0,0,.3)}
 
-#end{align-items:center;justify-content:center;background:linear-gradient(160deg,#ffe8d6 0%,#ffe0b8 50%,#ffd0e8 100%)}
+#end{align-items:center;justify-content:center;background:linear-gradient(160deg,#e8f4ff 0%,#ffe0b8 50%,#ffd0e8 100%)}
 .endInner{text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(12px,2.5vmin,26px);padding:20px}
 .endStars{font-size:clamp(44px,9vmin,96px);letter-spacing:6px}
 .endTitle{font-size:clamp(32px,6.5vmin,68px);font-weight:900;margin:0}
@@ -106,8 +125,8 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 .endBtns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
 
 @media (max-height:560px){
-  .stepCard{min-height:52px}
-  .stepBody{font-size:clamp(14px,2.4vmin,20px);padding:8px 10px}
+  .key{min-height:42px;font-size:clamp(18px,3.5vmin,28px)}
+  .ld .c{width:clamp(30px,7vmin,44px);height:clamp(34px,7.5vmin,48px);font-size:clamp(18px,3.8vmin,28px)}
   .iconbtn{min-width:44px;height:44px;font-size:22px}
 }
 </style>
@@ -115,55 +134,57 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 <body>
 <div id="start" class="screen on">
   <div class="startInner">
-    <h1 class="title"><span class="emoji">🔍</span>除法錯中找錯<span class="emoji">✨</span></h1>
-    <p class="sub">呢條除法計錯咗！邊一步出錯？點選錯誤嘅步驟。</p>
+    <h1 class="title"><span class="emoji">✏️</span>除法直式填空<span class="emoji">🔢</span></h1>
+    <p class="sub">直式留咗幾個藍色窿窿，用下面九宮格打數字填上去！</p>
 
     <div class="modes">
       <button type="button" class="mode sel" data-mode="student" id="modeStudent">
         <div class="mi">🧒</div>
         <div class="mt">學生模式</div>
-        <div class="md">自己揀邊步錯</div>
+        <div class="md">自己填窿窿練習</div>
       </button>
       <button type="button" class="mode" data-mode="teacher" id="modeTeacher">
         <div class="mi">👩‍🏫</div>
         <div class="mt">老師模式</div>
-        <div class="md">投影全班投票：可暫停、顯示答案</div>
+        <div class="md">投影全班：可暫停、顯示答案</div>
       </button>
     </div>
 
     <div class="infoCard">
-      常見錯誤：九九乘數錯、商多／少 1、餘數處理錯、被除數同除數搞亂
+      <strong>點樣玩：</strong><br>
+      ① 撳藍色窿窿　② 用下面九宮格打數字　③ 全部填完撳「檢查」<br>
+      每局約 10 題 · 3 顆心 · 全部整除（無餘數）
     </div>
 
     <div class="toggles">
-      <label class="toggle"><input type="checkbox" id="chkSound" checked> 音效</label>
-      <label class="toggle"><input type="checkbox" id="chkHard"> 較難（步驟多啲／數字大啲）</label>
+      <label class="toggle"><input type="checkbox" id="togSound" checked> 音效</label>
+      <label class="toggle"><input type="checkbox" id="togHard"> 較難（三位數）</label>
     </div>
 
-    <button type="button" class="bigbtn" id="btnStart">開始遊戲</button>
-    <p class="note">適合小四 · 整除為主 · 唔使登入 · iPad 用手指點選</p>
+    <button type="button" class="bigbtn" id="btnStart">開始！</button>
+    <p class="note">小四 · 除法直式 · 唔會彈出手機鍵盤</p>
   </div>
 </div>
 
 <div id="tip" class="screen">
   <div class="tipCard">
-    <div class="tipEmoji">!</div>
-    <h2 class="tipTitle">點樣玩？</h2>
+    <div class="tipEmoji">✏️</div>
+    <h2 class="tipTitle">點樣填？</h2>
+    <p class="tipBody">畫面有一條<strong>除法直式</strong>，有啲位係藍色窿窿。</p>
     <div class="tipRule">
-      1. 睇清楚題目同每一步<br>
-      2. 點選「出錯」嗰一步（只有一步係錯）<br>
-      3. 之後會解釋點解錯，同埋正確做法
+      ① 撳藍色窿窿（會變黃）<br>
+      ② 用下面<strong>九宮格</strong>打數字<br>
+      ③ 全部填完 → 撳「檢查」
     </div>
-    <p class="tipBody">答啱加分；答錯扣一顆心 ❤️</p>
-    <p class="tipHow">一局約 10 題 · 你有 3 顆心 · 老師模式適合全班投票</p>
-    <button type="button" class="bigbtn green" id="btnTipGo">知道了，開始！</button>
+    <p class="tipHow">填錯唔緊要，可以改；心用完就結束。</p>
+    <button type="button" class="bigbtn green" id="btnTipGo">明白，開始！</button>
   </div>
 </div>
 
 <div id="play" class="screen">
   <div class="topbar">
-    <button type="button" class="iconbtn" id="btnHome" title="返回">🏠</button>
-    <button type="button" class="iconbtn" id="btnPause" title="暫停">⏸</button>
+    <button type="button" class="iconbtn" id="btnHome" title="回主選單">🏠</button>
+    <button type="button" class="iconbtn" id="btnPause" title="暫停">⏸️</button>
     <span class="pill" id="hearts">❤️❤️❤️</span>
     <span class="pill" id="scorePill">⭐ 0</span>
     <span class="pill" id="qPill">第 1／10 題</span>
@@ -172,29 +193,29 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
   </div>
   <div id="playWrap">
     <div class="playMain">
-      <div class="prompt">邊一步出錯？點選錯誤的步驟</div>
-      <div class="problemBox">
-        <div class="problemEq" id="problemEq">84 ÷ 7 = ?</div>
-        <div class="problemHint" id="problemHint">有人咁樣計：</div>
+      <div class="prompt" id="prompt">填入藍色窿窿嘅數字</div>
+      <div class="eqLine" id="eqLine"></div>
+      <div class="board">
+        <div class="ld" id="ld"></div>
       </div>
-      <div class="steps" id="steps"></div>
-      <div class="feedback" id="feedback"></div>
-      <div class="explainBox" id="explainBox">
-        <h3 id="explainTitle">為什麼錯？</h3>
-        <p id="explainText"></p>
-        <div class="correctWay" id="correctWay"></div>
+      <div class="feedback hint" id="feedback">撳窿窿，再用九宮格打數字</div>
+    </div>
+    <div class="keypadWrap" id="keypadWrap">
+      <div class="keys" id="keys"></div>
+      <div class="actionRow">
+        <button type="button" class="bigbtn blue" id="btnCheck">檢查</button>
       </div>
-      <div class="nextRow" id="nextRow">
-        <button type="button" class="bigbtn green" id="btnNext" style="min-width:200px;min-height:60px;font-size:clamp(20px,3.5vmin,32px)">下一題 →</button>
-      </div>
+    </div>
+    <div class="nextRow" id="nextRow">
+      <button type="button" class="bigbtn green" id="btnNext">下一題 ▶</button>
     </div>
     <div class="teachBar" id="teachBar">
-      <button type="button" class="tbtn" id="btnReveal">💡 顯示錯在哪</button>
-      <button type="button" class="tbtn" id="btnNextTeach">下一題 →</button>
+      <button type="button" class="tbtn" id="btnReveal">顯示答案</button>
+      <button type="button" class="tbtn" id="btnTeachNext">下一題</button>
     </div>
-    <div class="pausedOverlay" id="pausedOv">
-      <div class="pt">⏸ 暫停</div>
-      <button type="button" class="bigbtn blue" id="btnResume">繼續</button>
+    <div class="pausedOverlay" id="pausedOverlay">
+      <div class="pt">暫停中</div>
+      <button type="button" class="bigbtn" id="btnResume">繼續</button>
     </div>
   </div>
 </div>
@@ -202,12 +223,12 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 <div id="end" class="screen">
   <div class="endInner">
     <div class="endStars" id="endStars">⭐⭐⭐</div>
-    <h2 class="endTitle" id="endTitle">太棒了！</h2>
-    <div class="endScore" id="endScore">得分：0</div>
+    <h2 class="endTitle" id="endTitle">完成！</h2>
+    <div class="endScore" id="endScore">得分 0</div>
     <div class="endDetail" id="endDetail"></div>
     <div class="endBtns">
       <button type="button" class="bigbtn green" id="btnAgain">再玩一次</button>
-      <button type="button" class="bigbtn purple" id="btnMenu">返回主選單</button>
+      <button type="button" class="bigbtn purple" id="btnMenu">主選單</button>
     </div>
   </div>
 </div>
@@ -225,472 +246,575 @@ window.addEventListener('resize', setVH);
 if(window.visualViewport) window.visualViewport.addEventListener('resize', setVH);
 
 var TOTAL_Q = 10;
-
-var state = {
-  mode:'student',
-  sound:true,
-  hard:false,
-  lives:3,
-  score:0,
-  correct:0,
-  wrongs:0,
-  qIndex:0,
-  questions:[],
-  current:null,
-  playing:false,
-  paused:false,
-  locked:false
-};
-
-var el = {
-  hearts:document.getElementById('hearts'),
-  scorePill:document.getElementById('scorePill'),
-  qPill:document.getElementById('qPill'),
-  modeTag:document.getElementById('modeTag'),
-  problemEq:document.getElementById('problemEq'),
-  problemHint:document.getElementById('problemHint'),
-  steps:document.getElementById('steps'),
-  feedback:document.getElementById('feedback'),
-  explainBox:document.getElementById('explainBox'),
-  explainTitle:document.getElementById('explainTitle'),
-  explainText:document.getElementById('explainText'),
-  correctWay:document.getElementById('correctWay'),
-  nextRow:document.getElementById('nextRow'),
-  teachBar:document.getElementById('teachBar'),
-  pausedOv:document.getElementById('pausedOv'),
-  endStars:document.getElementById('endStars'),
-  endTitle:document.getElementById('endTitle'),
-  endScore:document.getElementById('endScore'),
-  endDetail:document.getElementById('endDetail')
-};
-
-function show(screen){
-  ['start','tip','play','end'].forEach(function(id){
-    document.getElementById(id).classList.toggle('on', id===screen);
-  });
-}
-
+var mode = 'student';
+var soundOn = true;
+var hard = false;
+var hearts = 3, score = 0, qIndex = 0;
+var paused = false;
+var answered = false;
+var cur = null; // current problem
+var blanks = []; // {id, answer, el, value}
+var selId = null;
 var audioCtx = null;
-function ensureAudio(){
-  if(!state.sound) return null;
-  try{
-    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-    if(audioCtx.state==='suspended') audioCtx.resume();
-    return audioCtx;
-  }catch(e){ return null; }
-}
-function beep(freq, dur, type, vol){
-  var ctx = ensureAudio();
-  if(!ctx) return;
-  var o = ctx.createOscillator();
-  var g = ctx.createGain();
-  o.type = type||'sine';
-  o.frequency.value = freq;
-  g.gain.value = vol||0.08;
-  o.connect(g); g.connect(ctx.destination);
-  o.start();
-  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (dur||0.15));
-  o.stop(ctx.currentTime + (dur||0.15) + 0.02);
-}
-function sfxGood(){ beep(660,.1,'triangle',.1); setTimeout(function(){ beep(880,.12,'triangle',.08); },80); }
-function sfxBad(){ beep(220,.18,'sawtooth',.07); }
-function sfxStar(){ beep(523,.08); setTimeout(function(){ beep(659,.08); },70); setTimeout(function(){ beep(784,.14); },140); }
 
-function randInt(a,b){ return a + Math.floor(Math.random()*(b-a+1)); }
-function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function $(id){ return document.getElementById(id); }
+function show(id){
+  ['start','tip','play','end'].forEach(function(s){ $(s).classList.toggle('on', s===id); });
+}
+function rand(a,b){ return a + Math.floor(Math.random()* (b-a+1)); }
 function shuffle(arr){
-  for(var i=arr.length-1;i>0;i--){
-    var j = Math.floor(Math.random()*(i+1));
-    var t = arr[i]; arr[i]=arr[j]; arr[j]=t;
-  }
+  for(var i=arr.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=arr[i]; arr[i]=arr[j]; arr[j]=t; }
   return arr;
 }
 
-/* Generate exact division facts suitable for P4 */
-function exactFact(hard){
-  var d = randInt(2,9);
-  var q = hard ? randInt(8, 25) : randInt(3, 12);
-  var n = d * q;
-  if(!hard && n > 99){ q = randInt(3, Math.floor(99/d)); n = d * q; }
-  if(hard && n < 40){ q = randInt(12, Math.min(40, Math.floor(200/d))); n = d * q; }
-  return { n:n, d:d, q:q };
+function beep(freq, dur, type, vol){
+  if(!soundOn) return;
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    var o = audioCtx.createOscillator();
+    var g = audioCtx.createGain();
+    o.type = type || 'sine';
+    o.frequency.value = freq;
+    g.gain.value = vol || 0.08;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + (dur||0.12));
+    o.stop(audioCtx.currentTime + (dur||0.12) + 0.02);
+  }catch(e){}
 }
 
-/*
-  Error templates produce:
-  - equation display
-  - steps[] text
-  - wrongIndex (0-based)
-  - explanation
-  - correctWay
-*/
-function makeTimesError(hard){
-  var f = exactFact(hard);
-  // wrong times-table: claim divisor * wrongQ = n, or wrong product in check
-  var wrongQ = f.q + (Math.random()<0.5 ? 1 : -1);
-  if(wrongQ < 2) wrongQ = f.q + 1;
-  var wrongProduct = f.d * wrongQ;
-  var steps = [
-    '想：' + f.d + ' × □ = ' + f.n,
-    '用九九：' + f.d + ' × ' + wrongQ + ' = ' + f.n,
-    '所以商是 ' + wrongQ,
-    '驗算：' + f.d + ' × ' + wrongQ + ' = ' + wrongProduct
-  ];
-  // Use 3 steps in easy: hide last or merge
-  if(!hard){
-    steps = [
-      '想：' + f.d + ' × □ = ' + f.n,
-      '用九九：' + f.d + ' × ' + wrongQ + ' = ' + f.n + '，所以商 = ' + wrongQ,
-      '寫答案：' + f.n + ' ÷ ' + f.d + ' = ' + wrongQ
-    ];
+/* ---------- problem generation ---------- */
+function buildLongDiv(dividend, divisor){
+  var nStr = String(dividend);
+  var d = divisor;
+  var cols = nStr.length;
+  // Simulate long division
+  var steps = []; // each: {startCol, width, current, qd, prod, rem, remDigits, bringDown?}
+  var rem = 0;
+  var qDigits = [];
+  var i = 0;
+  // Skip leading until we can divide
+  while(i < cols){
+    var current = rem * 10 + parseInt(nStr[i], 10);
+    if(current < d && i < cols - 1 && qDigits.length === 0){
+      // accumulate without placing quotient digit yet (leading)
+      rem = current;
+      i++;
+      continue;
+    }
+    var qd = Math.floor(current / d);
+    var prod = qd * d;
+    var newRem = current - prod;
+    qDigits.push({digit: qd, atCol: i});
+    var curStr = String(current);
+    var prodStr = String(prod);
+    // Align product under the current working number (right-aligned at column i)
+    steps.push({
+      atCol: i,
+      current: current,
+      currentDigits: curStr.split('').map(Number),
+      qd: qd,
+      prod: prod,
+      prodDigits: prodStr.split('').map(Number),
+      rem: newRem,
+      remDigits: String(newRem).split('').map(Number),
+      // how many digits the "current" spans ending at col i
+      span: curStr.length
+    });
+    rem = newRem;
+    i++;
   }
-  return {
-    eq: f.n + ' ÷ ' + f.d + ' = ?',
-    steps: steps,
-    wrongIndex: 1,
-    explain: '九九乘數記錯咗。' + f.d + ' × ' + wrongQ + ' = ' + wrongProduct + '，唔等於 ' + f.n + '。',
-    correct: '正確：' + f.d + ' × ' + f.q + ' = ' + f.n + '，所以 ' + f.n + ' ÷ ' + f.d + ' = ' + f.q
-  };
+  return {nStr: nStr, d: d, cols: cols, qDigits: qDigits, steps: steps, quotient: Math.floor(dividend / divisor)};
 }
 
-function makeOffByOne(hard){
-  var f = exactFact(hard);
-  var wrongQ = f.q + (Math.random()<0.5 ? 1 : -1);
-  if(wrongQ < 1) wrongQ = f.q + 1;
-  var steps = [
-    '被除數是 ' + f.n + '，除數是 ' + f.d,
-    '估計商大約是 ' + f.q + ' 左右',
-    '決定商 = ' + wrongQ,
-    '沒有用乘法驗算就寫答案'
-  ];
-  if(!hard){
-    steps = [
-      '題目：' + f.n + ' ÷ ' + f.d,
-      '以為商是 ' + wrongQ,
-      '答案寫成 ' + f.n + ' ÷ ' + f.d + ' = ' + wrongQ
-    ];
-    return {
-      eq: f.n + ' ÷ ' + f.d + ' = ?',
-      steps: steps,
-      wrongIndex: 1,
-      explain: '商多咗或少咗 1。要用乘法驗算：除數 × 商 應該等於被除數。',
-      correct: '正確：' + f.d + ' × ' + f.q + ' = ' + f.n + '，所以商是 ' + f.q
-    };
+function pickProblem(hardMode){
+  var d = rand(2, 9);
+  var dividend, quotient;
+  if(hardMode){
+    // 3-digit dividend, exact
+    var maxQ = Math.floor(999 / d);
+    var minQ = Math.ceil(100 / d);
+    quotient = rand(Math.max(minQ, 12), Math.min(maxQ, 99));
+    dividend = d * quotient;
+  } else {
+    // 2-digit dividend mostly
+    var maxQ2 = Math.floor(99 / d);
+    var minQ2 = Math.ceil(10 / d);
+    // Prefer 2-digit quotients when possible, else 1-digit
+    if(maxQ2 >= 10 && Math.random() < 0.7){
+      quotient = rand(10, Math.min(maxQ2, 25));
+    } else {
+      quotient = rand(Math.max(minQ2, 2), Math.min(maxQ2, 12));
+    }
+    dividend = d * quotient;
+    // ensure 2-digit dividend
+    if(dividend < 10){ quotient = rand(Math.max(minQ2,2), maxQ2); dividend = d * quotient; }
   }
-  return {
-    eq: f.n + ' ÷ ' + f.d + ' = ?',
-    steps: steps,
-    wrongIndex: 2,
-    explain: '商寫錯咗，差 1。' + f.d + ' × ' + wrongQ + ' ≠ ' + f.n + '。',
-    correct: '正確：' + f.n + ' ÷ ' + f.d + ' = ' + f.q + '（因為 ' + f.d + ' × ' + f.q + ' = ' + f.n + '）'
-  };
+  var ld = buildLongDiv(dividend, d);
+  return makeBlankPlan(ld, hardMode);
 }
 
-function makeSwapError(hard){
-  var f = exactFact(hard);
-  // conceptually swap: treat as d ÷ n or write n as divisor
-  var steps = [
-    '題目寫住 ' + f.n + ' ÷ ' + f.d,
-    '改成用 ' + f.d + ' ÷ ' + f.n + ' 嚟計',
-    '得出好細／唔合理嘅商',
-    '寫低最後答案'
-  ];
-  if(!hard){
-    steps = [
-      '題目：' + f.n + ' ÷ ' + f.d,
-      '用 ' + f.d + ' ÷ ' + f.n + ' 嚟諗',
-      '得出答案'
-    ];
+function makeBlankPlan(ld, hardMode){
+  // Build a list of fillable cells with answers
+  // Cell kinds: q0,q1,... prod0, rem0, etc.
+  var candidates = [];
+  ld.qDigits.forEach(function(qd, idx){
+    candidates.push({kind:'q', idx: idx, answer: qd.digit, label: '商'});
+  });
+  ld.steps.forEach(function(st, idx){
+    // blank product digits (last digit of product often)
+    if(st.prodDigits.length === 1){
+      candidates.push({kind:'prod', idx: idx, digi: 0, answer: st.prodDigits[0], label: '積'});
+    } else {
+      st.prodDigits.forEach(function(pd, di){
+        candidates.push({kind:'prod', idx: idx, digi: di, answer: pd, label: '積'});
+      });
+    }
+    // blank remainder (single digit remainders preferred)
+    if(st.rem <= 9 && idx < ld.steps.length - 1){
+      candidates.push({kind:'rem', idx: idx, digi: 0, answer: st.rem, label: '餘'});
+    }
+  });
+
+  // Always include at least one quotient blank
+  var must = candidates.filter(function(c){ return c.kind === 'q'; });
+  var others = candidates.filter(function(c){ return c.kind !== 'q'; });
+  shuffle(others);
+  var nBlanks = hardMode ? rand(4, Math.min(7, candidates.length)) : rand(3, Math.min(5, candidates.length));
+  var chosen = [];
+  // take all q or most
+  must.forEach(function(m){ chosen.push(m); });
+  if(chosen.length > nBlanks){
+    // keep at least 1 quotient
+    shuffle(chosen);
+    chosen = chosen.slice(0, Math.max(1, nBlanks - 1));
   }
-  return {
-    eq: f.n + ' ÷ ' + f.d + ' = ?',
-    steps: steps,
-    wrongIndex: 1,
-    explain: '被除數同除數唔可以調轉。要計嘅係「' + f.n + ' 裏面有幾多個 ' + f.d + '」。',
-    correct: '正確：' + f.n + ' ÷ ' + f.d + ' = ' + f.q
-  };
-}
-
-function makeRemainderFake(hard){
-  // exact division but student invents a remainder or leftover
-  var f = exactFact(hard);
-  var fakeR = randInt(1, f.d - 1);
-  var steps = [
-    '用 ' + f.d + ' 去除 ' + f.n,
-    '商取 ' + f.q + '，餘數寫 ' + fakeR,
-    '以為 ' + f.n + ' = ' + f.d + ' × ' + f.q + ' + ' + fakeR,
-    '其實 ' + f.d + ' × ' + f.q + ' 已經剛好等於 ' + f.n + '，無餘數'
-  ];
-  if(!hard){
-    steps = [
-      '題目：' + f.n + ' ÷ ' + f.d,
-      '寫成商 ' + f.q + ' 餘 ' + fakeR,
-      '答案：' + f.q + ' …… ' + fakeR
-    ];
-    return {
-      eq: f.n + ' ÷ ' + f.d + ' = ?',
-      steps: steps,
-      wrongIndex: 1,
-      explain: '呢題係整除，無餘數。' + f.d + ' × ' + f.q + ' = ' + f.n + '，唔使寫餘數。',
-      correct: '正確：' + f.n + ' ÷ ' + f.d + ' = ' + f.q + '（餘 0）'
-    };
+  for(var i=0; i<others.length && chosen.length < nBlanks; i++){
+    chosen.push(others[i]);
   }
-  return {
-    eq: f.n + ' ÷ ' + f.d + ' = ?',
-    steps: steps,
-    wrongIndex: 1,
-    explain: '多寫咗餘數。驗算：除數 × 商 + 餘數 應該等於被除數；呢度加咗餘數就大過被除數。',
-    correct: '正確：' + f.n + ' ÷ ' + f.d + ' = ' + f.q
-  };
+  // Deduplicate by kind+idx+digi
+  var seen = {};
+  chosen = chosen.filter(function(c){
+    var k = c.kind + '-' + c.idx + '-' + (c.digi||0);
+    if(seen[k]) return false;
+    seen[k] = true;
+    return true;
+  });
+
+  var blankSet = {};
+  chosen.forEach(function(c){
+    blankSet[c.kind + '-' + c.idx + '-' + (c.digi != null ? c.digi : 0)] = c.answer;
+  });
+
+  return {ld: ld, blankSet: blankSet, chosen: chosen, dividend: parseInt(ld.nStr,10), divisor: ld.d, quotient: ld.quotient};
 }
 
-function makeBringDown(hard){
-  // 2-digit short division style mistake on tens/ones
-  var d = randInt(2,9);
-  var tensQ = randInt(1, 8);
-  var onesQ = randInt(0, 9);
-  // build n = d * (10*tensQ + onesQ) exact
-  var q = 10 * tensQ + onesQ;
-  if(q < 12){ tensQ = randInt(2,6); onesQ = randInt(1,8); q = 10*tensQ+onesQ; }
-  var n = d * q;
-  if(n > 99 && !hard){
-    // keep 2-digit when possible
-    q = randInt(12, Math.min(48, Math.floor(99/d)));
-    n = d * q;
-    tensQ = Math.floor(q/10);
-    onesQ = q % 10;
+/* ---------- render long division ---------- */
+function cellKey(kind, idx, digi){ return kind + '-' + idx + '-' + (digi != null ? digi : 0); }
+
+function renderProblem(prob){
+  var ld = prob.ld;
+  var cols = ld.cols;
+  // Grid: col0 = divisor/corner spacer, col1..cols = digit columns
+  var gridCols = cols + 1;
+  var el = $('ld');
+  el.style.gridTemplateColumns = 'auto repeat(' + cols + ', max-content)';
+  el.innerHTML = '';
+  blanks = [];
+  selId = null;
+
+  function addCell(html, className, gridCol, gridRow){
+    var d = document.createElement('div');
+    d.className = 'c ' + (className || '');
+    d.style.gridColumn = String(gridCol);
+    d.style.gridRow = String(gridRow);
+    d.innerHTML = html;
+    el.appendChild(d);
+    return d;
   }
-  var wrongOnes = (onesQ + 1) % 10;
-  if(wrongOnes === onesQ) wrongOnes = (onesQ + 2) % 10;
-  var wrongQ = 10 * tensQ + wrongOnes;
-  var steps = [
-    '短除法：用 ' + d + ' 去除 ' + n,
-    '十位商寫 ' + tensQ,
-    '個位商寫 ' + wrongOnes,
-    '最後商是 ' + wrongQ
-  ];
-  if(!hard){
-    steps = [
-      '短除：' + n + ' ÷ ' + d,
-      '個位商寫 ' + wrongOnes,
-      '所以答案是 ' + wrongQ
-    ];
-    return {
-      eq: n + ' ÷ ' + d + ' = ?',
-      steps: steps,
-      wrongIndex: 1,
-      explain: '個位嘅商計錯（寫成 ' + wrongOnes + '，應該係 ' + onesQ + '）。要用乘法檢查每一步。',
-      correct: '正確：' + n + ' ÷ ' + d + ' = ' + q
-    };
+
+  function addBlankOrFixed(digit, kind, idx, digi, gridCol, gridRow, extraClass){
+    var key = cellKey(kind, idx, digi);
+    var isBlank = Object.prototype.hasOwnProperty.call(prob.blankSet, key);
+    if(isBlank){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'c blank' + (extraClass ? ' ' + extraClass : '');
+      b.style.gridColumn = String(gridCol);
+      b.style.gridRow = String(gridRow);
+      b.dataset.id = key;
+      b.dataset.answer = String(prob.blankSet[key]);
+      b.textContent = '';
+      b.setAttribute('aria-label', '填空');
+      b.addEventListener('click', function(){ if(!answered && !paused) selectBlank(key); });
+      el.appendChild(b);
+      blanks.push({id: key, answer: String(prob.blankSet[key]), el: b, value: ''});
+      return b;
+    } else {
+      return addCell(String(digit), 'fixed' + (extraClass ? ' ' + extraClass : ''), gridCol, gridRow);
+    }
   }
-  return {
-    eq: n + ' ÷ ' + d + ' = ?',
-    steps: [
-      '短除法：用 ' + d + ' 去除 ' + n,
-      '十位商寫 ' + tensQ,
-      '個位商寫 ' + wrongOnes,
-      '最後商是 ' + wrongQ
-    ],
-    wrongIndex: 2,
-    explain: '帶落嚟個位之後計錯，個位商應該係 ' + onesQ + ' 而唔係 ' + wrongOnes + '。',
-    correct: '正確步驟應得出商 ' + q + '（因為 ' + d + ' × ' + q + ' = ' + n + '）'
-  };
+
+  var row = 1;
+  // Quotient row: empty at col0, then q digits right-aligned under dividend
+  addCell('', 'empty', 1, row);
+  // Map qDigits to columns
+  var qByCol = {};
+  ld.qDigits.forEach(function(qd, idx){ qByCol[qd.atCol] = {digit: qd.digit, idx: idx}; });
+  for(var c = 0; c < cols; c++){
+    if(qByCol[c] != null){
+      addBlankOrFixed(qByCol[c].digit, 'q', qByCol[c].idx, 0, c + 2, row);
+    } else {
+      addCell('', 'empty', c + 2, row);
+    }
+  }
+  row++;
+
+  // Dividend row with divisor and corner
+  var divCell = addCell(String(ld.d), 'divisorCell', 1, row);
+  // Draw top bar using border on dividend cells — add a bar row via CSS on dividend
+  for(var c2 = 0; c2 < cols; c2++){
+    var dig = ld.nStr[c2];
+    var cls = 'fixed barLine' + (c2 === 0 ? ' firstDig' : '');
+    addCell(dig, cls, c2 + 2, row);
+  }
+  row++;
+
+  // Working steps
+  ld.steps.forEach(function(st, sIdx){
+    // Product row: right-aligned ending at st.atCol
+    var pSpan = st.prodDigits.length;
+    var pStartCol = st.atCol - pSpan + 1; // 0-based digit col
+    for(var c3 = 0; c3 < cols; c3++){
+      var di = c3 - pStartCol;
+      if(di >= 0 && di < pSpan){
+        addBlankOrFixed(st.prodDigits[di], 'prod', sIdx, di, c3 + 2, row);
+      } else {
+        addCell('', 'empty', c3 + 2, row);
+      }
+    }
+    addCell('', 'empty', 1, row);
+    row++;
+
+    // Subtraction line under product (only under relevant cols)
+    for(var c4 = 0; c4 < cols; c4++){
+      var di2 = c4 - pStartCol;
+      if(di2 >= 0 && di2 < pSpan){
+        var line = addCell('', 'fixed', c4 + 2, row);
+        line.style.borderTop = '3px solid #2a2a3a';
+        line.style.height = '8px';
+        line.style.minHeight = '8px';
+        line.textContent = '';
+      } else {
+        addCell('', 'empty', c4 + 2, row);
+      }
+    }
+    addCell('', 'empty', 1, row);
+    row++;
+
+    // Remainder (+ bring-down of next digit if any)
+    // After subtract, rem is at the product alignment; if there's a next digit, bring it down
+    var hasNext = sIdx < ld.steps.length - 1;
+    if(hasNext){
+      // Next step's "current" includes bring-down — show rem digits then next dividend digit
+      // Simpler: show rem right-aligned under product, then next digit from dividend at atCol+1
+      var nextCol = st.atCol + 1;
+      var remStr = String(st.rem);
+      // Place rem ending just left of nextCol, or at product end if rem is under product
+      // Standard: rem under product, then bring down digit to the right
+      var remDigits = remStr.split('').map(Number);
+      // If rem is 0 and we bring down, show 0 then digit, or just the brought digit as part of next current
+      // Display: rem digits right-aligned at st.atCol, then digit at nextCol from nStr
+      for(var c5 = 0; c5 < cols; c5++){
+        if(c5 === nextCol){
+          // brought-down digit (fixed from dividend)
+          addCell(ld.nStr[nextCol], 'fixed', c5 + 2, row);
+        } else {
+          // rem digit?
+          var remEnd = st.atCol;
+          var rSpan = remDigits.length;
+          var rStart = remEnd - rSpan + 1;
+          var rdi = c5 - rStart;
+          if(rdi >= 0 && rdi < rSpan && c5 !== nextCol){
+            addBlankOrFixed(remDigits[rdi], 'rem', sIdx, rdi, c5 + 2, row);
+          } else if(c5 !== nextCol){
+            addCell('', 'empty', c5 + 2, row);
+          }
+        }
+      }
+      addCell('', 'empty', 1, row);
+      row++;
+    } else {
+      // Final remainder (should be 0) — show it
+      var remDigitsF = String(st.rem).split('').map(Number);
+      var rSpanF = remDigitsF.length;
+      var rStartF = st.atCol - rSpanF + 1;
+      for(var c6 = 0; c6 < cols; c6++){
+        var rdiF = c6 - rStartF;
+        if(rdiF >= 0 && rdiF < rSpanF){
+          // Final rem usually shown fixed as 0, or blank if in set
+          addBlankOrFixed(remDigitsF[rdiF], 'rem', sIdx, rdiF, c6 + 2, row);
+        } else {
+          addCell('', 'empty', c6 + 2, row);
+        }
+      }
+      addCell('', 'empty', 1, row);
+      row++;
+    }
+  });
+
+  $('eqLine').textContent = ld.nStr + ' ÷ ' + ld.d + ' = ？';
+  // Select first blank
+  if(blanks.length) selectBlank(blanks[0].id);
 }
 
-function makePuzzle(kind, hard){
-  if(kind === 'times') return makeTimesError(hard);
-  if(kind === 'off') return makeOffByOne(hard);
-  if(kind === 'swap') return makeSwapError(hard);
-  if(kind === 'rem') return makeRemainderFake(hard);
-  return makeBringDown(hard);
+function findBlank(id){
+  for(var i=0;i<blanks.length;i++) if(blanks[i].id === id) return blanks[i];
+  return null;
 }
 
-function buildRound(){
-  var kinds = [];
-  var pool = ['times','off','swap','rem','bring'];
-  for(var i=0;i<TOTAL_Q;i++) kinds.push(pool[i % pool.length]);
-  shuffle(kinds);
-  var qs = [];
-  for(var j=0;j<TOTAL_Q;j++) qs.push(makePuzzle(kinds[j], state.hard));
-  return qs;
+function selectBlank(id){
+  selId = id;
+  blanks.forEach(function(b){
+    b.el.classList.toggle('sel', b.id === id && !answered);
+  });
 }
 
-function updateHUD(){
-  var h = '';
-  for(var i=0;i<3;i++) h += i < state.lives ? '❤️' : '🖤';
-  el.hearts.textContent = h;
-  el.scorePill.textContent = '⭐ ' + state.score;
-  el.qPill.textContent = '第 ' + Math.min(state.qIndex+1, TOTAL_Q) + '／' + TOTAL_Q + ' 題';
-  el.modeTag.textContent = state.mode==='teacher' ? '老師' : '學生';
+function typeDigit(dig){
+  if(answered || paused || !selId) return;
+  var b = findBlank(selId);
+  if(!b) return;
+  b.value = String(dig);
+  b.el.textContent = String(dig);
+  b.el.classList.add('filled');
+  b.el.classList.remove('bad','ok','reveal');
+  beep(660, 0.06, 'sine', 0.06);
+  // auto next empty blank
+  var idx = blanks.findIndex(function(x){ return x.id === selId; });
+  for(var i = 1; i <= blanks.length; i++){
+    var nb = blanks[(idx + i) % blanks.length];
+    if(nb.value === ''){ selectBlank(nb.id); return; }
+  }
 }
 
-function setFeedback(text, cls){
-  el.feedback.textContent = text || '';
-  el.feedback.className = 'feedback' + (cls ? ' ' + cls : '');
+function deleteDigit(){
+  if(answered || paused || !selId) return;
+  var b = findBlank(selId);
+  if(!b) return;
+  if(b.value !== ''){
+    b.value = '';
+    b.el.textContent = '';
+    b.el.classList.remove('filled','bad','ok','reveal');
+    beep(320, 0.05, 'triangle', 0.05);
+  } else {
+    // go to previous blank
+    var idx = blanks.findIndex(function(x){ return x.id === selId; });
+    if(idx > 0) selectBlank(blanks[idx-1].id);
+  }
 }
 
-function startRound(){
-  state.lives = 3;
-  state.score = 0;
-  state.correct = 0;
-  state.wrongs = 0;
-  state.qIndex = 0;
-  state.questions = buildRound();
-  state.playing = true;
-  state.paused = false;
-  state.locked = false;
-  el.pausedOv.classList.remove('on');
-  el.teachBar.classList.toggle('on', state.mode === 'teacher');
-  show('play');
+function nextBlank(){
+  if(answered || paused || !selId) return;
+  var idx = blanks.findIndex(function(x){ return x.id === selId; });
+  selectBlank(blanks[(idx + 1) % blanks.length].id);
+}
+
+function buildKeypad(){
+  var keys = $('keys');
+  keys.innerHTML = '';
+  [1,2,3,4,5,6,7,8,9].forEach(function(n){
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'key';
+    btn.textContent = String(n);
+    btn.addEventListener('click', function(){ typeDigit(n); });
+    keys.appendChild(btn);
+  });
+  var zero = document.createElement('button');
+  zero.type = 'button';
+  zero.className = 'key zero';
+  zero.textContent = '0';
+  zero.addEventListener('click', function(){ typeDigit(0); });
+  keys.appendChild(zero);
+
+  var del = document.createElement('button');
+  del.type = 'button';
+  del.className = 'key util del';
+  del.textContent = '⌫';
+  del.addEventListener('click', deleteDigit);
+  keys.appendChild(del);
+
+  var nxt = document.createElement('button');
+  nxt.type = 'button';
+  nxt.className = 'key util next';
+  nxt.textContent = '下一格';
+  nxt.addEventListener('click', nextBlank);
+  keys.appendChild(nxt);
+}
+
+function checkAnswer(){
+  if(answered || paused) return;
+  var empty = blanks.some(function(b){ return b.value === ''; });
+  if(empty){
+    $('feedback').className = 'feedback hint';
+    $('feedback').textContent = '仲有窿窿未填呀！';
+    beep(200, 0.1, 'square', 0.05);
+    return;
+  }
+  var allOk = true;
+  blanks.forEach(function(b){
+    if(b.value === b.answer){
+      b.el.classList.add('ok');
+      b.el.classList.remove('bad','sel');
+    } else {
+      allOk = false;
+      b.el.classList.add('bad');
+      b.el.classList.remove('sel');
+    }
+  });
+  if(allOk){
+    answered = true;
+    score += 10 + (hard ? 5 : 0);
+    $('scorePill').textContent = '⭐ ' + score;
+    $('feedback').className = 'feedback ok';
+    $('feedback').textContent = '全部啱！👏 ' + cur.dividend + ' ÷ ' + cur.divisor + ' = ' + cur.quotient;
+    beep(523, 0.1); setTimeout(function(){ beep(659, 0.1); }, 100); setTimeout(function(){ beep(784, 0.15); }, 200);
+    $('keypadWrap').style.display = 'none';
+    $('nextRow').classList.add('on');
+    if(mode === 'teacher') $('teachBar').classList.add('on');
+    try{ $('feedback').scrollIntoView({block:'nearest'}); }catch(e){}
+  } else {
+    hearts--;
+    updateHearts();
+    $('feedback').className = 'feedback bad';
+    $('feedback').textContent = '有啲錯咗（紅色），改完再撳檢查';
+    beep(180, 0.2, 'sawtooth', 0.07);
+    // allow retry — clear bad mark styling after a moment but keep values
+    setTimeout(function(){
+      blanks.forEach(function(b){
+        if(b.value !== b.answer) b.el.classList.remove('bad');
+      });
+    }, 800);
+    if(hearts <= 0){
+      setTimeout(endGame, 700);
+    }
+  }
+}
+
+function revealAnswers(){
+  blanks.forEach(function(b){
+    b.value = b.answer;
+    b.el.textContent = b.answer;
+    b.el.classList.add('reveal','filled');
+    b.el.classList.remove('bad','sel','ok');
+  });
+  $('feedback').className = 'feedback hint';
+  $('feedback').textContent = '答案：' + cur.dividend + ' ÷ ' + cur.divisor + ' = ' + cur.quotient;
+  answered = true;
+  $('keypadWrap').style.display = 'none';
+  $('nextRow').classList.add('on');
+}
+
+function updateHearts(){
+  var s = '';
+  for(var i=0;i<3;i++) s += i < hearts ? '❤️' : '🖤';
+  $('hearts').textContent = s;
+}
+
+function nextQuestion(){
+  qIndex++;
+  if(qIndex >= TOTAL_Q || hearts <= 0){
+    endGame();
+    return;
+  }
   loadQuestion();
 }
 
 function loadQuestion(){
-  if(state.qIndex >= state.questions.length || state.lives <= 0){
-    finish();
-    return;
-  }
-  state.current = state.questions[state.qIndex];
-  state.locked = false;
-  setFeedback('', '');
-  el.explainBox.classList.remove('on');
-  el.nextRow.classList.remove('on');
-  updateHUD();
-  renderQuestion();
-}
-
-function renderQuestion(){
-  var q = state.current;
-  el.problemEq.textContent = q.eq;
-  el.problemHint.textContent = '有人咁樣計——邊一步出錯？';
-  el.steps.innerHTML = '';
-  q.steps.forEach(function(text, i){
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'stepCard';
-    btn.setAttribute('data-i', String(i));
-    btn.innerHTML = '<div class="stepNum">' + (i+1) + '</div><div class="stepBody">' + text + '</div>';
-    btn.addEventListener('click', function(){ onPick(i); });
-    el.steps.appendChild(btn);
-  });
-}
-
-function showExplain(){
-  var q = state.current;
-  el.explainTitle.textContent = '為什麼錯？';
-  el.explainText.textContent = q.explain;
-  el.correctWay.textContent = q.correct;
-  el.explainBox.classList.add('on');
-  el.nextRow.classList.add('on');
-}
-
-function highlightResult(picked, ok){
-  var cards = el.steps.querySelectorAll('.stepCard');
-  var q = state.current;
-  cards.forEach(function(card, i){
-    card.classList.remove('sel','wrongPick','rightPick','dim');
-    if(i === q.wrongIndex) card.classList.add('rightPick');
-    else if(i === picked && !ok) card.classList.add('wrongPick');
-    else card.classList.add('dim');
-  });
-}
-
-function onPick(i){
-  if(!state.playing || state.paused || state.locked) return;
-  state.locked = true;
-  var q = state.current;
-  var ok = (i === q.wrongIndex);
-  highlightResult(i, ok);
-  if(ok){
-    state.correct++;
-    state.score += state.hard ? 15 : 10;
-    setFeedback('搵中！就係呢一步 🎉', 'ok');
-    sfxGood();
-    updateHUD();
+  answered = false;
+  paused = false;
+  $('pausedOverlay').classList.remove('on');
+  $('nextRow').classList.remove('on');
+  $('keypadWrap').style.display = '';
+  $('keypadWrap').style.opacity = '1';
+  $('keypadWrap').style.pointerEvents = 'auto';
+  $('qPill').textContent = '第 ' + (qIndex+1) + '／' + TOTAL_Q + ' 題';
+  $('feedback').className = 'feedback hint';
+  $('feedback').textContent = '撳藍色窿窿，再用九宮格打數字';
+  cur = pickProblem(hard);
+  // Avoid too few blanks
+  var tries = 0;
+  while(Object.keys(cur.blankSet).length < 2 && tries < 8){ cur = pickProblem(hard); tries++; }
+  renderProblem(cur);
+  if(mode === 'teacher'){
+    $('teachBar').classList.add('on');
   } else {
-    state.wrongs++;
-    state.lives--;
-    setFeedback('唔係呢步——正確係第 ' + (q.wrongIndex+1) + ' 步', 'bad');
-    sfxBad();
-    updateHUD();
-  }
-  showExplain();
-  if(state.lives <= 0){
-    setTimeout(finish, 2200);
+    $('teachBar').classList.remove('on');
   }
 }
 
-function revealAnswer(){
-  if(!state.playing || !state.current || state.locked) {
-    // still allow reveal highlight if already locked
-  }
-  state.locked = true;
-  var q = state.current;
-  highlightResult(q.wrongIndex, true);
-  setFeedback('錯在第 ' + (q.wrongIndex+1) + ' 步（課堂討論）', 'hint');
-  showExplain();
-}
-
-function goNext(){
-  if(!state.playing) return;
-  if(state.lives <= 0){ finish(); return; }
-  state.qIndex++;
-  loadQuestion();
-}
-
-function finish(){
-  state.playing = false;
-  var stars = 1;
-  if(state.correct >= 8 && state.lives >= 2) stars = 3;
-  else if(state.correct >= 5 || state.lives >= 1) stars = 2;
-  var starStr = '';
-  for(var i=0;i<3;i++) starStr += i < stars ? '⭐' : '☆';
-  el.endStars.textContent = starStr;
-  el.endTitle.textContent = stars === 3 ? '火眼金睛！' : (stars === 2 ? '做得好！' : '繼續加油！');
-  el.endScore.textContent = '得分：' + state.score;
-  el.endDetail.textContent = '搵中 ' + state.correct + ' 題 · 答錯 ' + state.wrongs + ' 題 · 剩餘 ' + state.lives + ' 心';
-  sfxStar();
+function endGame(){
   show('end');
+  var stars = hearts >= 3 ? '⭐⭐⭐' : hearts === 2 ? '⭐⭐' : hearts === 1 ? '⭐' : '💫';
+  $('endStars').textContent = stars;
+  $('endTitle').textContent = hearts > 0 ? '完成！' : '再試過啦！';
+  $('endScore').textContent = '得分 ' + score;
+  $('endDetail').textContent = '答中 ' + Math.floor(score / (hard ? 15 : 10)) + ' 題 · 剩餘 ' + hearts + ' 心';
 }
 
-function goHome(){
-  state.playing = false;
-  state.paused = false;
-  el.pausedOv.classList.remove('on');
-  show('start');
-}
-
-function togglePause(){
-  if(!state.playing) return;
-  state.paused = !state.paused;
-  el.pausedOv.classList.toggle('on', state.paused);
-}
-
-document.querySelectorAll('.mode').forEach(function(btn){
-  btn.addEventListener('click', function(){
-    document.querySelectorAll('.mode').forEach(function(b){ b.classList.remove('sel'); });
-    btn.classList.add('sel');
-    state.mode = btn.getAttribute('data-mode');
-  });
-});
-document.getElementById('chkSound').addEventListener('change', function(){ state.sound = this.checked; });
-document.getElementById('chkHard').addEventListener('change', function(){ state.hard = this.checked; });
-document.getElementById('btnStart').addEventListener('click', function(){
-  state.sound = document.getElementById('chkSound').checked;
-  state.hard = document.getElementById('chkHard').checked;
-  ensureAudio();
+function startGame(){
+  soundOn = $('togSound').checked;
+  hard = $('togHard').checked;
+  hearts = 3; score = 0; qIndex = 0;
+  updateHearts();
+  $('scorePill').textContent = '⭐ 0';
+  $('modeTag').textContent = mode === 'teacher' ? '老師' : '學生';
   show('tip');
-});
-document.getElementById('btnTipGo').addEventListener('click', startRound);
-document.getElementById('btnHome').addEventListener('click', goHome);
-document.getElementById('btnPause').addEventListener('click', togglePause);
-document.getElementById('btnResume').addEventListener('click', function(){ state.paused=false; el.pausedOv.classList.remove('on'); });
-document.getElementById('btnReveal').addEventListener('click', revealAnswer);
-document.getElementById('btnNextTeach').addEventListener('click', goNext);
-document.getElementById('btnNext').addEventListener('click', goNext);
-document.getElementById('btnAgain').addEventListener('click', function(){ show('tip'); });
-document.getElementById('btnMenu').addEventListener('click', goHome);
+}
 
+// Mode buttons
+$('modeStudent').addEventListener('click', function(){
+  mode = 'student';
+  $('modeStudent').classList.add('sel');
+  $('modeTeacher').classList.remove('sel');
+});
+$('modeTeacher').addEventListener('click', function(){
+  mode = 'teacher';
+  $('modeTeacher').classList.add('sel');
+  $('modeStudent').classList.remove('sel');
+});
+
+$('btnStart').addEventListener('click', startGame);
+$('btnTipGo').addEventListener('click', function(){
+  show('play');
+  buildKeypad();
+  loadQuestion();
+});
+$('btnCheck').addEventListener('click', checkAnswer);
+$('btnNext').addEventListener('click', nextQuestion);
+$('btnTeachNext').addEventListener('click', nextQuestion);
+$('btnReveal').addEventListener('click', function(){
+  if(!answered) revealAnswers();
+});
+$('btnHome').addEventListener('click', function(){ show('start'); });
+$('btnPause').addEventListener('click', function(){
+  if(answered) return;
+  paused = true;
+  $('pausedOverlay').classList.add('on');
+});
+$('btnResume').addEventListener('click', function(){
+  paused = false;
+  $('pausedOverlay').classList.remove('on');
+});
+$('btnAgain').addEventListener('click', startGame);
+$('btnMenu').addEventListener('click', function(){ show('start'); });
+
+// Prevent system keyboard / focus issues
+document.addEventListener('focusin', function(e){
+  if(e.target && e.target.tagName === 'INPUT' && e.target.type !== 'checkbox'){
+    e.target.blur();
+  }
+});
 })();
 </script>
 </body>
