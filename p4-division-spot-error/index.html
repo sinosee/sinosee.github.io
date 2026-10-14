@@ -95,7 +95,36 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 .feedback{min-height:1.4em;font-size:clamp(16px,2.6vmin,26px);font-weight:900;text-align:center;width:min(94vw,420px)}
 .feedback.ok{color:var(--green)}.feedback.bad{color:var(--red)}.feedback.hint{color:#5a5a6e}
 
-.keypadWrap{flex:none;width:100%;max-width:380px;margin:0 auto;padding:0 10px 6px;display:flex;flex-direction:column;gap:8px}
+.keypadWrap{
+  position:fixed;left:0;right:0;bottom:0;z-index:12;
+  display:none;justify-content:center;
+  padding:0 12px calc(8px + env(safe-area-inset-bottom));
+  pointer-events:none;
+}
+.keypadWrap.on{display:flex}
+.keypadPanel{
+  pointer-events:auto;
+  width:min(420px,96vw);
+  max-height:min(62vh,520px);
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  background:#fff;
+  border-radius:24px;
+  border:4px solid #d6ebff;
+  box-shadow:0 14px 40px rgba(30,50,80,.28), 0 6px 0 #7eb0d0;
+  padding:10px 12px 12px;
+  margin-bottom:6px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.keypadHead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.keypadTitle{font-size:clamp(16px,2.6vmin,24px);font-weight:900;color:#1e56b5}
+.keypadHint{margin:0;font-size:clamp(13px,2vmin,18px);font-weight:700;color:#5a6a7a;line-height:1.35}
+.keypadClose{
+  flex:none;min-height:48px;min-width:84px;padding:0 16px;border-radius:14px;
+  background:#eef2f6;box-shadow:0 3px 0 #c5d0dc;
+  font-size:clamp(16px,2.6vmin,22px);font-weight:900;color:#3a4a5a;
+}
+.keypadClose:active{transform:translateY(3px);box-shadow:0 0 0 #c5d0dc}
 .keys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .key{min-height:clamp(48px,9vmin,64px);border-radius:16px;background:#fff;box-shadow:0 4px 0 #a8c8e0;
   font-size:clamp(24px,4.5vmin,36px);font-weight:900;color:#2a2a3a}
@@ -107,9 +136,9 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 .actionRow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 .actionRow .bigbtn{min-width:0;flex:1 1 140px;min-height:clamp(52px,8vmin,72px);font-size:clamp(20px,3.5vmin,32px);letter-spacing:1px}
 
-.nextRow{display:none;justify-content:center;padding:2px 0 6px}
+.nextRow{display:none;justify-content:center;padding:2px 0 6px;position:relative;z-index:14}
 .nextRow.on{display:flex}
-.teachBar{flex:none;display:none;justify-content:center;gap:12px;padding:4px 10px 10px;flex-wrap:wrap}
+.teachBar{flex:none;display:none;justify-content:center;gap:12px;padding:4px 10px 10px;flex-wrap:wrap;position:relative;z-index:14;background:linear-gradient(180deg,rgba(255,232,240,0),#ffe8f0 30%)}
 .teachBar.on{display:flex}
 .tbtn{min-height:52px;padding:0 20px;border-radius:16px;background:#fff;box-shadow:0 4px 0 #a8c8e0;font-size:clamp(16px,2.6vmin,24px);font-weight:800}
 .pausedOverlay{position:absolute;inset:0;background:rgba(30,50,80,.55);z-index:15;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px}
@@ -135,7 +164,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 <div id="start" class="screen on">
   <div class="startInner">
     <h1 class="title"><span class="emoji">✏️</span>除法直式填空<span class="emoji">🔢</span></h1>
-    <p class="sub">直式留咗幾個藍色窿窿，用下面九宮格打數字填上去！</p>
+    <p class="sub">直式留咗幾個藍色窿窿。先撳窿窿，先出九宮格！</p>
 
     <div class="modes">
       <button type="button" class="mode sel" data-mode="student" id="modeStudent">
@@ -152,7 +181,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 
     <div class="infoCard">
       <strong>點樣玩：</strong><br>
-      ① 撳藍色窿窿　② 用下面九宮格打數字　③ 全部填完撳「檢查」<br>
+      ① 先撳窿窿，先出九宮格　② 打數字　③ 全部填完撳「檢查」<br>
       每局約 10 題 · 3 顆心 · 全部整除（無餘數）
     </div>
 
@@ -172,11 +201,11 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
     <h2 class="tipTitle">點樣填？</h2>
     <p class="tipBody">畫面有一條<strong>除法直式</strong>，有啲位係藍色窿窿。</p>
     <div class="tipRule">
-      ① 撳藍色窿窿（會變黃）<br>
-      ② 用下面<strong>九宮格</strong>打數字<br>
+      ① 先撳藍色窿窿（會變黃），先出九宮格<br>
+      ② 用<strong>九宮格</strong>打數字<br>
       ③ 全部填完 → 撳「檢查」
     </div>
-    <p class="tipHow">填錯唔緊要，可以改；心用完就結束。</p>
+    <p class="tipHow">想睇清楚直式，撳「收起」或者撳九宮格外面。填錯可以改；心用完就結束。</p>
     <button type="button" class="bigbtn green" id="btnTipGo">明白，開始！</button>
   </div>
 </div>
@@ -193,17 +222,26 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
   </div>
   <div id="playWrap">
     <div class="playMain">
-      <div class="prompt" id="prompt">填入藍色窿窿嘅數字</div>
+      <div class="prompt" id="prompt">先撳藍色窿窿，先出九宮格</div>
       <div class="eqLine" id="eqLine"></div>
       <div class="board">
         <div class="ld" id="ld"></div>
       </div>
-      <div class="feedback hint" id="feedback">撳窿窿，再用九宮格打數字</div>
+      <div class="feedback hint" id="feedback">先撳窿窿，先出九宮格</div>
     </div>
-    <div class="keypadWrap" id="keypadWrap">
-      <div class="keys" id="keys"></div>
-      <div class="actionRow">
-        <button type="button" class="bigbtn blue" id="btnCheck">檢查</button>
+    <div class="keypadWrap" id="keypadWrap" aria-hidden="true">
+      <div class="keypadPanel" role="dialog" aria-label="九宮格">
+        <div class="keypadHead">
+          <div>
+            <div class="keypadTitle">九宮格</div>
+            <p class="keypadHint">撳「收起」或畫面其他地方，可以收起</p>
+          </div>
+          <button type="button" class="keypadClose" id="btnCloseKeypad">收起</button>
+        </div>
+        <div class="keys" id="keys"></div>
+        <div class="actionRow">
+          <button type="button" class="bigbtn blue" id="btnCheck">檢查</button>
+        </div>
       </div>
     </div>
     <div class="nextRow" id="nextRow">
@@ -445,7 +483,8 @@ function renderProblem(prob){
       b.dataset.id = key;
       b.dataset.answer = String(prob.blankSet[key]);
       b.textContent = '';
-      b.setAttribute('aria-label', '填空');
+      b.setAttribute('aria-label', '藍色填空，撳咗先出九宮格');
+      b.setAttribute('aria-pressed', 'false');
       b.addEventListener('click', function(){ if(!answered && !paused) selectBlank(key); });
       el.appendChild(b);
       blanks.push({id: key, answer: String(prob.blankSet[key]), el: b, value: ''});
@@ -564,8 +603,6 @@ function renderProblem(prob){
   });
 
   $('eqLine').textContent = ld.nStr + ' ÷ ' + ld.d + ' = ？';
-  // Select first blank
-  if(blanks.length) selectBlank(blanks[0].id);
 }
 
 function findBlank(id){
@@ -573,11 +610,72 @@ function findBlank(id){
   return null;
 }
 
+function placeKeypad(){
+  var wrap = $('keypadWrap');
+  var main = document.querySelector('#play .playMain');
+  if(!wrap.classList.contains('on')){
+    wrap.style.bottom = '';
+    if(main) main.style.paddingBottom = '';
+    return;
+  }
+  var teach = $('teachBar');
+  var lift = teach.classList.contains('on') ? teach.offsetHeight : 0;
+  wrap.style.bottom = lift + 'px';
+  var panel = wrap.querySelector('.keypadPanel');
+  if(main && panel) main.style.paddingBottom = (panel.offsetHeight + 18) + 'px';
+}
+
+function keepBlankVisible(){
+  var b = findBlank(selId);
+  var main = document.querySelector('#play .playMain');
+  var panel = document.querySelector('#keypadWrap.on .keypadPanel');
+  if(!b || !b.el || !main || !panel) return;
+  var blankRect = b.el.getBoundingClientRect();
+  var panelTop = panel.getBoundingClientRect().top;
+  var overlap = blankRect.bottom - (panelTop - 16);
+  if(overlap > 0) main.scrollTop += overlap;
+}
+
+function showKeypad(){
+  if(answered || paused) return;
+  var wrap = $('keypadWrap');
+  wrap.classList.add('on');
+  wrap.setAttribute('aria-hidden', 'false');
+  placeKeypad();
+  var fb = $('feedback');
+  if(fb.textContent.indexOf('先撳窿窿') !== -1){
+    fb.className = 'feedback hint';
+    fb.textContent = '打數字，填完撳「檢查」。撳「收起」可收起九宮格';
+  }
+  requestAnimationFrame(function(){
+    placeKeypad();
+    keepBlankVisible();
+  });
+}
+
+function hideKeypad(){
+  var wrap = $('keypadWrap');
+  wrap.classList.remove('on');
+  wrap.setAttribute('aria-hidden', 'true');
+  wrap.style.bottom = '';
+  var main = document.querySelector('#play .playMain');
+  if(main) main.style.paddingBottom = '';
+  selId = null;
+  blanks.forEach(function(b){
+    b.el.classList.remove('sel');
+    b.el.setAttribute('aria-pressed', 'false');
+  });
+}
+
 function selectBlank(id){
+  if(answered || paused) return;
   selId = id;
   blanks.forEach(function(b){
-    b.el.classList.toggle('sel', b.id === id && !answered);
+    var on = b.id === id;
+    b.el.classList.toggle('sel', on);
+    b.el.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
+  showKeypad();
 }
 
 function typeDigit(dig){
@@ -679,7 +777,7 @@ function checkAnswer(){
     $('feedback').className = 'feedback ok';
     $('feedback').textContent = '全部啱！👏 ' + cur.dividend + ' ÷ ' + cur.divisor + ' = ' + cur.quotient;
     beep(523, 0.1); setTimeout(function(){ beep(659, 0.1); }, 100); setTimeout(function(){ beep(784, 0.15); }, 200);
-    $('keypadWrap').style.display = 'none';
+    hideKeypad();
     $('nextRow').classList.add('on');
     if(mode === 'teacher') $('teachBar').classList.add('on');
     try{ $('feedback').scrollIntoView({block:'nearest'}); }catch(e){}
@@ -691,8 +789,10 @@ function checkAnswer(){
     beep(180, 0.2, 'sawtooth', 0.07);
     // allow retry — clear bad mark styling after a moment but keep values
     setTimeout(function(){
+      if(answered) return;
       blanks.forEach(function(b){
         if(b.value !== b.answer) b.el.classList.remove('bad');
+        if(b.id === selId && $('keypadWrap').classList.contains('on')) b.el.classList.add('sel');
       });
     }, 800);
     if(hearts <= 0){
@@ -711,7 +811,7 @@ function revealAnswers(){
   $('feedback').className = 'feedback hint';
   $('feedback').textContent = '答案：' + cur.dividend + ' ÷ ' + cur.divisor + ' = ' + cur.quotient;
   answered = true;
-  $('keypadWrap').style.display = 'none';
+  hideKeypad();
   $('nextRow').classList.add('on');
 }
 
@@ -735,12 +835,10 @@ function loadQuestion(){
   paused = false;
   $('pausedOverlay').classList.remove('on');
   $('nextRow').classList.remove('on');
-  $('keypadWrap').style.display = '';
-  $('keypadWrap').style.opacity = '1';
-  $('keypadWrap').style.pointerEvents = 'auto';
+  hideKeypad();
   $('qPill').textContent = '第 ' + (qIndex+1) + '／' + TOTAL_Q + ' 題';
   $('feedback').className = 'feedback hint';
-  $('feedback').textContent = '撳藍色窿窿，再用九宮格打數字';
+  $('feedback').textContent = '先撳窿窿，先出九宮格';
   cur = pickProblem(hard);
   // Avoid too few blanks
   var tries = 0;
@@ -791,6 +889,16 @@ $('btnTipGo').addEventListener('click', function(){
   loadQuestion();
 });
 $('btnCheck').addEventListener('click', checkAnswer);
+$('btnCloseKeypad').addEventListener('click', hideKeypad);
+$('play').addEventListener('click', function(e){
+  var wrap = $('keypadWrap');
+  if(!wrap.classList.contains('on')) return;
+  if(e.target.closest && (e.target.closest('#keypadWrap') || e.target.closest('.blank'))) return;
+  hideKeypad();
+});
+window.addEventListener('resize', function(){
+  if($('keypadWrap').classList.contains('on')) placeKeypad();
+});
 $('btnNext').addEventListener('click', nextQuestion);
 $('btnTeachNext').addEventListener('click', nextQuestion);
 $('btnReveal').addEventListener('click', function(){
