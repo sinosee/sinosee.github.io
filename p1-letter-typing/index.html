@@ -518,19 +518,26 @@ window.addEventListener("error", function(ev){
    由舊 100 關抽薄：每種技巧都仲會見到，同一種少練幾關。
    --------------------------------------------------------
    第 1–10 關   小楷入門（全鍵提示）：abc…yz、易混字母、a–z
-   第 11–16 關  大楷字母：要先撳 Shift（⇧），唔亮字母鍵
-   第 17–20 關  大細楷混合字母
-   第 21–28 關  詞語：三字母，然後四字母
-   第 29–30 關  開頭大楷嘅詞
-   第 31–35 關  詞組（第 31 關第一次空格，淨係亮空格鍵）
-   第 36–45 關  短句入門（全鍵提示；對應舊第 71–80 關）
-   第 46–50 關  短文（兩句）。第 48 關第一次數字 1，第 49 關數字 2
+   第 11 關     大楷入門：同小楷一樣亮所需字母鍵，未開大楷時一齊亮 ⇧
+   第 12–16 關  大楷字母：要先撳 Shift（⇧），唔亮鍵
+   第 17–20 關  大細楷混合字母，唔亮鍵
+   第 21–28 關  詞語：三字母，然後四字母，唔亮鍵
+   第 29 關     開頭大楷嘅詞：全鍵提示（大楷連 ⇧）
+   第 30 關     開頭大楷嘅詞，唔亮鍵
+   第 31 關     詞組，第一次空格：只亮空格鍵
+   第 32–33 關  詞組，唔亮鍵
+   第 34 關     詞組（有大楷）：全鍵提示，同小楷入門一樣
+   第 35 關     詞組，唔亮鍵
+   第 36 關     短句入門：只亮標點（先 123，再句號）
+   第 37–40 關  短句，唔亮鍵
+   第 41–50 關  短句同短文：完全唔亮鍵（包括第 48–49 關嘅數字）
 
-   全鍵提示（字母 + 需要時 ⇧、空格、標點／數字同 123）：
-   第 1–10 關小楷入門；第 36–45 關短句入門（對應舊第 71–80 關）。
-   其餘關唔亮字母鍵。空格、標點、數字第一次出現嗰關
-   （第 31 關空格、第 36 關句號、第 48 關數字 1、第 49 關數字 2）
-   仍然亮嗰粒新鍵；如果鍵喺 123 層，會先提示 123。
+   亮鍵規則：
+   第 1–10 關小楷入門全鍵提示。第 11、29、34 關同樣亮而家要撳嘅鍵
+   （大楷未開時連黃色 ⇧）。第 31 關只亮空格。第 36 關只亮標點：
+   字母鍵盤亮 123，去到數字鍵盤先亮句號。第 41–50 關永遠唔亮鍵。
+   其餘關唔亮字母鍵；空格、標點、數字若第一次出現喺第 41 關之前，
+   仍然只亮嗰粒新鍵（鍵喺 123 層就先提示 123）。
 
    星星（做完先計；中途離開唔改寫；同一頁內留最好嗰次）
    ★★★  0 次打錯
@@ -621,7 +628,8 @@ function specSource(spec){
 }
 
 /* 每個非字母字元第一次出現嘅關卡。
-   全鍵提示以外（即唔係第 1–10 或第 36–45 關），只喺呢一關提示該鍵。 */
+   全鍵提示（第 1–10、11、29、34 關）同第 41–50 關（完全唔亮鍵）以外，
+   只喺呢一關提示該鍵。第 31 關空格、第 36 關標點另有指定規則。 */
 var FIRST_SPECIAL = {};
 SPECS.forEach(function(spec, index){
   var blob = specSource(spec);
@@ -694,10 +702,15 @@ function phaseOf(id){
   return {key:"para", label:"短文", emoji:"📖"};
 }
 
-/* 全鍵提示關卡（字母、空格、標點／數字，需要時連 ⇧ 同 123）：
-   第 1–10 關小楷入門；第 36–45 關短句入門（對應舊課程第 71–80 關）。 */
+/* 全鍵提示：而家要打嘅字係邊粒就亮邊粒（大楷未開時連 ⇧）。
+   第 1–10 關小楷入門，同第 11、29、34 關大楷。 */
 function hasFullHints(id){
-  return (id >= 1 && id <= 10) || (id >= 36 && id <= 45);
+  return (id >= 1 && id <= 10) || id === 11 || id === 29 || id === 34;
+}
+
+/* 第 41–50 關覆蓋一切亮鍵，包括短句全鍵提示同第一次出現嘅數字。 */
+function hintsOff(id){
+  return id >= 41 && id <= 50;
 }
 
 function flagsFromSpec(spec){
@@ -858,8 +871,11 @@ function findFirstSpecials(){
 var firstSpecial = findFirstSpecials();
 
 function highlightKind(levelId, ch){
+  if(hintsOff(levelId)) return "none";
   if(hasFullHints(levelId)) return "full";
   if(!ch) return "none";
+  if(levelId === 31 && ch === " ") return "special";
+  if(levelId === 36 && isPunctChar(ch)) return "special";
   if(ch === " " && levelId === firstSpecial.space) return "special";
   if(/^[0-9]$/.test(ch) && firstSpecial.digit[ch] === levelId) return "special";
   if(isPunctChar(ch) && firstSpecial.punct[ch] === levelId) return "special";
@@ -917,29 +933,47 @@ function selfCheck(){
   if(Object.keys(firstSpecial.digit).join("") !== "12") issues.push("數字種類");
   if(calcStars(0) !== 3 || calcStars(1) !== 2 || calcStars(2) !== 2 || calcStars(3) !== 1) issues.push("星星");
   if(highlightKind(1, "a") !== "full" || highlightKind(10, "z") !== "full") issues.push("1–10提示");
-  if(highlightKind(11, "A") !== "none" || highlightKind(20, "b") !== "none") issues.push("11–20唔提示");
+  if(highlightKind(11, "A") !== "full") issues.push("第11關提示");
+  if(highlightKind(12, "F") !== "none" || highlightKind(20, "b") !== "none") issues.push("12–20唔提示");
+  if(highlightKind(29, "C") !== "full" || highlightKind(29, "a") !== "full") issues.push("第29關提示");
+  if(highlightKind(30, "S") !== "none" || highlightKind(30, "u") !== "none") issues.push("第30關提示");
   if(highlightKind(31, " ") !== "special" || highlightKind(31, "a") !== "none") issues.push("第31關提示");
   if(highlightKind(32, " ") !== "none") issues.push("第32關空格");
-  if(highlightKind(36, ".") !== "full" || highlightKind(45, "a") !== "full") issues.push("短句提示");
+  if(highlightKind(34, "I") !== "full" || highlightKind(34, " ") !== "full" || highlightKind(34, "a") !== "full") issues.push("第34關提示");
+  if(highlightKind(35, "I") !== "none" || highlightKind(35, " ") !== "none") issues.push("第35關提示");
+  if(highlightKind(36, ".") !== "special" || highlightKind(36, "I") !== "none" || highlightKind(36, " ") !== "none" || highlightKind(36, "a") !== "none") issues.push("第36關提示");
+  if(highlightKind(37, ".") !== "none" || highlightKind(37, " ") !== "none" || highlightKind(40, "a") !== "none") issues.push("37–40唔提示");
+  if(highlightKind(41, "I") !== "none" || highlightKind(45, "a") !== "none" || highlightKind(45, ".") !== "none" || highlightKind(45, " ") !== "none") issues.push("41–45唔提示");
   if(highlightKind(46, ".") !== "none" || highlightKind(46, " ") !== "none") issues.push("第46關");
-  if(highlightKind(48, "1") !== "special" || highlightKind(48, " ") !== "none" || highlightKind(48, ".") !== "none") issues.push("第48關");
-  if(highlightKind(49, "2") !== "special" || highlightKind(49, "1") !== "none") issues.push("第49關");
-  if(highlightKind(50, "a") !== "none") issues.push("第50關提示");
+  if(highlightKind(48, "1") !== "none" || highlightKind(48, " ") !== "none" || highlightKind(48, ".") !== "none") issues.push("第48關");
+  if(highlightKind(49, "2") !== "none" || highlightKind(49, "1") !== "none") issues.push("第49關");
+  if(highlightKind(50, "a") !== "none" || highlightKind(50, ".") !== "none" || highlightKind(50, " ") !== "none") issues.push("第50關提示");
   var k1 = hotKeysFor(1, "b", "letters", 0);
   if(!k1.b || k1.shift) issues.push("第1關亮鍵");
   var k11 = hotKeysFor(11, "A", "letters", 0);
-  if(k11.a || k11.shift) issues.push("第11關亮鍵");
+  if(!k11.a || !k11.shift) issues.push("第11關亮鍵");
+  if(hotKeysFor(11, "A", "letters", 1).shift || !hotKeysFor(11, "A", "letters", 1).a) issues.push("第11關已開大楷");
+  var k29 = hotKeysFor(29, "C", "letters", 0);
+  if(!k29.c || !k29.shift) issues.push("第29關亮鍵");
+  if(!hotKeysFor(29, "a", "letters", 0).a || hotKeysFor(29, "a", "letters", 0).shift) issues.push("第29關小楷");
   var k31 = hotKeysFor(31, " ", "letters", 0);
   if(!k31.space || hotKeysFor(31, "a", "letters", 0).a) issues.push("第31關亮鍵");
+  var k34 = hotKeysFor(34, "I", "letters", 0);
+  if(!k34.i || !k34.shift) issues.push("第34關亮鍵");
+  if(!hotKeysFor(34, " ", "letters", 0).space || !hotKeysFor(34, "a", "letters", 0).a) issues.push("第34關其餘鍵");
   var k36 = hotKeysFor(36, "I", "letters", 0);
-  if(!k36.i || !k36.shift) issues.push("第36關字母");
+  if(k36.i || k36.shift) issues.push("第36關字母");
+  if(hotKeysFor(36, " ", "letters", 0).space) issues.push("第36關空格");
   if(!hotKeysFor(36, ".", "letters", 0).num) issues.push("第36關123");
   if(!hotKeysFor(36, ".", "numbers", 0)["."]) issues.push("第36關句號鍵");
-  if(!hotKeysFor(36, " ", "letters", 0).space) issues.push("第36關空格");
+  if(hotKeysFor(36, ".", "symbols", 0)["."] || !hotKeysFor(36, ".", "symbols", 0).num) issues.push("第36關符號層");
+  if(hotKeysFor(41, "I", "letters", 0).i || hotKeysFor(41, "I", "letters", 0).shift || hotKeysFor(41, " ", "letters", 0).space) issues.push("第41關亮鍵");
+  if(hotKeysFor(45, ".", "numbers", 0)["."] || hotKeysFor(45, " ", "letters", 0).space) issues.push("第45關亮鍵");
   if(hotKeysFor(46, ".", "numbers", 0)["."] || hotKeysFor(46, " ", "letters", 0).space) issues.push("第46關亮鍵");
-  if(!hotKeysFor(48, "1", "letters", 0).num || !hotKeysFor(48, "1", "numbers", 0)["1"]) issues.push("第48關亮鍵");
+  if(hotKeysFor(48, "1", "letters", 0).num || hotKeysFor(48, "1", "numbers", 0)["1"]) issues.push("第48關亮鍵");
   if(hotKeysFor(48, ".", "numbers", 0)["."] || hotKeysFor(48, "a", "letters", 0).a) issues.push("第48關多餘亮鍵");
-  if(!hotKeysFor(49, "2", "numbers", 0)["2"] || hotKeysFor(49, "2", "letters", 0)["2"]) issues.push("第49關亮鍵");
+  if(hotKeysFor(49, "2", "numbers", 0)["2"] || hotKeysFor(49, "2", "letters", 0)["2"]) issues.push("第49關亮鍵");
+  if(hotKeysFor(50, ".", "letters", 0).num || hotKeysFor(50, "a", "letters", 0).a) issues.push("第50關亮鍵");
   if(FIRST_SPECIAL[" "] !== 31) issues.push("空格介紹關 " + FIRST_SPECIAL[" "]);
   if(FIRST_SPECIAL["."] !== 36) issues.push("句號介紹關 " + FIRST_SPECIAL["."]);
   if(FIRST_SPECIAL["1"] !== 48) issues.push("數字1介紹關 " + FIRST_SPECIAL["1"]);
@@ -1182,9 +1216,10 @@ function levelHasNewSymbol(level){
 
 function levelHintLines(level){
   var lines = [];
-  var full = hasFullHints(level.id);
-  var teachSpace = full ? level.hasSpace : FIRST_SPECIAL[" "] === level.id;
-  var teachSymbol = full ? level.hasSymbol : levelHasNewSymbol(level);
+  var id = level.id;
+  var blocked = hintsOff(id);
+  var teachSpace = !blocked && FIRST_SPECIAL[" "] === id;
+  var teachSymbol = !blocked && levelHasNewSymbol(level);
   if(level.needsUpper){
     lines.push("要打大楷：先撳黃色 ⇧（向上），再撳字母。撳一下，下一個字母先係大楷；快啲撳兩下 ⇧，就可以鎖住大楷。");
   }
