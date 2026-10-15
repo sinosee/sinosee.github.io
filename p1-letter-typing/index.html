@@ -7,8 +7,8 @@
 <meta name="apple-mobile-web-app-title" content="字母打字">
 <meta name="format-detection" content="telephone=no">
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#e7f4ff">
-<meta name="description" content="小一英文字母打字練習：睇住大楷或小楷，點字母表或者用鍵盤打。">
+<meta name="theme-color" content="#ffe4f4">
+<meta name="description" content="小一英文字母打字：100 關，由小楷字母、大楷、詞語，玩到短文。每關最多三粒星。">
 <title>英文字母打字</title>
 <link rel="preload" href="andika-latin-700.woff2" as="font" type="font/woff2" crossorigin>
 <!-- Letterforms: Andika by SIL, Latin bold subset. License: OFL.txt -->
@@ -22,20 +22,15 @@
   unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
 }
 :root{
-  --ink:#243056;
-  --muted:#44506f;
-  --card:#fff;
-  --line:#ffe0b5;
-  --shadow:#efd3a6;
-  --blue:#1558c0;
-  --green:#148a45;
-  --green-d:#0d6431;
-  --coral:#e85d6a;
-  --teal:#0e8f8f;
-  --purple:#6d4aff;
-  --gold:#ffb703;
-  --ok:#157a3e;
-  --soft:#d2652a;
+  --ink:#5a2d78;
+  --muted:#7a568f;
+  --deep:#c43b86;
+  --gold:#f5a623;
+  --gold-d:#e08a00;
+  --empty:#eadcf2;
+  --shadow:#f3c3dc;
+  --ok:#1a9a52;
+  --soft:#e36a2c;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{-webkit-text-size-adjust:100%}
@@ -44,9 +39,11 @@ body{
   color:var(--ink);
   font-family:"PingFang HK","PingFang TC","Noto Sans CJK HK","Microsoft JhengHei","Heiti TC",sans-serif;
   background:
-    radial-gradient(circle at 0 0,#fff 0,transparent 28%),
-    radial-gradient(circle at 100% 0,#d7efff 0,transparent 32%),
-    linear-gradient(165deg,#e7f4ff 0%,#fff8ee 52%,#ffe8f2 100%);
+    radial-gradient(circle at 6% 8%,#ffe29a 0,transparent 26%),
+    radial-gradient(circle at 96% 0,#ffb3de 0,transparent 30%),
+    radial-gradient(circle at 90% 92%,#b8f3d8 0,transparent 28%),
+    radial-gradient(circle at 4% 96%,#c9dcff 0,transparent 26%),
+    linear-gradient(165deg,#fff0f8 0%,#e7f7ff 42%,#fff6d8 100%);
   -webkit-user-select:none;
   user-select:none;
   -webkit-touch-callout:none;
@@ -54,11 +51,10 @@ body{
 }
 button,a{font-family:inherit;touch-action:manipulation}
 button{cursor:pointer;border:none;color:inherit;background:none;padding:0}
-button:focus-visible,a:focus-visible{outline:4px solid var(--blue);outline-offset:3px}
-.letters{font-family:"Andika","Chalkboard SE","Comic Sans MS",Verdana,"Trebuchet MS",sans-serif;font-weight:700}
+button:focus-visible,a:focus-visible{outline:4px solid #4dabf7;outline-offset:3px}
+.letters{font-family:"Andika","Chalkboard SE","Comic Sans MS",Verdana,sans-serif;font-weight:700}
 .screen{
-  position:fixed;left:0;right:0;top:0;
-  height:100vh;height:100dvh;
+  position:fixed;inset:0;z-index:1;
   display:none;flex-direction:column;
   padding:
     env(safe-area-inset-top)
@@ -67,482 +63,930 @@ button:focus-visible,a:focus-visible{outline:4px solid var(--blue);outline-offse
     env(safe-area-inset-left);
 }
 .screen.on{display:flex}
+[hidden]{display:none!important}
 .sr-only{
   position:absolute;width:1px;height:1px;padding:0;margin:-1px;
   overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
 }
+#booterr{
+  position:relative;z-index:9;margin:0;padding:12px 16px;
+  background:#ffd6d6;color:#8d1428;font-weight:900;text-align:center;
+}
 
 /* ---------- home ---------- */
-#home{overflow-y:auto;-webkit-overflow-scrolling:touch}
-.homeInner{
-  width:min(920px,calc(100% - 28px));
-  margin:0 auto;
-  padding:22px 0 32px;
-  display:flex;flex-direction:column;align-items:center;
-  gap:clamp(12px,2.2vmin,20px);
+.homeTop{
+  flex:none;
+  width:min(1100px,calc(100% - 16px));
+  margin:8px auto 0;
+  padding:10px 12px 8px;
+  border-radius:28px;
+  background:
+    linear-gradient(#fff,#fff) padding-box,
+    linear-gradient(100deg,#ff8ec8,#ffd15c,#7ddeb3,#7ecbff,#c9b6ff) border-box;
+  border:4px solid transparent;
+  box-shadow:0 6px 0 #f3c3dc;
+}
+.brand{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.mascot{
+  width:54px;height:54px;border-radius:50%;
+  object-fit:cover;border:3px solid #ff8ec8;
+  box-shadow:0 3px 0 #ffc2de;background:#fff;
 }
 h1{
   margin:0;
-  font-size:clamp(34px,6vw,64px);
-  font-weight:900;
-  letter-spacing:.04em;
-  line-height:1.15;
+  font-size:clamp(28px,4.6vw,46px);
+  font-weight:900;letter-spacing:.04em;line-height:1.1;
   text-align:center;
 }
-.sub{margin:0;text-align:center;color:var(--muted);font-size:clamp(18px,3vw,28px);font-weight:800;line-height:1.4}
-.modes{width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.mode{
-  min-height:132px;
-  padding:14px 10px 16px;
-  border-radius:24px;
-  background:var(--card);
-  border:5px solid transparent;
-  box-shadow:0 6px 0 var(--shadow);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+.brandSub{
+  margin:2px 0 0;text-align:center;
+  font-size:clamp(16px,2.4vw,22px);font-weight:900;color:var(--deep);
 }
-.mode .sample{font-size:clamp(34px,5vw,56px);line-height:1;letter-spacing:.04em}
-.mode .mt{font-size:clamp(22px,3vw,32px);font-weight:900}
-.mode .md{font-size:clamp(14px,2vw,18px);font-weight:700;color:var(--muted);line-height:1.3}
-.mode[data-mode="upper"].sel{border-color:var(--coral);background:#fff6f6}
-.mode[data-mode="lower"].sel{border-color:var(--teal);background:#f3fffd}
-.mode[data-mode="mixed"].sel{border-color:var(--purple);background:#f7f4ff}
-.sec{width:100%;display:flex;flex-direction:column;align-items:center;gap:8px}
-.seclabel{font-size:clamp(16px,2.4vw,22px);font-weight:800;color:var(--muted)}
-.segs{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-.seg{
-  min-width:128px;min-height:58px;padding:0 16px;
-  border-radius:16px;background:#fff;border:4px solid transparent;
-  box-shadow:0 4px 0 var(--shadow);
-  font-size:clamp(18px,2.6vw,24px);font-weight:900;
+.statRow{
+  margin-top:6px;
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;
 }
-.seg.sel{border-color:var(--blue);background:#eef5ff}
-.toggles{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
-.toggle{
-  display:flex;align-items:center;gap:10px;
-  min-height:52px;padding:8px 16px;
-  background:#fff;border-radius:16px;box-shadow:0 4px 0 var(--shadow);
-  font-size:clamp(18px,2.6vw,24px);font-weight:800;
+.totalPill,.soundToggle{
+  display:inline-flex;align-items:center;gap:6px;
+  min-height:42px;padding:4px 14px;border-radius:999px;
+  background:#fff8d6;border:3px solid #ffd15c;
+  font-size:clamp(16px,2.3vw,22px);font-weight:900;
 }
-.toggle input{width:26px;height:26px;accent-color:var(--blue)}
-.bigbtn{
-  min-width:min(100%,280px);min-height:76px;padding:0 36px;
-  border-radius:999px;background:var(--green);color:#fff;
-  font-size:clamp(28px,4.5vw,44px);font-weight:900;
-  box-shadow:0 7px 0 var(--green-d);letter-spacing:.08em;
+.soundToggle{background:#e7fff4;border-color:#7ddeb3}
+.soundToggle input{width:22px;height:22px;accent-color:#1a9a52}
+.rules,.teacher{
+  margin:6px auto 0;max-width:980px;
+  text-align:center;font-weight:800;line-height:1.45;
+  font-size:clamp(14px,1.9vw,18px);
 }
-.bigbtn.white{background:#fff;color:var(--ink);box-shadow:0 7px 0 var(--shadow);letter-spacing:0}
-.bigbtn:active,.mode:active,.seg:active,.key:active,.iconbtn:active{
-  transform:translateY(3px);
+.rules{color:var(--ink)}
+.teacher{color:#0e6f8a}
+.rules b{color:#c47b00}
+.banner{
+  margin:6px auto 0;max-width:760px;
+  padding:6px 12px;border-radius:16px;
+  background:#fff0f6;border:3px solid #ff8ec8;
+  text-align:center;font-weight:900;
+  font-size:clamp(16px,2.2vw,22px);color:var(--deep);
 }
-.bigbtn:active{box-shadow:0 2px 0 var(--green-d)}
-.bigbtn.white:active{box-shadow:0 2px 0 var(--shadow)}
-.note{
-  max-width:640px;margin:0;
-  color:var(--muted);font-size:clamp(14px,2vw,18px);font-weight:700;
-  line-height:1.55;text-align:center;
+.jumps{
+  margin-top:8px;
+  display:flex;flex-wrap:wrap;gap:6px;justify-content:center;
 }
-a.backsite{
-  min-height:44px;display:inline-flex;align-items:center;
-  color:var(--muted);font-weight:800;font-size:16px;text-decoration:none;
+.jump{
+  min-height:40px;padding:0 10px;border-radius:999px;
+  background:#fff;border:3px solid var(--jc,#ffb3d4);
+  font-size:clamp(13px,1.7vw,16px);font-weight:900;
+  box-shadow:0 3px 0 var(--jc,#ffb3d4);
 }
-a.backsite:hover{color:var(--blue)}
+.jump.on{background:var(--jc,#ffb3d4);color:#4a245c;transform:translateY(1px);box-shadow:0 1px 0 var(--jc,#ffb3d4)}
+#scroller{
+  flex:1 1 auto;min-height:0;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  scroll-snap-type:y proximity;
+  width:min(1100px,calc(100% - 16px));
+  margin:8px auto 8px;
+}
+.page{
+  scroll-snap-align:start;
+  box-sizing:border-box;
+  height:var(--page-h,auto);
+  min-height:var(--page-h,100%);
+  padding:0;
+}
+@media (min-width:861px){
+  .page{max-height:var(--page-h,none);overflow:hidden}
+}
+@media (max-width:860px){
+  .page{height:auto;max-height:none;overflow:visible}
+}
+.pageInner{
+  min-height:100%;
+  display:flex;flex-direction:column;gap:8px;
+  padding:12px;
+  border-radius:30px;
+  background:var(--wash,#fff0f6);
+  box-shadow:inset 0 0 0 3px rgba(255,255,255,.8);
+}
+.page h2{
+  margin:0;text-align:center;
+  font-size:clamp(22px,3vw,32px);font-weight:900;line-height:1.2;
+}
+.blurb{
+  margin:0;text-align:center;font-weight:800;color:var(--muted);
+  font-size:clamp(14px,2vw,18px);
+}
+.grid{
+  flex:1;
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  grid-template-rows:1fr 1fr;
+  gap:10px;
+  min-height:220px;
+}
+.lvl{
+  min-height:0;padding:8px 6px 10px;overflow:hidden;
+  border-radius:24px;background:#fff;
+  border:5px solid var(--c,#ff8ec8);
+  box-shadow:0 6px 0 var(--c,#ff8ec8);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;
+}
+.lvl:active{transform:translateY(4px);box-shadow:0 2px 0 var(--c,#ff8ec8)}
+.lvl.just{animation:pop .45s ease}
+.lnum{font-size:clamp(15px,2vw,20px);font-weight:900}
+.phase{
+  font-size:clamp(13px,1.7vw,16px);font-weight:900;
+  padding:1px 8px;border-radius:999px;background:#fff6fb;
+}
+.preview{
+  font-size:clamp(15px,2vw,22px);line-height:1.2;
+  text-align:center;max-width:100%;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.stars{font-size:clamp(18px,2.6vw,26px);letter-spacing:.06em;line-height:1}
+.star{color:#d9c6e6;-webkit-text-stroke:1px #b894cc}
+.star.on{color:var(--gold);-webkit-text-stroke:1px #e08a00;text-shadow:0 1px 0 #e08a00}
+.meta{font-size:clamp(12px,1.5vw,14px);font-weight:800;color:var(--muted)}
+.footNote{
+  flex:none;margin:0 auto 8px;text-align:center;
+  font-size:14px;font-weight:800;color:var(--muted);
+}
+a.backsite{color:var(--deep);text-decoration:none;font-weight:900}
+a.backsite:hover{text-decoration:underline}
 
 /* ---------- play ---------- */
-#play{overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch}
+#play{overflow:hidden}
 .topbar{
-  flex:none;display:flex;align-items:center;gap:8px;
-  padding:8px 12px 4px;flex-wrap:wrap;
+  flex:none;display:flex;align-items:center;gap:6px;
+  padding:8px 10px 2px;flex-wrap:wrap;
 }
 .iconbtn{
-  min-width:56px;min-height:56px;border-radius:16px;
-  background:#fff;box-shadow:0 4px 0 var(--shadow);
-  font-size:28px;display:flex;align-items:center;justify-content:center;
+  min-width:52px;min-height:52px;border-radius:18px;
+  background:#fff;border:3px solid #ffb3d4;
+  box-shadow:0 4px 0 #ffb3d4;
+  font-size:26px;display:flex;align-items:center;justify-content:center;
 }
+.iconbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #ffb3d4}
 .pill{
-  min-height:40px;display:inline-flex;align-items:center;
-  padding:4px 12px;border-radius:999px;background:#fff;
-  font-size:clamp(16px,2.4vw,22px);font-weight:900;white-space:nowrap;
+  min-height:38px;display:inline-flex;align-items:center;
+  padding:4px 12px;border-radius:999px;
+  font-size:clamp(14px,2vw,20px);font-weight:900;white-space:nowrap;
+  border:3px solid transparent;
 }
-.pill.star{background:#fff6d8}
-.pill.hot{background:#ffe08a}
-.pill.mode{background:#efeaff;color:#5336c9}
-.pill.loose{background:#e7fff6;color:#0e7a62}
+.pill.lv{background:#ffe3f2;border-color:#ff8ec8}
+.pill.phase{background:#efe4ff;border-color:#c9b6ff}
+.pill.prog{background:#e3f4ff;border-color:#7ecbff}
+.pill.miss{background:#fff1e4;border-color:#ffb088}
+.pill.time{background:#e9fff3;border-color:#7ddeb3}
+.pill.live{background:#fff6d0;border-color:#ffd15c}
 .spacer{flex:1}
 .bar{
-  flex:none;height:10px;margin:2px 12px 0;
-  background:rgba(255,255,255,.75);border-radius:999px;overflow:hidden;
+  flex:none;height:12px;margin:4px 12px 0;
+  background:rgba(255,255,255,.8);border-radius:999px;overflow:hidden;
+  border:2px solid #fff;
 }
-.bar > span{
-  display:block;height:100%;width:0;
-  background:linear-gradient(90deg,#ffb703,#22a85a);
-  border-radius:inherit;
+.bar>span{
+  display:block;height:100%;width:0;border-radius:inherit;
+  background:linear-gradient(90deg,#ff8ec8,#ffd15c,#7ddeb3,#7ecbff);
   transition:width .25s ease;
 }
 .stage{
-  flex:1 1 auto;min-height:0;
+  flex:1 1 auto;min-height:0;overflow:auto;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:6px;padding:6px 12px 4px;
+  gap:6px;padding:6px 12px;
 }
-.ask{margin:0;font-size:clamp(18px,3vw,30px);font-weight:900;color:var(--muted)}
-.letterCard{
-  width:min(86vw,480px);
-  height:min(34dvh,340px);
-  min-height:132px;
-  border-radius:36px;
-  background:#fff;
-  border:6px solid #ffd7a8;
-  box-shadow:0 10px 0 #efd3a6;
-  display:flex;align-items:center;justify-content:center;
-  container-type:size;
+.ask{margin:0;font-size:clamp(16px,2.6vw,26px);font-weight:900;color:var(--muted)}
+.hints{width:min(920px,100%);display:flex;flex-direction:column;gap:6px}
+.hint{
+  margin:0;padding:8px 12px;border-radius:16px;
+  background:#fff7cc;border:3px solid #ffd15c;
+  font-size:clamp(15px,2.2vw,22px);font-weight:900;line-height:1.4;text-align:center;
 }
-.letterCard[data-case="upper"]{border-color:#ffb0b6}
-.letterCard[data-case="lower"]{border-color:#8ee0dc}
-.letterCard.good{border-color:#22a85a;background:#f3fff7;box-shadow:0 10px 0 #8ed4a8}
-.letterCard.bad{background:#fff8f3}
+.coach{
+  margin:0;min-height:1.3em;text-align:center;
+  font-size:clamp(18px,3vw,30px);font-weight:900;color:#0e6f8a;
+}
+.letterCard,.wordCard,.textCard{
+  width:min(92vw,760px);
+  border-radius:32px;background:#fff;
+  border:6px solid transparent;
+  background:
+    linear-gradient(#fff,#fff) padding-box,
+    linear-gradient(135deg,#ff8ec8,#ffd15c,#7ddeb3,#7ecbff,#c9b6ff) border-box;
+  box-shadow:0 8px 0 #f3c3dc;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:8px 16px 12px;
+}
+.letterCard{min-height:min(30dvh,280px)}
 .glyph{
-  font-size:clamp(96px,22vmin,210px);
-  line-height:1;
-  color:var(--ink);
+  font-size:clamp(92px,20vmin,200px);line-height:.95;color:var(--ink);
 }
-.letterCard.good .glyph{color:var(--ok)}
-.caseTag{
-  margin:0;min-height:36px;padding:2px 14px;
-  border-radius:999px;background:#fff;
-  font-size:clamp(18px,3vw,30px);font-weight:900;
+.glyph.pop{animation:pop .32s ease-out}
+.wordShow{font-size:clamp(42px,8vw,84px);letter-spacing:.08em;line-height:1.1}
+.slots{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px}
+.slot{
+  min-width:42px;min-height:52px;padding:4px 8px;
+  border-radius:14px;background:#fff6fb;border:3px solid #ffd0e6;
+  font-size:clamp(26px,4vw,40px);line-height:1.1;
+  display:flex;align-items:center;justify-content:center;
+}
+.slot.spaceSlot{font-family:inherit;font-size:clamp(14px,2vw,18px);font-weight:900;color:#0e6f8a}
+.slot:not(.done):not(.now){background:#fff6fb}
+.slot.done{background:#e5ffef;border-color:#7ddeb3;color:var(--ok)}
+.slot.now{
+  border-color:#2f9cf5;background:#e7f4ff;color:#123a66;
+  box-shadow:0 0 0 4px #c6e6ff;transform:translateY(-3px);
+}
+.passage{
+  margin:0;width:100%;
+  font-size:clamp(26px,4.4vw,44px);line-height:1.55;
+  text-align:left;word-break:break-word;
+}
+.ch.done{color:var(--ok)}
+.ch.now{
+  background:#fff3bf;border-radius:10px;
+  box-shadow:inset 0 -4px 0 #ffd15c;
+}
+.ch.sp{display:inline-flex;min-width:.55em;justify-content:center}
+.ch.sp.now{
+  font-family:"PingFang HK","PingFang TC","Microsoft JhengHei",sans-serif;
+  font-size:.48em;font-weight:900;color:#0e6f8a;
+  padding:0 6px;vertical-align:middle;
 }
 .status{
-  margin:0;min-height:1.35em;
-  font-size:clamp(22px,4vw,40px);font-weight:900;
-  text-align:center;color:transparent;
+  margin:0;min-height:1.3em;text-align:center;
+  font-size:clamp(20px,3.4vw,34px);font-weight:900;color:transparent;
 }
 .status.ok{color:var(--ok)}
 .status.no{color:var(--soft)}
+.letterCard.bad,.wordCard.bad,.textCard.bad{animation:shake .34s ease}
+
 .kbDock{
-  flex:none;width:100%;min-width:0;
-  padding:4px 12px calc(12px + env(safe-area-inset-bottom));
-}
-.kbLabel{
-  margin:0 0 8px;text-align:center;
-  font-size:clamp(14px,2.2vw,18px);font-weight:800;color:var(--muted);
-}
-.kbLabel strong{color:var(--ink)}
-.kbWrap{width:100%;overflow-x:auto}
-.kb{
-  width:min(860px,100%);
-  min-width:356px;
+  flex:none;width:min(980px,calc(100% - 12px));
   margin:0 auto;
-  display:grid;
-  grid-template-columns:repeat(7,minmax(44px,1fr));
-  gap:8px;
+  padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+  border-radius:26px 26px 0 0;
+  background:linear-gradient(180deg,rgba(255,255,255,.72),#ffd6ee 70%,#e4dcff);
+  box-shadow:0 -5px 0 rgba(255,150,196,.35);
 }
+.kbLegend{
+  margin:0 0 6px;text-align:center;
+  font-size:clamp(12px,1.7vw,16px);font-weight:800;color:#6a3d86;
+}
+.kb{width:100%;display:flex;flex-direction:column;gap:7px}
+.kbRow{display:flex;justify-content:center;gap:6px}
+.kbRow.inset{padding:0 4.5%}
 .key{
-  min-width:44px;
-  min-height:52px;
-  height:clamp(52px,8vmin,76px);
-  border-radius:16px;
-  background:#fff;
-  border:3px solid transparent;
-  box-shadow:0 5px 0 #e6d3ae;
-  font-size:clamp(28px,4.6vmin,46px);
-  color:var(--ink);
+  flex:1 1 0;min-width:0;
+  height:clamp(46px,7.2vh,62px);
+  border-radius:14px;
+  background:linear-gradient(#fff,#fff7fb);
+  box-shadow:0 4px 0 #e7b6d4;
+  color:#5a3478;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
   line-height:1;
 }
-.key.good{background:#d9f8e4;border-color:#22a85a}
-.key.bad{background:#fff1e6;border-color:#ffb088}
-.kb.locked{pointer-events:none}
-
-/* ---------- done ---------- */
-#done{
-  overflow-y:auto;align-items:center;justify-content:center;
-  background:linear-gradient(165deg,#fff8ee 0%,#e7f7ff 50%,#ffe6f1 100%);
+.key .main{font-size:clamp(18px,3.2vw,30px)}
+.key .sub{font-size:clamp(10px,1.5vw,13px);font-weight:900}
+.key.wide{flex:1.45 1 0}
+.key.space{
+  flex:7 1 auto;
+  background:linear-gradient(#fff,#f3fff8);
+  box-shadow:0 4px 0 #7dceb0;
 }
-.doneInner{
-  width:min(640px,calc(100% - 28px));
+.key.space .main{font-family:inherit;font-size:clamp(16px,2.4vw,22px);font-weight:900}
+.key.shift{background:linear-gradient(#fff4b0,#ffc94a);box-shadow:0 4px 0 #e0a020;color:#6a4200}
+.key.shift.on{background:linear-gradient(#ffe56a,#ffb703);outline:3px solid #fff}
+.key.shift.lock{background:linear-gradient(#ffe08a,#ff9f1c);outline:3px solid #fff;box-shadow:inset 0 0 0 3px #fff,0 4px 0 #e08a00}
+.key.del{background:linear-gradient(#ffe0ea,#ff9eb6);box-shadow:0 4px 0 #e07a98}
+.key.fn{background:linear-gradient(#e5f3ff,#8fd0ff);box-shadow:0 4px 0 #5aa8e0;color:#0d4e86}
+.key.hot{outline:3px solid #ff4d8d;animation:wiggle .7s ease-in-out infinite}
+.key:active{transform:translateY(3px);box-shadow:0 1px 0 #e7b6d4}
+.key.good{background:#d9f8e4;box-shadow:0 4px 0 #7dceb0}
+.key.bad{background:#ffe1d2;box-shadow:0 4px 0 #ffb088}
+.kb.locked{pointer-events:none;opacity:.72}
+
+/* ---------- result ---------- */
+#result{
+  position:fixed;inset:0;z-index:5;
+  display:none;align-items:center;justify-content:center;
+  padding:20px;
+  background:rgba(255,244,250,.94);
+}
+#result.on{display:flex}
+.resultCard{
+  width:min(560px,100%);
   text-align:center;
-  display:flex;flex-direction:column;align-items:center;
-  gap:clamp(10px,2vmin,18px);
-  padding:24px 0;
+  padding:22px 18px 20px;
+  border-radius:36px;background:#fff;
+  border:6px solid transparent;
+  background:
+    linear-gradient(#fff,#fff) padding-box,
+    linear-gradient(135deg,#ff8ec8,#ffd15c,#7ddeb3,#7ecbff) border-box;
+  box-shadow:0 10px 0 #f3c3dc;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
 }
-.endMark{font-size:clamp(56px,12vw,96px);line-height:1}
-.endTitle{margin:0;font-size:clamp(36px,7vw,64px);font-weight:900}
-.endMode{margin:0;font-weight:800;color:var(--muted);font-size:clamp(16px,2.6vw,22px)}
-.endDetail,.endStreak,.endBest{
-  margin:0;font-weight:900;
-  font-size:clamp(20px,3.4vw,32px);line-height:1.35;
+.resultMark{font-size:clamp(40px,8vw,64px);line-height:1}
+.resultStars{font-size:clamp(42px,8vw,72px);letter-spacing:.08em;line-height:1}
+.resultTitle{margin:0;font-size:clamp(28px,5vw,44px);font-weight:900}
+.resultWhy,.resultNums{margin:0;font-weight:900;font-size:clamp(16px,2.6vw,24px);line-height:1.4}
+.resultWhy{color:#0e6f8a}
+.bigbtn{
+  min-width:min(100%,280px);min-height:68px;padding:0 28px;
+  border-radius:999px;background:#ff5fa2;color:#fff;
+  font-size:clamp(22px,3.5vw,32px);font-weight:900;
+  box-shadow:0 6px 0 #d43b7c;
 }
-.endBest{color:#9a6b00}
-.endBtns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.bigbtn:active{transform:translateY(4px);box-shadow:0 2px 0 #d43b7c}
 
-@keyframes pop{
-  0%{transform:scale(.86)}
-  60%{transform:scale(1.06)}
-  100%{transform:scale(1)}
-}
-@keyframes shake{
-  0%,100%{transform:translateX(0)}
-  20%{transform:translateX(-8px)}
-  40%{transform:translateX(8px)}
-  60%{transform:translateX(-5px)}
-  80%{transform:translateX(5px)}
-}
-@keyframes bump{
-  50%{transform:scale(1.12)}
-}
-.glyph.pop{animation:pop .34s ease-out}
-.letterCard.bad{animation:shake .38s ease}
-.bump{animation:bump .32s ease}
+@keyframes pop{0%{transform:scale(.86)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-4px)}}
+@keyframes wiggle{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 @media (prefers-reduced-motion:reduce){
-  .glyph.pop,.letterCard.bad,.bump{animation:none}
-  .bar > span{transition:none}
+  .glyph.pop,.lvl.just,.letterCard.bad,.wordCard.bad,.textCard.bad,.key.hot{animation:none}
+  .bar>span{transition:none}
 }
-@supports (font-size:1cqi){
-  .glyph{font-size:min(68cqh,78cqi,250px)}
+@media (max-width:860px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none}
+  .mascot{width:44px;height:44px}
 }
-@media (max-width:680px){
-  .modes{grid-template-columns:1fr}
-  .mode{min-height:96px;flex-direction:row;gap:14px;justify-content:flex-start;padding-left:18px}
-  .mode .sample{min-width:92px;text-align:center}
-}
-@media (max-height:860px){
-  .letterCard{height:min(28dvh,210px);min-height:112px;border-radius:28px}
-  .key{min-height:48px;height:48px;font-size:clamp(24px,4.2vmin,36px)}
-  .ask{font-size:16px}
-  .status{font-size:clamp(18px,3.5vw,28px)}
-  .homeInner{padding-top:12px;gap:10px}
-  h1{font-size:clamp(28px,5vw,44px)}
+@media (max-height:760px){
+  .homeTop{margin-top:4px;padding:6px 8px}
+  h1{font-size:clamp(22px,4vw,32px)}
+  .rules,.teacher{margin-top:3px;font-size:13px}
+  .letterCard{min-height:96px}
+  .glyph{font-size:clamp(72px,16vmin,140px)}
+  .key{height:44px;border-radius:12px}
 }
 </style>
 </head>
 <body>
-<p id="live" class="sr-only" aria-live="polite" aria-atomic="true"></p>
+<p id="live" class="sr-only" aria-live="polite"></p>
+<p id="booterr" hidden></p>
 
-<section id="home" class="screen on" aria-label="開始">
-  <div class="homeInner">
-    <h1>英文字母打字</h1>
-    <p class="sub">小一英文 · 睇住個字母，打出佢</p>
-
-    <div class="modes" role="group" aria-label="大楷定小楷">
-      <button type="button" class="mode sel" data-mode="upper" aria-pressed="true">
-        <span class="sample letters">ABC</span>
-        <span class="mt">大楷</span>
-        <span class="md">淨係打大楷</span>
-      </button>
-      <button type="button" class="mode" data-mode="lower" aria-pressed="false">
-        <span class="sample letters">abc</span>
-        <span class="mt">小楷</span>
-        <span class="md">淨係打小楷</span>
-      </button>
-      <button type="button" class="mode" data-mode="mixed" aria-pressed="false">
-        <span class="sample letters">Aa</span>
-        <span class="mt">混合</span>
-        <span class="md">大細楷夾埋</span>
-      </button>
-    </div>
-
-    <div class="sec">
-      <div class="seclabel" id="countLabel">玩幾多個</div>
-      <div class="segs" role="group" aria-labelledby="countLabel">
-        <button type="button" class="seg sel" data-count="10" aria-pressed="true">10 個字母</button>
-        <button type="button" class="seg" data-count="26" aria-pressed="false" aria-label="成個字母表，26 個">成個字母表</button>
+<section id="home" class="screen on" aria-label="關卡主頁">
+  <div class="homeTop">
+    <div class="brand">
+      <img class="mascot" src="../assets/mascot.jpg" alt="" width="54" height="54">
+      <div>
+        <h1>🌟 英文字母打字 🌟</h1>
+        <p class="brandSub">100 關 · 字母玩到短文</p>
       </div>
     </div>
-
-    <div class="toggles">
-      <label class="toggle"><input type="checkbox" id="optSound" checked> 音效</label>
-      <label class="toggle"><input type="checkbox" id="optStrict" checked> 要分大小楷</label>
+    <div class="statRow">
+      <div class="totalPill" id="totalPill">⭐ 0 / 300</div>
+      <label class="soundToggle"><input type="checkbox" id="optSound" checked> 音效</label>
     </div>
-
-    <p class="note" id="bestNote" hidden></p>
-    <button type="button" class="bigbtn" id="btnStart">開始玩！</button>
-    <p class="note">字母次序會打亂。畫面鍵盤跟字母表由 A 排到 Z，方便認字；實體鍵盤都可以打。要分大小楷剔住，就要打啱大楷定小楷；取消就兩個都算啱。</p>
-    <p class="note">唔使登入 · 成績淨係留喺呢部機</p>
-    <a class="backsite" href="../">返遊戲站</a>
+    <p class="rules"><b>星星：</b>★★★ 冇打錯又夠快　★★ 打錯 1–2 次，或全對但慢過時限　★ 做完但打錯 3 次或以上。未做完唔計，主頁留低最好嗰次。</p>
+    <p class="teacher">老師提示：第 1–20 關小楷字母，21–30 關大楷（要撳 ⇧），31–39 關大細楷，第 40 關開始詞語，71 關短句，81 關短文。</p>
+    <p class="banner" id="banner" hidden></p>
+    <div class="jumps" id="jumps" role="navigation" aria-label="跳去某一頁關卡"></div>
   </div>
+  <div id="scroller" tabindex="-1"></div>
+  <p class="footNote"><a class="backsite" href="../">返遊戲站</a> · 唔使登入 · 星星留喺呢部機</p>
 </section>
 
-<section id="play" class="screen" aria-label="打字母">
+<section id="play" class="screen" aria-label="打字">
   <div class="topbar">
-    <button type="button" class="iconbtn" id="btnHome" aria-label="返去開始">🏠</button>
+    <button type="button" class="iconbtn" id="btnHome" aria-label="返主頁">🏠</button>
     <button type="button" class="iconbtn" id="btnSound" aria-pressed="true" aria-label="音效開住，撳一下閂">🔊</button>
-    <span class="pill" id="prog">1 / 10</span>
-    <span class="pill star" id="starPill">⭐ 0</span>
-    <span class="pill" id="streakPill">連續 0</span>
+    <span class="pill lv" id="lvPill">第 1 關</span>
+    <span class="pill phase" id="phasePill">🐣 小楷</span>
+    <span class="pill prog" id="progPill">1 / 9</span>
+    <span class="pill miss" id="missPill">打錯 0</span>
+    <span class="pill time" id="timePill">0 秒</span>
     <span class="spacer"></span>
-    <span class="pill mode" id="modePill">大楷</span>
-    <span class="pill loose" id="loosePill" hidden>大細楷都得</span>
+    <span class="pill live" id="liveStarPill">預計 ★★★</span>
   </div>
   <div class="bar" aria-hidden="true"><span id="barFill"></span></div>
   <div class="stage">
-    <p class="ask">打呢個</p>
-    <div class="letterCard" id="letterCard" data-case="upper">
-      <div class="glyph letters pop" id="glyph" lang="en" aria-hidden="true">A</div>
+    <div class="hints" id="hints"></div>
+    <div class="letterCard" id="viewLetter">
+      <p class="ask">打呢個字母</p>
+      <div class="glyph letters" id="glyph" lang="en">a</div>
     </div>
-    <p class="caseTag" id="caseTag">大楷</p>
+    <div class="wordCard" id="viewWord" hidden>
+      <p class="ask" id="wordAsk">打呢個詞</p>
+      <div class="wordShow letters" id="wordShow" lang="en"></div>
+      <div class="slots" id="slots"></div>
+    </div>
+    <div class="textCard" id="viewText" hidden>
+      <p class="ask" id="textAsk">打呢段</p>
+      <p class="passage letters" id="passage" lang="en"></p>
+    </div>
+    <p class="coach" id="coach" aria-live="polite"></p>
     <p class="status" id="status"></p>
   </div>
   <div class="kbDock">
-    <p class="kbLabel"><strong>字母表順序</strong> · 點一點，或者用鍵盤打</p>
-    <div class="kbWrap">
-      <div class="kb" id="kb" role="group" aria-label="字母表鍵盤"></div>
-    </div>
+    <p class="kbLegend">黃色 ⇧ 係大楷（向上）· 長鍵係空格 · 123 有數字同符號 · 快撳兩下 ⇧ 可以鎖住大楷</p>
+    <div class="kb" id="kb" role="group" aria-label="鍵盤"></div>
   </div>
 </section>
 
-<section id="done" class="screen" aria-label="完成">
-  <div class="doneInner">
-    <div class="endMark" id="endMark" aria-hidden="true">⭐</div>
-    <h2 class="endTitle" id="endTitle">完成啦！</h2>
-    <p class="endMode" id="endMode">大楷</p>
-    <p class="endDetail" id="endDetail">10 個字母都打到</p>
-    <p class="endStreak" id="endStreak">今次最長連續 0 下</p>
-    <p class="endBest" id="endBest"></p>
-    <div class="endBtns">
-      <button type="button" class="bigbtn" id="btnReplay">再玩一次</button>
-      <button type="button" class="bigbtn white" id="btnDoneHome">返去開始</button>
-    </div>
+<div id="result" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+  <div class="resultCard">
+    <div class="resultMark" id="resultMark" aria-hidden="true">🎉</div>
+    <div class="resultStars" id="resultStars" aria-hidden="true"></div>
+    <h2 class="resultTitle" id="resultTitle">完成啦！</h2>
+    <p class="resultWhy" id="resultWhy"></p>
+    <p class="resultNums" id="resultNums"></p>
+    <button type="button" class="bigbtn" id="btnResultHome">返主頁睇星星</button>
   </div>
-</section>
+</div>
 
 <script>
 (function(){
 "use strict";
+window.addEventListener("error", function(ev){
+  var el = document.getElementById("booterr");
+  if(!el) return;
+  el.hidden = false;
+  el.textContent = "程式錯誤：" + (ev && ev.message ? ev.message : "未知");
+});
 
-/* On-screen keys follow the classroom alphabet chart (A–G, H–N, O–U, V–Z),
-   not QWERTY. For a single-letter prompt, inexperienced children find an
-   ABC layout faster and less variable than QWERTY (Nicolson & Gardner, 1985),
-   and P1 already learns A to Z in that order. A hardware keyboard still
-   accepts real key presses, and the case has to match unless the teacher
-   turns 要分大小楷 off. */
+/* ============================================================
+   100 關課程（每頁 10 關，可以滾動）
+   --------------------------------------------------------
+   第 1–10 關   小楷入門：abc、def…每個字母練幾次
+   第 11–20 關  小楷練習：組得耐啲，直至成個 a–z
+   第 21–30 關  大楷字母：要先撳 Shift（⇧）
+   第 31–39 關  大細楷混合字母
+   第 40–50 關  三字母詞（第 40 關開始由字母轉做詞語）
+   第 51–60 關  四字母詞
+   第 61–70 關  大楷詞、兩字詞（要空格）
+   第 71–80 關  短句（空格 + 句號，句號喺 123）
+   第 81–100 關 短文（兩句；第 91–92 關有數字，要撳 123）
 
-var SETTINGS_KEY = "p1letters_settings_v1";
-var BEST_KEY = "p1letters_best_v1";
-var PRAISE = ["啱！", "好叻！", "掂！"];
+   星星（做完先計；中途離開唔改寫，淨係留最好嗰次）
+   ★★★  0 次打錯，而且喺時限內
+   ★★   打錯 1–2 次；或者 0 次打錯但超過時限
+   ★    做完，但打錯 3 次或以上
+   時限：1–20 每個字母 8 秒；21–39 每個字母 10 秒；
+        40–50 每個詞 20 秒；51–60 每個詞 25 秒；
+        61–70 每個詞組 30 秒；71–100 每個字（連空格、符號）4 秒。
+   成績 key：localStorage p1letters_levels_v1
+   ============================================================ */
 
-var S = {caseMode:"upper", count:10, sound:true, strict:true};
-var bests = {};
+var STORE_KEY = "p1letters_levels_v1";
+var JUMP_COLORS = ["#ffb3d4","#ffd15c","#9cf0c8","#9fd8ff","#d7c6ff","#ffc49a","#9af0e4","#ffb0c8","#c9d6ff","#ffe08a"];
+var CARD_COLORS = ["#ff7eb3","#ffb347","#f0c93a","#3dbe7a","#4dabf7","#8e7dff","#ff7ad9","#ff9a62","#2ec4b6","#ff8fab"];
+var PAGE_WASH = ["#ffe3f1","#fff4cc","#ddf8ea","#e3f3ff","#f3e8ff","#ffe8d6","#e5fff6","#ffe4ee","#eaf0ff","#fff6d8"];
+var PAGE_META = [
+  {title:"🐣 第 1–10 關 · 小楷入門", blurb:"abc、def 咁練，每個字母打幾次"},
+  {title:"🐥 第 11–20 關 · 小楷練習", blurb:"組得耐啲，練匀成個字母表"},
+  {title:"🦁 第 21–30 關 · 大楷字母", blurb:"先撳黃色 ⇧（向上），再撳字母"},
+  {title:"🌈 第 31–40 關 · 大細楷，然後詞語", blurb:"31–39 關混合；第 40 關開始打詞"},
+  {title:"🐱 第 41–50 關 · 簡單詞語", blurb:"三個字母嘅小楷詞"},
+  {title:"🐻 第 51–60 關 · 長少少嘅詞", blurb:"四個字母"},
+  {title:"✏️ 第 61–70 關 · 大楷同空格", blurb:"第一個字母要大楷，或者中間要撳空格"},
+  {title:"💬 第 71–80 關 · 短句", blurb:"一句句子，記得空格同句號（句號喺 123）"},
+  {title:"📖 第 81–90 關 · 短文", blurb:"兩句連住打"},
+  {title:"🏆 第 91–100 關 · 短文挑戰", blurb:"去到第 100 關，打一段短文"}
+];
+
+var SPECS = [
+  {kind:"each", letters:"abc", times:3, kase:"lower", preview:"a b c"},
+  {kind:"each", letters:"def", times:3, kase:"lower", preview:"d e f"},
+  {kind:"each", letters:"ghi", times:3, kase:"lower", preview:"g h i"},
+  {kind:"each", letters:"jkl", times:3, kase:"lower", preview:"j k l"},
+  {kind:"each", letters:"mno", times:3, kase:"lower", preview:"m n o"},
+  {kind:"each", letters:"pqr", times:3, kase:"lower", preview:"p q r"},
+  {kind:"each", letters:"stu", times:3, kase:"lower", preview:"s t u"},
+  {kind:"each", letters:"vwx", times:3, kase:"lower", preview:"v w x"},
+  {kind:"each", letters:"yz", times:4, kase:"lower", preview:"y z"},
+  {kind:"sample", letters:"abcdefghijklmnopqrstuvwxyz", n:10, kase:"lower", preview:"a–z"},
+
+  {kind:"sample", letters:"abcdef", n:8, kase:"lower", preview:"a–f"},
+  {kind:"sample", letters:"ghijkl", n:8, kase:"lower", preview:"g–l"},
+  {kind:"sample", letters:"mnopqr", n:8, kase:"lower", preview:"m–r"},
+  {kind:"sample", letters:"stuvwxyz", n:8, kase:"lower", preview:"s–z"},
+  {kind:"sample", letters:"abcdefghijklm", n:10, kase:"lower", preview:"a–m"},
+  {kind:"sample", letters:"nopqrstuvwxyz", n:10, kase:"lower", preview:"n–z"},
+  {kind:"sample", letters:"abcdefghijklmnopqrstuvwxyz", n:10, kase:"lower", preview:"a–z"},
+  {kind:"each", letters:"bdpq", times:3, kase:"lower", preview:"b d p q"},
+  {kind:"each", letters:"mnuw", times:3, kase:"lower", preview:"m n u w"},
+  {kind:"sample", letters:"abcdefghijklmnopqrstuvwxyz", n:12, kase:"lower", preview:"a–z 總溫習"},
+
+  {kind:"each", letters:"ABC", times:3, kase:"upper", preview:"A B C"},
+  {kind:"each", letters:"DEF", times:3, kase:"upper", preview:"D E F"},
+  {kind:"each", letters:"GHI", times:3, kase:"upper", preview:"G H I"},
+  {kind:"each", letters:"JKL", times:3, kase:"upper", preview:"J K L"},
+  {kind:"each", letters:"MNO", times:3, kase:"upper", preview:"M N O"},
+  {kind:"each", letters:"PQR", times:3, kase:"upper", preview:"P Q R"},
+  {kind:"each", letters:"STU", times:3, kase:"upper", preview:"S T U"},
+  {kind:"each", letters:"VWX", times:3, kase:"upper", preview:"V W X"},
+  {kind:"each", letters:"YZ", times:4, kase:"upper", preview:"Y Z"},
+  {kind:"sample", letters:"abcdefghijklmnopqrstuvwxyz", n:10, kase:"upper", preview:"A–Z"},
+
+  {kind:"each", letters:"ABC", times:2, kase:"both", preview:"Aa Bb Cc"},
+  {kind:"each", letters:"DEF", times:2, kase:"both", preview:"Dd Ee Ff"},
+  {kind:"each", letters:"GHI", times:2, kase:"both", preview:"Gg Hh Ii"},
+  {kind:"each", letters:"JKL", times:2, kase:"both", preview:"Jj Kk Ll"},
+  {kind:"each", letters:"MNO", times:2, kase:"both", preview:"Mm Nn Oo"},
+  {kind:"each", letters:"PQR", times:2, kase:"both", preview:"Pp Qq Rr"},
+  {kind:"each", letters:"STU", times:2, kase:"both", preview:"Ss Tt Uu"},
+  {kind:"each", letters:"VWXYZ", times:1, kase:"both", preview:"V–Z 大細楷"},
+  {kind:"sample", letters:"abcdefghijklmnopqrstuvwxyz", n:10, kase:"mix", preview:"A–Z 混合"},
+  {kind:"words", words:["cat","dog","pig"], preview:"cat · dog · pig"},
+
+  {kind:"words", words:["hat","sun","cup"], preview:"hat · sun · cup"},
+  {kind:"words", words:["bed","bus","pen"], preview:"bed · bus · pen"},
+  {kind:"words", words:["red","box","fox"], preview:"red · box · fox"},
+  {kind:"words", words:["jam","kid","map"], preview:"jam · kid · map"},
+  {kind:"words", words:["net","pot","run"], preview:"net · pot · run"},
+  {kind:"words", words:["sit","top","van"], preview:"sit · top · van"},
+  {kind:"words", words:["web","yes","zip"], preview:"web · yes · zip"},
+  {kind:"words", words:["ant","egg","owl"], preview:"ant · egg · owl"},
+  {kind:"words", words:["bat","hen","rat"], preview:"bat · hen · rat"},
+  {kind:"words", words:["cat","sun","pen","red"], preview:"cat · sun · pen · red"},
+
+  {kind:"words", words:["book","fish","cake","duck"], preview:"book · fish · cake · duck"},
+  {kind:"words", words:["bird","frog","lion","bear"], preview:"bird · frog · lion · bear"},
+  {kind:"words", words:["milk","rain","snow","wind"], preview:"milk · rain · snow · wind"},
+  {kind:"words", words:["star","moon","tree","leaf"], preview:"star · moon · tree · leaf"},
+  {kind:"words", words:["hand","foot","nose","eyes"], preview:"hand · foot · nose · eyes"},
+  {kind:"words", words:["blue","pink","gold","grey"], preview:"blue · pink · gold · grey"},
+  {kind:"words", words:["jump","play","sing","read"], preview:"jump · play · sing · read"},
+  {kind:"words", words:["ball","kite","ship","boat"], preview:"ball · kite · ship · boat"},
+  {kind:"words", words:["corn","sand","rock","pond"], preview:"corn · sand · rock · pond"},
+  {kind:"words", words:["book","star","blue","jump"], preview:"book · star · blue · jump"},
+
+  {kind:"words", words:["Cat","Dog","Pig","Hat"], preview:"Cat · Dog · Pig · Hat"},
+  {kind:"words", words:["Sun","Bus","Pen","Red"], preview:"Sun · Bus · Pen · Red"},
+  {kind:"words", words:["a cat","a dog","a pig"], preview:"a cat · a dog · a pig"},
+  {kind:"words", words:["the sun","the bus","the pen"], preview:"the sun · the bus"},
+  {kind:"words", words:["big cat","red hat","hot sun"], preview:"big cat · red hat"},
+  {kind:"words", words:["I am","I see","I can"], preview:"I am · I see · I can"},
+  {kind:"words", words:["The cat","The dog","A pig"], preview:"The cat · The dog"},
+  {kind:"words", words:["sit down","stand up","come here"], preview:"sit down · stand up"},
+  {kind:"words", words:["blue pen","pink hat","red bus"], preview:"blue pen · pink hat"},
+  {kind:"words", words:["I see","a cat","The dog"], preview:"I see · a cat · The dog"},
+
+  {kind:"text", text:"I see a cat.", preview:"I see a cat."},
+  {kind:"text", text:"The dog is big.", preview:"The dog is big."},
+  {kind:"text", text:"A pig can run.", preview:"A pig can run."},
+  {kind:"text", text:"The sun is hot.", preview:"The sun is hot."},
+  {kind:"text", text:"I like my hat.", preview:"I like my hat."},
+  {kind:"text", text:"A bug is on the cup.", preview:"A bug is on the cup."},
+  {kind:"text", text:"The cat can sit.", preview:"The cat can sit."},
+  {kind:"text", text:"I can see a bus.", preview:"I can see a bus."},
+  {kind:"text", text:"We like to play.", preview:"We like to play."},
+  {kind:"text", text:"The fish can swim.", preview:"The fish can swim."},
+
+  {kind:"text", text:"I see a cat. The cat is big.", preview:"I see a cat…"},
+  {kind:"text", text:"A dog can run. I like the dog.", preview:"A dog can run…"},
+  {kind:"text", text:"The sun is up. It is a hot day.", preview:"The sun is up…"},
+  {kind:"text", text:"I have a red hat. It is on the bed.", preview:"I have a red hat…"},
+  {kind:"text", text:"A bug is on the cup. The cup is blue.", preview:"A bug is on the cup…"},
+  {kind:"text", text:"We play a game. It is fun.", preview:"We play a game…"},
+  {kind:"text", text:"The fish is small. It is in a pond.", preview:"The fish is small…"},
+  {kind:"text", text:"I can read a book. The book is good.", preview:"I can read a book…"},
+  {kind:"text", text:"Mum has a cake. The cake is sweet.", preview:"Mum has a cake…"},
+  {kind:"text", text:"Sam has a dog. The dog can sit.", preview:"Sam has a dog…"},
+
+  {kind:"text", text:"I see 1 cat. The cat is soft.", preview:"I see 1 cat…"},
+  {kind:"text", text:"I have 2 pens. The pens are red.", preview:"I have 2 pens…"},
+  {kind:"text", text:"A little bird can fly. It is in the tree.", preview:"A little bird…"},
+  {kind:"text", text:"The moon is big. I see a star.", preview:"The moon is big…"},
+  {kind:"text", text:"I am happy. I can jump and play.", preview:"I am happy…"},
+  {kind:"text", text:"I like school. I can read and write.", preview:"I like school…"},
+  {kind:"text", text:"The cat and the dog play. They are good.", preview:"The cat and the dog…"},
+  {kind:"text", text:"A frog is in the pond. It can jump.", preview:"A frog is in the pond…"},
+  {kind:"text", text:"We see the moon and a star. It is night.", preview:"We see the moon…"},
+  {kind:"text", text:"I am happy today. I can read and play.", preview:"I am happy today…"}
+];
+
+var LAYOUTS = {
+  letters:[
+    ["q","w","e","r","t","y","u","i","o","p"],
+    ["a","s","d","f","g","h","j","k","l"],
+    ["shift","z","x","c","v","b","n","m","del"],
+    ["num","space"]
+  ],
+  numbers:[
+    ["1","2","3","4","5","6","7","8","9","0"],
+    ["-","/",":",";","(",")","$","&","@","\""],
+    ["sym",".",",","?","!","'","del"],
+    ["abc","space"]
+  ],
+  symbols:[
+    ["[","]","{","}","#","%","^","*","+","="],
+    ["_","\\","|","~","<",">","\u20ac","\u00a3","\u00a5","\u2022"],
+    ["num",".",",","?","!","'","del"],
+    ["abc","space"]
+  ]
+};
+var NUM_CHARS = "1234567890-/:;()$&@\".,?!'";
+
+var store = {stars:{}, sound:true};
 var screenName = "home";
-var queue = [];
-var index = 0;
-var stars = 0;
-var streak = 0;
-var roundBest = 0;
+var banner = null;
+var run = null;
 var locked = false;
-var timer = 0;
-var praiseI = 0;
-var keysUpper = null;
+var shiftMode = 0;
+var lastShiftAt = 0;
+var layoutName = "letters";
+var timers = [];
+var tick = 0;
 var audioCtx = null;
+var praiseI = 0;
+var PRAISE = ["啱！","好叻！","掂！"];
 
 var $ = function(id){return document.getElementById(id);};
-var glyph = $("glyph");
-var letterCard = $("letterCard");
-var caseTag = $("caseTag");
-var statusEl = $("status");
-var live = $("live");
-var prog = $("prog");
-var starPill = $("starPill");
-var streakPill = $("streakPill");
-var modePill = $("modePill");
-var loosePill = $("loosePill");
-var barFill = $("barFill");
-var kb = $("kb");
-var optSound = $("optSound");
-var optStrict = $("optStrict");
-var btnSound = $("btnSound");
 
 function shuffle(list){
-  for(var i = list.length - 1; i > 0; i--){
+  var arr = list.slice();
+  for(var i = arr.length - 1; i > 0; i--){
     var j = Math.floor(Math.random() * (i + 1));
-    var tmp = list[i];
-    list[i] = list[j];
-    list[j] = tmp;
+    var tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
   }
-  return list;
+  return arr;
 }
 
-function loadSettings(){
+function isUpper(ch){
+  return /^[A-Z]$/.test(ch);
+}
+
+function phaseOf(id){
+  if(id <= 20) return {key:"lower", label:"小楷", emoji:"🐣"};
+  if(id <= 30) return {key:"upper", label:"大楷", emoji:"🦁"};
+  if(id <= 39) return {key:"mix", label:"混合", emoji:"🌈"};
+  if(id <= 70) return {key:"word", label:"詞語", emoji:"🐱"};
+  if(id <= 80) return {key:"sent", label:"短句", emoji:"💬"};
+  return {key:"para", label:"短文", emoji:"📖"};
+}
+
+function flagsFromSpec(spec){
+  var blob = "";
+  if(spec.words) blob = spec.words.join(" ");
+  else if(spec.text) blob = spec.text;
+  else blob = spec.letters || "";
+  var needsUpper = spec.kase === "upper" || spec.kase === "both" || spec.kase === "mix" || /[A-Z]/.test(blob);
+  var hasSpace = (spec.words || []).some(function(w){return w.indexOf(" ") >= 0;}) || (spec.text ? spec.text.indexOf(" ") >= 0 : false);
+  var hasSymbol = /[^A-Za-z\s]/.test(blob);
+  return {needsUpper:needsUpper, hasSpace:hasSpace, hasSymbol:hasSymbol};
+}
+
+function taskCount(spec){
+  if(spec.kind === "each"){
+    var n = spec.letters.length * spec.times * (spec.kase === "both" ? 2 : 1);
+    return n + " 個字母";
+  }
+  if(spec.kind === "sample") return spec.n + " 個字母";
+  if(spec.kind === "words") return spec.words.length + " 個詞";
+  return spec.text.length + " 個字";
+}
+
+function eachLetters(letters, times, kase){
+  var out = [];
+  for(var i = 0; i < letters.length; i++){
+    var base = letters.charAt(i);
+    var forms = kase === "both" ? [base.toUpperCase(), base.toLowerCase()]
+      : kase === "upper" ? [base.toUpperCase()] : [base.toLowerCase()];
+    for(var f = 0; f < forms.length; f++){
+      for(var t = 0; t < times; t++) out.push(forms[f]);
+    }
+  }
+  return shuffle(out);
+}
+
+function sampleFrom(letters, n, kase){
+  var pool = letters.split("");
+  var out = [];
+  var last = "";
+  for(var i = 0; i < n; i++){
+    var choices = [];
+    for(var j = 0; j < pool.length; j++){
+      if(pool[j].toLowerCase() !== last.toLowerCase()) choices.push(pool[j]);
+    }
+    if(!choices.length) choices = pool.slice();
+    var base = choices[Math.floor(Math.random() * choices.length)];
+    var ch = base.toLowerCase();
+    if(kase === "upper") ch = ch.toUpperCase();
+    else if(kase === "mix") ch = Math.random() < 0.5 ? ch.toUpperCase() : ch;
+    out.push(ch);
+    last = ch;
+  }
+  if(kase === "mix" && n >= 2){
+    var hasU = out.some(function(c){return isUpper(c);});
+    var hasL = out.some(function(c){return /^[a-z]$/.test(c);});
+    if(!hasU) out[0] = out[0].toUpperCase();
+    if(!hasL) out[1] = out[1].toLowerCase();
+  }
+  return out;
+}
+
+function expand(spec){
+  if(spec.kind === "each") return {kind:"letters", prompts:eachLetters(spec.letters, spec.times, spec.kase)};
+  if(spec.kind === "sample") return {kind:"letters", prompts:sampleFrom(spec.letters, spec.n, spec.kase)};
+  if(spec.kind === "words") return {kind:"words", prompts:spec.words.slice()};
+  return {kind:"text", prompts:[spec.text]};
+}
+
+function limitFor(id, expanded){
+  var prompts = expanded.prompts;
+  var chars = 0;
+  for(var i = 0; i < prompts.length; i++) chars += prompts[i].length;
+  if(id <= 20) return {sec:prompts.length * 8, note:"每個字母 8 秒"};
+  if(id <= 39) return {sec:prompts.length * 10, note:"每個字母 10 秒"};
+  if(id <= 50) return {sec:prompts.length * 20, note:"每個詞 20 秒"};
+  if(id <= 60) return {sec:prompts.length * 25, note:"每個詞 25 秒"};
+  if(id <= 70) return {sec:prompts.length * 30, note:"每個詞組 30 秒"};
+  return {sec:chars * 4, note:"每個字（連空格同符號）4 秒"};
+}
+
+function calcStars(mistakes, elapsedSec, limitSec){
+  if(mistakes <= 0 && elapsedSec <= limitSec) return 3;
+  if(mistakes <= 2) return 2;
+  return 1;
+}
+
+function explainStars(stars, mistakes){
+  if(stars === 3) return "一次都冇打錯，而且喺時限內做完。";
+  if(mistakes === 0) return "全部打啱，但慢過時限，所以兩粒星。";
+  if(mistakes <= 2) return "打錯 " + mistakes + " 次，所以兩粒星。";
+  return "打錯 " + mistakes + " 次，做完都有一粒星。";
+}
+
+var LEVELS = SPECS.map(function(spec, index){
+  var id = index + 1;
+  var flags = flagsFromSpec(spec);
+  return {
+    id:id,
+    page:Math.ceil(id / 10),
+    spec:spec,
+    preview:spec.preview,
+    phase:phaseOf(id),
+    countLabel:taskCount(spec),
+    needsUpper:flags.needsUpper,
+    hasSpace:flags.hasSpace,
+    hasSymbol:flags.hasSymbol
+  };
+});
+
+function loadStore(){
   try{
-    var raw = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "null");
+    var raw = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
     if(!raw || typeof raw !== "object") return;
-    if(raw.caseMode === "upper" || raw.caseMode === "lower" || raw.caseMode === "mixed") S.caseMode = raw.caseMode;
-    if(raw.count === 10 || raw.count === 26) S.count = raw.count;
-    if(typeof raw.sound === "boolean") S.sound = raw.sound;
-    if(typeof raw.strict === "boolean") S.strict = raw.strict;
+    if(raw.stars && typeof raw.stars === "object"){
+      Object.keys(raw.stars).forEach(function(k){
+        var n = Number(raw.stars[k]);
+        if(n >= 1 && n <= 3) store.stars[k] = n;
+      });
+    }
+    if(typeof raw.sound === "boolean") store.sound = raw.sound;
   }catch(e){}
 }
 
-function saveSettings(){
-  try{localStorage.setItem(SETTINGS_KEY, JSON.stringify(S));}catch(e){}
+function saveStore(){
+  try{localStorage.setItem(STORE_KEY, JSON.stringify(store));}catch(e){}
 }
 
-function loadBests(){
-  try{
-    var raw = JSON.parse(localStorage.getItem(BEST_KEY) || "{}");
-    if(raw && typeof raw === "object") bests = raw;
-  }catch(e){bests = {};}
+function bestOf(id){
+  return store.stars[String(id)] || 0;
 }
 
-function bestId(){
-  return S.caseMode + "-" + S.count + "-" + (S.strict ? "s" : "a");
+function totalStars(){
+  var n = 0;
+  Object.keys(store.stars).forEach(function(k){n += store.stars[k];});
+  return n;
 }
 
-function currentBest(){
-  var n = Number(bests[bestId()]);
-  return isFinite(n) && n > 0 ? n : 0;
-}
-
-function saveBest(n){
-  bests[bestId()] = n;
-  try{localStorage.setItem(BEST_KEY, JSON.stringify(bests));}catch(e){}
-}
-
-function modeLabel(mode){
-  if(mode === "lower") return "小楷";
-  if(mode === "mixed") return "混合";
-  return "大楷";
-}
-
-function renderBestNote(){
-  var el = $("bestNote");
-  if(!el) return;
-  var n = currentBest();
-  el.hidden = !(n > 0);
-  el.textContent = n > 0 ? ("呢個玩法最長連續 " + n + " 下") : "";
-}
-
-function renderSound(){
-  btnSound.textContent = S.sound ? "🔊" : "🔇";
-  btnSound.setAttribute("aria-pressed", S.sound ? "true" : "false");
-  btnSound.setAttribute("aria-label", S.sound ? "音效開住，撳一下閂" : "音效閂咗，撳一下開");
-  optSound.checked = S.sound;
-}
-
-function syncHome(){
-  var modes = document.querySelectorAll("[data-mode]");
-  for(var i = 0; i < modes.length; i++){
-    var on = modes[i].getAttribute("data-mode") === S.caseMode;
-    modes[i].classList.toggle("sel", on);
-    modes[i].setAttribute("aria-pressed", on ? "true" : "false");
+function starsHtml(n){
+  var html = "";
+  for(var i = 1; i <= 3; i++){
+    html += '<span class="star' + (i <= n ? " on" : "") + '" aria-hidden="true">★</span>';
   }
-  var counts = document.querySelectorAll("[data-count]");
-  for(var c = 0; c < counts.length; c++){
-    var picked = Number(counts[c].getAttribute("data-count")) === S.count;
-    counts[c].classList.toggle("sel", picked);
-    counts[c].setAttribute("aria-pressed", picked ? "true" : "false");
+  return html;
+}
+
+function selfCheck(){
+  var issues = [];
+  if(LEVELS.length !== 100) issues.push("關卡數量 " + LEVELS.length);
+  LEVELS.forEach(function(lv, i){
+    if(lv.id !== i + 1) issues.push("id " + lv.id);
+    if(!lv.preview) issues.push("preview " + lv.id);
+  });
+  var l1 = expand(LEVELS[0].spec);
+  var counts = {a:0, b:0, c:0};
+  l1.prompts.forEach(function(p){counts[p] = (counts[p] || 0) + 1;});
+  if(l1.kind !== "letters" || counts.a !== 3 || counts.b !== 3 || counts.c !== 3) issues.push("第1關");
+  var l21 = expand(LEVELS[20].spec);
+  if(l21.prompts.some(function(p){return p !== p.toUpperCase();})) issues.push("第21關");
+  var l40 = expand(LEVELS[39].spec);
+  if(l40.kind !== "words" || l40.prompts.join(",") !== "cat,dog,pig") issues.push("第40關");
+  var l71 = expand(LEVELS[70].spec);
+  if(l71.kind !== "text" || l71.prompts[0] !== "I see a cat.") issues.push("第71關");
+  var l100 = expand(LEVELS[99].spec);
+  if(l100.kind !== "text" || l100.prompts[0].indexOf("happy") < 0) issues.push("第100關");
+  if(calcStars(0, 10, 10) !== 3) issues.push("三星");
+  if(calcStars(0, 10.01, 10) !== 2) issues.push("慢兩星");
+  if(calcStars(2, 1, 10) !== 2) issues.push("錯兩星");
+  if(calcStars(3, 1, 10) !== 1) issues.push("一星");
+  var el = $("booterr");
+  if(issues.length){
+    el.hidden = false;
+    el.textContent = "課程資料有問題：" + issues.join("、");
   }
-  optStrict.checked = S.strict;
-  renderSound();
-  renderBestNote();
+  return issues;
+}
+
+function fitPages(){
+  var scroller = $("scroller");
+  if(!scroller) return;
+  var h = scroller.clientHeight;
+  if(h > 0) document.documentElement.style.setProperty("--page-h", h + "px");
+}
+
+function scrollPage(page, smooth){
+  var scroller = $("scroller");
+  if(!page || !scroller) return;
+  var top = page.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop;
+  scroller.scrollTo({top:top, behavior:smooth ? "smooth" : "auto"});
+}
+
+function renderJumps(){
+  var box = $("jumps");
+  box.innerHTML = "";
+  for(var p = 1; p <= 10; p++){
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "jump";
+    btn.style.setProperty("--jc", JUMP_COLORS[p - 1]);
+    btn.textContent = ((p - 1) * 10 + 1) + "–" + (p * 10);
+    btn.setAttribute("data-page", String(p));
+    btn.setAttribute("aria-label", "去第 " + btn.textContent + " 關");
+    box.appendChild(btn);
+  }
+}
+
+function renderHome(focusId){
+  $("totalPill").textContent = "⭐ " + totalStars() + " / 300";
+  $("optSound").checked = store.sound;
+  var ban = $("banner");
+  if(banner){
+    ban.hidden = false;
+    var best = bestOf(banner.id);
+    ban.textContent = "第 " + banner.id + " 關完成 · 今次 " + banner.stars + " 粒星 · 主頁最佳 " + best + " 粒星";
+  }else{
+    ban.hidden = true;
+  }
+  var scroller = $("scroller");
+  var html = "";
+  for(var p = 1; p <= 10; p++){
+    var meta = PAGE_META[p - 1];
+    html += '<section class="page" id="page-' + p + '" data-page="' + p + '">';
+    html += '<div class="pageInner" style="--wash:' + PAGE_WASH[p - 1] + '">';
+    html += "<h2>" + meta.title + "</h2>";
+    html += '<p class="blurb">' + meta.blurb + "</p>";
+    html += '<div class="grid">';
+    for(var i = 0; i < 10; i++){
+      var lv = LEVELS[(p - 1) * 10 + i];
+      var stars = bestOf(lv.id);
+      var just = focusId === lv.id ? " just" : "";
+      html += '<button type="button" class="lvl' + just + '" data-level="' + lv.id + '" style="--c:' + CARD_COLORS[i] + '"';
+      html += ' aria-label="第 ' + lv.id + " 關，" + lv.phase.label + "，" + lv.preview + "，最佳 " + stars + " 粒星，" + lv.countLabel + '">';
+      html += '<span class="lnum">第 ' + lv.id + " 關</span>";
+      html += '<span class="phase">' + lv.phase.emoji + " " + lv.phase.label + "</span>";
+      html += '<span class="preview letters">' + lv.preview + "</span>";
+      html += '<span class="stars">' + starsHtml(stars) + "</span>";
+      html += '<span class="meta">' + lv.countLabel + "</span>";
+      html += "</button>";
+    }
+    html += "</div></div></section>";
+  }
+  scroller.innerHTML = html;
+  fitPages();
+  watchPage();
 }
 
 function show(name){
   screenName = name;
-  var ids = ["home", "play", "done"];
-  for(var i = 0; i < ids.length; i++){
-    var el = $(ids[i]);
-    var on = ids[i] === name;
-    el.classList.toggle("on", on);
-    if(on) el.scrollTop = 0;
+  ["home","play"].forEach(function(id){
+    $(id).classList.toggle("on", id === name);
+  });
+  if(name === "play"){
+    var stage = document.querySelector("#play .stage");
+    if(stage) stage.scrollTop = 0;
   }
+}
+
+function clearTimers(){
+  timers.forEach(function(id){clearTimeout(id);});
+  timers = [];
+  if(tick){clearInterval(tick); tick = 0;}
+}
+
+function later(fn, ms){
+  var id = setTimeout(fn, ms);
+  timers.push(id);
+  return id;
 }
 
 function ensureAudio(){
@@ -556,14 +1000,14 @@ function ensureAudio(){
 }
 
 function beep(freq, dur, type, vol){
-  if(!S.sound) return;
+  if(!store.sound) return;
   var ctx = ensureAudio();
   if(!ctx) return;
   var o = ctx.createOscillator();
   var g = ctx.createGain();
   o.type = type || "sine";
   o.frequency.value = freq;
-  var v = vol || 0.1;
+  var v = vol || 0.08;
   g.gain.setValueAtTime(v, ctx.currentTime);
   g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
   o.connect(g);
@@ -572,304 +1016,638 @@ function beep(freq, dur, type, vol){
   o.stop(ctx.currentTime + dur + 0.02);
 }
 
+function sfxTick(){beep(660, 0.06, "sine", 0.05);}
 function sfxOk(){
-  beep(523, 0.1, "sine", 0.1);
-  setTimeout(function(){beep(659, 0.1, "sine", 0.1);}, 90);
-  setTimeout(function(){beep(784, 0.16, "sine", 0.1);}, 170);
+  beep(523, 0.09, "sine", 0.08);
+  setTimeout(function(){beep(659, 0.09, "sine", 0.08);}, 80);
+  setTimeout(function(){beep(784, 0.14, "sine", 0.08);}, 150);
 }
-
-function sfxNo(){beep(196, 0.16, "triangle", 0.07);}
-
+function sfxNo(){beep(196, 0.14, "triangle", 0.06);}
 function sfxWin(){
-  [523, 659, 784, 1047].forEach(function(f, i){
-    setTimeout(function(){beep(f, 0.16, "sine", 0.09);}, i * 110);
+  [523,659,784,1047].forEach(function(f, i){
+    setTimeout(function(){beep(f, 0.14, "sine", 0.08);}, i * 100);
   });
 }
 
-function buildQueue(caseMode, count){
-  var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-  shuffle(letters);
-  var picked = letters.slice(0, count);
-  if(caseMode === "upper") return picked;
-  if(caseMode === "lower") return picked.map(function(ch){return ch.toLowerCase();});
-  var flags = picked.map(function(_, i){return i < Math.ceil(picked.length / 2);});
-  shuffle(flags);
-  return picked.map(function(ch, i){return flags[i] ? ch : ch.toLowerCase();});
+function syncSound(){
+  var btn = $("btnSound");
+  btn.textContent = store.sound ? "🔊" : "🔇";
+  btn.setAttribute("aria-pressed", store.sound ? "true" : "false");
+  btn.setAttribute("aria-label", store.sound ? "音效開住，撳一下閂" : "音效閂咗，撳一下開");
+  $("optSound").checked = store.sound;
 }
 
-function buildKeys(){
-  for(var i = 0; i < 26; i++){
-    var btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "key letters";
-    var row = i < 21 ? Math.floor(i / 7) + 1 : 4;
-    var col = i < 21 ? (i % 7) + 1 : (i - 21) + 2;
-    btn.style.gridRow = String(row);
-    btn.style.gridColumn = String(col);
-    kb.appendChild(btn);
+function currentPrompt(){
+  return run.prompts[run.promptIndex] || "";
+}
+
+function currentChar(){
+  var p = currentPrompt();
+  return p.charAt(run.charIndex);
+}
+
+function doneChars(){
+  var n = 0;
+  for(var i = 0; i < run.promptIndex; i++) n += run.prompts[i].length;
+  return n + run.charIndex;
+}
+
+function totalChars(){
+  var n = 0;
+  for(var i = 0; i < run.prompts.length; i++) n += run.prompts[i].length;
+  return n;
+}
+
+function elapsedSec(){
+  return (Date.now() - run.startedAt) / 1000;
+}
+
+function layoutHas(name, ch){
+  var rows = LAYOUTS[name];
+  for(var r = 0; r < rows.length; r++){
+    if(rows[r].indexOf(ch) >= 0) return true;
+    if(ch === " " && rows[r].indexOf("space") >= 0) return true;
+    if(/^[A-Z]$/.test(ch) && rows[r].indexOf(ch.toLowerCase()) >= 0) return true;
   }
+  return false;
 }
 
-function applyCase(isUpper){
-  if(keysUpper === isUpper && kb.children.length === 26) return;
-  keysUpper = isUpper;
-  if(kb.children.length !== 26) buildKeys();
-  var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  for(var i = 0; i < 26; i++){
-    var ch = isUpper ? alphabet.charAt(i) : alphabet.charAt(i).toLowerCase();
-    var btn = kb.children[i];
-    btn.textContent = ch;
-    btn.setAttribute("data-letter", ch);
-    btn.setAttribute("aria-label", (isUpper ? "大楷 " : "小楷 ") + ch);
+function whereIs(ch){
+  if(/^[a-zA-Z]$/.test(ch) || ch === " ") return "letters";
+  if(NUM_CHARS.indexOf(ch) >= 0) return "numbers";
+  return "symbols";
+}
+
+function coachLine(ch){
+  if(!ch) return "";
+  if(ch === " ") return "而家要撳下面長長嘅空格鍵";
+  if(isUpper(ch)){
+    if(shiftMode === 0) return "而家要大楷 " + ch + "：先撳黃色 ⇧（向上），再撳字母";
+    if(shiftMode === 2) return "大楷鎖住咗，撳字母 " + ch;
+    return "⇧ 開咗，而家撳大楷 " + ch;
   }
+  if(/^[a-z]$/.test(ch)){
+    if(shiftMode === 2) return "要小楷 " + ch + "：撳 ⇧ 解除大楷鎖";
+    if(shiftMode === 1) return "要小楷 " + ch + "：再撳一下 ⇧，取消大楷";
+    return "而家撳小楷 " + ch;
+  }
+  var here = layoutHas(layoutName, ch) && layoutName !== "letters";
+  if(/^[0-9]$/.test(ch)){
+    return here ? "而家撳數字 " + ch : "而家要數字 " + ch + "：先撳藍色 123";
+  }
+  if(layoutName === "letters") return "而家要符號 " + ch + "：先撳藍色 123";
+  if(!layoutHas(layoutName, ch)) return "呢個符號喺另一版：撳 #+= 或者 123";
+  return "而家撳符號 " + ch;
 }
 
-function clearKeyFlash(){
-  var keys = kb.children;
-  for(var i = 0; i < keys.length; i++) keys[i].classList.remove("good", "bad");
+function levelHintLines(level){
+  var lines = [];
+  if(level.needsUpper){
+    lines.push("要打大楷：先撳黃色 ⇧（向上），再撳字母。撳一下，下一個字母先係大楷；快啲撳兩下 ⇧，就可以鎖住大楷。");
+  }
+  if(level.hasSpace){
+    lines.push("要打空格：字同字之間，撳鍵盤下面長長嘅空格鍵。");
+  }
+  if(level.hasSymbol){
+    lines.push("句號、問號同數字：先撳 123。想睇多啲符號，再撳 #+=。");
+  }
+  return lines;
 }
 
-function flashKey(ch, cls){
-  clearKeyFlash();
-  var want = ch.toLowerCase();
-  var keys = kb.children;
-  for(var i = 0; i < keys.length; i++){
-    var letter = keys[i].getAttribute("data-letter") || "";
-    if(letter.toLowerCase() === want){
-      keys[i].classList.add(cls);
+function renderHints(){
+  var box = $("hints");
+  var lines = levelHintLines(run.level);
+  box.innerHTML = "";
+  lines.forEach(function(line){
+    var p = document.createElement("p");
+    p.className = "hint";
+    p.textContent = line;
+    box.appendChild(p);
+  });
+}
+
+function renderPrompt(){
+  var kind = run.kind;
+  var prompt = currentPrompt();
+  $("viewLetter").hidden = kind !== "letters";
+  $("viewWord").hidden = kind !== "words";
+  $("viewText").hidden = kind !== "text";
+  if(kind === "letters"){
+    var glyph = $("glyph");
+    glyph.textContent = prompt;
+    glyph.classList.remove("pop");
+    void glyph.offsetWidth;
+    glyph.classList.add("pop");
+  }else if(kind === "words"){
+    $("wordAsk").textContent = "打呢個詞 · 第 " + (run.promptIndex + 1) + " / " + run.prompts.length + " 個";
+    $("wordShow").textContent = prompt;
+    var slots = $("slots");
+    slots.innerHTML = "";
+    for(var i = 0; i < prompt.length; i++){
+      var slot = document.createElement("span");
+      var ch = prompt.charAt(i);
+      var cls = "slot";
+      if(ch === " ") cls += " spaceSlot";
+      else cls += " letters";
+      if(i < run.charIndex) cls += " done";
+      else if(i === run.charIndex) cls += " now";
+      slot.className = cls;
+      if(i > run.charIndex) slot.textContent = "";
+      else if(ch === " ") slot.textContent = "空格";
+      else slot.textContent = ch;
+      slots.appendChild(slot);
+    }
+  }else{
+    $("textAsk").textContent = run.level.id >= 81 ? "打呢段短文" : "打呢句";
+    var passage = $("passage");
+    passage.innerHTML = "";
+    for(var c = 0; c < prompt.length; c++){
+      var span = document.createElement("span");
+      var glyphCh = prompt.charAt(c);
+      var klass = "ch";
+      if(glyphCh === " ") klass += " sp";
+      if(c < run.charIndex) klass += " done";
+      else if(c === run.charIndex) klass += " now";
+      span.className = klass;
+      if(glyphCh === " " && c === run.charIndex) span.textContent = "空格";
+      else span.textContent = glyphCh === " " ? "\u00a0" : glyphCh;
+      passage.appendChild(span);
+    }
+  }
+  $("coach").textContent = coachLine(currentChar());
+}
+
+function renderScores(){
+  var el = elapsedSec();
+  var stars = calcStars(run.mistakes, el, run.limit);
+  $("lvPill").textContent = "第 " + run.level.id + " 關";
+  $("phasePill").textContent = run.level.phase.emoji + " " + run.level.phase.label;
+  if(run.kind === "letters"){
+    $("progPill").textContent = (run.promptIndex + 1) + " / " + run.prompts.length;
+  }else if(run.kind === "words"){
+    $("progPill").textContent = "詞 " + (run.promptIndex + 1) + "/" + run.prompts.length;
+  }else{
+    $("progPill").textContent = doneChars() + " / " + totalChars();
+  }
+  $("missPill").textContent = "打錯 " + run.mistakes;
+  $("timePill").textContent = Math.floor(el) + " 秒 / 時限 " + run.limit + " 秒";
+  $("liveStarPill").textContent = "預計 " + "★★★".slice(0, stars) + "☆☆☆".slice(stars);
+  $("liveStarPill").setAttribute("aria-label", "如果而家完成，預計 " + stars + " 粒星");
+  var pct = totalChars() ? (doneChars() / totalChars()) * 100 : 0;
+  $("barFill").style.width = pct + "%";
+}
+
+function hotSet(){
+  var hot = {};
+  var ch = currentChar();
+  if(!ch || !run) return hot;
+  if(ch === " "){hot.space = true; return hot;}
+  if(/^[a-zA-Z]$/.test(ch)){
+    if(layoutName === "letters") hot[ch.toLowerCase()] = true;
+    else hot.abc = true;
+    if(isUpper(ch) && shiftMode === 0) hot.shift = true;
+    if(!isUpper(ch) && shiftMode > 0) hot.shift = true;
+    return hot;
+  }
+  var home = whereIs(ch);
+  if(layoutHas(layoutName, ch) && layoutName === home) hot[ch] = true;
+  else if(layoutName === "letters") hot.num = true;
+  else if(home === "symbols" && layoutName === "numbers") hot.sym = true;
+  else if(home === "numbers" && layoutName === "symbols") hot.num = true;
+  else hot.num = true;
+  return hot;
+}
+
+function keyLabel(token){
+  if(token === "shift") return shiftMode === 2 ? "⇪" : "⇧";
+  if(token === "del") return "⌫";
+  if(token === "num") return "123";
+  if(token === "sym") return "#+=";
+  if(token === "abc") return "ABC";
+  if(token === "space") return "空格";
+  if(/^[a-z]$/.test(token) && shiftMode > 0) return token.toUpperCase();
+  return token;
+}
+
+function keyOutput(token){
+  if(token === "space") return " ";
+  if(/^[a-z]$/.test(token)) return shiftMode > 0 ? token.toUpperCase() : token;
+  if(token.length === 1) return token;
+  return null;
+}
+
+function ariaFor(token){
+  if(token === "shift") return "大楷。撳一下準備下一個大楷，快撳兩下鎖住大楷";
+  if(token === "del") return "刪除上一個已經打啱嘅字";
+  if(token === "num") return "數字同符號";
+  if(token === "sym") return "更多符號";
+  if(token === "abc") return "返字母鍵盤";
+  if(token === "space") return "空格";
+  var label = keyLabel(token);
+  if(isUpper(label)) return "大楷 " + label;
+  if(/^[a-z]$/.test(label)) return "小楷 " + label;
+  return label;
+}
+
+function renderKeyboard(){
+  var kb = $("kb");
+  var rows = LAYOUTS[layoutName];
+  var hot = hotSet();
+  kb.innerHTML = "";
+  rows.forEach(function(row, idx){
+    var line = document.createElement("div");
+    line.className = "kbRow" + (layoutName === "letters" && idx === 1 ? " inset" : "");
+    row.forEach(function(token){
+      var btn = document.createElement("button");
+      btn.type = "button";
+      var cls = "key";
+      if(token === "shift" || token === "del" || token === "num" || token === "sym" || token === "abc") cls += " wide";
+      if(token === "shift") cls += " shift" + (shiftMode === 1 ? " on" : shiftMode === 2 ? " lock" : "");
+      if(token === "del") cls += " del";
+      if(token === "num" || token === "sym" || token === "abc") cls += " fn";
+      if(token === "space") cls += " space";
+      if(/^[a-z]$/.test(token) || (token.length === 1 && /[A-Za-z]/.test(keyLabel(token)))) cls += " letters";
+      if(hot[token]) cls += " hot";
+      btn.className = cls;
+      btn.setAttribute("data-key", token);
+      btn.setAttribute("aria-label", ariaFor(token));
+      if(token === "shift") btn.setAttribute("aria-pressed", shiftMode > 0 ? "true" : "false");
+      var main = document.createElement("span");
+      main.className = "main";
+      main.textContent = keyLabel(token);
+      btn.appendChild(main);
+      if(token === "shift"){
+        var sub = document.createElement("span");
+        sub.className = "sub";
+        sub.textContent = shiftMode === 2 ? "鎖住" : "大楷";
+        btn.appendChild(sub);
+      }
+      line.appendChild(btn);
+    });
+    kb.appendChild(line);
+  });
+  kb.classList.toggle("locked", locked);
+}
+
+function renderAll(){
+  renderPrompt();
+  renderScores();
+  renderKeyboard();
+}
+
+function setStatus(msg, kind){
+  var el = $("status");
+  el.textContent = msg;
+  el.className = "status" + (kind ? " " + kind : "");
+  if(msg) $("live").textContent = msg;
+}
+
+function flashCard(cls){
+  ["viewLetter","viewWord","viewText"].forEach(function(id){
+    var el = $(id);
+    el.classList.remove("bad");
+    if(cls){
+      void el.offsetWidth;
+      el.classList.add(cls);
+    }
+  });
+}
+
+function flashKey(token, cls){
+  var keys = $("kb").querySelectorAll(".key");
+  for(var i = 0; i < keys.length; i++) keys[i].classList.remove("good","bad");
+  if(!token) return;
+  for(var k = 0; k < keys.length; k++){
+    if(keys[k].getAttribute("data-key") === token){
+      keys[k].classList.add(cls);
       return;
     }
   }
 }
 
-function setStatus(msg, kind){
-  statusEl.textContent = msg;
-  statusEl.className = "status" + (kind ? " " + kind : "");
-  if(msg) live.textContent = msg;
+function tokenForChar(ch){
+  if(ch === " ") return "space";
+  if(/^[A-Z]$/.test(ch)) return ch.toLowerCase();
+  return ch;
 }
 
-function renderScores(){
-  starPill.textContent = "⭐ " + stars;
-  streakPill.textContent = "連續 " + streak;
-  streakPill.classList.toggle("hot", streak >= 3);
-  starPill.setAttribute("aria-label", "完成咗 " + stars + " 個");
-  streakPill.setAttribute("aria-label", "連續 " + streak + " 下");
+function missMessage(got, want){
+  if(want === " ") return "要撳空格鍵呀";
+  if(/^[a-z]$/.test(want) && got === want.toUpperCase()) return "要小楷呀";
+  if(isUpper(want) && got.toLowerCase() === want.toLowerCase()) return "要大楷呀，先撳 ⇧";
+  if(/^[0-9]$/.test(want)) return "先撳 123，再撳數字 " + want;
+  if(!/^[a-zA-Z ]$/.test(want)) return "先撳 123，再搵 " + want;
+  return "再試下";
 }
 
-function bump(el){
-  el.classList.remove("bump");
-  void el.offsetWidth;
-  el.classList.add("bump");
+function speakPrompt(){
+  var ch = currentChar();
+  var say = ch === " " ? "空格" : ch;
+  if(run.kind === "letters") $("live").textContent = "第 " + run.level.id + " 關，打 " + say;
+  else if(run.kind === "words") $("live").textContent = "打個詞 " + currentPrompt() + "，而家 " + say;
+  else $("live").textContent = "打短文，而家 " + say;
 }
 
-function renderLetter(){
-  var ch = queue[index];
-  var isUpper = ch === ch.toUpperCase();
-  glyph.textContent = ch;
-  glyph.classList.remove("pop");
-  void glyph.offsetWidth;
-  glyph.classList.add("pop");
-  caseTag.textContent = isUpper ? "大楷" : "小楷";
-  letterCard.setAttribute("data-case", isUpper ? "upper" : "lower");
-  letterCard.classList.remove("good", "bad");
-  setStatus("", "");
-  applyCase(isUpper);
-  clearKeyFlash();
-  prog.textContent = (index + 1) + " / " + queue.length;
-  barFill.style.width = ((index / queue.length) * 100) + "%";
-  modePill.textContent = modeLabel(S.caseMode);
-  loosePill.hidden = !!S.strict;
-  live.textContent = (isUpper ? "大楷 " : "小楷 ") + ch + "，第 " + (index + 1) + " 個，共 " + queue.length + " 個";
-  kb.classList.toggle("locked", false);
-  locked = false;
-}
-
-function clearTimer(){
-  if(timer){
-    clearTimeout(timer);
-    timer = 0;
-  }
-}
-
-function advance(){
-  timer = 0;
-  index += 1;
-  if(index >= queue.length){
-    finish();
+function advancePrompt(){
+  run.promptIndex += 1;
+  run.charIndex = 0;
+  if(run.promptIndex >= run.prompts.length){
+    finishLevel();
     return;
   }
-  renderLetter();
-}
-
-function onCorrect(ch){
-  locked = true;
-  kb.classList.add("locked");
-  stars += 1;
-  streak += 1;
-  if(streak > roundBest) roundBest = streak;
-  flashKey(ch, "good");
-  letterCard.classList.remove("bad");
-  letterCard.classList.add("good");
-  glyph.classList.remove("pop");
-  void glyph.offsetWidth;
-  glyph.classList.add("pop");
-  var msg = streak >= 3 ? ("連續 " + streak + " 下！") : PRAISE[praiseI++ % PRAISE.length];
-  setStatus(msg, "ok");
-  renderScores();
-  bump(starPill);
+  setStatus(PRAISE[praiseI++ % PRAISE.length], "ok");
   sfxOk();
-  clearTimer();
-  timer = setTimeout(advance, 680);
-}
-
-function onWrong(ch, message){
-  streak = 0;
-  renderScores();
-  flashKey(ch, "bad");
-  letterCard.classList.remove("good", "bad");
-  void letterCard.offsetWidth;
-  letterCard.classList.add("bad");
-  setStatus(message, "no");
-  sfxNo();
-}
-
-function answer(raw){
-  if(screenName !== "play" || locked) return;
-  if(typeof raw !== "string" || !/^[a-zA-Z]$/.test(raw)) return;
-  var target = queue[index];
-  var sameLetter = raw.toLowerCase() === target.toLowerCase();
-  if(raw === target || (!S.strict && sameLetter)){
-    onCorrect(raw);
+  if(run.kind === "text"){
+    renderAll();
+    speakPrompt();
     return;
   }
-  if(sameLetter){
-    onWrong(raw, target === target.toUpperCase() ? "要大楷呀" : "要小楷呀");
-    return;
-  }
-  onWrong(raw, "再試下");
-}
-
-function finish(){
   locked = true;
-  kb.classList.add("locked");
-  var prev = currentBest();
-  var perfect = roundBest === queue.length;
-  if(roundBest > prev) saveBest(roundBest);
-  $("endMark").textContent = perfect ? "⭐⭐⭐" : "⭐";
-  $("endTitle").textContent = perfect ? "全部打啱，好叻！" : "完成啦！";
-  $("endMode").textContent = modeLabel(S.caseMode) + " · " + (S.strict ? "要分大小楷" : "大細楷都得");
-  $("endDetail").textContent = queue.length + " 個字母都打到";
-  $("endStreak").textContent = "今次最長連續 " + roundBest + " 下";
-  var bestEl = $("endBest");
-  if(roundBest > prev && (prev > 0 || roundBest >= 3)) bestEl.textContent = "新高分！最長連續 " + roundBest + " 下";
-  else if(prev > 0 && roundBest === prev) bestEl.textContent = "追平最高紀錄 " + prev + " 下";
-  else if(prev > 0) bestEl.textContent = "最高紀錄 " + prev + " 下";
-  else bestEl.textContent = "";
-  sfxWin();
-  show("done");
-  renderBestNote();
+  renderAll();
+  later(function(){
+    locked = false;
+    setStatus("", "");
+    renderAll();
+    speakPrompt();
+  }, run.kind === "letters" ? 520 : 640);
 }
 
-function startRound(){
-  clearTimer();
-  queue = buildQueue(S.caseMode, S.count);
-  index = 0;
-  stars = 0;
-  streak = 0;
-  roundBest = 0;
-  praiseI = 0;
-  keysUpper = null;
-  saveSettings();
+function onHit(ch){
+  if(shiftMode === 1 && /^[A-Za-z]$/.test(ch)) shiftMode = 0;
+  run.charIndex += 1;
+  flashCard("");
+  flashKey(tokenForChar(ch), "good");
+  var prompt = currentPrompt();
+  if(run.charIndex >= prompt.length){
+    advancePrompt();
+    return;
+  }
+  if(run.kind === "letters") sfxOk();
+  else sfxTick();
+  setStatus("", "");
+  renderAll();
+  speakPrompt();
+}
+
+function onMiss(got, want){
+  run.mistakes += 1;
+  flashCard("bad");
+  flashKey(tokenForChar(got), "bad");
+  var msg = missMessage(got, want);
+  setStatus(msg, "no");
+  sfxNo();
   renderScores();
-  show("play");
-  renderLetter();
+  renderKeyboard();
 }
 
-function goHome(){
-  clearTimer();
+function submitChar(ch){
+  if(screenName !== "play" || !run || locked || run.over) return;
+  if(typeof ch !== "string" || ch.length !== 1) return;
+  var want = currentChar();
+  if(!want) return;
+  if(ch === want) onHit(ch);
+  else onMiss(ch, want);
+}
+
+function doBackspace(){
+  if(screenName !== "play" || !run || locked || run.over) return;
+  if(run.charIndex <= 0) return;
+  run.charIndex -= 1;
+  setStatus("", "");
+  renderAll();
+}
+
+function onShift(){
+  var now = Date.now();
+  if(shiftMode === 2) shiftMode = 0;
+  else if(shiftMode === 1 && now - lastShiftAt < 420) shiftMode = 2;
+  else if(shiftMode === 1) shiftMode = 0;
+  else shiftMode = 1;
+  lastShiftAt = now;
+  renderKeyboard();
+  $("coach").textContent = coachLine(currentChar());
+}
+
+function onKeyToken(token){
+  if(token === "shift"){onShift(); return;}
+  if(token === "del"){doBackspace(); return;}
+  if(token === "num"){layoutName = "numbers"; renderKeyboard(); $("coach").textContent = coachLine(currentChar()); return;}
+  if(token === "sym"){layoutName = "symbols"; renderKeyboard(); $("coach").textContent = coachLine(currentChar()); return;}
+  if(token === "abc"){layoutName = "letters"; renderKeyboard(); $("coach").textContent = coachLine(currentChar()); return;}
+  var out = keyOutput(token);
+  if(out) submitChar(out);
+}
+
+function finishLevel(){
+  if(run.over) return;
+  run.over = true;
+  locked = true;
+  clearTimers();
+  var elapsed = elapsedSec();
+  var stars = calcStars(run.mistakes, elapsed, run.limit);
+  var prev = bestOf(run.level.id);
+  var best = Math.max(prev, stars);
+  if(stars > prev) store.stars[String(run.level.id)] = stars;
+  saveStore();
+  banner = {id:run.level.id, stars:stars, best:best};
+  var big = "";
+  for(var i = 1; i <= 3; i++) big += i <= stars ? "★" : "☆";
+  $("resultMark").textContent = stars === 3 ? "🎉" : stars === 2 ? "👏" : "💪";
+  $("resultStars").innerHTML = starsHtml(stars);
+  $("resultTitle").textContent = "第 " + run.level.id + " 關完成！";
+  $("resultWhy").textContent = explainStars(stars, run.mistakes);
+  var extra = stars > prev ? "新高分！主頁會見到 " + stars + " 粒星。"
+    : prev > stars ? "今次 " + stars + " 粒星，主頁保持最佳 " + prev + " 粒星。"
+    : "主頁最佳仍然係 " + best + " 粒星。";
+  $("resultNums").textContent = "打錯 " + run.mistakes + " 次 · 用時 " + Math.max(1, Math.round(elapsed)) + " 秒 · 時限 " + run.limit + " 秒（" + run.limitNote + "）。" + extra;
+  $("result").classList.add("on");
+  $("live").textContent = "第 " + run.level.id + " 關完成，拿到 " + stars + " 粒星。" + extra;
+  sfxWin();
+  var left = 6;
+  var btn = $("btnResultHome");
+  btn.textContent = "返主頁睇星星（" + left + "）";
+  btn.focus();
+  var countdown = setInterval(function(){
+    left -= 1;
+    if(left <= 0){
+      clearInterval(countdown);
+      goHome(run.level.id);
+      return;
+    }
+    btn.textContent = "返主頁睇星星（" + left + "）";
+  }, 1000);
+  run.countdown = countdown;
+}
+
+function goHome(focusId){
+  if(run && run.countdown) clearInterval(run.countdown);
+  clearTimers();
   locked = false;
-  kb.classList.remove("locked");
+  $("result").classList.remove("on");
   show("home");
-  renderBestNote();
+  renderHome(focusId || 0);
+  if(focusId){
+    requestAnimationFrame(function(){
+      var pageNo = Math.ceil(focusId / 10);
+      var page = $("page-" + pageNo);
+      if(page) scrollPage(page, false);
+      document.querySelectorAll(".jump").forEach(function(btn){
+        btn.classList.toggle("on", btn.getAttribute("data-page") === String(pageNo));
+      });
+    });
+  }
 }
 
-loadSettings();
-loadBests();
-var startBtn = $("btnStart");
-syncHome();
+function startLevel(id){
+  var level = LEVELS[id - 1];
+  if(!level) return;
+  clearTimers();
+  if(run && run.countdown) clearInterval(run.countdown);
+  var expanded = expand(level.spec);
+  var lim = limitFor(level.id, expanded);
+  run = {
+    level:level,
+    kind:expanded.kind,
+    prompts:expanded.prompts,
+    promptIndex:0,
+    charIndex:0,
+    mistakes:0,
+    limit:lim.sec,
+    limitNote:lim.note,
+    startedAt:Date.now(),
+    over:false,
+    countdown:0
+  };
+  locked = false;
+  shiftMode = 0;
+  lastShiftAt = 0;
+  layoutName = "letters";
+  praiseI = 0;
+  banner = null;
+  $("result").classList.remove("on");
+  setStatus("", "");
+  flashCard("");
+  show("play");
+  renderHints();
+  renderAll();
+  speakPrompt();
+  tick = setInterval(function(){
+    if(!run || run.over) return;
+    renderScores();
+    var coach = $("coach");
+    if(coach && !coach.textContent) coach.textContent = coachLine(currentChar());
+  }, 250);
+}
+
+var pageWatchOn = false;
+function markVisiblePage(){
+  var scroller = $("scroller");
+  var pages = scroller.querySelectorAll(".page");
+  if(!pages.length) return;
+  var edge = scroller.getBoundingClientRect().top;
+  var best = pages[0];
+  var bestDist = Infinity;
+  for(var i = 0; i < pages.length; i++){
+    var dist = Math.abs(pages[i].getBoundingClientRect().top - edge);
+    if(dist < bestDist){bestDist = dist; best = pages[i];}
+  }
+  var page = best.getAttribute("data-page");
+  document.querySelectorAll(".jump").forEach(function(btn){
+    btn.classList.toggle("on", btn.getAttribute("data-page") === page);
+    btn.setAttribute("aria-current", btn.getAttribute("data-page") === page ? "true" : "false");
+  });
+}
+function watchPage(){
+  if(pageWatchOn) return;
+  pageWatchOn = true;
+  $("scroller").addEventListener("scroll", markVisiblePage, {passive:true});
+  markVisiblePage();
+}
+
+loadStore();
+var bootIssues = selfCheck();
+renderJumps();
+renderHome(0);
+syncSound();
 show("home");
+fitPages();
+watchPage();
+window.addEventListener("resize", fitPages);
 
-document.querySelector(".modes").addEventListener("click", function(e){
-  var btn = e.target.closest("[data-mode]");
+$("jumps").addEventListener("click", function(e){
+  var btn = e.target.closest("[data-page]");
   if(!btn) return;
-  S.caseMode = btn.getAttribute("data-mode");
-  saveSettings();
-  syncHome();
+  var page = $("page-" + btn.getAttribute("data-page"));
+    if(page) scrollPage(page, true);
 });
 
-document.querySelector(".segs").addEventListener("click", function(e){
-  var btn = e.target.closest("[data-count]");
+$("scroller").addEventListener("click", function(e){
+  var btn = e.target.closest("[data-level]");
   if(!btn) return;
-  S.count = Number(btn.getAttribute("data-count"));
-  saveSettings();
-  syncHome();
-});
-
-optSound.addEventListener("change", function(){
-  S.sound = optSound.checked;
-  if(S.sound) ensureAudio();
-  saveSettings();
-  renderSound();
-});
-
-optStrict.addEventListener("change", function(){
-  S.strict = optStrict.checked;
-  saveSettings();
-  renderBestNote();
-});
-
-startBtn.addEventListener("click", function(){
   ensureAudio();
-  startRound();
+  startLevel(Number(btn.getAttribute("data-level")));
 });
 
-$("btnHome").addEventListener("click", goHome);
-$("btnDoneHome").addEventListener("click", goHome);
-$("btnReplay").addEventListener("click", function(){
-  ensureAudio();
-  startRound();
+$("optSound").addEventListener("change", function(){
+  store.sound = $("optSound").checked;
+  if(store.sound) ensureAudio();
+  saveStore();
+  syncSound();
 });
 
-btnSound.addEventListener("click", function(){
-  S.sound = !S.sound;
-  if(S.sound) ensureAudio();
-  saveSettings();
-  renderSound();
+$("btnSound").addEventListener("click", function(){
+  store.sound = !store.sound;
+  if(store.sound) ensureAudio();
+  saveStore();
+  syncSound();
 });
 
-kb.addEventListener("click", function(e){
-  var btn = e.target.closest(".key");
+$("btnHome").addEventListener("click", function(){goHome(0);});
+$("btnResultHome").addEventListener("click", function(){
+  goHome(run ? run.level.id : 0);
+});
+
+$("kb").addEventListener("click", function(e){
+  var btn = e.target.closest("[data-key]");
   if(!btn) return;
-  answer(btn.getAttribute("data-letter"));
+  onKeyToken(btn.getAttribute("data-key"));
   btn.blur();
 });
 
 document.addEventListener("keydown", function(e){
-  if(e.key === "Escape" && (screenName === "play" || screenName === "done")){
-    e.preventDefault();
-    goHome();
+  if(e.key === "Escape"){
+    if(screenName === "play" || $("result").classList.contains("on")){
+      e.preventDefault();
+      goHome(run && run.over ? run.level.id : 0);
+    }
     return;
   }
-  if(screenName !== "play") return;
-  if(e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
-  if(!/^[a-zA-Z]$/.test(e.key)) return;
+  if($("result").classList.contains("on")){
+    if(e.key === "Enter"){
+      e.preventDefault();
+      goHome(run ? run.level.id : 0);
+    }
+    return;
+  }
+  if(screenName !== "play" || !run) return;
+  if(e.metaKey || e.ctrlKey || e.altKey) return;
+  if(e.key === "Backspace"){
+    e.preventDefault();
+    doBackspace();
+    return;
+  }
+  if(e.key === "Shift" || e.key === "CapsLock" || e.key === "Tab") return;
+  if(e.repeat) return;
+  if(e.key.length !== 1) return;
   e.preventDefault();
-  answer(e.key);
+  submitChar(e.key);
 });
 
 document.addEventListener("contextmenu", function(e){
   if(e.target.closest && e.target.closest("button")) e.preventDefault();
 });
+
+if(bootIssues.length) console.error(bootIssues);
 })();
 </script>
 </body>
