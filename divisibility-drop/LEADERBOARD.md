@@ -1,6 +1,6 @@
 # 龍虎榜設定 Leaderboard setup
 
-整除掉落挑戰的每關龍虎榜存在 **Firebase Realtime Database**。學生只填班別同學號，唔使登入。未貼上設定、或學校網絡連唔到時，遊戲仍然可以玩，分數會寫入這部機的 **本機暫存**。
+整除掉落挑戰的每關龍虎榜存在 **Firebase Realtime Database**。學生只填班別學號，唔使登入。未貼上設定、或學校網絡連唔到時，遊戲仍然可以玩，分數會寫入這部機的 **本機暫存**。
 
 Each level has its own board. Students enter a class and student number. The game keeps working when Firebase is not configured.
 
@@ -47,7 +47,7 @@ The client `apiKey` is public. Realtime Database rules are what stop strangers f
 | 欄位 field | 說明 |
 | --- | --- |
 | `classId` | 班別，例如 `4A`。英數字，可有 `-`，最長 12。會轉成大階。 |
-| `studentNo` | 同學號，例如 `12`。同樣只准英數字同 `-`。 |
+| `studentNo` | 學號，例如 `12`。同樣只准英數字同 `-`。 |
 | `score` | 整數 0–9999。越高越好。 |
 | `stars` | 整數 0–3。同分時星星多的排前。 |
 | `ts` | 完成時間，毫秒。分數同星星都一樣時，比較新的排前。 |
@@ -107,12 +107,12 @@ The screen shows each student's best run. The database keeps every run (append-o
 
 - `.read` 公開，投影同 iPad 唔使登入都睇到龍虎榜。
 - `.write` 只准**新**紀錄（`!data.exists()`），唔可以改人或刪除。
-- 班別同學號只准英數字同連字號，拒絕中文。
+- 班別學號只准英數字同連字號，拒絕中文。
 - 分數同星星有上限。
 - `$other` 拒絕多餘欄位。
 - 其他路徑預設拒絕。
 
-班別同學號會顯示喺龍虎榜。請學生唔好打中文全名。
+班別學號會顯示喺龍虎榜。請學生唔好打中文全名。
 
 ## 未接上雲端 Offline / placeholders
 
@@ -120,11 +120,11 @@ The screen shows each student's best run. The database keeps every run (append-o
 
 - 畫面上會寫 **龍虎榜未接上雲端** 或 **暫時無法連線**，並標明 **本機暫存**。
 - 學生一樣可以玩。分數留喺該瀏覽器的 localStorage，唔會中途寫入。
-- 只在一局**結束**時先寫一次。老師模式同樣要填班別同學號，同樣只在結束時提交。
+- 只在一局**結束**時先寫一次。老師模式同樣要填班別學號，同樣只在結束時提交。
 
 ## 學生畫面 Student flow
 
 1. 主畫面揀模式同關卡 → **開始遊戲**。
-2. 閘門要填 **班別**、**同學號**。打中文會被拒絕。兩個都填先入提示同遊戲。
+2. 閘門要填 **班別**、**學號**。打中文會被拒絕。兩個都填先入提示同遊戲。
 3. 局結束後顯示該關龍虎榜，並標示這位同學。
 4. 主畫面 **查看龍虎榜** 可以揀關卡睇，唔使先玩。
