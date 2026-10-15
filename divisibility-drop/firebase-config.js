@@ -1,5 +1,6 @@
 /* Divisibility Drop — Firebase web config (public client config).
    Realtime Database rules still need to be published: LEADERBOARD.md
+   Teacher delete needs the new rules republished, plus divisibilityDrop/teacherPin.
    The client apiKey is public by design; database rules protect the scores.
    Analytics is not loaded; measurementId is unused by the leaderboard. */
 window.FIREBASE_CONFIG = {

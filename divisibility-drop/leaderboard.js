@@ -1,36 +1,14 @@
 /* Per-level leaderboard for 整除掉落挑戰.
-   Cloud path (append-only):
+   Cloud path:
      /divisibilityDrop/levels/{2|5|10|3|mix}/scores/{pushId}
    Fields: classId, studentNo, score, stars, ts, displayName (= classId + studentNo)
-   Client writes only after a run ends.
+   Students may only create a score node. A teacher deletes one node by writing
+   /divisibilityDrop/levels/{levelId}/deleteTicket with the PIN that matches
+   /divisibilityDrop/teacherPin (set in the Firebase console; clients cannot read it),
+   then removing that score. Full rules: LEADERBOARD.md — republish them or delete fails.
+   Client writes a score only after a run ends.
    If Firebase is still placeholders or the network fails, scores stay in localStorage.
-
-   Realtime Database rules (also in LEADERBOARD.md — publish these in the console):
-   {
-     "rules": {
-       "divisibilityDrop": {
-         "levels": {
-           "$levelId": {
-             "scores": {
-               ".read": true,
-               ".indexOn": ["score"],
-               "$pushId": {
-                 ".write": "!data.exists() && newData.exists() && ($levelId == '2' || $levelId == '5' || $levelId == '10' || $levelId == '3' || $levelId == 'mix')",
-                 ".validate": "newData.hasChildren(['classId','studentNo','score','stars','ts','displayName'])",
-                 "classId": { ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9][A-Za-z0-9-]{0,11}$/)" },
-                 "studentNo": { ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9][A-Za-z0-9-]{0,11}$/)" },
-                 "score": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 9999 && newData.val() % 1 == 0" },
-                 "stars": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 3 && newData.val() % 1 == 0" },
-                 "ts": { ".validate": "newData.isNumber() && newData.val() > 1600000000000 && newData.val() < now + 86400000" },
-                 "displayName": { ".validate": "newData.isString() && newData.val() == newData.parent().child('classId').val() + newData.parent().child('studentNo').val()" },
-                 "$other": { ".validate": false }
-               }
-             }
-           }
-         }
-       }
-     }
-   }
+   Offline deletes use LOCAL_TEACHER_PIN and never touch the cloud.
 */
 (function (root, factory) {
   var api = factory(root);
@@ -56,6 +34,10 @@
   var CJK_PUNCT_RE = /[\u3000-\u303F]/;
   var FULLWIDTH_RE = /[\uFF00-\uFFEF]/;
   var TOKEN_RE = /^[A-Za-z0-9][A-Za-z0-9-]{0,11}$/;
+  var PIN_RE = /^[0-9]{4,8}$/;
+  var SCORE_ID_RE = /^[A-Za-z0-9_-]{1,128}$/;
+  /* Offline / 本機暫存 only. Cloud deletes check divisibilityDrop/teacherPin. */
+  var LOCAL_TEACHER_PIN = '8800';
 
   var MSG = {
     unconfigured: '龍虎榜未接上雲端，以下係本機暫存。',
@@ -170,7 +152,7 @@
     if (!raw || typeof raw !== 'object') return null;
     var idn = validateIdentity(raw.classId, raw.studentNo);
     if (!idn.ok) return null;
-    return {
+    var row = {
       classId: idn.classId,
       studentNo: idn.studentNo,
       displayName: idn.displayName,
@@ -178,12 +160,19 @@
       stars: clampStars(raw.stars),
       ts: clampTs(raw.ts)
     };
+    if (raw.id && SCORE_ID_RE.test(String(raw.id))) row.id = String(raw.id);
+    return row;
+  }
+
+  function newLocalId() {
+    return 'local-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
   }
 
   function saveLocal(levelId, entry) {
     var all = readScores();
     var list = Array.isArray(all[levelId]) ? all[levelId].slice() : [];
     list.push({
+      id: entry.id && SCORE_ID_RE.test(String(entry.id)) ? String(entry.id) : newLocalId(),
       classId: entry.classId,
       studentNo: entry.studentNo,
       displayName: entry.displayName,
@@ -325,6 +314,109 @@
     });
   }
 
+  function ticketRef(levelId) {
+    return root.firebase.database().ref('divisibilityDrop/levels/' + levelId + '/deleteTicket');
+  }
+
+  function normalizePin(raw) {
+    var value = clean(raw).replace(/[\uFF10-\uFF19]/g, function (ch) {
+      return String.fromCharCode(ch.charCodeAt(0) - 0xFF10 + 0x30);
+    });
+    if (!PIN_RE.test(value)) return '';
+    return value;
+  }
+
+  function isCloudScoreId(id) {
+    return typeof id === 'string' && SCORE_ID_RE.test(id) && id.indexOf('local-') !== 0 && id.charAt(0) !== '_';
+  }
+
+  function removeLocal(levelId, row) {
+    var all = readScores();
+    var list = Array.isArray(all[levelId]) ? all[levelId] : [];
+    all[levelId] = list.filter(function (item) {
+      if (!item || typeof item !== 'object') return true;
+      if (row.id && item.id && String(item.id) === String(row.id)) return false;
+      var n = normalizeStored(item);
+      if (!n || !row) return true;
+      return !(n.classId === row.classId && n.studentNo === row.studentNo
+        && n.score === clampScore(row.score) && n.stars === clampStars(row.stars)
+        && n.ts === clampTs(row.ts));
+    });
+    writeScores(all);
+  }
+
+  function verifyTeacherPin(levelId, pinRaw) {
+    var pin = normalizePin(pinRaw);
+    if (!pin) {
+      return Promise.resolve({ ok: false, code: 'format', message: '老師密碼要 4 至 8 位數字。' });
+    }
+    if (!LEVEL_IDS[levelId]) levelId = '2';
+    return ensureFirebase().then(function (gate) {
+      if (!gate.ready) {
+        if (pin === LOCAL_TEACHER_PIN) return { ok: true, source: 'local', pin: pin, message: '' };
+        return { ok: false, code: 'pin', source: 'local', message: '老師密碼唔正確。' };
+      }
+      var ref = ticketRef(levelId);
+      return ref.set({ pin: pin, scoreId: '_pincheck', levelId: levelId }).then(function () {
+        return ref.remove().catch(function () { /* ticket is unreadable; leftover expires on the next unlock */ });
+      }).then(function () {
+        return { ok: true, source: 'cloud', pin: pin, message: '' };
+      }).catch(function (err) {
+        if (root.console && root.console.warn) root.console.warn('[leaderboard] pin check failed', err);
+        return {
+          ok: false,
+          code: 'pin',
+          source: 'cloud',
+          message: '解鎖失敗。密碼唔啱，或者 Firebase 未發佈新規則、未設定 teacherPin。請睇 LEADERBOARD.md。成績未改動。'
+        };
+      });
+    });
+  }
+
+  function deleteScore(levelId, row, pinRaw) {
+    var pin = normalizePin(pinRaw);
+    if (!pin) return Promise.resolve({ ok: false, message: '老師密碼要 4 至 8 位數字。' });
+    if (!LEVEL_IDS[levelId] || !row || !row.classId) {
+      return Promise.resolve({ ok: false, message: '搵唔到呢筆成績。' });
+    }
+    return ensureFirebase().then(function (gate) {
+      if (!gate.ready || !isCloudScoreId(row.id)) {
+        return verifyTeacherPin(levelId, pin).then(function (check) {
+          if (!check.ok) {
+            var denied = check.source === 'cloud'
+              ? '刪除失敗。密碼唔啱，或者未發佈新規則、未設定 teacherPin。呢筆成績仍然在榜上。請睇 LEADERBOARD.md。'
+              : (check.message || '老師密碼唔正確。');
+            return { ok: false, source: check.source, message: denied };
+          }
+          removeLocal(levelId, row);
+          return { ok: true, source: 'local', message: '已刪除本機呢筆成績。' };
+        });
+      }
+      var ref = ticketRef(levelId);
+      return ref.set({ pin: pin, scoreId: row.id, levelId: levelId }).then(function () {
+        return scoresRef(levelId).child(row.id).remove();
+      }).then(function () {
+        removeLocal(levelId, row);
+        return ref.remove().catch(function () {});
+      }).then(function () {
+        return {
+          ok: true,
+          source: 'cloud',
+          message: '已刪除呢筆成績。如果榜上仲見到同一位同學，代表仲有其他紀錄，可以再刪一次。'
+        };
+      }).catch(function (err) {
+        if (root.console && root.console.warn) root.console.warn('[leaderboard] delete failed', err);
+        return ref.remove().catch(function () {}).then(function () {
+          return {
+            ok: false,
+            source: 'cloud',
+            message: '刪除失敗。密碼唔啱，或者未發佈新規則、未設定 teacherPin。呢筆成績仍然在榜上。請睇 LEADERBOARD.md。'
+          };
+        });
+      });
+    });
+  }
+
   function makeEntry(input) {
     input = input || {};
     if (!LEVEL_IDS[input.levelId]) return null;
@@ -414,11 +506,18 @@
     });
   }
 
-  /* Higher score wins. Tie: more stars, then newer ts. */
+  /* Higher score wins the place. Same score is one rank and one medal
+     (two people on 1st, the next lower score is 3rd). Stars, then a
+     newer timestamp, only order students inside that tie. */
   function better(a, b) {
-    if ((b.score || 0) !== (a.score || 0)) return (b.score || 0) - (a.score || 0);
+    if (scoreOf(b) !== scoreOf(a)) return scoreOf(b) - scoreOf(a);
     if ((b.stars || 0) !== (a.stars || 0)) return (b.stars || 0) - (a.stars || 0);
     return (b.ts || 0) - (a.ts || 0);
+  }
+
+  function scoreOf(e) {
+    var n = e && e.score;
+    return n || 0;
   }
 
   function bestByStudent(entries) {
@@ -450,39 +549,33 @@
     var cap = limit || TOP_N;
     var rows = [];
     var mine = null;
+    var pinned = null;
+    var place = 1;
     for (var i = 0; i < ranked.length; i++) {
       var e = ranked[i];
+      if (i > 0 && scoreOf(e) !== scoreOf(ranked[i - 1])) place = i + 1;
+      var tied = (i > 0 && scoreOf(ranked[i - 1]) === scoreOf(e))
+        || (i + 1 < ranked.length && scoreOf(ranked[i + 1]) === scoreOf(e));
       var isMine = sameStudent(e, highlight);
       var badge = '';
+      if (isMine) badge = (highlight.ts && e.ts === highlight.ts) ? '今次' : '你';
+      var row = {
+        rank: place,
+        tied: tied,
+        id: e.id || '',
+        classId: e.classId,
+        studentNo: e.studentNo,
+        score: e.score,
+        stars: e.stars,
+        ts: e.ts,
+        mine: isMine,
+        badge: badge
+      };
       if (isMine) {
-        badge = (highlight.ts && e.ts === highlight.ts) ? '今次' : '你';
-        mine = {
-          rank: i + 1,
-          classId: e.classId,
-          studentNo: e.studentNo,
-          score: e.score,
-          stars: e.stars,
-          ts: e.ts,
-          badge: badge
-        };
+        mine = row;
+        if (i >= cap) pinned = row;
       }
-      if (i < cap) {
-        rows.push({
-          rank: i + 1,
-          classId: e.classId,
-          studentNo: e.studentNo,
-          score: e.score,
-          stars: e.stars,
-          ts: e.ts,
-          mine: isMine,
-          badge: badge
-        });
-      }
-    }
-    var pinned = null;
-    if (mine && mine.rank > cap) {
-      pinned = mine;
-      pinned.mine = true;
+      if (i < cap) rows.push(row);
     }
     var note = '';
     if (highlight && mine && highlight.score != null && highlight.score !== mine.score) {
@@ -498,15 +591,27 @@
     return node;
   }
 
-  function paintRow(doc, row) {
-    var li = el(doc, 'li', 'lbRow' + (row.mine ? ' mine' : ''));
+  function paintRow(doc, row, onDelete) {
+    var li = el(doc, 'li', 'lbRow' + (row.mine ? ' mine' : '') + (onDelete ? ' hasDel' : ''));
     li.appendChild(el(doc, 'span', 'lbRank', rankText(row.rank)));
     var name = el(doc, 'span', 'lbName', row.classId + ' · ' + row.studentNo);
     if (row.badge) name.appendChild(el(doc, 'span', 'lbTag', row.badge));
     li.appendChild(name);
     li.appendChild(el(doc, 'span', 'lbStars', starsText(row.stars)));
     li.appendChild(el(doc, 'span', 'lbScore', String(row.score)));
-    li.setAttribute('aria-label', '第' + row.rank + '名 ' + row.classId + ' ' + row.studentNo + '號 ' + row.score + '分');
+    if (onDelete) {
+      var btn = el(doc, 'button', 'lbDel', '刪除');
+      btn.type = 'button';
+      btn.setAttribute('aria-label', '刪除 ' + row.classId + ' ' + row.studentNo + ' 號 ' + row.score + ' 分');
+      btn.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        onDelete(row);
+      });
+      li.appendChild(btn);
+    }
+    var placeWord = (row.tied ? '並列第' : '第') + row.rank + '名 ';
+    li.setAttribute('aria-label', placeWord + row.classId + ' ' + row.studentNo + '號 ' + row.score + '分');
     return li;
   }
 
@@ -533,20 +638,23 @@
     var message = (loadResult && loadResult.message) || '';
     if (!view.rows.length && !message) message = MSG.empty;
     if (message) container.appendChild(el(doc, 'p', 'lbMsg', message));
-    container.appendChild(el(doc, 'p', 'lbHint', '每位同學顯示最高分。同分先比星星，星星一樣就比較新的排前面。'));
+    container.appendChild(el(doc, 'p', 'lbHint', '每位同學顯示最高分。分數一樣就並列同一名、同一個獎牌；下一個不同分數會跳名。並列時星星多的排前，星星一樣就比較新的排前面。'));
     if (view.note) container.appendChild(el(doc, 'p', 'lbMsg', view.note));
+    if (options.onDelete) {
+      container.appendChild(el(doc, 'p', 'lbHint', '老師刪除模式。每一行是最高分，刪除只清走呢一筆。'));
+    }
 
     if (!view.rows.length) {
       container.appendChild(el(doc, 'div', 'lbEmpty', '呢關暫時未有人上榜。'));
       return;
     }
     var list = el(doc, 'ol', 'lbList');
-    view.rows.forEach(function (row) { list.appendChild(paintRow(doc, row)); });
+    view.rows.forEach(function (row) { list.appendChild(paintRow(doc, row, options.onDelete)); });
     container.appendChild(list);
     if (view.pinned) {
       container.appendChild(el(doc, 'p', 'lbHint', '你的名次'));
       var extra = el(doc, 'ol', 'lbList');
-      extra.appendChild(paintRow(doc, view.pinned));
+      extra.appendChild(paintRow(doc, view.pinned, options.onDelete));
       container.appendChild(extra);
     }
   }
@@ -566,6 +674,8 @@
     isConfigured: isConfigured,
     submit: submit,
     load: load,
+    verifyTeacherPin: verifyTeacherPin,
+    deleteScore: deleteScore,
     present: present,
     bestByStudent: bestByStudent,
     renderInto: renderInto,

@@ -144,7 +144,17 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
 .lbTag{display:inline-block;margin-left:6px;background:#ff8c1a;color:#fff;border-radius:999px;padding:1px 8px;font-size:.72em;vertical-align:middle}
 .lbStars{letter-spacing:1px;white-space:nowrap}
 .lbScore{min-width:2.2em;text-align:right;font-variant-numeric:tabular-nums}
+.lbRow.hasDel{grid-template-columns:auto minmax(0,1fr) auto auto auto}
+.lbDel{min-height:44px;min-width:64px;padding:0 12px;border-radius:12px;background:#ffe4e4;color:#c62828;font-weight:900;font-size:clamp(15px,2.2vmin,20px);box-shadow:0 3px 0 #e0a0a0}
+.lbDel:active{transform:translateY(2px)}
 .lbEmpty{background:#fff;border-radius:16px;padding:16px;text-align:center;font-weight:800;color:#5a5a6e;box-shadow:0 3px 0 #b8d4e8}
+.teacherBox{width:100%;background:#fff;border-radius:18px;padding:14px;box-shadow:0 3px 0 #b8d4e8;display:flex;flex-direction:column;align-items:center;gap:10px}
+.teacherForm{width:100%;display:flex;flex-direction:column;align-items:center;gap:10px}
+.teacherForm[hidden],#teacherOn[hidden],#btnTeacherOpen[hidden]{display:none !important}
+.teacherBox .field{width:min(420px,100%)}
+.teacherRow{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+.teacherGo{min-height:52px;min-width:160px;padding:0 22px;border-radius:999px;background:var(--green);color:#fff;font-size:clamp(18px,3vmin,26px);font-weight:900;box-shadow:0 4px 0 #1d7e3d}
+.teacherGo:disabled{opacity:.55}
 #whoPill{background:#e0f7f4;color:#0f766e}
 @media (min-width:700px){
   .gateFields{flex-direction:row}
@@ -270,6 +280,24 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
     <h2 class="tipTitle">🐲 龍虎榜</h2>
     <p class="sub">揀關卡睇最高分。未玩都可以睇。</p>
     <div class="segs" id="boardPick" role="tablist" aria-label="龍虎榜關卡"></div>
+    <div class="teacherBox" id="teacherBox">
+      <button type="button" class="tbtn" id="btnTeacherOpen">老師模式：刪除成績</button>
+      <form id="teacherForm" class="teacherForm" hidden autocomplete="off">
+        <p class="lbHint">輸入老師密碼，先可以刪走龍虎榜其中一筆成績。學生唔好輸入。</p>
+        <label class="field" for="teacherPin">老師密碼
+          <input id="teacherPin" name="teacher-pin" type="password" inputmode="numeric" maxlength="8" pattern="[0-9]*" placeholder="4 至 8 位數字" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-describedby="teacherErr">
+        </label>
+        <p class="gateErr" id="teacherErr" role="alert" aria-live="assertive"></p>
+        <div class="teacherRow">
+          <button type="submit" class="teacherGo" id="btnTeacherUnlock">解鎖刪除</button>
+          <button type="button" class="gateBack" id="btnTeacherCancel">取消</button>
+        </div>
+      </form>
+      <div id="teacherOn" hidden>
+        <p class="lbMsg" id="teacherStatus">已解鎖。撳「刪除」清走一筆最高分。如果仲有其他紀錄，會顯示下一筆。</p>
+        <button type="button" class="gateBack" id="btnTeacherLock">離開老師刪除</button>
+      </div>
+    </div>
     <div id="boardMount" class="lbPanel" aria-live="polite"></div>
     <div class="endBtns">
       <button type="button" class="bigbtn blue" id="btnBoardReload">重新載入</button>
@@ -348,6 +376,10 @@ var state = {
   colorIdx:0,
   player:null,
   runId:0,
+  teacherUnlocked:false,
+  teacherFormOpen:false,
+  teacherPin:'',
+  teacherBusy:false,
   submittedRunId:0,
   boardLevel:'2',
   boardToken:0,
@@ -871,10 +903,33 @@ function markBoardSegs(){
   });
 }
 
+function syncTeacherBox(){
+  var openBtn = document.getElementById('btnTeacherOpen');
+  var form = document.getElementById('teacherForm');
+  var on = document.getElementById('teacherOn');
+  if(!openBtn || !form || !on) return;
+  openBtn.hidden = state.teacherUnlocked || state.teacherFormOpen;
+  form.hidden = state.teacherUnlocked || !state.teacherFormOpen;
+  on.hidden = !state.teacherUnlocked;
+}
+
+function lockTeacherDelete(){
+  state.teacherUnlocked = false;
+  state.teacherFormOpen = false;
+  state.teacherPin = '';
+  state.teacherBusy = false;
+  var pin = document.getElementById('teacherPin');
+  var err = document.getElementById('teacherErr');
+  if(pin) pin.value = '';
+  if(err) err.textContent = '';
+  syncTeacherBox();
+}
+
 function openBoard(){
   ensureBoardPicker();
   state.boardLevel = state.section || '2';
   markBoardSegs();
+  syncTeacherBox();
   show('board');
   refreshBoard();
 }
@@ -895,7 +950,28 @@ function refreshBoard(){
       classId: state.player.classId,
       studentNo: state.player.studentNo
     } : null;
-    DivLeaderboard.renderInto(mount, result, highlight, { title: levelName(levelId), levelId: levelId });
+    DivLeaderboard.renderInto(mount, result, highlight, {
+      title: levelName(levelId),
+      levelId: levelId,
+      onDelete: state.teacherUnlocked ? function(row){ askDeleteScore(levelId, row); } : null
+    });
+  });
+}
+
+function askDeleteScore(levelId, row){
+  if(!state.teacherUnlocked || state.teacherBusy || !window.DivLeaderboard) return;
+  var who = row.classId + ' · ' + row.studentNo;
+  if(!confirm('確定刪除 ' + who + ' 的 ' + row.score + ' 分？刪除後唔可以還原。')) return;
+  state.teacherBusy = true;
+  var status = document.getElementById('teacherStatus');
+  if(status) status.textContent = '刪除緊…';
+  DivLeaderboard.deleteScore(levelId, row, state.teacherPin).then(function(res){
+    state.teacherBusy = false;
+    if(status) status.textContent = (res && res.message) || (res && res.ok ? '已刪除。' : '刪除失敗。');
+    if(res && res.ok) refreshBoard();
+  }).catch(function(){
+    state.teacherBusy = false;
+    if(status) status.textContent = '刪除失敗。請稍後再試。';
   });
 }
 
@@ -998,8 +1074,62 @@ document.getElementById('btnAgain').addEventListener('click', function(){
   openGate('end');
 });
 document.getElementById('btnMenu').addEventListener('click', function(){ show('start'); });
-document.getElementById('btnBoardBack').addEventListener('click', function(){ show('start'); });
+document.getElementById('btnBoardBack').addEventListener('click', function(){
+  lockTeacherDelete();
+  show('start');
+});
 document.getElementById('btnBoardReload').addEventListener('click', refreshBoard);
+document.getElementById('btnTeacherOpen').addEventListener('click', function(){
+  state.teacherFormOpen = true;
+  var err = document.getElementById('teacherErr');
+  if(err) err.textContent = '';
+  syncTeacherBox();
+  var pin = document.getElementById('teacherPin');
+  if(pin) pin.focus();
+});
+document.getElementById('btnTeacherCancel').addEventListener('click', function(){
+  state.teacherFormOpen = false;
+  var pin = document.getElementById('teacherPin');
+  var err = document.getElementById('teacherErr');
+  if(pin) pin.value = '';
+  if(err) err.textContent = '';
+  syncTeacherBox();
+});
+document.getElementById('btnTeacherLock').addEventListener('click', function(){
+  lockTeacherDelete();
+  refreshBoard();
+});
+document.getElementById('teacherForm').addEventListener('submit', function(ev){
+  ev.preventDefault();
+  if(state.teacherBusy || !window.DivLeaderboard) return;
+  var pinEl = document.getElementById('teacherPin');
+  var err = document.getElementById('teacherErr');
+  var btn = document.getElementById('btnTeacherUnlock');
+  state.teacherBusy = true;
+  btn.disabled = true;
+  if(err) err.textContent = '';
+  DivLeaderboard.verifyTeacherPin(state.boardLevel || '2', pinEl.value).then(function(res){
+    state.teacherBusy = false;
+    btn.disabled = false;
+    if(!res || !res.ok){
+      if(err) err.textContent = (res && res.message) || '老師密碼唔正確。';
+      pinEl.focus();
+      return;
+    }
+    state.teacherPin = res.pin || '';
+    pinEl.value = '';
+    state.teacherUnlocked = true;
+    state.teacherFormOpen = false;
+    var status = document.getElementById('teacherStatus');
+    if(status) status.textContent = '已解鎖。撳「刪除」清走一筆最高分。如果仲有其他紀錄，會顯示下一筆。';
+    syncTeacherBox();
+    refreshBoard();
+  }).catch(function(){
+    state.teacherBusy = false;
+    btn.disabled = false;
+    if(err) err.textContent = '暫時無法核對老師密碼。請稍後再試。';
+  });
+});
 
 
 /* Delegated hit-test: more reliable on moving targets / iPad */
