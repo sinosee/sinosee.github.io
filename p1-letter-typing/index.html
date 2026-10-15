@@ -8,7 +8,7 @@
 <meta name="format-detection" content="telephone=no">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#e7f4ff">
-<meta name="description" content="小一英文字母打字練習：睇住大楷或小楷，點字母表或者用鍵盤打。">
+<meta name="description" content="小一英文字母打字練習：睇住大楷或小楷，點 QWERTY 鍵盤或者用鍵盤打。">
 <title>英文字母打字</title>
 <link rel="preload" href="andika-latin-700.woff2" as="font" type="font/woff2" crossorigin>
 <!-- Letterforms: Andika by SIL, Latin bold subset. License: OFL.txt -->
@@ -228,22 +228,25 @@ a.backsite:hover{color:var(--blue)}
 .kbLabel strong{color:var(--ink)}
 .kbWrap{width:100%;overflow-x:auto}
 .kb{
-  width:min(860px,100%);
-  min-width:356px;
+  /* 20 half-key tracks so rows stagger like a computer keyboard:
+     QWERTYUIOP, then ASDFGHJKL inset by half a key, then ZXCVBNM inset further. */
+  width:min(920px,100%);
   margin:0 auto;
   display:grid;
-  grid-template-columns:repeat(7,minmax(44px,1fr));
-  gap:8px;
+  grid-template-columns:repeat(20,minmax(0,1fr));
+  column-gap:clamp(3px,0.7vw,7px);
+  row-gap:clamp(5px,1vw,8px);
 }
 .key{
-  min-width:44px;
-  min-height:52px;
-  height:clamp(52px,8vmin,76px);
-  border-radius:16px;
+  min-width:0;
+  min-height:48px;
+  height:clamp(48px,8vmin,76px);
+  padding:0 1px;
+  border-radius:14px;
   background:#fff;
   border:3px solid transparent;
   box-shadow:0 5px 0 #e6d3ae;
-  font-size:clamp(28px,4.6vmin,46px);
+  font-size:clamp(20px,4.6vmin,46px);
   color:var(--ink);
   line-height:1;
 }
@@ -305,7 +308,7 @@ a.backsite:hover{color:var(--blue)}
 }
 @media (max-height:860px){
   .letterCard{height:min(28dvh,210px);min-height:112px;border-radius:28px}
-  .key{min-height:48px;height:48px;font-size:clamp(24px,4.2vmin,36px)}
+  .key{min-height:44px;height:46px;font-size:clamp(18px,4vw,34px);border-radius:12px}
   .ask{font-size:16px}
   .status{font-size:clamp(18px,3.5vw,28px)}
   .homeInner{padding-top:12px;gap:10px}
@@ -354,7 +357,7 @@ a.backsite:hover{color:var(--blue)}
 
     <p class="note" id="bestNote" hidden></p>
     <button type="button" class="bigbtn" id="btnStart">開始玩！</button>
-    <p class="note">字母次序會打亂。畫面鍵盤跟字母表由 A 排到 Z，方便認字；實體鍵盤都可以打。要分大小楷剔住，就要打啱大楷定小楷；取消就兩個都算啱。</p>
+    <p class="note">字母次序會打亂。畫面鍵盤跟電腦鍵盤 QWERTY 排（QWERTY、ASDF、ZXCV）；實體鍵盤都可以打。要分大小楷剔住，就要打啱大楷定小楷；取消就兩個都算啱。</p>
     <p class="note">唔使登入 · 成績淨係留喺呢部機</p>
     <a class="backsite" href="../">返遊戲站</a>
   </div>
@@ -381,9 +384,9 @@ a.backsite:hover{color:var(--blue)}
     <p class="status" id="status"></p>
   </div>
   <div class="kbDock">
-    <p class="kbLabel"><strong>字母表順序</strong> · 點一點，或者用鍵盤打</p>
+    <p class="kbLabel"><strong>QWERTY</strong> · 點一點，或者用鍵盤打</p>
     <div class="kbWrap">
-      <div class="kb" id="kb" role="group" aria-label="字母表鍵盤"></div>
+      <div class="kb" id="kb" role="group" aria-label="QWERTY 鍵盤"></div>
     </div>
   </div>
 </section>
@@ -407,12 +410,17 @@ a.backsite:hover{color:var(--blue)}
 (function(){
 "use strict";
 
-/* On-screen keys follow the classroom alphabet chart (A–G, H–N, O–U, V–Z),
-   not QWERTY. For a single-letter prompt, inexperienced children find an
-   ABC layout faster and less variable than QWERTY (Nicolson & Gardner, 1985),
-   and P1 already learns A to Z in that order. A hardware keyboard still
-   accepts real key presses, and the case has to match unless the teacher
-   turns 要分大小楷 off. */
+/* On-screen keys follow a computer QWERTY layout:
+   QWERTYUIOP / ASDFGHJKL / ZXCVBNM. Uppercase and lowercase modes paint
+   every key in the matching case. A hardware keyboard still accepts real
+   key presses, and the case has to match unless the teacher turns
+   要分大小楷 off. */
+
+var QWERTY_ROWS = [
+  {letters:"QWERTYUIOP", col:1},
+  {letters:"ASDFGHJKL", col:2},
+  {letters:"ZXCVBNM", col:4}
+];
 
 var SETTINGS_KEY = "p1letters_settings_v1";
 var BEST_KEY = "p1letters_best_v1";
@@ -598,15 +606,19 @@ function buildQueue(caseMode, count){
 }
 
 function buildKeys(){
-  for(var i = 0; i < 26; i++){
-    var btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "key letters";
-    var row = i < 21 ? Math.floor(i / 7) + 1 : 4;
-    var col = i < 21 ? (i % 7) + 1 : (i - 21) + 2;
-    btn.style.gridRow = String(row);
-    btn.style.gridColumn = String(col);
-    kb.appendChild(btn);
+  kb.textContent = "";
+  for(var r = 0; r < QWERTY_ROWS.length; r++){
+    var letters = QWERTY_ROWS[r].letters;
+    var col = QWERTY_ROWS[r].col;
+    for(var i = 0; i < letters.length; i++){
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "key letters";
+      btn.style.gridRow = String(r + 1);
+      btn.style.gridColumn = col + " / span 2";
+      kb.appendChild(btn);
+      col += 2;
+    }
   }
 }
 
@@ -614,13 +626,16 @@ function applyCase(isUpper){
   if(keysUpper === isUpper && kb.children.length === 26) return;
   keysUpper = isUpper;
   if(kb.children.length !== 26) buildKeys();
-  var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  for(var i = 0; i < 26; i++){
-    var ch = isUpper ? alphabet.charAt(i) : alphabet.charAt(i).toLowerCase();
-    var btn = kb.children[i];
-    btn.textContent = ch;
-    btn.setAttribute("data-letter", ch);
-    btn.setAttribute("aria-label", (isUpper ? "大楷 " : "小楷 ") + ch);
+  var n = 0;
+  for(var r = 0; r < QWERTY_ROWS.length; r++){
+    var letters = QWERTY_ROWS[r].letters;
+    for(var i = 0; i < letters.length; i++){
+      var ch = isUpper ? letters.charAt(i) : letters.charAt(i).toLowerCase();
+      var btn = kb.children[n++];
+      btn.textContent = ch;
+      btn.setAttribute("data-letter", ch);
+      btn.setAttribute("aria-label", (isUpper ? "大楷 " : "小楷 ") + ch);
+    }
   }
 }
 
