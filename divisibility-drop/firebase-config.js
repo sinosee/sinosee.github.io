@@ -1,14 +1,14 @@
-/* Divisibility Drop — Firebase web config.
-   Replace every YOUR_* value with the Web app config from Firebase console.
-   Steps and Realtime Database rules: LEADERBOARD.md
+/* Divisibility Drop — Firebase web config (public client config).
+   Realtime Database rules still need to be published: LEADERBOARD.md
    The client apiKey is public by design; database rules protect the scores.
-   Keep the placeholders until the teacher pastes real values. */
+   Analytics is not loaded; measurementId is unused by the leaderboard. */
 window.FIREBASE_CONFIG = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAMiaQhNkj_RqM0GiWazXPs7wNorY5qld4",
+  authDomain: "sinosee-mathsgame.firebaseapp.com",
+  databaseURL: "https://sinosee-mathsgame-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "sinosee-mathsgame",
+  storageBucket: "sinosee-mathsgame.firebasestorage.app",
+  messagingSenderId: "85436615444",
+  appId: "1:85436615444:web:b70f223c4ef025471e5001",
+  measurementId: "G-G5R8MT3M72"
 };
