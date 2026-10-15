@@ -451,7 +451,7 @@ a.backsite:hover{text-decoration:underline}
     <div class="jumps" id="jumps" role="navigation" aria-label="跳去某一頁關卡"></div>
   </div>
   <div id="scroller" tabindex="-1"></div>
-  <p class="footNote"><a class="backsite" href="../">返遊戲站</a> · 唔使登入 · 星星留喺呢部機</p>
+  <p class="footNote"><a class="backsite" href="../">返遊戲站</a> · 唔使登入 · 重新整理會清走星星</p>
 </section>
 
 <section id="play" class="screen" aria-label="打字">
@@ -462,7 +462,6 @@ a.backsite:hover{text-decoration:underline}
     <span class="pill phase" id="phasePill">🐣 小楷</span>
     <span class="pill prog" id="progPill">1 / 9</span>
     <span class="pill miss" id="missPill">打錯 0</span>
-    <span class="pill time" id="timePill">0 秒</span>
     <span class="spacer"></span>
     <span class="pill live" id="liveStarPill">預計 ★★★</span>
   </div>
@@ -528,14 +527,17 @@ window.addEventListener("error", function(ev){
    第 71–80 關  短句（空格 + 句號，句號喺 123）
    第 81–100 關 短文（兩句；第 91–92 關有數字，要撳 123）
 
-   星星（做完先計；中途離開唔改寫，淨係留最好嗰次）
-   ★★★  0 次打錯，而且喺時限內
-   ★★   打錯 1–2 次；或者 0 次打錯但超過時限
+   星星（做完先計；中途離開唔改寫；同一頁內留最好嗰次）
+   ★★★  0 次打錯
+   ★★   打錯 1–2 次
    ★    做完，但打錯 3 次或以上
-   時限：1–20 每個字母 8 秒；21–39 每個字母 10 秒；
-        40–50 每個詞 20 秒；51–60 每個詞 25 秒；
-        61–70 每個詞組 30 秒；71–100 每個字（連空格、符號）4 秒。
-   成績 key：localStorage p1letters_levels_v1
+   唔計速度，冇倒數，冇時限。
+   星星唔寫入 localStorage，重新整理就由 0 開始。
+   音效先至存 localStorage（p1letters_levels_v1，只存 sound）。
+   第 1–10 關鍵盤會亮起下一個鍵，教練字亦會講邊個鍵。
+   第 11 關起，字母唔再提示。
+   空格、標點、數字同其他符號：淨係喺課程第一次出現嗰一關提示
+   （亮起嗰個鍵；如果鍵喺 123 層，會先提示 123）。之後嘅關唔再亮。
    ============================================================ */
 
 var STORE_KEY = "p1letters_levels_v1";
@@ -667,6 +669,23 @@ var SPECS = [
   {kind:"text", text:"I am happy today. I can read and play.", preview:"I am happy today…"}
 ];
 
+function specSource(spec){
+  if(spec.words) return spec.words.join("");
+  if(spec.text) return spec.text;
+  return spec.letters || "";
+}
+
+/* 每個非字母字元第一次出現嘅關卡。第 11 關起只喺呢一關提示。 */
+var FIRST_SPECIAL = {};
+SPECS.forEach(function(spec, index){
+  var blob = specSource(spec);
+  for(var i = 0; i < blob.length; i++){
+    var ch = blob.charAt(i);
+    if(/^[A-Za-z]$/.test(ch)) continue;
+    if(!Object.prototype.hasOwnProperty.call(FIRST_SPECIAL, ch)) FIRST_SPECIAL[ch] = index + 1;
+  }
+});
+
 var LAYOUTS = {
   letters:[
     ["q","w","e","r","t","y","u","i","o","p"],
@@ -796,27 +815,14 @@ function expand(spec){
   return {kind:"text", prompts:[spec.text]};
 }
 
-function limitFor(id, expanded){
-  var prompts = expanded.prompts;
-  var chars = 0;
-  for(var i = 0; i < prompts.length; i++) chars += prompts[i].length;
-  if(id <= 20) return {sec:prompts.length * 8, note:"每個字母 8 秒"};
-  if(id <= 39) return {sec:prompts.length * 10, note:"每個字母 10 秒"};
-  if(id <= 50) return {sec:prompts.length * 20, note:"每個詞 20 秒"};
-  if(id <= 60) return {sec:prompts.length * 25, note:"每個詞 25 秒"};
-  if(id <= 70) return {sec:prompts.length * 30, note:"每個詞組 30 秒"};
-  return {sec:chars * 4, note:"每個字（連空格同符號）4 秒"};
-}
-
-function calcStars(mistakes, elapsedSec, limitSec){
-  if(mistakes <= 0 && elapsedSec <= limitSec) return 3;
+function calcStars(mistakes){
+  if(mistakes <= 0) return 3;
   if(mistakes <= 2) return 2;
   return 1;
 }
 
 function explainStars(stars, mistakes){
-  if(stars === 3) return "一次都冇打錯，而且喺時限內做完。";
-  if(mistakes === 0) return "全部打啱，但慢過時限，所以兩粒星。";
+  if(stars === 3) return "一次都冇打錯，三粒星。";
   if(mistakes <= 2) return "打錯 " + mistakes + " 次，所以兩粒星。";
   return "打錯 " + mistakes + " 次，做完都有一粒星。";
 }
@@ -840,19 +846,13 @@ var LEVELS = SPECS.map(function(spec, index){
 function loadStore(){
   try{
     var raw = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
-    if(!raw || typeof raw !== "object") return;
-    if(raw.stars && typeof raw.stars === "object"){
-      Object.keys(raw.stars).forEach(function(k){
-        var n = Number(raw.stars[k]);
-        if(n >= 1 && n <= 3) store.stars[k] = n;
-      });
-    }
-    if(typeof raw.sound === "boolean") store.sound = raw.sound;
+    if(raw && typeof raw === "object" && typeof raw.sound === "boolean") store.sound = raw.sound;
   }catch(e){}
+  saveStore();
 }
 
 function saveStore(){
-  try{localStorage.setItem(STORE_KEY, JSON.stringify(store));}catch(e){}
+  try{localStorage.setItem(STORE_KEY, JSON.stringify({sound:!!store.sound}));}catch(e){}
 }
 
 function bestOf(id){
@@ -892,10 +892,16 @@ function selfCheck(){
   if(l71.kind !== "text" || l71.prompts[0] !== "I see a cat.") issues.push("第71關");
   var l100 = expand(LEVELS[99].spec);
   if(l100.kind !== "text" || l100.prompts[0].indexOf("happy") < 0) issues.push("第100關");
-  if(calcStars(0, 10, 10) !== 3) issues.push("三星");
-  if(calcStars(0, 10.01, 10) !== 2) issues.push("慢兩星");
-  if(calcStars(2, 1, 10) !== 2) issues.push("錯兩星");
-  if(calcStars(3, 1, 10) !== 1) issues.push("一星");
+  if(calcStars(0) !== 3) issues.push("三星");
+  if(calcStars(1) !== 2 || calcStars(2) !== 2) issues.push("兩星");
+  if(calcStars(3) !== 1) issues.push("一星");
+  if(FIRST_SPECIAL[" "] !== 63) issues.push("空格介紹關 " + FIRST_SPECIAL[" "]);
+  if(FIRST_SPECIAL["."] !== 71) issues.push("句號介紹關 " + FIRST_SPECIAL["."]);
+  if(FIRST_SPECIAL["1"] !== 91) issues.push("數字1介紹關 " + FIRST_SPECIAL["1"]);
+  if(FIRST_SPECIAL["2"] !== 92) issues.push("數字2介紹關 " + FIRST_SPECIAL["2"]);
+  Object.keys(FIRST_SPECIAL).forEach(function(ch){
+    if(ch !== " " && ch !== "." && ch !== "1" && ch !== "2") issues.push("未預計符號 " + ch);
+  });
   var el = $("booterr");
   if(issues.length){
     el.hidden = false;
@@ -1065,10 +1071,6 @@ function totalChars(){
   return n;
 }
 
-function elapsedSec(){
-  return (Date.now() - run.startedAt) / 1000;
-}
-
 function layoutHas(name, ch){
   var rows = LAYOUTS[name];
   for(var r = 0; r < rows.length; r++){
@@ -1083,6 +1085,23 @@ function whereIs(ch){
   if(/^[a-zA-Z]$/.test(ch) || ch === " ") return "letters";
   if(NUM_CHARS.indexOf(ch) >= 0) return "numbers";
   return "symbols";
+}
+
+function isLetterKey(ch){
+  return /^[A-Za-z]$/.test(ch);
+}
+
+function hintCurrent(){
+  if(!run || !run.level) return false;
+  var ch = currentChar();
+  if(!ch) return false;
+  if(run.level.id <= 10) return true;
+  if(isLetterKey(ch)) return false;
+  return FIRST_SPECIAL[ch] === run.level.id;
+}
+
+function setCoach(){
+  $("coach").textContent = hintCurrent() ? coachLine(currentChar()) : "";
 }
 
 function coachLine(ch){
@@ -1107,15 +1126,27 @@ function coachLine(ch){
   return "而家撳符號 " + ch;
 }
 
+function levelHasNewSymbol(level){
+  var blob = specSource(level.spec);
+  for(var i = 0; i < blob.length; i++){
+    var ch = blob.charAt(i);
+    if(ch === " " || isLetterKey(ch)) continue;
+    if(FIRST_SPECIAL[ch] === level.id) return true;
+  }
+  return false;
+}
+
 function levelHintLines(level){
   var lines = [];
+  var teachSpace = level.id <= 10 ? level.hasSpace : FIRST_SPECIAL[" "] === level.id;
+  var teachSymbol = level.id <= 10 ? level.hasSymbol : levelHasNewSymbol(level);
   if(level.needsUpper){
     lines.push("要打大楷：先撳黃色 ⇧（向上），再撳字母。撳一下，下一個字母先係大楷；快啲撳兩下 ⇧，就可以鎖住大楷。");
   }
-  if(level.hasSpace){
+  if(teachSpace){
     lines.push("要打空格：字同字之間，撳鍵盤下面長長嘅空格鍵。");
   }
-  if(level.hasSymbol){
+  if(teachSymbol){
     lines.push("句號、問號同數字：先撳 123。想睇多啲符號，再撳 #+=。");
   }
   return lines;
@@ -1181,12 +1212,11 @@ function renderPrompt(){
       passage.appendChild(span);
     }
   }
-  $("coach").textContent = coachLine(currentChar());
+  setCoach();
 }
 
 function renderScores(){
-  var el = elapsedSec();
-  var stars = calcStars(run.mistakes, el, run.limit);
+  var stars = calcStars(run.mistakes);
   $("lvPill").textContent = "第 " + run.level.id + " 關";
   $("phasePill").textContent = run.level.phase.emoji + " " + run.level.phase.label;
   if(run.kind === "letters"){
@@ -1197,7 +1227,6 @@ function renderScores(){
     $("progPill").textContent = doneChars() + " / " + totalChars();
   }
   $("missPill").textContent = "打錯 " + run.mistakes;
-  $("timePill").textContent = Math.floor(el) + " 秒 / 時限 " + run.limit + " 秒";
   $("liveStarPill").textContent = "預計 " + "★★★".slice(0, stars) + "☆☆☆".slice(stars);
   $("liveStarPill").setAttribute("aria-label", "如果而家完成，預計 " + stars + " 粒星");
   var pct = totalChars() ? (doneChars() / totalChars()) * 100 : 0;
@@ -1207,7 +1236,7 @@ function renderScores(){
 function hotSet(){
   var hot = {};
   var ch = currentChar();
-  if(!ch || !run) return hot;
+  if(!hintCurrent() || !ch || !run) return hot;
   if(ch === " "){hot.space = true; return hot;}
   if(/^[a-zA-Z]$/.test(ch)){
     if(layoutName === "letters") hot[ch.toLowerCase()] = true;
@@ -1432,15 +1461,15 @@ function onShift(){
   else shiftMode = 1;
   lastShiftAt = now;
   renderKeyboard();
-  $("coach").textContent = coachLine(currentChar());
+  setCoach();
 }
 
 function onKeyToken(token){
   if(token === "shift"){onShift(); return;}
   if(token === "del"){doBackspace(); return;}
-  if(token === "num"){layoutName = "numbers"; renderKeyboard(); $("coach").textContent = coachLine(currentChar()); return;}
-  if(token === "sym"){layoutName = "symbols"; renderKeyboard(); $("coach").textContent = coachLine(currentChar()); return;}
-  if(token === "abc"){layoutName = "letters"; renderKeyboard(); $("coach").textContent = coachLine(currentChar()); return;}
+  if(token === "num"){layoutName = "numbers"; renderKeyboard(); setCoach(); return;}
+  if(token === "sym"){layoutName = "symbols"; renderKeyboard(); setCoach(); return;}
+  if(token === "abc"){layoutName = "letters"; renderKeyboard(); setCoach(); return;}
   var out = keyOutput(token);
   if(out) submitChar(out);
 }
@@ -1450,15 +1479,11 @@ function finishLevel(){
   run.over = true;
   locked = true;
   clearTimers();
-  var elapsed = elapsedSec();
-  var stars = calcStars(run.mistakes, elapsed, run.limit);
+  var stars = calcStars(run.mistakes);
   var prev = bestOf(run.level.id);
   var best = Math.max(prev, stars);
   if(stars > prev) store.stars[String(run.level.id)] = stars;
-  saveStore();
   banner = {id:run.level.id, stars:stars, best:best};
-  var big = "";
-  for(var i = 1; i <= 3; i++) big += i <= stars ? "★" : "☆";
   $("resultMark").textContent = stars === 3 ? "🎉" : stars === 2 ? "👏" : "💪";
   $("resultStars").innerHTML = starsHtml(stars);
   $("resultTitle").textContent = "第 " + run.level.id + " 關完成！";
@@ -1466,7 +1491,7 @@ function finishLevel(){
   var extra = stars > prev ? "新高分！主頁會見到 " + stars + " 粒星。"
     : prev > stars ? "今次 " + stars + " 粒星，主頁保持最佳 " + prev + " 粒星。"
     : "主頁最佳仍然係 " + best + " 粒星。";
-  $("resultNums").textContent = "打錯 " + run.mistakes + " 次 · 用時 " + Math.max(1, Math.round(elapsed)) + " 秒 · 時限 " + run.limit + " 秒（" + run.limitNote + "）。" + extra;
+  $("resultNums").textContent = "打錯 " + run.mistakes + " 次。" + extra;
   $("result").classList.add("on");
   $("live").textContent = "第 " + run.level.id + " 關完成，拿到 " + stars + " 粒星。" + extra;
   sfxWin();
@@ -1474,11 +1499,11 @@ function finishLevel(){
   var hasNext = run.level.id < LEVELS.length;
   nextBtn.hidden = !hasNext;
   nextBtn.disabled = !hasNext;
+  $("btnResultHome").textContent = "返主頁睇星星";
   (hasNext ? nextBtn : $("btnResultHome")).focus();
 }
 
 function goHome(focusId){
-  if(run && run.countdown) clearInterval(run.countdown);
   clearTimers();
   locked = false;
   $("result").classList.remove("on");
@@ -1500,9 +1525,7 @@ function startLevel(id){
   var level = LEVELS[id - 1];
   if(!level) return;
   clearTimers();
-  if(run && run.countdown) clearInterval(run.countdown);
   var expanded = expand(level.spec);
-  var lim = limitFor(level.id, expanded);
   run = {
     level:level,
     kind:expanded.kind,
@@ -1510,11 +1533,7 @@ function startLevel(id){
     promptIndex:0,
     charIndex:0,
     mistakes:0,
-    limit:lim.sec,
-    limitNote:lim.note,
-    startedAt:Date.now(),
-    over:false,
-    countdown:0
+    over:false
   };
   locked = false;
   shiftMode = 0;
@@ -1529,12 +1548,6 @@ function startLevel(id){
   renderHints();
   renderAll();
   speakPrompt();
-  tick = setInterval(function(){
-    if(!run || run.over) return;
-    renderScores();
-    var coach = $("coach");
-    if(coach && !coach.textContent) coach.textContent = coachLine(currentChar());
-  }, 250);
 }
 
 var pageWatchOn = false;
