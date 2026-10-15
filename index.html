@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Sinosee 數學遊戲站：按年級和課題打開課堂小遊戲，唔使登入。">
+<meta name="description" content="教學小遊戲：數學科同電腦科課堂小遊戲，唔使登入。">
 <meta name="theme-color" content="#ffe4f0">
-<title>Sinosee 數學遊戲站</title>
+<title>教學小遊戲</title>
 <style>
   :root {
     --ink: #5c2440;
@@ -16,6 +16,10 @@
     --blush: #ffe4f0;
     --line: #ffd3e4;
     --shadow: #f3b7d0;
+    --blue: #2f7de1;
+    --sky: #e7f3ff;
+    --sky-line: #b9dcff;
+    --sky-shadow: #9ec8f0;
   }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
@@ -45,7 +49,7 @@
     align-items: center;
     gap: 14px;
     text-align: center;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
   .mascot-frame {
     width: min(168px, 42vw);
@@ -66,17 +70,6 @@
     object-position: center center;
   }
   .hero-copy { min-width: 0; }
-  .kicker {
-    display: inline-block;
-    margin: 0 0 8px;
-    padding: 5px 12px;
-    border-radius: 999px;
-    background: #fff;
-    color: var(--deep);
-    font-size: 14px;
-    font-weight: 800;
-    line-height: 1.3;
-  }
   h1 {
     margin: 0;
     font-size: 36px;
@@ -86,22 +79,93 @@
   a.home-link { color: inherit; text-decoration: none; }
   a.home-link:hover h1, a.home-link:focus-visible h1 { color: var(--deep); }
   a.home-link:focus-visible { outline: 3px solid var(--pink); outline-offset: 4px; border-radius: 12px; }
-  .site {
-    margin: 8px 0 0;
+
+  .subjects {
+    display: grid;
+    gap: 14px;
+    margin-top: 18px;
+  }
+  a.subject {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 112px;
+    padding: 18px 18px;
+    text-decoration: none;
+    color: inherit;
+    background: #fff;
+    border: 3px solid var(--line);
+    border-radius: 28px;
+    box-shadow: 0 6px 0 var(--shadow);
+  }
+  a.subject.computer {
+    border-color: var(--sky-line);
+    box-shadow: 0 6px 0 var(--sky-shadow);
+  }
+  a.subject:hover, a.subject:focus-visible {
+    transform: translateY(-1px);
+    outline: none;
+  }
+  a.subject:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
+  a.subject.computer:focus-visible { outline-color: var(--blue); }
+  a.subject:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--shadow); }
+  a.subject.computer:active { box-shadow: 0 2px 0 var(--sky-shadow); }
+  .subject-mark {
+    flex: 0 0 auto;
+    width: 72px;
+    height: 72px;
+    display: grid;
+    place-items: center;
+    border-radius: 22px;
+    background: var(--blush);
+    color: var(--deep);
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1;
+  }
+  a.subject.computer .subject-mark { background: var(--sky); color: var(--blue); }
+  .subject-mark svg { width: 40px; height: 40px; }
+  a.subject strong {
+    display: block;
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+  }
+  a.subject .hint {
+    display: block;
+    margin-top: 4px;
     color: var(--muted);
     font-size: 16px;
     font-weight: 800;
-    line-height: 1.45;
   }
-  .domain {
-    display: block;
-    margin-top: 2px;
-    color: var(--muted);
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0;
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    margin: 16px 0 4px;
+    padding: 0 18px;
+    border-radius: 999px;
+    background: #fff;
+    border: 3px solid var(--line);
+    box-shadow: 0 4px 0 var(--shadow);
+    color: var(--deep);
+    font-size: 18px;
+    font-weight: 900;
+    text-decoration: none;
   }
-  .grade { margin-top: 26px; }
+  .back:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
+  .back:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--shadow); }
+  .back.end { margin-top: 18px; }
+
+  #maths, #computer { display: none; }
+  #maths:target, #computer:target { display: block; }
+  body:has(#maths:target) #home,
+  body:has(#computer:target) #home { display: none; }
+
+  .grade { margin-top: 18px; }
   .grade > h2 {
     display: inline-block;
     margin: 0 0 12px;
@@ -112,6 +176,7 @@
     font-size: 20px;
     line-height: 1.3;
   }
+  #computer .grade > h2 { background: var(--blue); }
   .topics { display: grid; gap: 12px; }
   .topic {
     margin: 0;
@@ -128,6 +193,7 @@
     font-size: 18px;
     line-height: 1.3;
   }
+  #computer .topic h3 { color: var(--blue); }
   .topic h3 svg { width: 28px; height: 28px; flex: 0 0 auto; }
   .links { display: grid; grid-template-columns: 1fr; gap: 10px; }
   a.link {
@@ -163,6 +229,7 @@
     text-align: center;
     line-height: 1.25;
   }
+  #computer .badge { background: var(--sky); color: var(--blue); }
   a.link .copy { min-width: 0; }
   a.link strong {
     display: block;
@@ -193,17 +260,7 @@
     line-height: 1.45;
     overflow-wrap: anywhere;
   }
-  footer {
-    margin-top: 22px;
-    padding: 14px 16px;
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.82);
-    color: var(--muted);
-    font-size: 15px;
-    font-weight: 700;
-    line-height: 1.55;
-  }
-  footer p { margin: 0; }
+  #computer a.link .slug { background: var(--sky); }
   @media (min-width: 720px) {
     .wrap { padding-top: 32px; }
     header {
@@ -215,6 +272,7 @@
     }
     .mascot-frame { width: 168px; height: 168px; }
     h1 { font-size: 48px; }
+    .subjects { grid-template-columns: 1fr 1fr; margin-top: 28px; }
     .grade > h2 { font-size: 22px; }
     .topic { padding: 16px 16px 18px; }
     .topic h3 { font-size: 20px; }
@@ -224,131 +282,167 @@
 </style>
 </head>
 <body>
-  <div class="wrap">
+  <div class="wrap" id="top">
     <header>
       <div class="mascot-frame">
         <img class="mascot" src="assets/mascot.jpg" width="512" height="512" alt="Q版白色小狗，坐喺粉紅色圓圈入面" fetchpriority="high" decoding="async">
       </div>
       <div class="hero-copy">
-        <p class="kicker">唔使登入 · 打開就玩</p>
-        <a class="home-link" href="./">
-          <h1>數學小遊戲</h1>
-          <p class="site">Sinosee 數學遊戲站<span class="domain">sinosee.github.io</span></p>
+        <a class="home-link" href="#top">
+          <h1>教學小遊戲</h1>
         </a>
       </div>
     </header>
 
-    <section class="grade" aria-labelledby="p1">
-      <h2 id="p1">小一</h2>
-      <div class="topics">
-        <div class="topic">
-          <h3>
-            <svg viewBox="0 0 36 36" aria-hidden="true">
-              <rect x="6" y="8" width="24" height="20" rx="4" fill="#fff" stroke="#c73b74" stroke-width="3"/>
-              <path d="M10 14 h16 M10 18 h16 M10 22 h10" stroke="#ff7eae" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            長度
-          </h3>
-          <div class="links">
-            <a class="link" href="p1-cm-estimate/">
-              <span class="badge">小一</span>
-              <span class="copy"><strong>估量長度（厘米）</strong><span class="sub">用紙條估一估</span><span class="slug">p1-<wbr>cm-<wbr>estimate</span></span>
-            </a>
-            <a class="link" href="p1-cm-estimate-no-strip/">
-              <span class="badge">小一</span>
-              <span class="copy"><strong>估量長度（無紙條）</strong><span class="sub">沒有紙條，直接估</span><span class="slug">p1-<wbr>cm-<wbr>estimate-<wbr>no-<wbr>strip</span></span>
-            </a>
-          </div>
-        </div>
-
-        <div class="topic">
-          <h3>
-            <svg viewBox="0 0 36 36" aria-hidden="true">
+    <section id="home" aria-label="揀科目">
+      <nav class="subjects">
+        <a class="subject" href="#maths">
+          <span class="subject-mark" aria-hidden="true">
+            <svg viewBox="0 0 36 36">
               <circle cx="12" cy="18" r="7" fill="#ff8fb8"/>
               <circle cx="24" cy="12" r="5" fill="#ffd0e4" stroke="#c73b74" stroke-width="2"/>
               <circle cx="25" cy="25" r="6" fill="#ffe07a" stroke="#e0a43a" stroke-width="2"/>
             </svg>
-            數
-          </h3>
-          <div class="links">
-            <a class="link" href="p1-number-bonds/">
-              <span class="badge">小一</span>
-              <span class="copy"><strong>數的分解與合成（4–13）</strong><span class="sub">點選，湊出 4 至 13</span><span class="slug">p1-<wbr>number-<wbr>bonds</span></span>
-            </a>
-            <a class="link" href="p1-number-bonds-14-18/">
-              <span class="badge">小一</span>
-              <span class="copy"><strong>數的分解與合成（14至18）</strong><span class="sub">點選，湊出 14 至 18</span><span class="slug">p1-<wbr>number-<wbr>bonds-<wbr>14-<wbr>18</span></span>
-            </a>
-            <a class="link" href="p1-number-bonds-2-18/">
-              <span class="badge">小一</span>
-              <span class="copy"><strong>數的分解與合成（2至18）</strong><span class="sub">由 2 玩到 18</span><span class="slug">p1-<wbr>number-<wbr>bonds-<wbr>2-<wbr>18</span></span>
-            </a>
-          </div>
-        </div>
-
-        <div class="topic">
-          <h3>
-            <svg viewBox="0 0 36 36" aria-hidden="true">
-              <rect x="4" y="6" width="28" height="24" rx="6" fill="#fff" stroke="#c73b74" stroke-width="3"/>
-              <text x="18" y="23.5" text-anchor="middle" font-size="15" font-weight="800" fill="#c73b74" font-family="Verdana, sans-serif">Aa</text>
+          </span>
+          <span>
+            <strong>數學科</strong>
+            <span class="hint">小一、小四課堂遊戲</span>
+          </span>
+        </a>
+        <a class="subject computer" href="#computer">
+          <span class="subject-mark" aria-hidden="true">
+            <svg viewBox="0 0 36 36">
+              <rect x="4" y="6" width="28" height="18" rx="3" fill="#fff" stroke="#2f7de1" stroke-width="3"/>
+              <path d="M12 30 h12 M18 24 v6" fill="none" stroke="#2f7de1" stroke-width="3" stroke-linecap="round"/>
             </svg>
-            英文
-          </h3>
-          <div class="links">
-            <a class="link" href="p1-letter-typing/">
-              <span class="badge">小一</span>
-              <span class="copy"><strong>英文字母打字</strong><span class="sub">50 關：字母、詞語同短文</span><span class="slug">p1-<wbr>letter-<wbr>typing</span></span>
-            </a>
-          </div>
-        </div>
-      </div>
+          </span>
+          <span>
+            <strong>電腦科</strong>
+            <span class="hint">小一電腦堂打字</span>
+          </span>
+        </a>
+      </nav>
     </section>
 
-    <section class="grade" aria-labelledby="p4">
-      <h2 id="p4">小四</h2>
-      <div class="topics">
-        <div class="topic">
-          <h3>
-            <svg viewBox="0 0 36 36" aria-hidden="true">
-              <path d="M10 8 h16 v4 H16 v16" fill="none" stroke="#c73b74" stroke-width="3" stroke-linejoin="round"/>
-              <circle cx="24" cy="24" r="5" fill="#ff8fb8"/>
-            </svg>
-            除法
-          </h3>
-          <div class="links">
-            <a class="link" href="p4-division-spot-error/">
-              <span class="badge">小四</span>
-              <span class="copy"><strong>除法直式填空</strong><span class="sub">用畫面上的鍵盤填空</span><span class="slug">p4-<wbr>division-<wbr>spot-<wbr>error</span></span>
-            </a>
-            <a class="link" href="p4-division-missing/">
-              <span class="badge">小四</span>
-              <span class="copy"><strong>除法缺漏謎題</strong><span class="sub">找出直式裡缺了的數</span><span class="slug">p4-<wbr>division-<wbr>missing</span></span>
-            </a>
+    <section id="maths" aria-label="數學科">
+      <a class="back" href="#top">返回</a>
+      <section class="grade" aria-labelledby="p1">
+        <h2 id="p1">小一</h2>
+        <div class="topics">
+          <div class="topic">
+            <h3>
+              <svg viewBox="0 0 36 36" aria-hidden="true">
+                <rect x="6" y="8" width="24" height="20" rx="4" fill="#fff" stroke="#c73b74" stroke-width="3"/>
+                <path d="M10 14 h16 M10 18 h16 M10 22 h10" stroke="#ff7eae" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              長度
+            </h3>
+            <div class="links">
+              <a class="link" href="p1-cm-estimate/">
+                <span class="badge">小一</span>
+                <span class="copy"><strong>估量長度（厘米）</strong><span class="sub">用紙條估一估</span><span class="slug">p1-<wbr>cm-<wbr>estimate</span></span>
+              </a>
+              <a class="link" href="p1-cm-estimate-no-strip/">
+                <span class="badge">小一</span>
+                <span class="copy"><strong>估量長度（無紙條）</strong><span class="sub">沒有紙條，直接估</span><span class="slug">p1-<wbr>cm-<wbr>estimate-<wbr>no-<wbr>strip</span></span>
+              </a>
+            </div>
           </div>
-        </div>
 
-        <div class="topic">
-          <h3>
-            <svg viewBox="0 0 36 36" aria-hidden="true">
-              <circle cx="12" cy="10" r="5" fill="#ff8fb8"/>
-              <circle cx="22" cy="18" r="5" fill="#ffd56a" stroke="#e0a43a" stroke-width="2"/>
-              <circle cx="16" cy="27" r="5" fill="#ffb3cf" stroke="#c73b74" stroke-width="2"/>
-            </svg>
-            整除
-          </h3>
-          <div class="links">
-            <a class="link" href="divisibility-drop/">
-              <span class="badge">小四至<br>小六</span>
-              <span class="copy"><strong>整除掉落挑戰</strong><span class="sub">點擊能被 2、5、10 或 3 整除的數</span><span class="slug">divisibility-<wbr>drop</span></span>
-            </a>
+          <div class="topic">
+            <h3>
+              <svg viewBox="0 0 36 36" aria-hidden="true">
+                <circle cx="12" cy="18" r="7" fill="#ff8fb8"/>
+                <circle cx="24" cy="12" r="5" fill="#ffd0e4" stroke="#c73b74" stroke-width="2"/>
+                <circle cx="25" cy="25" r="6" fill="#ffe07a" stroke="#e0a43a" stroke-width="2"/>
+              </svg>
+              數
+            </h3>
+            <div class="links">
+              <a class="link" href="p1-number-bonds/">
+                <span class="badge">小一</span>
+                <span class="copy"><strong>數的分解與合成（4–13）</strong><span class="sub">點選，湊出 4 至 13</span><span class="slug">p1-<wbr>number-<wbr>bonds</span></span>
+              </a>
+              <a class="link" href="p1-number-bonds-14-18/">
+                <span class="badge">小一</span>
+                <span class="copy"><strong>數的分解與合成（14至18）</strong><span class="sub">點選，湊出 14 至 18</span><span class="slug">p1-<wbr>number-<wbr>bonds-<wbr>14-<wbr>18</span></span>
+              </a>
+              <a class="link" href="p1-number-bonds-2-18/">
+                <span class="badge">小一</span>
+                <span class="copy"><strong>數的分解與合成（2至18）</strong><span class="sub">由 2 玩到 18</span><span class="slug">p1-<wbr>number-<wbr>bonds-<wbr>2-<wbr>18</span></span>
+              </a>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      <section class="grade" aria-labelledby="p4">
+        <h2 id="p4">小四</h2>
+        <div class="topics">
+          <div class="topic">
+            <h3>
+              <svg viewBox="0 0 36 36" aria-hidden="true">
+                <path d="M10 8 h16 v4 H16 v16" fill="none" stroke="#c73b74" stroke-width="3" stroke-linejoin="round"/>
+                <circle cx="24" cy="24" r="5" fill="#ff8fb8"/>
+              </svg>
+              除法
+            </h3>
+            <div class="links">
+              <a class="link" href="p4-division-spot-error/">
+                <span class="badge">小四</span>
+                <span class="copy"><strong>除法直式填空</strong><span class="sub">用畫面上的鍵盤填空</span><span class="slug">p4-<wbr>division-<wbr>spot-<wbr>error</span></span>
+              </a>
+              <a class="link" href="p4-division-missing/">
+                <span class="badge">小四</span>
+                <span class="copy"><strong>除法缺漏謎題</strong><span class="sub">找出直式裡缺了的數</span><span class="slug">p4-<wbr>division-<wbr>missing</span></span>
+              </a>
+            </div>
+          </div>
+
+          <div class="topic">
+            <h3>
+              <svg viewBox="0 0 36 36" aria-hidden="true">
+                <circle cx="12" cy="10" r="5" fill="#ff8fb8"/>
+                <circle cx="22" cy="18" r="5" fill="#ffd56a" stroke="#e0a43a" stroke-width="2"/>
+                <circle cx="16" cy="27" r="5" fill="#ffb3cf" stroke="#c73b74" stroke-width="2"/>
+              </svg>
+              整除
+            </h3>
+            <div class="links">
+              <a class="link" href="divisibility-drop/">
+                <span class="badge">小四至<br>小六</span>
+                <span class="copy"><strong>整除掉落挑戰</strong><span class="sub">點擊能被 2、5、10 或 3 整除的數</span><span class="slug">divisibility-<wbr>drop</span></span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+      <a class="back end" href="#top">返回</a>
     </section>
 
-    <footer>
-      <p>舊網址 stephaniesincc.github.io 改名後可能打不開，請改用 sinosee.github.io。</p>
-    </footer>
+    <section id="computer" aria-label="電腦科">
+      <a class="back" href="#top">返回</a>
+      <section class="grade" aria-labelledby="ict">
+        <h2 id="ict">電腦科</h2>
+        <div class="topics">
+          <div class="topic">
+            <h3>
+              <svg viewBox="0 0 36 36" aria-hidden="true">
+                <rect x="4" y="6" width="28" height="18" rx="3" fill="#fff" stroke="#2f7de1" stroke-width="3"/>
+                <path d="M12 30 h12 M18 24 v6" fill="none" stroke="#2f7de1" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+              電腦堂
+            </h3>
+            <div class="links">
+              <a class="link" href="p1-letter-typing/">
+                <span class="badge">小一</span>
+                <span class="copy"><strong>英文字母打字</strong><span class="sub">電腦堂：50 關，由字母打到短文</span><span class="slug">p1-<wbr>letter-<wbr>typing</span></span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
   </div>
 </body>
 </html>
