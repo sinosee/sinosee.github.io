@@ -8,7 +8,7 @@
 <meta name="format-detection" content="telephone=no">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffe4f4">
-<meta name="description" content="小一英文字母打字：100 關，由小楷字母、大楷、詞語，玩到短文。每關最多三粒星。">
+<meta name="description" content="小一英文字母打字：50 關，由小楷字母、大楷、詞語，玩到短文。每關最多三粒星。">
 <title>英文字母打字</title>
 <link rel="preload" href="andika-latin-700.woff2" as="font" type="font/woff2" crossorigin>
 <!-- Letterforms: Andika by SIL, Latin bold subset. License: OFL.txt -->
@@ -241,7 +241,6 @@ a.backsite:hover{text-decoration:underline}
 .pill.phase{background:#efe4ff;border-color:#c9b6ff}
 .pill.prog{background:#e3f4ff;border-color:#7ecbff}
 .pill.miss{background:#fff1e4;border-color:#ffb088}
-.pill.time{background:#e9fff3;border-color:#7ddeb3}
 .pill.live{background:#fff6d0;border-color:#ffd15c}
 .spacer{flex:1}
 .bar{
@@ -395,13 +394,20 @@ a.backsite:hover{text-decoration:underline}
 .resultTitle{margin:0;font-size:clamp(28px,5vw,44px);font-weight:900}
 .resultWhy,.resultNums{margin:0;font-weight:900;font-size:clamp(16px,2.6vw,24px);line-height:1.4}
 .resultWhy{color:#0e6f8a}
+.resultActions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;width:100%}
 .bigbtn{
-  min-width:min(100%,280px);min-height:68px;padding:0 28px;
+  min-width:min(100%,220px);min-height:68px;padding:0 28px;
   border-radius:999px;background:#ff5fa2;color:#fff;
   font-size:clamp(22px,3.5vw,32px);font-weight:900;
   box-shadow:0 6px 0 #d43b7c;
 }
+.bigbtn.ghost{
+  background:#fff;color:var(--deep);
+  border:4px solid #ff8ec8;
+  box-shadow:0 6px 0 #f3c3dc;
+}
 .bigbtn:active{transform:translateY(4px);box-shadow:0 2px 0 #d43b7c}
+.bigbtn.ghost:active{box-shadow:0 2px 0 #f3c3dc}
 
 @keyframes pop{0%{transform:scale(.86)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-4px)}}
@@ -434,20 +440,20 @@ a.backsite:hover{text-decoration:underline}
       <img class="mascot" src="../assets/mascot.jpg" alt="" width="54" height="54">
       <div>
         <h1>🌟 英文字母打字 🌟</h1>
-        <p class="brandSub">100 關 · 字母玩到短文</p>
+        <p class="brandSub">50 關 · 字母玩到短文</p>
       </div>
     </div>
     <div class="statRow">
-      <div class="totalPill" id="totalPill">⭐ 0 / 300</div>
+      <div class="totalPill" id="totalPill">⭐ 0 / 150</div>
       <label class="soundToggle"><input type="checkbox" id="optSound" checked> 音效</label>
     </div>
-    <p class="rules"><b>星星：</b>★★★ 冇打錯又夠快　★★ 打錯 1–2 次，或全對但慢過時限　★ 做完但打錯 3 次或以上。未做完唔計，主頁留低最好嗰次。</p>
-    <p class="teacher">老師提示：第 1–20 關小楷字母，21–30 關大楷（要撳 ⇧），31–39 關大細楷，第 40 關開始詞語，71 關短句，81 關短文。</p>
+    <p class="rules"><b>星星：</b>★★★ 冇打錯　★★ 打錯 1–2 次　★ 打錯 3 次或以上。未做完唔計，同一關留低今次開頁最好嘅星。刷新頁面會重新計。</p>
+    <p class="teacher">老師提示：第 1–10 關小楷（鍵盤會亮鍵）。第 11–16 關大楷要撳 ⇧，第 17–20 關大細楷。第 21 關開始詞語，第 31 關第一次有空格，第 36–45 關短句會再亮鍵，第 46 關開始短文。數字喺第 48–49 關。</p>
     <p class="banner" id="banner" hidden></p>
     <div class="jumps" id="jumps" role="navigation" aria-label="跳去某一頁關卡"></div>
   </div>
   <div id="scroller" tabindex="-1"></div>
-  <p class="footNote"><a class="backsite" href="../">返遊戲站</a> · 唔使登入 · 星星留喺呢部機</p>
+  <p class="footNote"><a class="backsite" href="../">返遊戲站</a> · 唔使登入 · 星星唔會儲存，刷新就清走</p>
 </section>
 
 <section id="play" class="screen" aria-label="打字">
@@ -458,7 +464,6 @@ a.backsite:hover{text-decoration:underline}
     <span class="pill phase" id="phasePill">🐣 小楷</span>
     <span class="pill prog" id="progPill">1 / 9</span>
     <span class="pill miss" id="missPill">打錯 0</span>
-    <span class="pill time" id="timePill">0 秒</span>
     <span class="spacer"></span>
     <span class="pill live" id="liveStarPill">預計 ★★★</span>
   </div>
@@ -494,7 +499,10 @@ a.backsite:hover{text-decoration:underline}
     <h2 class="resultTitle" id="resultTitle">完成啦！</h2>
     <p class="resultWhy" id="resultWhy"></p>
     <p class="resultNums" id="resultNums"></p>
-    <button type="button" class="bigbtn" id="btnResultHome">返主頁睇星星</button>
+    <div class="resultActions">
+      <button type="button" class="bigbtn" id="btnResultNext">下一關</button>
+      <button type="button" class="bigbtn ghost" id="btnResultHome">返主頁</button>
+    </div>
   </div>
 </div>
 
@@ -509,43 +517,42 @@ window.addEventListener("error", function(ev){
 });
 
 /* ============================================================
-   100 關課程（每頁 10 關，可以滾動）
+   50 關課程（每頁 10 關，5 頁可以滾動）
+   由舊 100 關抽薄：每種技巧都仲會見到，同一種少練幾關。
    --------------------------------------------------------
-   第 1–10 關   小楷入門：abc、def…每個字母練幾次
-   第 11–20 關  小楷練習：組得耐啲，直至成個 a–z
-   第 21–30 關  大楷字母：要先撳 Shift（⇧）
-   第 31–39 關  大細楷混合字母
-   第 40–50 關  三字母詞（第 40 關開始由字母轉做詞語）
-   第 51–60 關  四字母詞
-   第 61–70 關  大楷詞、兩字詞（要空格）
-   第 71–80 關  短句（空格 + 句號，句號喺 123）
-   第 81–100 關 短文（兩句；第 91–92 關有數字，要撳 123）
+   第 1–10 關   小楷入門（全鍵提示）：abc…yz、易混字母、a–z
+   第 11–16 關  大楷字母：要先撳 Shift（⇧），唔亮字母鍵
+   第 17–20 關  大細楷混合字母
+   第 21–28 關  詞語：三字母，然後四字母
+   第 29–30 關  開頭大楷嘅詞
+   第 31–35 關  詞組（第 31 關第一次空格，淨係亮空格鍵）
+   第 36–45 關  短句入門（全鍵提示；對應舊第 71–80 關）
+   第 46–50 關  短文（兩句）。第 48 關第一次數字 1，第 49 關數字 2
 
-   星星（做完先計；中途離開唔改寫，淨係留最好嗰次）
-   ★★★  0 次打錯，而且喺時限內
-   ★★   打錯 1–2 次；或者 0 次打錯但超過時限
+   全鍵提示（字母 + 需要時 ⇧、空格、標點／數字同 123）嘅關卡：
+   第 1–10 關、第 36–45 關。
+   其餘關平常唔亮字母鍵。空格、標點、數字第一次出現嗰關，
+   就算唔係全鍵提示，都仍然亮嗰粒新鍵（同埋要先撳嘅 123）。
+
+   星星（做完先計；今次開頁留最好嗰次；刷新頁面清走，唔寫入 localStorage）
+   ★★★  0 次打錯
+   ★★   打錯 1–2 次
    ★    做完，但打錯 3 次或以上
-   時限：1–20 每個字母 8 秒；21–39 每個字母 10 秒；
-        40–50 每個詞 20 秒；51–60 每個詞 25 秒；
-        61–70 每個詞組 30 秒；71–100 每個字（連空格、符號）4 秒。
-   成績 key：localStorage p1letters_levels_v1
+   音效偏好 key：localStorage p1letters_levels_v1（只存 sound）
    ============================================================ */
 
 var STORE_KEY = "p1letters_levels_v1";
+var LEVEL_COUNT = 50;
+var PAGE_SIZE = 10;
 var JUMP_COLORS = ["#ffb3d4","#ffd15c","#9cf0c8","#9fd8ff","#d7c6ff","#ffc49a","#9af0e4","#ffb0c8","#c9d6ff","#ffe08a"];
 var CARD_COLORS = ["#ff7eb3","#ffb347","#f0c93a","#3dbe7a","#4dabf7","#8e7dff","#ff7ad9","#ff9a62","#2ec4b6","#ff8fab"];
 var PAGE_WASH = ["#ffe3f1","#fff4cc","#ddf8ea","#e3f3ff","#f3e8ff","#ffe8d6","#e5fff6","#ffe4ee","#eaf0ff","#fff6d8"];
 var PAGE_META = [
-  {title:"🐣 第 1–10 關 · 小楷入門", blurb:"abc、def 咁練，每個字母打幾次"},
-  {title:"🐥 第 11–20 關 · 小楷練習", blurb:"組得耐啲，練匀成個字母表"},
-  {title:"🦁 第 21–30 關 · 大楷字母", blurb:"先撳黃色 ⇧（向上），再撳字母"},
-  {title:"🌈 第 31–40 關 · 大細楷，然後詞語", blurb:"31–39 關混合；第 40 關開始打詞"},
-  {title:"🐱 第 41–50 關 · 簡單詞語", blurb:"三個字母嘅小楷詞"},
-  {title:"🐻 第 51–60 關 · 長少少嘅詞", blurb:"四個字母"},
-  {title:"✏️ 第 61–70 關 · 大楷同空格", blurb:"第一個字母要大楷，或者中間要撳空格"},
-  {title:"💬 第 71–80 關 · 短句", blurb:"一句句子，記得空格同句號（句號喺 123）"},
-  {title:"📖 第 81–90 關 · 短文", blurb:"兩句連住打"},
-  {title:"🏆 第 91–100 關 · 短文挑戰", blurb:"去到第 100 關，打一段短文"}
+  {title:"🐣 第 1–10 關 · 小楷入門", blurb:"abc 練到 yz，再練易混字母同成個字母表"},
+  {title:"🦁 第 11–20 關 · 大楷同大細楷", blurb:"先撳黃色 ⇧ 打大楷，再大細楷夾埋"},
+  {title:"🐱 第 21–30 關 · 詞語", blurb:"三字母、四字母，然後開頭大楷"},
+  {title:"💬 第 31–40 關 · 詞組同短句", blurb:"第 31 關開始空格；第 36 關開始短句同句號"},
+  {title:"📖 第 41–50 關 · 短句同短文", blurb:"短句練完打兩句。第 48–49 關有數字"}
 ];
 
 var SPECS = [
@@ -555,76 +562,39 @@ var SPECS = [
   {kind:"each", letters:"jkl", times:3, kase:"lower", preview:"j k l"},
   {kind:"each", letters:"mno", times:3, kase:"lower", preview:"m n o"},
   {kind:"each", letters:"pqr", times:3, kase:"lower", preview:"p q r"},
-  {kind:"each", letters:"stu", times:3, kase:"lower", preview:"s t u"},
-  {kind:"each", letters:"vwx", times:3, kase:"lower", preview:"v w x"},
-  {kind:"each", letters:"yz", times:4, kase:"lower", preview:"y z"},
+  {kind:"each", letters:"stu", times:2, kase:"lower", preview:"s t u"},
+  {kind:"each", letters:"vwxyz", times:2, kase:"lower", preview:"v w x y z"},
+  {kind:"each", letters:"bdpqmnuw", times:2, kase:"lower", preview:"b d p q · m n u w"},
   {kind:"sample", letters:"abcdefghijklmnopqrstuvwxyz", n:10, kase:"lower", preview:"a–z"},
 
-  {kind:"sample", letters:"abcdef", n:8, kase:"lower", preview:"a–f"},
-  {kind:"sample", letters:"ghijkl", n:8, kase:"lower", preview:"g–l"},
-  {kind:"sample", letters:"mnopqr", n:8, kase:"lower", preview:"m–r"},
-  {kind:"sample", letters:"stuvwxyz", n:8, kase:"lower", preview:"s–z"},
-  {kind:"sample", letters:"abcdefghijklm", n:10, kase:"lower", preview:"a–m"},
-  {kind:"sample", letters:"nopqrstuvwxyz", n:10, kase:"lower", preview:"n–z"},
-  {kind:"sample", letters:"abcdefghijklmnopqrstuvwxyz", n:10, kase:"lower", preview:"a–z"},
-  {kind:"each", letters:"bdpq", times:3, kase:"lower", preview:"b d p q"},
-  {kind:"each", letters:"mnuw", times:3, kase:"lower", preview:"m n u w"},
-  {kind:"sample", letters:"abcdefghijklmnopqrstuvwxyz", n:12, kase:"lower", preview:"a–z 總溫習"},
+  {kind:"each", letters:"ABCDE", times:2, kase:"upper", preview:"A–E"},
+  {kind:"each", letters:"FGHIJ", times:2, kase:"upper", preview:"F–J"},
+  {kind:"each", letters:"KLMNO", times:2, kase:"upper", preview:"K–O"},
+  {kind:"each", letters:"PQRST", times:2, kase:"upper", preview:"P–T"},
+  {kind:"each", letters:"UVWXYZ", times:2, kase:"upper", preview:"U–Z"},
+  {kind:"sample", letters:"abcdefghijklmnopqrstuvwxyz", n:8, kase:"upper", preview:"A–Z"},
 
-  {kind:"each", letters:"ABC", times:3, kase:"upper", preview:"A B C"},
-  {kind:"each", letters:"DEF", times:3, kase:"upper", preview:"D E F"},
-  {kind:"each", letters:"GHI", times:3, kase:"upper", preview:"G H I"},
-  {kind:"each", letters:"JKL", times:3, kase:"upper", preview:"J K L"},
-  {kind:"each", letters:"MNO", times:3, kase:"upper", preview:"M N O"},
-  {kind:"each", letters:"PQR", times:3, kase:"upper", preview:"P Q R"},
-  {kind:"each", letters:"STU", times:3, kase:"upper", preview:"S T U"},
-  {kind:"each", letters:"VWX", times:3, kase:"upper", preview:"V W X"},
-  {kind:"each", letters:"YZ", times:4, kase:"upper", preview:"Y Z"},
-  {kind:"sample", letters:"abcdefghijklmnopqrstuvwxyz", n:10, kase:"upper", preview:"A–Z"},
-
-  {kind:"each", letters:"ABC", times:2, kase:"both", preview:"Aa Bb Cc"},
-  {kind:"each", letters:"DEF", times:2, kase:"both", preview:"Dd Ee Ff"},
-  {kind:"each", letters:"GHI", times:2, kase:"both", preview:"Gg Hh Ii"},
-  {kind:"each", letters:"JKL", times:2, kase:"both", preview:"Jj Kk Ll"},
-  {kind:"each", letters:"MNO", times:2, kase:"both", preview:"Mm Nn Oo"},
-  {kind:"each", letters:"PQR", times:2, kase:"both", preview:"Pp Qq Rr"},
-  {kind:"each", letters:"STU", times:2, kase:"both", preview:"Ss Tt Uu"},
-  {kind:"each", letters:"VWXYZ", times:1, kase:"both", preview:"V–Z 大細楷"},
+  {kind:"each", letters:"abcdefghi", times:1, kase:"both", preview:"Aa–Ii"},
+  {kind:"each", letters:"jklmnopqr", times:1, kase:"both", preview:"Jj–Rr"},
+  {kind:"each", letters:"stuvwxyz", times:1, kase:"both", preview:"Ss–Zz"},
   {kind:"sample", letters:"abcdefghijklmnopqrstuvwxyz", n:10, kase:"mix", preview:"A–Z 混合"},
+
   {kind:"words", words:["cat","dog","pig"], preview:"cat · dog · pig"},
-
-  {kind:"words", words:["hat","sun","cup"], preview:"hat · sun · cup"},
-  {kind:"words", words:["bed","bus","pen"], preview:"bed · bus · pen"},
-  {kind:"words", words:["red","box","fox"], preview:"red · box · fox"},
-  {kind:"words", words:["jam","kid","map"], preview:"jam · kid · map"},
-  {kind:"words", words:["net","pot","run"], preview:"net · pot · run"},
-  {kind:"words", words:["sit","top","van"], preview:"sit · top · van"},
-  {kind:"words", words:["web","yes","zip"], preview:"web · yes · zip"},
-  {kind:"words", words:["ant","egg","owl"], preview:"ant · egg · owl"},
-  {kind:"words", words:["bat","hen","rat"], preview:"bat · hen · rat"},
-  {kind:"words", words:["cat","sun","pen","red"], preview:"cat · sun · pen · red"},
-
+  {kind:"words", words:["hat","sun","cup","pen"], preview:"hat · sun · cup · pen"},
+  {kind:"words", words:["red","box","fox","jam"], preview:"red · box · fox · jam"},
+  {kind:"words", words:["map","run","web","zip"], preview:"map · run · web · zip"},
   {kind:"words", words:["book","fish","cake","duck"], preview:"book · fish · cake · duck"},
   {kind:"words", words:["bird","frog","lion","bear"], preview:"bird · frog · lion · bear"},
-  {kind:"words", words:["milk","rain","snow","wind"], preview:"milk · rain · snow · wind"},
-  {kind:"words", words:["star","moon","tree","leaf"], preview:"star · moon · tree · leaf"},
-  {kind:"words", words:["hand","foot","nose","eyes"], preview:"hand · foot · nose · eyes"},
-  {kind:"words", words:["blue","pink","gold","grey"], preview:"blue · pink · gold · grey"},
+  {kind:"words", words:["star","moon","hand","foot"], preview:"star · moon · hand · foot"},
   {kind:"words", words:["jump","play","sing","read"], preview:"jump · play · sing · read"},
-  {kind:"words", words:["ball","kite","ship","boat"], preview:"ball · kite · ship · boat"},
-  {kind:"words", words:["corn","sand","rock","pond"], preview:"corn · sand · rock · pond"},
-  {kind:"words", words:["book","star","blue","jump"], preview:"book · star · blue · jump"},
-
   {kind:"words", words:["Cat","Dog","Pig","Hat"], preview:"Cat · Dog · Pig · Hat"},
   {kind:"words", words:["Sun","Bus","Pen","Red"], preview:"Sun · Bus · Pen · Red"},
+
   {kind:"words", words:["a cat","a dog","a pig"], preview:"a cat · a dog · a pig"},
   {kind:"words", words:["the sun","the bus","the pen"], preview:"the sun · the bus"},
   {kind:"words", words:["big cat","red hat","hot sun"], preview:"big cat · red hat"},
   {kind:"words", words:["I am","I see","I can"], preview:"I am · I see · I can"},
-  {kind:"words", words:["The cat","The dog","A pig"], preview:"The cat · The dog"},
-  {kind:"words", words:["sit down","stand up","come here"], preview:"sit down · stand up"},
-  {kind:"words", words:["blue pen","pink hat","red bus"], preview:"blue pen · pink hat"},
-  {kind:"words", words:["I see","a cat","The dog"], preview:"I see · a cat · The dog"},
+  {kind:"words", words:["sit down","The cat","blue pen"], preview:"sit down · The cat"},
 
   {kind:"text", text:"I see a cat.", preview:"I see a cat."},
   {kind:"text", text:"The dog is big.", preview:"The dog is big."},
@@ -638,25 +608,9 @@ var SPECS = [
   {kind:"text", text:"The fish can swim.", preview:"The fish can swim."},
 
   {kind:"text", text:"I see a cat. The cat is big.", preview:"I see a cat…"},
-  {kind:"text", text:"A dog can run. I like the dog.", preview:"A dog can run…"},
   {kind:"text", text:"The sun is up. It is a hot day.", preview:"The sun is up…"},
-  {kind:"text", text:"I have a red hat. It is on the bed.", preview:"I have a red hat…"},
-  {kind:"text", text:"A bug is on the cup. The cup is blue.", preview:"A bug is on the cup…"},
-  {kind:"text", text:"We play a game. It is fun.", preview:"We play a game…"},
-  {kind:"text", text:"The fish is small. It is in a pond.", preview:"The fish is small…"},
-  {kind:"text", text:"I can read a book. The book is good.", preview:"I can read a book…"},
-  {kind:"text", text:"Mum has a cake. The cake is sweet.", preview:"Mum has a cake…"},
-  {kind:"text", text:"Sam has a dog. The dog can sit.", preview:"Sam has a dog…"},
-
   {kind:"text", text:"I see 1 cat. The cat is soft.", preview:"I see 1 cat…"},
   {kind:"text", text:"I have 2 pens. The pens are red.", preview:"I have 2 pens…"},
-  {kind:"text", text:"A little bird can fly. It is in the tree.", preview:"A little bird…"},
-  {kind:"text", text:"The moon is big. I see a star.", preview:"The moon is big…"},
-  {kind:"text", text:"I am happy. I can jump and play.", preview:"I am happy…"},
-  {kind:"text", text:"I like school. I can read and write.", preview:"I like school…"},
-  {kind:"text", text:"The cat and the dog play. They are good.", preview:"The cat and the dog…"},
-  {kind:"text", text:"A frog is in the pond. It can jump.", preview:"A frog is in the pond…"},
-  {kind:"text", text:"We see the moon and a star. It is night.", preview:"We see the moon…"},
   {kind:"text", text:"I am happy today. I can read and play.", preview:"I am happy today…"}
 ];
 
@@ -691,7 +645,6 @@ var shiftMode = 0;
 var lastShiftAt = 0;
 var layoutName = "letters";
 var timers = [];
-var tick = 0;
 var audioCtx = null;
 var praiseI = 0;
 var PRAISE = ["啱！","好叻！","掂！"];
@@ -714,12 +667,19 @@ function isUpper(ch){
 }
 
 function phaseOf(id){
-  if(id <= 20) return {key:"lower", label:"小楷", emoji:"🐣"};
-  if(id <= 30) return {key:"upper", label:"大楷", emoji:"🦁"};
-  if(id <= 39) return {key:"mix", label:"混合", emoji:"🌈"};
-  if(id <= 70) return {key:"word", label:"詞語", emoji:"🐱"};
-  if(id <= 80) return {key:"sent", label:"短句", emoji:"💬"};
+  if(id <= 10) return {key:"lower", label:"小楷", emoji:"🐣"};
+  if(id <= 16) return {key:"upper", label:"大楷", emoji:"🦁"};
+  if(id <= 20) return {key:"mix", label:"混合", emoji:"🌈"};
+  if(id <= 30) return {key:"word", label:"詞語", emoji:"🐱"};
+  if(id <= 35) return {key:"phrase", label:"詞組", emoji:"✏️"};
+  if(id <= 45) return {key:"sent", label:"短句", emoji:"💬"};
   return {key:"para", label:"短文", emoji:"📖"};
+}
+
+/* 全鍵提示關卡（字母、空格、標點／數字，需要時連 ⇧ 同 123）：
+   第 1–10 關小楷入門；第 36–45 關短句入門（對應舊課程第 71–80 關）。 */
+function hasFullHints(id){
+  return (id >= 1 && id <= 10) || (id >= 36 && id <= 45);
 }
 
 function flagsFromSpec(spec){
@@ -789,27 +749,14 @@ function expand(spec){
   return {kind:"text", prompts:[spec.text]};
 }
 
-function limitFor(id, expanded){
-  var prompts = expanded.prompts;
-  var chars = 0;
-  for(var i = 0; i < prompts.length; i++) chars += prompts[i].length;
-  if(id <= 20) return {sec:prompts.length * 8, note:"每個字母 8 秒"};
-  if(id <= 39) return {sec:prompts.length * 10, note:"每個字母 10 秒"};
-  if(id <= 50) return {sec:prompts.length * 20, note:"每個詞 20 秒"};
-  if(id <= 60) return {sec:prompts.length * 25, note:"每個詞 25 秒"};
-  if(id <= 70) return {sec:prompts.length * 30, note:"每個詞組 30 秒"};
-  return {sec:chars * 4, note:"每個字（連空格同符號）4 秒"};
-}
-
-function calcStars(mistakes, elapsedSec, limitSec){
-  if(mistakes <= 0 && elapsedSec <= limitSec) return 3;
+function calcStars(mistakes){
+  if(mistakes <= 0) return 3;
   if(mistakes <= 2) return 2;
   return 1;
 }
 
 function explainStars(stars, mistakes){
-  if(stars === 3) return "一次都冇打錯，而且喺時限內做完。";
-  if(mistakes === 0) return "全部打啱，但慢過時限，所以兩粒星。";
+  if(stars === 3) return "一次都冇打錯。";
   if(mistakes <= 2) return "打錯 " + mistakes + " 次，所以兩粒星。";
   return "打錯 " + mistakes + " 次，做完都有一粒星。";
 }
@@ -834,18 +781,12 @@ function loadStore(){
   try{
     var raw = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
     if(!raw || typeof raw !== "object") return;
-    if(raw.stars && typeof raw.stars === "object"){
-      Object.keys(raw.stars).forEach(function(k){
-        var n = Number(raw.stars[k]);
-        if(n >= 1 && n <= 3) store.stars[k] = n;
-      });
-    }
     if(typeof raw.sound === "boolean") store.sound = raw.sound;
   }catch(e){}
 }
 
 function saveStore(){
-  try{localStorage.setItem(STORE_KEY, JSON.stringify(store));}catch(e){}
+  try{localStorage.setItem(STORE_KEY, JSON.stringify({sound:store.sound}));}catch(e){}
 }
 
 function bestOf(id){
@@ -866,29 +807,121 @@ function starsHtml(n){
   return html;
 }
 
+function specBlob(spec){
+  if(spec.words) return spec.words.join("\n");
+  if(spec.text) return spec.text;
+  return spec.letters || "";
+}
+
+function isPunctChar(ch){
+  return /[^A-Za-z0-9\s]/.test(ch);
+}
+
+function findFirstSpecials(){
+  var space = 0;
+  var punct = {};
+  var digit = {};
+  LEVELS.forEach(function(lv){
+    var blob = specBlob(lv.spec);
+    for(var i = 0; i < blob.length; i++){
+      var ch = blob.charAt(i);
+      if(ch === " "){
+        if(!space) space = lv.id;
+      }else if(/^[0-9]$/.test(ch)){
+        if(!digit[ch]) digit[ch] = lv.id;
+      }else if(isPunctChar(ch)){
+        if(!punct[ch]) punct[ch] = lv.id;
+      }
+    }
+  });
+  return {space:space, punct:punct, digit:digit};
+}
+
+var firstSpecial = findFirstSpecials();
+
+function highlightKind(levelId, ch){
+  if(hasFullHints(levelId)) return "full";
+  if(!ch) return "none";
+  if(ch === " " && levelId === firstSpecial.space) return "special";
+  if(/^[0-9]$/.test(ch) && firstSpecial.digit[ch] === levelId) return "special";
+  if(isPunctChar(ch) && firstSpecial.punct[ch] === levelId) return "special";
+  return "none";
+}
+
 function selfCheck(){
   var issues = [];
-  if(LEVELS.length !== 100) issues.push("關卡數量 " + LEVELS.length);
+  if(LEVELS.length !== LEVEL_COUNT) issues.push("關卡數量 " + LEVELS.length);
+  if(PAGE_META.length !== LEVEL_COUNT / PAGE_SIZE) issues.push("頁數 " + PAGE_META.length);
   LEVELS.forEach(function(lv, i){
     if(lv.id !== i + 1) issues.push("id " + lv.id);
+    if(lv.page !== Math.ceil(lv.id / PAGE_SIZE)) issues.push("page " + lv.id);
     if(!lv.preview) issues.push("preview " + lv.id);
+  });
+  var lower = "";
+  var upper = "";
+  var mixed = "";
+  for(var id = 1; id <= 10; id++){
+    if(LEVELS[id - 1].spec.kind === "each") lower += LEVELS[id - 1].spec.letters;
+  }
+  for(id = 11; id <= 16; id++){
+    if(LEVELS[id - 1].spec.kind === "each") upper += LEVELS[id - 1].spec.letters;
+  }
+  for(id = 17; id <= 20; id++){
+    if(LEVELS[id - 1].spec.kind === "each") mixed += LEVELS[id - 1].spec.letters;
+  }
+  "abcdefghijklmnopqrstuvwxyz".split("").forEach(function(ch){
+    if(lower.indexOf(ch) < 0) issues.push("缺小楷 " + ch);
+    if(upper.indexOf(ch.toUpperCase()) < 0) issues.push("缺大楷 " + ch);
+    if(mixed.indexOf(ch) < 0) issues.push("缺混合 " + ch);
+  });
+  "bdpqmnuw".split("").forEach(function(ch){
+    if(LEVELS[8].spec.letters.indexOf(ch) < 0) issues.push("易混 " + ch);
   });
   var l1 = expand(LEVELS[0].spec);
   var counts = {a:0, b:0, c:0};
   l1.prompts.forEach(function(p){counts[p] = (counts[p] || 0) + 1;});
   if(l1.kind !== "letters" || counts.a !== 3 || counts.b !== 3 || counts.c !== 3) issues.push("第1關");
+  var l11 = expand(LEVELS[10].spec);
+  if(l11.prompts.some(function(p){return p !== p.toUpperCase();})) issues.push("第11關");
   var l21 = expand(LEVELS[20].spec);
-  if(l21.prompts.some(function(p){return p !== p.toUpperCase();})) issues.push("第21關");
-  var l40 = expand(LEVELS[39].spec);
-  if(l40.kind !== "words" || l40.prompts.join(",") !== "cat,dog,pig") issues.push("第40關");
-  var l71 = expand(LEVELS[70].spec);
-  if(l71.kind !== "text" || l71.prompts[0] !== "I see a cat.") issues.push("第71關");
-  var l100 = expand(LEVELS[99].spec);
-  if(l100.kind !== "text" || l100.prompts[0].indexOf("happy") < 0) issues.push("第100關");
-  if(calcStars(0, 10, 10) !== 3) issues.push("三星");
-  if(calcStars(0, 10.01, 10) !== 2) issues.push("慢兩星");
-  if(calcStars(2, 1, 10) !== 2) issues.push("錯兩星");
-  if(calcStars(3, 1, 10) !== 1) issues.push("一星");
+  if(l21.kind !== "words" || l21.prompts.join(",") !== "cat,dog,pig") issues.push("第21關");
+  var l31 = expand(LEVELS[30].spec);
+  if(l31.prompts.join("|").indexOf(" ") < 0) issues.push("第31關空格");
+  var l36 = expand(LEVELS[35].spec);
+  if(l36.kind !== "text" || l36.prompts[0] !== "I see a cat.") issues.push("第36關");
+  var l50 = expand(LEVELS[49].spec);
+  if(l50.kind !== "text" || l50.prompts[0].indexOf("happy") < 0) issues.push("第50關");
+  if(firstSpecial.space !== 31) issues.push("空格首次 " + firstSpecial.space);
+  if(firstSpecial.punct["."] !== 36) issues.push("句號首次 " + firstSpecial.punct["."]);
+  if(firstSpecial.digit["1"] !== 48) issues.push("數字1首次 " + firstSpecial.digit["1"]);
+  if(firstSpecial.digit["2"] !== 49) issues.push("數字2首次 " + firstSpecial.digit["2"]);
+  if(Object.keys(firstSpecial.punct).length !== 1) issues.push("標點種類");
+  if(Object.keys(firstSpecial.digit).join("") !== "12") issues.push("數字種類");
+  if(calcStars(0) !== 3 || calcStars(1) !== 2 || calcStars(2) !== 2 || calcStars(3) !== 1) issues.push("星星");
+  if(highlightKind(1, "a") !== "full" || highlightKind(10, "z") !== "full") issues.push("1–10提示");
+  if(highlightKind(11, "A") !== "none" || highlightKind(20, "b") !== "none") issues.push("11–20唔提示");
+  if(highlightKind(31, " ") !== "special" || highlightKind(31, "a") !== "none") issues.push("第31關提示");
+  if(highlightKind(32, " ") !== "none") issues.push("第32關空格");
+  if(highlightKind(36, ".") !== "full" || highlightKind(45, "a") !== "full") issues.push("短句提示");
+  if(highlightKind(46, ".") !== "none" || highlightKind(46, " ") !== "none") issues.push("第46關");
+  if(highlightKind(48, "1") !== "special" || highlightKind(48, " ") !== "none" || highlightKind(48, ".") !== "none") issues.push("第48關");
+  if(highlightKind(49, "2") !== "special" || highlightKind(49, "1") !== "none") issues.push("第49關");
+  if(highlightKind(50, "a") !== "none") issues.push("第50關提示");
+  var k1 = hotKeysFor(1, "b", "letters", 0);
+  if(!k1.b || k1.shift) issues.push("第1關亮鍵");
+  var k11 = hotKeysFor(11, "A", "letters", 0);
+  if(k11.a || k11.shift) issues.push("第11關亮鍵");
+  var k31 = hotKeysFor(31, " ", "letters", 0);
+  if(!k31.space || hotKeysFor(31, "a", "letters", 0).a) issues.push("第31關亮鍵");
+  var k36 = hotKeysFor(36, "I", "letters", 0);
+  if(!k36.i || !k36.shift) issues.push("第36關字母");
+  if(!hotKeysFor(36, ".", "letters", 0).num) issues.push("第36關123");
+  if(!hotKeysFor(36, ".", "numbers", 0)["."]) issues.push("第36關句號鍵");
+  if(!hotKeysFor(36, " ", "letters", 0).space) issues.push("第36關空格");
+  if(hotKeysFor(46, ".", "numbers", 0)["."] || hotKeysFor(46, " ", "letters", 0).space) issues.push("第46關亮鍵");
+  if(!hotKeysFor(48, "1", "letters", 0).num || !hotKeysFor(48, "1", "numbers", 0)["1"]) issues.push("第48關亮鍵");
+  if(hotKeysFor(48, ".", "numbers", 0)["."] || hotKeysFor(48, "a", "letters", 0).a) issues.push("第48關多餘亮鍵");
+  if(!hotKeysFor(49, "2", "numbers", 0)["2"] || hotKeysFor(49, "2", "letters", 0)["2"]) issues.push("第49關亮鍵");
   var el = $("booterr");
   if(issues.length){
     el.hidden = false;
@@ -914,12 +947,14 @@ function scrollPage(page, smooth){
 function renderJumps(){
   var box = $("jumps");
   box.innerHTML = "";
-  for(var p = 1; p <= 10; p++){
+  for(var p = 1; p <= PAGE_META.length; p++){
     var btn = document.createElement("button");
     btn.type = "button";
     btn.className = "jump";
     btn.style.setProperty("--jc", JUMP_COLORS[p - 1]);
-    btn.textContent = ((p - 1) * 10 + 1) + "–" + (p * 10);
+    var from = (p - 1) * PAGE_SIZE + 1;
+    var to = p * PAGE_SIZE;
+    btn.textContent = from + "–" + to;
     btn.setAttribute("data-page", String(p));
     btn.setAttribute("aria-label", "去第 " + btn.textContent + " 關");
     box.appendChild(btn);
@@ -927,7 +962,7 @@ function renderJumps(){
 }
 
 function renderHome(focusId){
-  $("totalPill").textContent = "⭐ " + totalStars() + " / 300";
+  $("totalPill").textContent = "⭐ " + totalStars() + " / " + (LEVEL_COUNT * 3);
   $("optSound").checked = store.sound;
   var ban = $("banner");
   if(banner){
@@ -939,15 +974,15 @@ function renderHome(focusId){
   }
   var scroller = $("scroller");
   var html = "";
-  for(var p = 1; p <= 10; p++){
+  for(var p = 1; p <= PAGE_META.length; p++){
     var meta = PAGE_META[p - 1];
     html += '<section class="page" id="page-' + p + '" data-page="' + p + '">';
     html += '<div class="pageInner" style="--wash:' + PAGE_WASH[p - 1] + '">';
     html += "<h2>" + meta.title + "</h2>";
     html += '<p class="blurb">' + meta.blurb + "</p>";
     html += '<div class="grid">';
-    for(var i = 0; i < 10; i++){
-      var lv = LEVELS[(p - 1) * 10 + i];
+    for(var i = 0; i < PAGE_SIZE; i++){
+      var lv = LEVELS[(p - 1) * PAGE_SIZE + i];
       var stars = bestOf(lv.id);
       var just = focusId === lv.id ? " just" : "";
       html += '<button type="button" class="lvl' + just + '" data-level="' + lv.id + '" style="--c:' + CARD_COLORS[i] + '"';
@@ -980,7 +1015,6 @@ function show(name){
 function clearTimers(){
   timers.forEach(function(id){clearTimeout(id);});
   timers = [];
-  if(tick){clearInterval(tick); tick = 0;}
 }
 
 function later(fn, ms){
@@ -1056,10 +1090,6 @@ function totalChars(){
   var n = 0;
   for(var i = 0; i < run.prompts.length; i++) n += run.prompts[i].length;
   return n;
-}
-
-function elapsedSec(){
-  return (Date.now() - run.startedAt) / 1000;
 }
 
 function layoutHas(name, ch){
@@ -1158,7 +1188,7 @@ function renderPrompt(){
       slots.appendChild(slot);
     }
   }else{
-    $("textAsk").textContent = run.level.id >= 81 ? "打呢段短文" : "打呢句";
+    $("textAsk").textContent = run.level.phase.key === "para" ? "打呢段短文" : "打呢句";
     var passage = $("passage");
     passage.innerHTML = "";
     for(var c = 0; c < prompt.length; c++){
@@ -1178,8 +1208,7 @@ function renderPrompt(){
 }
 
 function renderScores(){
-  var el = elapsedSec();
-  var stars = calcStars(run.mistakes, el, run.limit);
+  var stars = calcStars(run.mistakes);
   $("lvPill").textContent = "第 " + run.level.id + " 關";
   $("phasePill").textContent = run.level.phase.emoji + " " + run.level.phase.label;
   if(run.kind === "letters"){
@@ -1190,32 +1219,36 @@ function renderScores(){
     $("progPill").textContent = doneChars() + " / " + totalChars();
   }
   $("missPill").textContent = "打錯 " + run.mistakes;
-  $("timePill").textContent = Math.floor(el) + " 秒 / 時限 " + run.limit + " 秒";
   $("liveStarPill").textContent = "預計 " + "★★★".slice(0, stars) + "☆☆☆".slice(stars);
   $("liveStarPill").setAttribute("aria-label", "如果而家完成，預計 " + stars + " 粒星");
   var pct = totalChars() ? (doneChars() / totalChars()) * 100 : 0;
   $("barFill").style.width = pct + "%";
 }
 
-function hotSet(){
+function hotKeysFor(levelId, ch, layout, shift){
   var hot = {};
-  var ch = currentChar();
-  if(!ch || !run) return hot;
+  if(!ch || highlightKind(levelId, ch) === "none") return hot;
   if(ch === " "){hot.space = true; return hot;}
   if(/^[a-zA-Z]$/.test(ch)){
-    if(layoutName === "letters") hot[ch.toLowerCase()] = true;
+    if(layout === "letters") hot[ch.toLowerCase()] = true;
     else hot.abc = true;
-    if(isUpper(ch) && shiftMode === 0) hot.shift = true;
-    if(!isUpper(ch) && shiftMode > 0) hot.shift = true;
+    if(isUpper(ch) && shift === 0) hot.shift = true;
+    if(!isUpper(ch) && shift > 0) hot.shift = true;
     return hot;
   }
   var home = whereIs(ch);
-  if(layoutHas(layoutName, ch) && layoutName === home) hot[ch] = true;
-  else if(layoutName === "letters") hot.num = true;
-  else if(home === "symbols" && layoutName === "numbers") hot.sym = true;
-  else if(home === "numbers" && layoutName === "symbols") hot.num = true;
+  if(layoutHas(layout, ch) && layout === home) hot[ch] = true;
+  else if(layout === "letters") hot.num = true;
+  else if(home === "symbols" && layout === "numbers") hot.sym = true;
+  else if(home === "numbers" && layout === "symbols") hot.num = true;
   else hot.num = true;
   return hot;
+}
+
+function hotSet(){
+  var ch = currentChar();
+  if(!ch || !run) return {};
+  return hotKeysFor(run.level.id, ch, layoutName, shiftMode);
 }
 
 function keyLabel(token){
@@ -1443,15 +1476,11 @@ function finishLevel(){
   run.over = true;
   locked = true;
   clearTimers();
-  var elapsed = elapsedSec();
-  var stars = calcStars(run.mistakes, elapsed, run.limit);
+  var stars = calcStars(run.mistakes);
   var prev = bestOf(run.level.id);
   var best = Math.max(prev, stars);
   if(stars > prev) store.stars[String(run.level.id)] = stars;
-  saveStore();
   banner = {id:run.level.id, stars:stars, best:best};
-  var big = "";
-  for(var i = 1; i <= 3; i++) big += i <= stars ? "★" : "☆";
   $("resultMark").textContent = stars === 3 ? "🎉" : stars === 2 ? "👏" : "💪";
   $("resultStars").innerHTML = starsHtml(stars);
   $("resultTitle").textContent = "第 " + run.level.id + " 關完成！";
@@ -1459,28 +1488,18 @@ function finishLevel(){
   var extra = stars > prev ? "新高分！主頁會見到 " + stars + " 粒星。"
     : prev > stars ? "今次 " + stars + " 粒星，主頁保持最佳 " + prev + " 粒星。"
     : "主頁最佳仍然係 " + best + " 粒星。";
-  $("resultNums").textContent = "打錯 " + run.mistakes + " 次 · 用時 " + Math.max(1, Math.round(elapsed)) + " 秒 · 時限 " + run.limit + " 秒（" + run.limitNote + "）。" + extra;
+  $("resultNums").textContent = "打錯 " + run.mistakes + " 次。" + extra;
   $("result").classList.add("on");
   $("live").textContent = "第 " + run.level.id + " 關完成，拿到 " + stars + " 粒星。" + extra;
   sfxWin();
-  var left = 6;
-  var btn = $("btnResultHome");
-  btn.textContent = "返主頁睇星星（" + left + "）";
-  btn.focus();
-  var countdown = setInterval(function(){
-    left -= 1;
-    if(left <= 0){
-      clearInterval(countdown);
-      goHome(run.level.id);
-      return;
-    }
-    btn.textContent = "返主頁睇星星（" + left + "）";
-  }, 1000);
-  run.countdown = countdown;
+  var nextBtn = $("btnResultNext");
+  var last = run.level.id >= LEVELS.length;
+  nextBtn.hidden = last;
+  nextBtn.textContent = "下一關";
+  (last ? $("btnResultHome") : nextBtn).focus();
 }
 
 function goHome(focusId){
-  if(run && run.countdown) clearInterval(run.countdown);
   clearTimers();
   locked = false;
   $("result").classList.remove("on");
@@ -1488,7 +1507,7 @@ function goHome(focusId){
   renderHome(focusId || 0);
   if(focusId){
     requestAnimationFrame(function(){
-      var pageNo = Math.ceil(focusId / 10);
+      var pageNo = Math.ceil(focusId / PAGE_SIZE);
       var page = $("page-" + pageNo);
       if(page) scrollPage(page, false);
       document.querySelectorAll(".jump").forEach(function(btn){
@@ -1502,9 +1521,7 @@ function startLevel(id){
   var level = LEVELS[id - 1];
   if(!level) return;
   clearTimers();
-  if(run && run.countdown) clearInterval(run.countdown);
   var expanded = expand(level.spec);
-  var lim = limitFor(level.id, expanded);
   run = {
     level:level,
     kind:expanded.kind,
@@ -1512,11 +1529,7 @@ function startLevel(id){
     promptIndex:0,
     charIndex:0,
     mistakes:0,
-    limit:lim.sec,
-    limitNote:lim.note,
-    startedAt:Date.now(),
-    over:false,
-    countdown:0
+    over:false
   };
   locked = false;
   shiftMode = 0;
@@ -1531,12 +1544,6 @@ function startLevel(id){
   renderHints();
   renderAll();
   speakPrompt();
-  tick = setInterval(function(){
-    if(!run || run.over) return;
-    renderScores();
-    var coach = $("coach");
-    if(coach && !coach.textContent) coach.textContent = coachLine(currentChar());
-  }, 250);
 }
 
 var pageWatchOn = false;
@@ -1606,6 +1613,12 @@ $("btnHome").addEventListener("click", function(){goHome(0);});
 $("btnResultHome").addEventListener("click", function(){
   goHome(run ? run.level.id : 0);
 });
+$("btnResultNext").addEventListener("click", function(){
+  if(!run) return;
+  var id = run.level.id;
+  if(id >= LEVELS.length) goHome(id);
+  else startLevel(id + 1);
+});
 
 $("kb").addEventListener("click", function(e){
   var btn = e.target.closest("[data-key]");
@@ -1625,7 +1638,9 @@ document.addEventListener("keydown", function(e){
   if($("result").classList.contains("on")){
     if(e.key === "Enter"){
       e.preventDefault();
-      goHome(run ? run.level.id : 0);
+      var nextBtn = $("btnResultNext");
+      if(nextBtn && !nextBtn.hidden) nextBtn.click();
+      else goHome(run ? run.level.id : 0);
     }
     return;
   }
