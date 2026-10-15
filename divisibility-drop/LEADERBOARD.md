@@ -49,13 +49,13 @@ The client `apiKey` is public. Realtime Database rules are what stop strangers f
 | `classId` | 班別，例如 `4A`。英數字，可有 `-`，最長 12。會轉成大階。 |
 | `studentNo` | 學號，例如 `12`。同樣只准英數字同 `-`。 |
 | `score` | 整數 0–9999。越高越好。 |
-| `stars` | 整數 0–3。同分時星星多的排前。 |
-| `ts` | 完成時間，毫秒。分數同星星都一樣時，比較新的排前。 |
+| `stars` | 整數 0–3。分數一樣時唔會拆開名次；星星多的只係喺並列裡面排得前啲。 |
+| `ts` | 完成時間，毫秒。分數同星星都一樣時，比較新的排前面，名次仍然一樣。 |
 | `displayName` | 必須等於 `classId` + `studentNo`，例如 `4A12`。 |
 
-畫面上每位同學只顯示**最高的一次**（先比分數，再比星星，再比時間）。雲端保留每次成績，直到老師刪走其中一筆。
+畫面上每位同學只顯示**最高的一次**。分數一樣就**並列同一名、同一個獎牌**（兩人同分第一都係金牌，下一個較低分係第三、銅牌）。並列裡面先排星星多的，再排比較新的。雲端保留每次成績，直到老師刪走其中一筆。
 
-The screen shows each student's best run. The database keeps every run until a teacher deletes one score node.
+The screen shows each student's best run. The same score shares one rank and the same medal (two 1sts are both gold; the next lower score is 3rd). Stars, then a newer time, only order students inside that tie. The database keeps every run until a teacher deletes one score node.
 
 老師刪除時會先寫入呢條**老師刪除路徑**（客戶端讀唔到），密碼核對成功先准刪走對應的分數節點：
 

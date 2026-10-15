@@ -506,11 +506,18 @@
     });
   }
 
-  /* Higher score wins. Tie: more stars, then newer ts. */
+  /* Higher score wins the place. Same score is one rank and one medal
+     (two people on 1st, the next lower score is 3rd). Stars, then a
+     newer timestamp, only order students inside that tie. */
   function better(a, b) {
-    if ((b.score || 0) !== (a.score || 0)) return (b.score || 0) - (a.score || 0);
+    if (scoreOf(b) !== scoreOf(a)) return scoreOf(b) - scoreOf(a);
     if ((b.stars || 0) !== (a.stars || 0)) return (b.stars || 0) - (a.stars || 0);
     return (b.ts || 0) - (a.ts || 0);
+  }
+
+  function scoreOf(e) {
+    var n = e && e.score;
+    return n || 0;
   }
 
   function bestByStudent(entries) {
@@ -542,41 +549,33 @@
     var cap = limit || TOP_N;
     var rows = [];
     var mine = null;
+    var pinned = null;
+    var place = 1;
     for (var i = 0; i < ranked.length; i++) {
       var e = ranked[i];
+      if (i > 0 && scoreOf(e) !== scoreOf(ranked[i - 1])) place = i + 1;
+      var tied = (i > 0 && scoreOf(ranked[i - 1]) === scoreOf(e))
+        || (i + 1 < ranked.length && scoreOf(ranked[i + 1]) === scoreOf(e));
       var isMine = sameStudent(e, highlight);
       var badge = '';
+      if (isMine) badge = (highlight.ts && e.ts === highlight.ts) ? '今次' : '你';
+      var row = {
+        rank: place,
+        tied: tied,
+        id: e.id || '',
+        classId: e.classId,
+        studentNo: e.studentNo,
+        score: e.score,
+        stars: e.stars,
+        ts: e.ts,
+        mine: isMine,
+        badge: badge
+      };
       if (isMine) {
-        badge = (highlight.ts && e.ts === highlight.ts) ? '今次' : '你';
-        mine = {
-          rank: i + 1,
-          id: e.id || '',
-          classId: e.classId,
-          studentNo: e.studentNo,
-          score: e.score,
-          stars: e.stars,
-          ts: e.ts,
-          badge: badge
-        };
+        mine = row;
+        if (i >= cap) pinned = row;
       }
-      if (i < cap) {
-        rows.push({
-          rank: i + 1,
-          id: e.id || '',
-          classId: e.classId,
-          studentNo: e.studentNo,
-          score: e.score,
-          stars: e.stars,
-          ts: e.ts,
-          mine: isMine,
-          badge: badge
-        });
-      }
-    }
-    var pinned = null;
-    if (mine && mine.rank > cap) {
-      pinned = mine;
-      pinned.mine = true;
+      if (i < cap) rows.push(row);
     }
     var note = '';
     if (highlight && mine && highlight.score != null && highlight.score !== mine.score) {
@@ -611,7 +610,8 @@
       });
       li.appendChild(btn);
     }
-    li.setAttribute('aria-label', '第' + row.rank + '名 ' + row.classId + ' ' + row.studentNo + '號 ' + row.score + '分');
+    var placeWord = (row.tied ? '並列第' : '第') + row.rank + '名 ';
+    li.setAttribute('aria-label', placeWord + row.classId + ' ' + row.studentNo + '號 ' + row.score + '分');
     return li;
   }
 
@@ -638,7 +638,7 @@
     var message = (loadResult && loadResult.message) || '';
     if (!view.rows.length && !message) message = MSG.empty;
     if (message) container.appendChild(el(doc, 'p', 'lbMsg', message));
-    container.appendChild(el(doc, 'p', 'lbHint', '每位同學顯示最高分。同分先比星星，星星一樣就比較新的排前面。'));
+    container.appendChild(el(doc, 'p', 'lbHint', '每位同學顯示最高分。分數一樣就並列同一名、同一個獎牌；下一個不同分數會跳名。並列時星星多的排前，星星一樣就比較新的排前面。'));
     if (view.note) container.appendChild(el(doc, 'p', 'lbMsg', view.note));
     if (options.onDelete) {
       container.appendChild(el(doc, 'p', 'lbHint', '老師刪除模式。每一行是最高分，刪除只清走呢一筆。'));
