@@ -49,12 +49,13 @@
   }
   .mascot-frame {
     width: min(168px, 42vw);
+    height: min(168px, 42vw);
     aspect-ratio: 1 / 1;
     flex: 0 0 auto;
     overflow: hidden;
     border: 4px solid #fff;
     border-radius: 50%;
-    background: #ffd0e0;
+    background: #fff;
     box-shadow: 0 8px 0 var(--shadow);
   }
   .mascot {
@@ -62,7 +63,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
+    object-position: center center;
   }
   .hero-copy { min-width: 0; }
   .kicker {
@@ -212,7 +213,7 @@
       gap: 22px;
       text-align: left;
     }
-    .mascot-frame { width: 168px; }
+    .mascot-frame { width: 168px; height: 168px; }
     h1 { font-size: 48px; }
     .grade > h2 { font-size: 22px; }
     .topic { padding: 16px 16px 18px; }
