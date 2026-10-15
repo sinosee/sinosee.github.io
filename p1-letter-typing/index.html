@@ -90,9 +90,10 @@ button:focus-visible,a:focus-visible{outline:4px solid #4dabf7;outline-offset:3p
   display:flex;align-items:center;justify-content:center;gap:10px;
 }
 .mascot{
-  width:54px;height:54px;border-radius:50%;
-  object-fit:cover;border:3px solid #ff8ec8;
-  box-shadow:0 3px 0 #ffc2de;background:#fff;
+  width:64px;height:64px;border-radius:50%;
+  object-fit:cover;object-position:center;
+  border:3px solid #ff8ec8;
+  box-shadow:0 3px 0 #ffc2de;background:#ffd6ea;
 }
 h1{
   margin:0;
@@ -116,14 +117,6 @@ h1{
 }
 .soundToggle{background:#e7fff4;border-color:#7ddeb3}
 .soundToggle input{width:22px;height:22px;accent-color:#1a9a52}
-.rules,.teacher{
-  margin:6px auto 0;max-width:980px;
-  text-align:center;font-weight:800;line-height:1.45;
-  font-size:clamp(14px,1.9vw,18px);
-}
-.rules{color:var(--ink)}
-.teacher{color:#0e6f8a}
-.rules b{color:#c47b00}
 .banner{
   margin:6px auto 0;max-width:760px;
   padding:6px 12px;border-radius:16px;
@@ -395,13 +388,27 @@ a.backsite:hover{text-decoration:underline}
 .resultTitle{margin:0;font-size:clamp(28px,5vw,44px);font-weight:900}
 .resultWhy,.resultNums{margin:0;font-weight:900;font-size:clamp(16px,2.6vw,24px);line-height:1.4}
 .resultWhy{color:#0e6f8a}
+.resultActions{
+  width:100%;
+  margin-top:6px;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+}
 .bigbtn{
-  min-width:min(100%,280px);min-height:68px;padding:0 28px;
+  width:min(100%,280px);min-height:68px;padding:0 28px;
   border-radius:999px;background:#ff5fa2;color:#fff;
   font-size:clamp(22px,3.5vw,32px);font-weight:900;
   box-shadow:0 6px 0 #d43b7c;
 }
+.bigbtn.alt{
+  background:#fff;color:var(--deep);
+  border:3px solid #ff8ec8;
+  box-shadow:0 6px 0 #f3c3dc;
+}
 .bigbtn:active{transform:translateY(4px);box-shadow:0 2px 0 #d43b7c}
+.bigbtn.alt:active{box-shadow:0 2px 0 #f3c3dc}
+@media (min-width:560px){
+  .resultActions{flex-direction:row;justify-content:center}
+}
 
 @keyframes pop{0%{transform:scale(.86)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-4px)}}
@@ -412,12 +419,11 @@ a.backsite:hover{text-decoration:underline}
 }
 @media (max-width:860px){
   .grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none}
-  .mascot{width:44px;height:44px}
+  .mascot{width:48px;height:48px}
 }
 @media (max-height:760px){
   .homeTop{margin-top:4px;padding:6px 8px}
   h1{font-size:clamp(22px,4vw,32px)}
-  .rules,.teacher{margin-top:3px;font-size:13px}
   .letterCard{min-height:96px}
   .glyph{font-size:clamp(72px,16vmin,140px)}
   .key{height:44px;border-radius:12px}
@@ -431,7 +437,7 @@ a.backsite:hover{text-decoration:underline}
 <section id="home" class="screen on" aria-label="關卡主頁">
   <div class="homeTop">
     <div class="brand">
-      <img class="mascot" src="../assets/mascot.jpg" alt="" width="54" height="54">
+      <img class="mascot" src="../assets/mascot.jpg" alt="Q版白色小狗" width="64" height="64">
       <div>
         <h1>🌟 英文字母打字 🌟</h1>
         <p class="brandSub">100 關 · 字母玩到短文</p>
@@ -441,8 +447,6 @@ a.backsite:hover{text-decoration:underline}
       <div class="totalPill" id="totalPill">⭐ 0 / 300</div>
       <label class="soundToggle"><input type="checkbox" id="optSound" checked> 音效</label>
     </div>
-    <p class="rules"><b>星星：</b>★★★ 冇打錯又夠快　★★ 打錯 1–2 次，或全對但慢過時限　★ 做完但打錯 3 次或以上。未做完唔計，主頁留低最好嗰次。</p>
-    <p class="teacher">老師提示：第 1–20 關小楷字母，21–30 關大楷（要撳 ⇧），31–39 關大細楷，第 40 關開始詞語，71 關短句，81 關短文。</p>
     <p class="banner" id="banner" hidden></p>
     <div class="jumps" id="jumps" role="navigation" aria-label="跳去某一頁關卡"></div>
   </div>
@@ -494,7 +498,10 @@ a.backsite:hover{text-decoration:underline}
     <h2 class="resultTitle" id="resultTitle">完成啦！</h2>
     <p class="resultWhy" id="resultWhy"></p>
     <p class="resultNums" id="resultNums"></p>
-    <button type="button" class="bigbtn" id="btnResultHome">返主頁睇星星</button>
+    <div class="resultActions">
+      <button type="button" class="bigbtn" id="btnResultNext">下一關</button>
+      <button type="button" class="bigbtn alt" id="btnResultHome">返主頁睇星星</button>
+    </div>
   </div>
 </div>
 
@@ -1463,20 +1470,11 @@ function finishLevel(){
   $("result").classList.add("on");
   $("live").textContent = "第 " + run.level.id + " 關完成，拿到 " + stars + " 粒星。" + extra;
   sfxWin();
-  var left = 6;
-  var btn = $("btnResultHome");
-  btn.textContent = "返主頁睇星星（" + left + "）";
-  btn.focus();
-  var countdown = setInterval(function(){
-    left -= 1;
-    if(left <= 0){
-      clearInterval(countdown);
-      goHome(run.level.id);
-      return;
-    }
-    btn.textContent = "返主頁睇星星（" + left + "）";
-  }, 1000);
-  run.countdown = countdown;
+  var nextBtn = $("btnResultNext");
+  var hasNext = run.level.id < LEVELS.length;
+  nextBtn.hidden = !hasNext;
+  nextBtn.disabled = !hasNext;
+  (hasNext ? nextBtn : $("btnResultHome")).focus();
 }
 
 function goHome(focusId){
@@ -1603,6 +1601,10 @@ $("btnSound").addEventListener("click", function(){
 });
 
 $("btnHome").addEventListener("click", function(){goHome(0);});
+$("btnResultNext").addEventListener("click", function(){
+  if(!run || run.level.id >= LEVELS.length) return;
+  startLevel(run.level.id + 1);
+});
 $("btnResultHome").addEventListener("click", function(){
   goHome(run ? run.level.id : 0);
 });
@@ -1625,7 +1627,9 @@ document.addEventListener("keydown", function(e){
   if($("result").classList.contains("on")){
     if(e.key === "Enter"){
       e.preventDefault();
-      goHome(run ? run.level.id : 0);
+      var nextBtn = $("btnResultNext");
+      if(run && nextBtn && !nextBtn.hidden && run.level.id < LEVELS.length) startLevel(run.level.id + 1);
+      else goHome(run ? run.level.id : 0);
     }
     return;
   }
