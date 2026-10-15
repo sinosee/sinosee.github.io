@@ -111,6 +111,51 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 .endScore{font-size:clamp(22px,3.8vmin,40px);font-weight:800;color:#5a5a6e}
 .endDetail{font-size:clamp(16px,2.6vmin,26px);color:#6a6a7e;font-weight:700;line-height:1.5}
 .endBtns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.startBtns{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulation}
+
+/* ---------- gate ---------- */
+#gate{align-items:center;justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;
+  background:linear-gradient(165deg,#e8f4ff 0%,#fff4d6 48%,#ffe0f0 100%)}
+.gateCard{width:min(760px,94vw);margin:16px auto;background:#fff;border-radius:28px;padding:clamp(18px,3vmin,32px);
+  box-shadow:0 12px 40px rgba(40,60,90,.18);text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(8px,1.6vmin,14px)}
+.gateForm{width:100%;display:flex;flex-direction:column;align-items:center;gap:12px}
+.gateFields{width:100%;display:flex;flex-direction:column;gap:12px}
+.field{display:flex;flex-direction:column;align-items:flex-start;gap:6px;font-weight:900;font-size:clamp(16px,2.6vmin,24px);text-align:left}
+.field input{width:100%;min-height:64px;border-radius:16px;border:4px solid #b8d4e8;font:inherit;font-size:clamp(22px,4vmin,36px);font-weight:900;
+  padding:8px 16px;color:var(--ink);background:#f7fbff}
+.field input::placeholder{color:#9aa8b6;font-weight:700}
+.field input:focus{outline:none;border-color:#3b82f6;background:#fff}
+.field input.bad{border-color:#e53935;background:#fff5f5}
+.gateHint{margin:0;min-height:1.3em;font-size:clamp(14px,2.2vmin,20px);font-weight:700;color:#5a6a7a}
+.gateErr{margin:0;min-height:1.4em;font-size:clamp(16px,2.6vmin,24px);font-weight:900;color:#c62828;line-height:1.4}
+.bigbtn.is-locked{opacity:.55}
+
+/* ---------- leaderboard ---------- */
+#board{align-items:center;justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;
+  background:linear-gradient(165deg,#e8f4ff 0%,#fff0d8 50%,#ffe0f0 100%)}
+.boardInner{width:min(860px,94vw);margin:auto;padding:18px 0 32px;display:flex;flex-direction:column;align-items:center;gap:12px}
+#end{align-items:center;justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+.endInner{width:min(760px,94vw);margin:12px auto 28px;gap:clamp(8px,1.6vmin,16px)}
+.lbPanel{width:100%;display:flex;flex-direction:column;gap:8px}
+.lbTitle{margin:4px 0 0;font-size:clamp(20px,3.4vmin,32px);font-weight:900;text-align:center}
+.lbMsg{margin:0;font-weight:800;font-size:clamp(15px,2.4vmin,22px);color:#3a4a5a;text-align:center;line-height:1.45}
+.lbHint{margin:0;font-size:clamp(13px,2vmin,18px);color:#7a8a9a;text-align:center;font-weight:700;line-height:1.4}
+.lbList{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;width:100%}
+.lbRow{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:8px 10px;background:#fff;border-radius:16px;
+  padding:10px 14px;box-shadow:0 3px 0 #b8d4e8;font-weight:900;font-size:clamp(16px,2.6vmin,26px)}
+.lbRow.mine{background:#fff6cc;box-shadow:0 3px 0 #e0a020, inset 0 0 0 3px #ff9f1c}
+.lbRank{min-width:1.6em;text-align:center}
+.lbName{text-align:left;min-width:0}
+.lbTag{display:inline-block;margin-left:6px;background:#ff8c1a;color:#fff;border-radius:999px;padding:1px 8px;font-size:.72em;vertical-align:middle}
+.lbStars{letter-spacing:1px;white-space:nowrap}
+.lbScore{min-width:2.2em;text-align:right;font-variant-numeric:tabular-nums}
+.lbEmpty{background:#fff;border-radius:16px;padding:16px;text-align:center;font-weight:800;color:#5a5a6e;box-shadow:0 3px 0 #b8d4e8}
+#whoPill{background:#e0f7f4;color:#0f766e}
+@media (min-width:700px){
+  .gateFields{flex-direction:row}
+  .field{flex:1}
+}
 
 /* landscape / small height */
 @media (max-height:500px){
@@ -155,8 +200,35 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
       <label class="toggle"><input type="checkbox" id="chkHard"> 較難（多三位數）</label>
     </div>
 
-    <button type="button" class="bigbtn" id="btnStart">開始遊戲</button>
-    <p class="note">適合小四至小六 · 唔使登入 · iPad 用手指點選</p>
+    <div class="startBtns">
+      <button type="button" class="bigbtn" id="btnStart">開始遊戲</button>
+      <button type="button" class="bigbtn purple" id="btnOpenBoard">查看龍虎榜</button>
+    </div>
+    <p class="note">適合小四至小六 · 開始前填班別同學號 · iPad 用手指點選</p>
+  </div>
+</div>
+
+<div id="gate" class="screen">
+  <div class="gateCard">
+    <div class="tipEmoji" id="gateEmoji">🐲</div>
+    <h2 class="tipTitle">先寫班別同學號</h2>
+    <p class="tipBody">用班別同學號上龍虎榜。請用英文同數字，唔好打中文。</p>
+    <form id="gateForm" class="gateForm" autocomplete="off">
+      <div class="gateFields">
+        <label class="field" for="gateClass">班別
+          <input id="gateClass" name="classId" type="text" inputmode="text" maxlength="24" placeholder="例如 4A" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off" enterkeyhint="next" aria-describedby="gateErr">
+        </label>
+        <label class="field" for="gateNo">同學號
+          <input id="gateNo" name="studentNo" type="text" inputmode="text" maxlength="24" placeholder="例如 12" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="off" enterkeyhint="go" aria-describedby="gateErr">
+        </label>
+      </div>
+      <p class="gateHint" id="gateHint">兩個都要填，先可以進入關卡。</p>
+      <p class="gateErr" id="gateErr" role="alert" aria-live="assertive"></p>
+      <div class="endBtns">
+        <button type="submit" class="bigbtn green" id="btnGateGo">進入關卡</button>
+        <button type="button" class="bigbtn blue" id="btnGateBack">返回</button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -180,6 +252,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
     <span class="pill" id="timerPill">⏱ 0</span>
     <span class="pill" id="rulePill">被 2 整除</span>
     <span class="spacer"></span>
+    <span class="pill" id="whoPill" hidden>4A · 12</span>
     <span class="pill" id="modeTag">學生</span>
   </div>
   <div class="banner" id="banner">點擊能被 <b>2</b> 整除的數字！</div>
@@ -209,9 +282,25 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
       <button type="button" class="bigbtn green" id="btnAgain">再玩一次</button>
       <button type="button" class="bigbtn purple" id="btnMenu">返回主選單</button>
     </div>
+    <div class="lbPanel" id="endBoard" aria-live="polite"></div>
   </div>
 </div>
 
+<div id="board" class="screen">
+  <div class="boardInner">
+    <h2 class="tipTitle">🐲 龍虎榜</h2>
+    <p class="sub">揀關卡睇最高分。未玩都可以睇。</p>
+    <div class="segs" id="boardPick" role="tablist" aria-label="龍虎榜關卡"></div>
+    <div id="boardMount" class="lbPanel" aria-live="polite"></div>
+    <div class="endBtns">
+      <button type="button" class="bigbtn blue" id="btnBoardReload">重新載入</button>
+      <button type="button" class="bigbtn purple" id="btnBoardBack">返回主選單</button>
+    </div>
+  </div>
+</div>
+
+<script src="firebase-config.js"></script>
+<script src="leaderboard.js"></script>
 <script>
 (function(){
 'use strict';
@@ -277,7 +366,14 @@ var state = {
   nextId:1,
   sectionEndAt:0,
   pauseLeftMs:0,
-  colorIdx:0
+  colorIdx:0,
+  player:null,
+  runId:0,
+  submittedRunId:0,
+  boardLevel:'2',
+  boardToken:0,
+  gateReturn:'start',
+  boardReady:false
 };
 
 var el = {
@@ -305,7 +401,7 @@ var el = {
 };
 
 function show(screen){
-  ['start','tip','play','end'].forEach(function(id){
+  ['start','gate','tip','play','end','board'].forEach(function(id){
     document.getElementById(id).classList.toggle('on', id===screen);
   });
 }
@@ -566,6 +662,8 @@ function stopSpawning(){
 /* ---------- flow ---------- */
 function beginFromStart(){
   ensureAudio();
+  state.runId = (state.runId || 0) + 1;
+  state.submittedRunId = 0;
   state.lives = 3;
   state.score = 0;
   state.hits = 0;
@@ -632,6 +730,15 @@ function startPlay(){
   el.rulePill.textContent = sec.name;
   el.banner.innerHTML = sec.banner;
   el.modeTag.textContent = state.mode === 'teacher' ? '老師' : '學生';
+  var who = document.getElementById('whoPill');
+  if(who){
+    if(state.player){
+      who.hidden = false;
+      who.textContent = state.player.classId + ' · ' + state.player.studentNo;
+    } else {
+      who.hidden = true;
+    }
+  }
   el.teachBar.classList.toggle('on', state.mode === 'teacher');
   updateHUD();
   clearNumbers();
@@ -689,6 +796,159 @@ function endGame(cleared){
     '<br>剩餘愛心：' + '❤️'.repeat(Math.max(0,state.lives)) + (state.lives?'' : '（用完了）');
   show('end');
   if(stars>=2) sfxStar();
+  var runId = state.runId;
+  if(state.submittedRunId !== runId){
+    state.submittedRunId = runId;
+    publishResult(stars, runId);
+  }
+}
+
+function levelName(id){
+  if(window.DivLeaderboard){
+    var lv = DivLeaderboard.levelById(id);
+    if(lv) return lv.name;
+  }
+  if(id === 'mix') return '全部關卡';
+  return '被 ' + id + ' 整除';
+}
+
+function publishResult(stars, runId){
+  var box = document.getElementById('endBoard');
+  if(!box) return;
+  if(!window.DivLeaderboard){
+    box.textContent = '';
+    return;
+  }
+  var levelId = state.section || '2';
+  DivLeaderboard.renderLoading(box);
+  var identity = state.player;
+  var score = state.score;
+  var done = function(result, highlight){
+    if(runId !== state.runId) return;
+    DivLeaderboard.renderInto(box, result, highlight, { title: '呢關龍虎榜 · ' + levelName(levelId), levelId: levelId });
+  };
+  if(!identity){
+    DivLeaderboard.load(levelId).then(function(result){ done(result, null); });
+    return;
+  }
+  DivLeaderboard.submit({
+    levelId: levelId,
+    classId: identity.classId,
+    studentNo: identity.studentNo,
+    score: score,
+    stars: stars
+  }).then(function(sub){
+    var highlight = {
+      classId: identity.classId,
+      studentNo: identity.studentNo,
+      ts: sub.entry ? sub.entry.ts : 0,
+      score: sub.entry ? sub.entry.score : score
+    };
+    return DivLeaderboard.load(levelId).then(function(result){
+      done(result, highlight);
+    });
+  }).catch(function(){
+    DivLeaderboard.load(levelId).then(function(result){
+      done(result, { classId: identity.classId, studentNo: identity.studentNo, score: score });
+    });
+  });
+}
+
+function openGate(returnTo){
+  state.gateReturn = returnTo || 'start';
+  var cls = document.getElementById('gateClass');
+  var no = document.getElementById('gateNo');
+  if(window.DivLeaderboard){
+    var saved = state.player || DivLeaderboard.recallIdentity();
+    if(saved){
+      if(!cls.value) cls.value = saved.classId || '';
+      if(!no.value) no.value = saved.studentNo || '';
+    }
+    applyGate(false);
+  }
+  show('gate');
+  setTimeout(function(){
+    if(cls.value){
+      no.focus();
+      if(no.value && no.select) no.select();
+    } else {
+      cls.focus();
+    }
+  }, 60);
+}
+
+function applyGate(forceEmpty){
+  if(!window.DivLeaderboard) return { ok:true };
+  var cls = document.getElementById('gateClass');
+  var no = document.getElementById('gateNo');
+  var err = document.getElementById('gateErr');
+  var hint = document.getElementById('gateHint');
+  var btn = document.getElementById('btnGateGo');
+  var result = DivLeaderboard.validateIdentity(cls.value, no.value);
+  var loud = !result.ok && (result.code !== 'empty' || forceEmpty);
+  err.textContent = loud ? result.message : '';
+  if(hint) hint.hidden = !!loud;
+  cls.classList.toggle('bad', !!(loud && result.fields.indexOf('classId') >= 0));
+  no.classList.toggle('bad', !!(loud && result.fields.indexOf('studentNo') >= 0));
+  cls.setAttribute('aria-invalid', (loud && result.fields.indexOf('classId') >= 0) ? 'true' : 'false');
+  no.setAttribute('aria-invalid', (loud && result.fields.indexOf('studentNo') >= 0) ? 'true' : 'false');
+  btn.classList.toggle('is-locked', !result.ok);
+  return result;
+}
+
+function ensureBoardPicker(){
+  if(state.boardReady || !window.DivLeaderboard) return;
+  var holder = document.getElementById('boardPick');
+  DivLeaderboard.LEVELS.forEach(function(lv){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'seg';
+    b.setAttribute('data-sec', lv.id);
+    b.setAttribute('role', 'tab');
+    b.textContent = lv.short;
+    b.addEventListener('click', function(){
+      state.boardLevel = lv.id;
+      markBoardSegs();
+      refreshBoard();
+    });
+    holder.appendChild(b);
+  });
+  state.boardReady = true;
+}
+
+function markBoardSegs(){
+  document.querySelectorAll('#boardPick .seg').forEach(function(b){
+    b.classList.toggle('sel', b.getAttribute('data-sec') === state.boardLevel);
+    b.setAttribute('aria-selected', b.classList.contains('sel') ? 'true' : 'false');
+  });
+}
+
+function openBoard(){
+  ensureBoardPicker();
+  state.boardLevel = state.section || '2';
+  markBoardSegs();
+  show('board');
+  refreshBoard();
+}
+
+function refreshBoard(){
+  var mount = document.getElementById('boardMount');
+  if(!window.DivLeaderboard){
+    mount.textContent = '龍虎榜未接上雲端';
+    return;
+  }
+  var token = ++state.boardToken;
+  var levelId = state.boardLevel || '2';
+  DivLeaderboard.renderLoading(mount);
+  DivLeaderboard.load(levelId).then(function(result){
+    if(token !== state.boardToken) return;
+    if(!document.getElementById('board').classList.contains('on')) return;
+    var highlight = state.player ? {
+      classId: state.player.classId,
+      studentNo: state.player.studentNo
+    } : null;
+    DivLeaderboard.renderInto(mount, result, highlight, { title: levelName(levelId), levelId: levelId });
+  });
 }
 
 function setPaused(p){
@@ -736,7 +996,36 @@ document.getElementById('chkHard').addEventListener('change', function(){ state.
 
 document.getElementById('btnStart').addEventListener('click', function(){
   ensureAudio();
+  if(!window.DivLeaderboard){ beginFromStart(); return; }
+  openGate('start');
+});
+document.getElementById('btnOpenBoard').addEventListener('click', openBoard);
+document.getElementById('gateClass').addEventListener('input', function(){ applyGate(false); });
+document.getElementById('gateNo').addEventListener('input', function(){ applyGate(false); });
+document.getElementById('gateClass').addEventListener('keydown', function(ev){
+  if(ev.key === 'Enter'){
+    ev.preventDefault();
+    document.getElementById('gateNo').focus();
+  }
+});
+document.getElementById('gateForm').addEventListener('submit', function(ev){
+  ev.preventDefault();
+  var result = applyGate(true);
+  if(!result.ok){
+    var focusId = result.field === 'studentNo' ? 'gateNo' : 'gateClass';
+    document.getElementById(focusId).focus();
+    return;
+  }
+  state.player = {
+    classId: result.classId,
+    studentNo: result.studentNo,
+    displayName: result.displayName
+  };
+  DivLeaderboard.rememberIdentity(state.player);
   beginFromStart();
+});
+document.getElementById('btnGateBack').addEventListener('click', function(){
+  show(state.gateReturn || 'start');
 });
 document.getElementById('btnTipGo').addEventListener('click', startPlay);
 document.getElementById('btnHome').addEventListener('click', function(){
@@ -757,8 +1046,13 @@ document.getElementById('btnReveal').addEventListener('click', function(){
   else clearReveal();
 });
 document.getElementById('btnClearReveal').addEventListener('click', clearReveal);
-document.getElementById('btnAgain').addEventListener('click', beginFromStart);
+document.getElementById('btnAgain').addEventListener('click', function(){
+  if(!window.DivLeaderboard){ beginFromStart(); return; }
+  openGate('end');
+});
 document.getElementById('btnMenu').addEventListener('click', function(){ show('start'); });
+document.getElementById('btnBoardBack').addEventListener('click', function(){ show('start'); });
+document.getElementById('btnBoardReload').addEventListener('click', refreshBoard);
 
 
 /* Delegated hit-test: more reliable on moving targets / iPad */
@@ -794,6 +1088,9 @@ window.__DIVDROP = {
   genNumber: genNumber,
   setPaused: setPaused,
   endGame: endGame,
+  openGate: openGate,
+  openBoard: openBoard,
+  applyGate: applyGate,
   onTap: function(id){
     var it = state.numbers.find(function(n){ return n.id===id; });
     if(it) onTap(it);
