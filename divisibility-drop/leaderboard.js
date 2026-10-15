@@ -93,10 +93,10 @@
       if (c.code === 'cjk') fields.push('classId');
       if (n.code === 'cjk') fields.push('studentNo');
       var message = (c.code === 'cjk' && n.code === 'cjk')
-        ? '唔好打中文。班別同學號請用英文字母同數字，例如 4A、12。'
+        ? '唔好打中文。班別學號請用英文字母同數字，例如 4A、12。'
         : (c.code === 'cjk'
           ? '班別唔可以打中文。請用英文字母同數字，例如 4A。'
-          : '同學號唔可以打中文。請用數字，例如 12。');
+          : '學號唔可以打中文。請用數字，例如 12。');
       return fail('cjk', message, fields);
     }
     if (c.code === 'fullwidth' || n.code === 'fullwidth') {
@@ -110,10 +110,10 @@
       return fail('charset', '只可以輸入英文字母、數字同連字號（-）。', fields);
     }
     if (c.code === 'empty' && n.code === 'empty') {
-      return fail('empty', '請填寫班別同學號，先可以開始。', ['classId', 'studentNo']);
+      return fail('empty', '請填寫班別學號，先可以開始。', ['classId', 'studentNo']);
     }
     if (c.code === 'empty') return fail('empty', '請填寫班別，例如 4A。', ['classId']);
-    if (n.code === 'empty') return fail('empty', '請填寫同學號，例如 12。', ['studentNo']);
+    if (n.code === 'empty') return fail('empty', '請填寫學號，例如 12。', ['studentNo']);
     return {
       ok: true,
       code: 'ok',
