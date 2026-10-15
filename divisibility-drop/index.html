@@ -54,15 +54,8 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 .bigbtn:disabled{opacity:.45;transform:none}
 .note{font-size:clamp(13px,2vmin,18px);color:#7a8a9a;text-align:center}
 
-/* ---------- tip ---------- */
-#tip{align-items:center;justify-content:center;background:rgba(40,60,90,.45);z-index:20}
-.tipCard{width:min(640px,92vw);background:#fff;border-radius:28px;padding:clamp(20px,3vmin,36px);box-shadow:0 12px 40px rgba(0,0,0,.25);text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2vmin,18px)}
-.tipEmoji{width:clamp(72px,12vmin,110px);height:clamp(72px,12vmin,110px);border-radius:28px;display:flex;align-items:center;justify-content:center;
-  font-size:clamp(36px,7vmin,64px);font-weight:900;color:#fff;background:linear-gradient(160deg,#5bb8ff,#3b82f6);box-shadow:0 6px 0 #1e56b5}
 .tipTitle{margin:0;font-size:clamp(28px,5vmin,48px);font-weight:900}
-.tipBody{margin:0;font-size:clamp(18px,3.2vmin,32px);line-height:1.55;color:#3a3a4a;font-weight:700}
-.tipRule{background:#eef6ff;border-radius:18px;padding:14px 18px;font-size:clamp(18px,3vmin,30px);font-weight:800;color:#1e56b5;line-height:1.5;width:100%}
-.tipHow{font-size:clamp(15px,2.4vmin,24px);color:#5a5a6e;font-weight:700;line-height:1.45}
+.playRule{flex:none;margin:0;padding:0 12px 6px;text-align:center;font-size:clamp(13px,2vmin,18px);font-weight:800;color:#1e56b5;line-height:1.35}
 
 /* ---------- play ---------- */
 #play{background:linear-gradient(180deg,#87ceeb 0%,#b8e0f8 35%,#d4f0ff 70%,#e8f8e0 100%)}
@@ -115,10 +108,10 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulation}
 
 /* ---------- gate ---------- */
-#gate{align-items:center;justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;
+#gate{align-items:center;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;
   background:linear-gradient(165deg,#e8f4ff 0%,#fff4d6 48%,#ffe0f0 100%)}
-.gateCard{width:min(760px,94vw);margin:16px auto;background:#fff;border-radius:28px;padding:clamp(18px,3vmin,32px);
-  box-shadow:0 12px 40px rgba(40,60,90,.18);text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(8px,1.6vmin,14px)}
+.gateCard{width:min(640px,92vw);margin:16px auto;background:#fff;border-radius:28px;padding:clamp(22px,3.4vmin,36px);
+  box-shadow:0 12px 40px rgba(40,60,90,.18);text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(14px,2.2vmin,22px)}
 .gateForm{width:100%;display:flex;flex-direction:column;align-items:center;gap:12px}
 .gateFields{width:100%;display:flex;flex-direction:column;gap:12px}
 .field{display:flex;flex-direction:column;align-items:flex-start;gap:6px;font-weight:900;font-size:clamp(16px,2.6vmin,24px);text-align:left}
@@ -127,8 +120,9 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
 .field input::placeholder{color:#9aa8b6;font-weight:700}
 .field input:focus{outline:none;border-color:#3b82f6;background:#fff}
 .field input.bad{border-color:#e53935;background:#fff5f5}
-.gateHint{margin:0;min-height:1.3em;font-size:clamp(14px,2.2vmin,20px);font-weight:700;color:#5a6a7a}
-.gateErr{margin:0;min-height:1.4em;font-size:clamp(16px,2.6vmin,24px);font-weight:900;color:#c62828;line-height:1.4}
+.gateErr{margin:0;font-size:clamp(16px,2.6vmin,24px);font-weight:900;color:#c62828;line-height:1.4}
+.gateErr:empty{display:none}
+.gateBack{min-height:44px;padding:4px 12px;font-size:clamp(16px,2.4vmin,22px);font-weight:800;color:#5a6a7a}
 .bigbtn.is-locked{opacity:.55}
 
 /* ---------- leaderboard ---------- */
@@ -210,9 +204,7 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
 
 <div id="gate" class="screen">
   <div class="gateCard">
-    <div class="tipEmoji" id="gateEmoji">🐲</div>
-    <h2 class="tipTitle">先寫班別同學號</h2>
-    <p class="tipBody">用班別同學號上龍虎榜。請用英文同數字，唔好打中文。</p>
+    <h2 class="tipTitle">班別同學號</h2>
     <form id="gateForm" class="gateForm" autocomplete="off">
       <div class="gateFields">
         <label class="field" for="gateClass">班別
@@ -222,24 +214,10 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
           <input id="gateNo" name="studentNo" type="text" inputmode="text" maxlength="24" placeholder="例如 12" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="off" enterkeyhint="go" aria-describedby="gateErr">
         </label>
       </div>
-      <p class="gateHint" id="gateHint">兩個都要填，先可以進入關卡。</p>
       <p class="gateErr" id="gateErr" role="alert" aria-live="assertive"></p>
-      <div class="endBtns">
-        <button type="submit" class="bigbtn green" id="btnGateGo">進入關卡</button>
-        <button type="button" class="bigbtn blue" id="btnGateBack">返回</button>
-      </div>
+      <button type="submit" class="bigbtn green" id="btnGateGo">開始</button>
+      <button type="button" class="gateBack" id="btnGateBack">返回</button>
     </form>
-  </div>
-</div>
-
-<div id="tip" class="screen">
-  <div class="tipCard">
-    <div class="tipEmoji" id="tipEmoji">2</div>
-    <h2 class="tipTitle" id="tipTitle">被 2 整除</h2>
-    <div class="tipRule" id="tipRule">個位是 0、2、4、6、8 → 能被 2 整除</div>
-    <p class="tipBody" id="tipBody">點擊能被 2 整除的數字！點錯或漏掉正確的，會失去一顆心 ❤️</p>
-    <p class="tipHow">你有 3 顆心 · 盡量多得分！</p>
-    <button type="button" class="bigbtn green" id="btnTipGo">知道了，開始！</button>
   </div>
 </div>
 
@@ -256,6 +234,7 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
     <span class="pill" id="modeTag">學生</span>
   </div>
   <div class="banner" id="banner">點擊能被 <b>2</b> 整除的數字！</div>
+  <p class="playRule" id="playRule">個位是 0、2、4、6、8 → 能被 2 整除</p>
   <div id="sky">
     <div class="cloud" style="width:70px;height:28px;top:8%;left:8%"></div>
     <div class="cloud" style="width:90px;height:34px;top:18%;right:12%"></div>
@@ -378,7 +357,6 @@ var state = {
 
 var el = {
   start:document.getElementById('start'),
-  tip:document.getElementById('tip'),
   play:document.getElementById('play'),
   end:document.getElementById('end'),
   sky:document.getElementById('sky'),
@@ -388,12 +366,9 @@ var el = {
   rulePill:document.getElementById('rulePill'),
   modeTag:document.getElementById('modeTag'),
   banner:document.getElementById('banner'),
+  playRule:document.getElementById('playRule'),
   pausedOv:document.getElementById('pausedOv'),
   teachBar:document.getElementById('teachBar'),
-  tipEmoji:document.getElementById('tipEmoji'),
-  tipTitle:document.getElementById('tipTitle'),
-  tipRule:document.getElementById('tipRule'),
-  tipBody:document.getElementById('tipBody'),
   endStars:document.getElementById('endStars'),
   endTitle:document.getElementById('endTitle'),
   endScore:document.getElementById('endScore'),
@@ -401,7 +376,7 @@ var el = {
 };
 
 function show(screen){
-  ['start','gate','tip','play','end','board'].forEach(function(id){
+  ['start','gate','play','end','board'].forEach(function(id){
     document.getElementById(id).classList.toggle('on', id===screen);
   });
 }
@@ -691,7 +666,7 @@ function nextSectionOrEnd(){
 
   var id = state.queue.shift();
   state.current = SECTIONS[id];
-  showTip(state.current);
+  startPlay();
 }
 
 function sectionDuration(sec){
@@ -699,36 +674,11 @@ function sectionDuration(sec){
   return sec.duration;
 }
 
-function showTip(sec){
-  el.tipEmoji.textContent = sec.emoji;
-  var colors = {
-    '2':['#5bb8ff','#3b82f6','#1e56b5'],
-    '5':['#ff9f4a','#ff6b1a','#c9620b'],
-    '10':['#a78bfa','#7c4dff','#5430b0'],
-    '3':['#34d399','#10b981','#047857']
-  };
-  var c = colors[sec.id] || colors['2'];
-  el.tipEmoji.style.background = 'linear-gradient(160deg,'+c[0]+','+c[1]+')';
-  el.tipEmoji.style.boxShadow = '0 6px 0 '+c[2];
-  el.tipTitle.textContent = sec.name;
-  el.tipRule.innerHTML = sec.tip;
-  el.tipBody.textContent = '點擊能被 ' + sec.id + ' 整除的數字！點錯或漏掉正確的，會失去一顆心 ❤️';
-  var dur = sectionDuration(sec);
-  var how = document.querySelector('#tip .tipHow');
-  if(how){
-    if(state.section === 'mix'){
-      how.textContent = '本關約 ' + dur + ' 秒 · 你有 3 顆心（四關共用）· 盡量多得分！';
-    } else {
-      how.textContent = '本關約 ' + dur + ' 秒 · 你有 3 顆心 · 盡量多得分！';
-    }
-  }
-  show('tip');
-}
-
 function startPlay(){
   var sec = state.current;
   el.rulePill.textContent = sec.name;
   el.banner.innerHTML = sec.banner;
+  if(el.playRule) el.playRule.innerHTML = sec.tip;
   el.modeTag.textContent = state.mode === 'teacher' ? '老師' : '學生';
   var who = document.getElementById('whoPill');
   if(who){
@@ -882,12 +832,10 @@ function applyGate(forceEmpty){
   var cls = document.getElementById('gateClass');
   var no = document.getElementById('gateNo');
   var err = document.getElementById('gateErr');
-  var hint = document.getElementById('gateHint');
   var btn = document.getElementById('btnGateGo');
   var result = DivLeaderboard.validateIdentity(cls.value, no.value);
   var loud = !result.ok && (result.code !== 'empty' || forceEmpty);
   err.textContent = loud ? result.message : '';
-  if(hint) hint.hidden = !!loud;
   cls.classList.toggle('bad', !!(loud && result.fields.indexOf('classId') >= 0));
   no.classList.toggle('bad', !!(loud && result.fields.indexOf('studentNo') >= 0));
   cls.setAttribute('aria-invalid', (loud && result.fields.indexOf('classId') >= 0) ? 'true' : 'false');
@@ -1027,7 +975,6 @@ document.getElementById('gateForm').addEventListener('submit', function(ev){
 document.getElementById('btnGateBack').addEventListener('click', function(){
   show(state.gateReturn || 'start');
 });
-document.getElementById('btnTipGo').addEventListener('click', startPlay);
 document.getElementById('btnHome').addEventListener('click', function(){
   if(!confirm('返回主選單？目前進度會消失。')) return;
   state.playing = false;
