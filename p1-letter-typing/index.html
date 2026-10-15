@@ -90,9 +90,10 @@ button:focus-visible,a:focus-visible{outline:4px solid #4dabf7;outline-offset:3p
   display:flex;align-items:center;justify-content:center;gap:10px;
 }
 .mascot{
-  width:54px;height:54px;border-radius:50%;
-  object-fit:cover;border:3px solid #ff8ec8;
-  box-shadow:0 3px 0 #ffc2de;background:#fff;
+  width:64px;height:64px;border-radius:50%;
+  object-fit:cover;object-position:center;
+  border:3px solid #ff8ec8;
+  box-shadow:0 3px 0 #ffc2de;background:#ffd6ea;
 }
 h1{
   margin:0;
@@ -116,14 +117,6 @@ h1{
 }
 .soundToggle{background:#e7fff4;border-color:#7ddeb3}
 .soundToggle input{width:22px;height:22px;accent-color:#1a9a52}
-.rules,.teacher{
-  margin:6px auto 0;max-width:980px;
-  text-align:center;font-weight:800;line-height:1.45;
-  font-size:clamp(14px,1.9vw,18px);
-}
-.rules{color:var(--ink)}
-.teacher{color:#0e6f8a}
-.rules b{color:#c47b00}
 .banner{
   margin:6px auto 0;max-width:760px;
   padding:6px 12px;border-radius:16px;
@@ -394,20 +387,27 @@ a.backsite:hover{text-decoration:underline}
 .resultTitle{margin:0;font-size:clamp(28px,5vw,44px);font-weight:900}
 .resultWhy,.resultNums{margin:0;font-weight:900;font-size:clamp(16px,2.6vw,24px);line-height:1.4}
 .resultWhy{color:#0e6f8a}
-.resultActions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;width:100%}
+.resultActions{
+  width:100%;
+  margin-top:6px;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+}
 .bigbtn{
-  min-width:min(100%,220px);min-height:68px;padding:0 28px;
+  width:min(100%,280px);min-height:68px;padding:0 28px;
   border-radius:999px;background:#ff5fa2;color:#fff;
   font-size:clamp(22px,3.5vw,32px);font-weight:900;
   box-shadow:0 6px 0 #d43b7c;
 }
-.bigbtn.ghost{
+.bigbtn.alt{
   background:#fff;color:var(--deep);
-  border:4px solid #ff8ec8;
+  border:3px solid #ff8ec8;
   box-shadow:0 6px 0 #f3c3dc;
 }
 .bigbtn:active{transform:translateY(4px);box-shadow:0 2px 0 #d43b7c}
-.bigbtn.ghost:active{box-shadow:0 2px 0 #f3c3dc}
+.bigbtn.alt:active{box-shadow:0 2px 0 #f3c3dc}
+@media (min-width:560px){
+  .resultActions{flex-direction:row;justify-content:center}
+}
 
 @keyframes pop{0%{transform:scale(.86)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-4px)}}
@@ -418,12 +418,11 @@ a.backsite:hover{text-decoration:underline}
 }
 @media (max-width:860px){
   .grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none}
-  .mascot{width:44px;height:44px}
+  .mascot{width:48px;height:48px}
 }
 @media (max-height:760px){
   .homeTop{margin-top:4px;padding:6px 8px}
   h1{font-size:clamp(22px,4vw,32px)}
-  .rules,.teacher{margin-top:3px;font-size:13px}
   .letterCard{min-height:96px}
   .glyph{font-size:clamp(72px,16vmin,140px)}
   .key{height:44px;border-radius:12px}
@@ -437,7 +436,7 @@ a.backsite:hover{text-decoration:underline}
 <section id="home" class="screen on" aria-label="關卡主頁">
   <div class="homeTop">
     <div class="brand">
-      <img class="mascot" src="../assets/mascot.jpg" alt="" width="54" height="54">
+      <img class="mascot" src="../assets/mascot.jpg" alt="Q版白色小狗" width="64" height="64">
       <div>
         <h1>🌟 英文字母打字 🌟</h1>
         <p class="brandSub">50 關 · 字母玩到短文</p>
@@ -447,13 +446,11 @@ a.backsite:hover{text-decoration:underline}
       <div class="totalPill" id="totalPill">⭐ 0 / 150</div>
       <label class="soundToggle"><input type="checkbox" id="optSound" checked> 音效</label>
     </div>
-    <p class="rules"><b>星星：</b>★★★ 冇打錯　★★ 打錯 1–2 次　★ 打錯 3 次或以上。未做完唔計，同一關留低今次開頁最好嘅星。刷新頁面會重新計。</p>
-    <p class="teacher">老師提示：第 1–10 關小楷（鍵盤會亮鍵）。第 11–16 關大楷要撳 ⇧，第 17–20 關大細楷。第 21 關開始詞語，第 31 關第一次有空格，第 36–45 關短句會再亮鍵，第 46 關開始短文。數字喺第 48–49 關。</p>
     <p class="banner" id="banner" hidden></p>
     <div class="jumps" id="jumps" role="navigation" aria-label="跳去某一頁關卡"></div>
   </div>
   <div id="scroller" tabindex="-1"></div>
-  <p class="footNote"><a class="backsite" href="../">返遊戲站</a> · 唔使登入 · 星星唔會儲存，刷新就清走</p>
+  <p class="footNote"><a class="backsite" href="../">返遊戲站</a> · 唔使登入 · 重新整理會清走星星</p>
 </section>
 
 <section id="play" class="screen" aria-label="打字">
@@ -501,7 +498,7 @@ a.backsite:hover{text-decoration:underline}
     <p class="resultNums" id="resultNums"></p>
     <div class="resultActions">
       <button type="button" class="bigbtn" id="btnResultNext">下一關</button>
-      <button type="button" class="bigbtn ghost" id="btnResultHome">返主頁</button>
+      <button type="button" class="bigbtn alt" id="btnResultHome">返主頁睇星星</button>
     </div>
   </div>
 </div>
@@ -529,16 +526,19 @@ window.addEventListener("error", function(ev){
    第 36–45 關  短句入門（全鍵提示；對應舊第 71–80 關）
    第 46–50 關  短文（兩句）。第 48 關第一次數字 1，第 49 關數字 2
 
-   全鍵提示（字母 + 需要時 ⇧、空格、標點／數字同 123）嘅關卡：
-   第 1–10 關、第 36–45 關。
-   其餘關平常唔亮字母鍵。空格、標點、數字第一次出現嗰關，
-   就算唔係全鍵提示，都仍然亮嗰粒新鍵（同埋要先撳嘅 123）。
+   全鍵提示（字母 + 需要時 ⇧、空格、標點／數字同 123）：
+   第 1–10 關小楷入門；第 36–45 關短句入門（對應舊第 71–80 關）。
+   其餘關唔亮字母鍵。空格、標點、數字第一次出現嗰關
+   （第 31 關空格、第 36 關句號、第 48 關數字 1、第 49 關數字 2）
+   仍然亮嗰粒新鍵；如果鍵喺 123 層，會先提示 123。
 
-   星星（做完先計；今次開頁留最好嗰次；刷新頁面清走，唔寫入 localStorage）
+   星星（做完先計；中途離開唔改寫；同一頁內留最好嗰次）
    ★★★  0 次打錯
    ★★   打錯 1–2 次
    ★    做完，但打錯 3 次或以上
-   音效偏好 key：localStorage p1letters_levels_v1（只存 sound）
+   唔計速度，冇倒數，冇時限。
+   星星唔寫入 localStorage，重新整理就由 0 開始。
+   音效先至存 localStorage（p1letters_levels_v1，只存 sound）。
    ============================================================ */
 
 var STORE_KEY = "p1letters_levels_v1";
@@ -613,6 +613,24 @@ var SPECS = [
   {kind:"text", text:"I have 2 pens. The pens are red.", preview:"I have 2 pens…"},
   {kind:"text", text:"I am happy today. I can read and play.", preview:"I am happy today…"}
 ];
+
+function specSource(spec){
+  if(spec.words) return spec.words.join("");
+  if(spec.text) return spec.text;
+  return spec.letters || "";
+}
+
+/* 每個非字母字元第一次出現嘅關卡。
+   全鍵提示以外（即唔係第 1–10 或第 36–45 關），只喺呢一關提示該鍵。 */
+var FIRST_SPECIAL = {};
+SPECS.forEach(function(spec, index){
+  var blob = specSource(spec);
+  for(var i = 0; i < blob.length; i++){
+    var ch = blob.charAt(i);
+    if(/^[A-Za-z]$/.test(ch)) continue;
+    if(!Object.prototype.hasOwnProperty.call(FIRST_SPECIAL, ch)) FIRST_SPECIAL[ch] = index + 1;
+  }
+});
 
 var LAYOUTS = {
   letters:[
@@ -756,7 +774,7 @@ function calcStars(mistakes){
 }
 
 function explainStars(stars, mistakes){
-  if(stars === 3) return "一次都冇打錯。";
+  if(stars === 3) return "一次都冇打錯，三粒星。";
   if(mistakes <= 2) return "打錯 " + mistakes + " 次，所以兩粒星。";
   return "打錯 " + mistakes + " 次，做完都有一粒星。";
 }
@@ -780,13 +798,13 @@ var LEVELS = SPECS.map(function(spec, index){
 function loadStore(){
   try{
     var raw = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
-    if(!raw || typeof raw !== "object") return;
-    if(typeof raw.sound === "boolean") store.sound = raw.sound;
+    if(raw && typeof raw === "object" && typeof raw.sound === "boolean") store.sound = raw.sound;
   }catch(e){}
+  saveStore();
 }
 
 function saveStore(){
-  try{localStorage.setItem(STORE_KEY, JSON.stringify({sound:store.sound}));}catch(e){}
+  try{localStorage.setItem(STORE_KEY, JSON.stringify({sound:!!store.sound}));}catch(e){}
 }
 
 function bestOf(id){
@@ -922,6 +940,13 @@ function selfCheck(){
   if(!hotKeysFor(48, "1", "letters", 0).num || !hotKeysFor(48, "1", "numbers", 0)["1"]) issues.push("第48關亮鍵");
   if(hotKeysFor(48, ".", "numbers", 0)["."] || hotKeysFor(48, "a", "letters", 0).a) issues.push("第48關多餘亮鍵");
   if(!hotKeysFor(49, "2", "numbers", 0)["2"] || hotKeysFor(49, "2", "letters", 0)["2"]) issues.push("第49關亮鍵");
+  if(FIRST_SPECIAL[" "] !== 31) issues.push("空格介紹關 " + FIRST_SPECIAL[" "]);
+  if(FIRST_SPECIAL["."] !== 36) issues.push("句號介紹關 " + FIRST_SPECIAL["."]);
+  if(FIRST_SPECIAL["1"] !== 48) issues.push("數字1介紹關 " + FIRST_SPECIAL["1"]);
+  if(FIRST_SPECIAL["2"] !== 49) issues.push("數字2介紹關 " + FIRST_SPECIAL["2"]);
+  Object.keys(FIRST_SPECIAL).forEach(function(ch){
+    if(ch !== " " && ch !== "." && ch !== "1" && ch !== "2") issues.push("未預計符號 " + ch);
+  });
   var el = $("booterr");
   if(issues.length){
     el.hidden = false;
@@ -1108,6 +1133,21 @@ function whereIs(ch){
   return "symbols";
 }
 
+function isLetterKey(ch){
+  return /^[A-Za-z]$/.test(ch);
+}
+
+function hintCurrent(){
+  if(!run || !run.level) return false;
+  var ch = currentChar();
+  if(!ch) return false;
+  return highlightKind(run.level.id, ch) !== "none";
+}
+
+function setCoach(){
+  $("coach").textContent = hintCurrent() ? coachLine(currentChar()) : "";
+}
+
 function coachLine(ch){
   if(!ch) return "";
   if(ch === " ") return "而家要撳下面長長嘅空格鍵";
@@ -1130,15 +1170,28 @@ function coachLine(ch){
   return "而家撳符號 " + ch;
 }
 
+function levelHasNewSymbol(level){
+  var blob = specSource(level.spec);
+  for(var i = 0; i < blob.length; i++){
+    var ch = blob.charAt(i);
+    if(ch === " " || isLetterKey(ch)) continue;
+    if(FIRST_SPECIAL[ch] === level.id) return true;
+  }
+  return false;
+}
+
 function levelHintLines(level){
   var lines = [];
+  var full = hasFullHints(level.id);
+  var teachSpace = full ? level.hasSpace : FIRST_SPECIAL[" "] === level.id;
+  var teachSymbol = full ? level.hasSymbol : levelHasNewSymbol(level);
   if(level.needsUpper){
     lines.push("要打大楷：先撳黃色 ⇧（向上），再撳字母。撳一下，下一個字母先係大楷；快啲撳兩下 ⇧，就可以鎖住大楷。");
   }
-  if(level.hasSpace){
+  if(teachSpace){
     lines.push("要打空格：字同字之間，撳鍵盤下面長長嘅空格鍵。");
   }
-  if(level.hasSymbol){
+  if(teachSymbol){
     lines.push("句號、問號同數字：先撳 123。想睇多啲符號，再撳 #+=。");
   }
   return lines;
@@ -1204,7 +1257,7 @@ function renderPrompt(){
       passage.appendChild(span);
     }
   }
-  $("coach").textContent = coachLine(currentChar());
+  setCoach();
 }
 
 function renderScores(){
@@ -1458,15 +1511,15 @@ function onShift(){
   else shiftMode = 1;
   lastShiftAt = now;
   renderKeyboard();
-  $("coach").textContent = coachLine(currentChar());
+  setCoach();
 }
 
 function onKeyToken(token){
   if(token === "shift"){onShift(); return;}
   if(token === "del"){doBackspace(); return;}
-  if(token === "num"){layoutName = "numbers"; renderKeyboard(); $("coach").textContent = coachLine(currentChar()); return;}
-  if(token === "sym"){layoutName = "symbols"; renderKeyboard(); $("coach").textContent = coachLine(currentChar()); return;}
-  if(token === "abc"){layoutName = "letters"; renderKeyboard(); $("coach").textContent = coachLine(currentChar()); return;}
+  if(token === "num"){layoutName = "numbers"; renderKeyboard(); setCoach(); return;}
+  if(token === "sym"){layoutName = "symbols"; renderKeyboard(); setCoach(); return;}
+  if(token === "abc"){layoutName = "letters"; renderKeyboard(); setCoach(); return;}
   var out = keyOutput(token);
   if(out) submitChar(out);
 }
@@ -1493,10 +1546,11 @@ function finishLevel(){
   $("live").textContent = "第 " + run.level.id + " 關完成，拿到 " + stars + " 粒星。" + extra;
   sfxWin();
   var nextBtn = $("btnResultNext");
-  var last = run.level.id >= LEVELS.length;
-  nextBtn.hidden = last;
-  nextBtn.textContent = "下一關";
-  (last ? $("btnResultHome") : nextBtn).focus();
+  var hasNext = run.level.id < LEVELS.length;
+  nextBtn.hidden = !hasNext;
+  nextBtn.disabled = !hasNext;
+  $("btnResultHome").textContent = "返主頁睇星星";
+  (hasNext ? nextBtn : $("btnResultHome")).focus();
 }
 
 function goHome(focusId){
@@ -1610,6 +1664,10 @@ $("btnSound").addEventListener("click", function(){
 });
 
 $("btnHome").addEventListener("click", function(){goHome(0);});
+$("btnResultNext").addEventListener("click", function(){
+  if(!run || run.level.id >= LEVELS.length) return;
+  startLevel(run.level.id + 1);
+});
 $("btnResultHome").addEventListener("click", function(){
   goHome(run ? run.level.id : 0);
 });
@@ -1639,7 +1697,7 @@ document.addEventListener("keydown", function(e){
     if(e.key === "Enter"){
       e.preventDefault();
       var nextBtn = $("btnResultNext");
-      if(nextBtn && !nextBtn.hidden) nextBtn.click();
+      if(run && nextBtn && !nextBtn.hidden && run.level.id < LEVELS.length) startLevel(run.level.id + 1);
       else goHome(run ? run.level.id : 0);
     }
     return;
