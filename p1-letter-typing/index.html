@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="字母打字">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#e7f4ff">
+<meta name="description" content="小一英文字母打字練習：睇住大楷或小楷，點字母表或者用鍵盤打。">
+<title>英文字母打字</title>
+<link rel="preload" href="andika-latin-700.woff2" as="font" type="font/woff2" crossorigin>
+<!-- Letterforms: Andika by SIL, Latin bold subset. License: OFL.txt -->
+<style>
+@font-face{
+  font-family:"Andika";
+  font-style:normal;
+  font-weight:700;
+  font-display:swap;
+  src:url("andika-latin-700.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+:root{
+  --ink:#243056;
+  --muted:#44506f;
+  --card:#fff;
+  --line:#ffe0b5;
+  --shadow:#efd3a6;
+  --blue:#1558c0;
+  --green:#148a45;
+  --green-d:#0d6431;
+  --coral:#e85d6a;
+  --teal:#0e8f8f;
+  --purple:#6d4aff;
+  --gold:#ffb703;
+  --ok:#157a3e;
+  --soft:#d2652a;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+html,body{margin:0;height:100%}
+body{
+  color:var(--ink);
+  font-family:"PingFang HK","PingFang TC","Noto Sans CJK HK","Microsoft JhengHei","Heiti TC",sans-serif;
+  background:
+    radial-gradient(circle at 0 0,#fff 0,transparent 28%),
+    radial-gradient(circle at 100% 0,#d7efff 0,transparent 32%),
+    linear-gradient(165deg,#e7f4ff 0%,#fff8ee 52%,#ffe8f2 100%);
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+  touch-action:manipulation;
+}
+button,a{font-family:inherit;touch-action:manipulation}
+button{cursor:pointer;border:none;color:inherit;background:none;padding:0}
+button:focus-visible,a:focus-visible{outline:4px solid var(--blue);outline-offset:3px}
+.letters{font-family:"Andika","Chalkboard SE","Comic Sans MS",Verdana,"Trebuchet MS",sans-serif;font-weight:700}
+.screen{
+  position:fixed;left:0;right:0;top:0;
+  height:100vh;height:100dvh;
+  display:none;flex-direction:column;
+  padding:
+    env(safe-area-inset-top)
+    env(safe-area-inset-right)
+    env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+}
+.screen.on{display:flex}
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+
+/* ---------- home ---------- */
+#home{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.homeInner{
+  width:min(920px,calc(100% - 28px));
+  margin:0 auto;
+  padding:22px 0 32px;
+  display:flex;flex-direction:column;align-items:center;
+  gap:clamp(12px,2.2vmin,20px);
+}
+h1{
+  margin:0;
+  font-size:clamp(34px,6vw,64px);
+  font-weight:900;
+  letter-spacing:.04em;
+  line-height:1.15;
+  text-align:center;
+}
+.sub{margin:0;text-align:center;color:var(--muted);font-size:clamp(18px,3vw,28px);font-weight:800;line-height:1.4}
+.modes{width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.mode{
+  min-height:132px;
+  padding:14px 10px 16px;
+  border-radius:24px;
+  background:var(--card);
+  border:5px solid transparent;
+  box-shadow:0 6px 0 var(--shadow);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+}
+.mode .sample{font-size:clamp(34px,5vw,56px);line-height:1;letter-spacing:.04em}
+.mode .mt{font-size:clamp(22px,3vw,32px);font-weight:900}
+.mode .md{font-size:clamp(14px,2vw,18px);font-weight:700;color:var(--muted);line-height:1.3}
+.mode[data-mode="upper"].sel{border-color:var(--coral);background:#fff6f6}
+.mode[data-mode="lower"].sel{border-color:var(--teal);background:#f3fffd}
+.mode[data-mode="mixed"].sel{border-color:var(--purple);background:#f7f4ff}
+.sec{width:100%;display:flex;flex-direction:column;align-items:center;gap:8px}
+.seclabel{font-size:clamp(16px,2.4vw,22px);font-weight:800;color:var(--muted)}
+.segs{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.seg{
+  min-width:128px;min-height:58px;padding:0 16px;
+  border-radius:16px;background:#fff;border:4px solid transparent;
+  box-shadow:0 4px 0 var(--shadow);
+  font-size:clamp(18px,2.6vw,24px);font-weight:900;
+}
+.seg.sel{border-color:var(--blue);background:#eef5ff}
+.toggles{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.toggle{
+  display:flex;align-items:center;gap:10px;
+  min-height:52px;padding:8px 16px;
+  background:#fff;border-radius:16px;box-shadow:0 4px 0 var(--shadow);
+  font-size:clamp(18px,2.6vw,24px);font-weight:800;
+}
+.toggle input{width:26px;height:26px;accent-color:var(--blue)}
+.bigbtn{
+  min-width:min(100%,280px);min-height:76px;padding:0 36px;
+  border-radius:999px;background:var(--green);color:#fff;
+  font-size:clamp(28px,4.5vw,44px);font-weight:900;
+  box-shadow:0 7px 0 var(--green-d);letter-spacing:.08em;
+}
+.bigbtn.white{background:#fff;color:var(--ink);box-shadow:0 7px 0 var(--shadow);letter-spacing:0}
+.bigbtn:active,.mode:active,.seg:active,.key:active,.iconbtn:active{
+  transform:translateY(3px);
+}
+.bigbtn:active{box-shadow:0 2px 0 var(--green-d)}
+.bigbtn.white:active{box-shadow:0 2px 0 var(--shadow)}
+.note{
+  max-width:640px;margin:0;
+  color:var(--muted);font-size:clamp(14px,2vw,18px);font-weight:700;
+  line-height:1.55;text-align:center;
+}
+a.backsite{
+  min-height:44px;display:inline-flex;align-items:center;
+  color:var(--muted);font-weight:800;font-size:16px;text-decoration:none;
+}
+a.backsite:hover{color:var(--blue)}
+
+/* ---------- play ---------- */
+#play{overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.topbar{
+  flex:none;display:flex;align-items:center;gap:8px;
+  padding:8px 12px 4px;flex-wrap:wrap;
+}
+.iconbtn{
+  min-width:56px;min-height:56px;border-radius:16px;
+  background:#fff;box-shadow:0 4px 0 var(--shadow);
+  font-size:28px;display:flex;align-items:center;justify-content:center;
+}
+.pill{
+  min-height:40px;display:inline-flex;align-items:center;
+  padding:4px 12px;border-radius:999px;background:#fff;
+  font-size:clamp(16px,2.4vw,22px);font-weight:900;white-space:nowrap;
+}
+.pill.star{background:#fff6d8}
+.pill.hot{background:#ffe08a}
+.pill.mode{background:#efeaff;color:#5336c9}
+.pill.loose{background:#e7fff6;color:#0e7a62}
+.spacer{flex:1}
+.bar{
+  flex:none;height:10px;margin:2px 12px 0;
+  background:rgba(255,255,255,.75);border-radius:999px;overflow:hidden;
+}
+.bar > span{
+  display:block;height:100%;width:0;
+  background:linear-gradient(90deg,#ffb703,#22a85a);
+  border-radius:inherit;
+  transition:width .25s ease;
+}
+.stage{
+  flex:1 1 auto;min-height:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;padding:6px 12px 4px;
+}
+.ask{margin:0;font-size:clamp(18px,3vw,30px);font-weight:900;color:var(--muted)}
+.letterCard{
+  width:min(86vw,480px);
+  height:min(34dvh,340px);
+  min-height:132px;
+  border-radius:36px;
+  background:#fff;
+  border:6px solid #ffd7a8;
+  box-shadow:0 10px 0 #efd3a6;
+  display:flex;align-items:center;justify-content:center;
+  container-type:size;
+}
+.letterCard[data-case="upper"]{border-color:#ffb0b6}
+.letterCard[data-case="lower"]{border-color:#8ee0dc}
+.letterCard.good{border-color:#22a85a;background:#f3fff7;box-shadow:0 10px 0 #8ed4a8}
+.letterCard.bad{background:#fff8f3}
+.glyph{
+  font-size:clamp(96px,22vmin,210px);
+  line-height:1;
+  color:var(--ink);
+}
+.letterCard.good .glyph{color:var(--ok)}
+.caseTag{
+  margin:0;min-height:36px;padding:2px 14px;
+  border-radius:999px;background:#fff;
+  font-size:clamp(18px,3vw,30px);font-weight:900;
+}
+.status{
+  margin:0;min-height:1.35em;
+  font-size:clamp(22px,4vw,40px);font-weight:900;
+  text-align:center;color:transparent;
+}
+.status.ok{color:var(--ok)}
+.status.no{color:var(--soft)}
+.kbDock{
+  flex:none;width:100%;min-width:0;
+  padding:4px 12px calc(12px + env(safe-area-inset-bottom));
+}
+.kbLabel{
+  margin:0 0 8px;text-align:center;
+  font-size:clamp(14px,2.2vw,18px);font-weight:800;color:var(--muted);
+}
+.kbLabel strong{color:var(--ink)}
+.kbWrap{width:100%;overflow-x:auto}
+.kb{
+  width:min(860px,100%);
+  min-width:356px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:repeat(7,minmax(44px,1fr));
+  gap:8px;
+}
+.key{
+  min-width:44px;
+  min-height:52px;
+  height:clamp(52px,8vmin,76px);
+  border-radius:16px;
+  background:#fff;
+  border:3px solid transparent;
+  box-shadow:0 5px 0 #e6d3ae;
+  font-size:clamp(28px,4.6vmin,46px);
+  color:var(--ink);
+  line-height:1;
+}
+.key.good{background:#d9f8e4;border-color:#22a85a}
+.key.bad{background:#fff1e6;border-color:#ffb088}
+.kb.locked{pointer-events:none}
+
+/* ---------- done ---------- */
+#done{
+  overflow-y:auto;align-items:center;justify-content:center;
+  background:linear-gradient(165deg,#fff8ee 0%,#e7f7ff 50%,#ffe6f1 100%);
+}
+.doneInner{
+  width:min(640px,calc(100% - 28px));
+  text-align:center;
+  display:flex;flex-direction:column;align-items:center;
+  gap:clamp(10px,2vmin,18px);
+  padding:24px 0;
+}
+.endMark{font-size:clamp(56px,12vw,96px);line-height:1}
+.endTitle{margin:0;font-size:clamp(36px,7vw,64px);font-weight:900}
+.endMode{margin:0;font-weight:800;color:var(--muted);font-size:clamp(16px,2.6vw,22px)}
+.endDetail,.endStreak,.endBest{
+  margin:0;font-weight:900;
+  font-size:clamp(20px,3.4vw,32px);line-height:1.35;
+}
+.endBest{color:#9a6b00}
+.endBtns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+
+@keyframes pop{
+  0%{transform:scale(.86)}
+  60%{transform:scale(1.06)}
+  100%{transform:scale(1)}
+}
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-8px)}
+  40%{transform:translateX(8px)}
+  60%{transform:translateX(-5px)}
+  80%{transform:translateX(5px)}
+}
+@keyframes bump{
+  50%{transform:scale(1.12)}
+}
+.glyph.pop{animation:pop .34s ease-out}
+.letterCard.bad{animation:shake .38s ease}
+.bump{animation:bump .32s ease}
+@media (prefers-reduced-motion:reduce){
+  .glyph.pop,.letterCard.bad,.bump{animation:none}
+  .bar > span{transition:none}
+}
+@supports (font-size:1cqi){
+  .glyph{font-size:min(68cqh,78cqi,250px)}
+}
+@media (max-width:680px){
+  .modes{grid-template-columns:1fr}
+  .mode{min-height:96px;flex-direction:row;gap:14px;justify-content:flex-start;padding-left:18px}
+  .mode .sample{min-width:92px;text-align:center}
+}
+@media (max-height:860px){
+  .letterCard{height:min(28dvh,210px);min-height:112px;border-radius:28px}
+  .key{min-height:48px;height:48px;font-size:clamp(24px,4.2vmin,36px)}
+  .ask{font-size:16px}
+  .status{font-size:clamp(18px,3.5vw,28px)}
+  .homeInner{padding-top:12px;gap:10px}
+  h1{font-size:clamp(28px,5vw,44px)}
+}
+</style>
+</head>
+<body>
+<p id="live" class="sr-only" aria-live="polite" aria-atomic="true"></p>
+
+<section id="home" class="screen on" aria-label="開始">
+  <div class="homeInner">
+    <h1>英文字母打字</h1>
+    <p class="sub">小一英文 · 睇住個字母，打出佢</p>
+
+    <div class="modes" role="group" aria-label="大楷定小楷">
+      <button type="button" class="mode sel" data-mode="upper" aria-pressed="true">
+        <span class="sample letters">ABC</span>
+        <span class="mt">大楷</span>
+        <span class="md">淨係打大楷</span>
+      </button>
+      <button type="button" class="mode" data-mode="lower" aria-pressed="false">
+        <span class="sample letters">abc</span>
+        <span class="mt">小楷</span>
+        <span class="md">淨係打小楷</span>
+      </button>
+      <button type="button" class="mode" data-mode="mixed" aria-pressed="false">
+        <span class="sample letters">Aa</span>
+        <span class="mt">混合</span>
+        <span class="md">大細楷夾埋</span>
+      </button>
+    </div>
+
+    <div class="sec">
+      <div class="seclabel" id="countLabel">玩幾多個</div>
+      <div class="segs" role="group" aria-labelledby="countLabel">
+        <button type="button" class="seg sel" data-count="10" aria-pressed="true">10 個字母</button>
+        <button type="button" class="seg" data-count="26" aria-pressed="false" aria-label="成個字母表，26 個">成個字母表</button>
+      </div>
+    </div>
+
+    <div class="toggles">
+      <label class="toggle"><input type="checkbox" id="optSound" checked> 音效</label>
+      <label class="toggle"><input type="checkbox" id="optStrict" checked> 要分大小楷</label>
+    </div>
+
+    <p class="note" id="bestNote" hidden></p>
+    <button type="button" class="bigbtn" id="btnStart">開始玩！</button>
+    <p class="note">字母次序會打亂。畫面鍵盤跟字母表由 A 排到 Z，方便認字；實體鍵盤都可以打。要分大小楷剔住，就要打啱大楷定小楷；取消就兩個都算啱。</p>
+    <p class="note">唔使登入 · 成績淨係留喺呢部機</p>
+    <a class="backsite" href="../">返遊戲站</a>
+  </div>
+</section>
+
+<section id="play" class="screen" aria-label="打字母">
+  <div class="topbar">
+    <button type="button" class="iconbtn" id="btnHome" aria-label="返去開始">🏠</button>
+    <button type="button" class="iconbtn" id="btnSound" aria-pressed="true" aria-label="音效開住，撳一下閂">🔊</button>
+    <span class="pill" id="prog">1 / 10</span>
+    <span class="pill star" id="starPill">⭐ 0</span>
+    <span class="pill" id="streakPill">連續 0</span>
+    <span class="spacer"></span>
+    <span class="pill mode" id="modePill">大楷</span>
+    <span class="pill loose" id="loosePill" hidden>大細楷都得</span>
+  </div>
+  <div class="bar" aria-hidden="true"><span id="barFill"></span></div>
+  <div class="stage">
+    <p class="ask">打呢個</p>
+    <div class="letterCard" id="letterCard" data-case="upper">
+      <div class="glyph letters pop" id="glyph" lang="en" aria-hidden="true">A</div>
+    </div>
+    <p class="caseTag" id="caseTag">大楷</p>
+    <p class="status" id="status"></p>
+  </div>
+  <div class="kbDock">
+    <p class="kbLabel"><strong>字母表順序</strong> · 點一點，或者用鍵盤打</p>
+    <div class="kbWrap">
+      <div class="kb" id="kb" role="group" aria-label="字母表鍵盤"></div>
+    </div>
+  </div>
+</section>
+
+<section id="done" class="screen" aria-label="完成">
+  <div class="doneInner">
+    <div class="endMark" id="endMark" aria-hidden="true">⭐</div>
+    <h2 class="endTitle" id="endTitle">完成啦！</h2>
+    <p class="endMode" id="endMode">大楷</p>
+    <p class="endDetail" id="endDetail">10 個字母都打到</p>
+    <p class="endStreak" id="endStreak">今次最長連續 0 下</p>
+    <p class="endBest" id="endBest"></p>
+    <div class="endBtns">
+      <button type="button" class="bigbtn" id="btnReplay">再玩一次</button>
+      <button type="button" class="bigbtn white" id="btnDoneHome">返去開始</button>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+"use strict";
+
+/* On-screen keys follow the classroom alphabet chart (A–G, H–N, O–U, V–Z),
+   not QWERTY. For a single-letter prompt, inexperienced children find an
+   ABC layout faster and less variable than QWERTY (Nicolson & Gardner, 1985),
+   and P1 already learns A to Z in that order. A hardware keyboard still
+   accepts real key presses, and the case has to match unless the teacher
+   turns 要分大小楷 off. */
+
+var SETTINGS_KEY = "p1letters_settings_v1";
+var BEST_KEY = "p1letters_best_v1";
+var PRAISE = ["啱！", "好叻！", "掂！"];
+
+var S = {caseMode:"upper", count:10, sound:true, strict:true};
+var bests = {};
+var screenName = "home";
+var queue = [];
+var index = 0;
+var stars = 0;
+var streak = 0;
+var roundBest = 0;
+var locked = false;
+var timer = 0;
+var praiseI = 0;
+var keysUpper = null;
+var audioCtx = null;
+
+var $ = function(id){return document.getElementById(id);};
+var glyph = $("glyph");
+var letterCard = $("letterCard");
+var caseTag = $("caseTag");
+var statusEl = $("status");
+var live = $("live");
+var prog = $("prog");
+var starPill = $("starPill");
+var streakPill = $("streakPill");
+var modePill = $("modePill");
+var loosePill = $("loosePill");
+var barFill = $("barFill");
+var kb = $("kb");
+var optSound = $("optSound");
+var optStrict = $("optStrict");
+var btnSound = $("btnSound");
+
+function shuffle(list){
+  for(var i = list.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = list[i];
+    list[i] = list[j];
+    list[j] = tmp;
+  }
+  return list;
+}
+
+function loadSettings(){
+  try{
+    var raw = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "null");
+    if(!raw || typeof raw !== "object") return;
+    if(raw.caseMode === "upper" || raw.caseMode === "lower" || raw.caseMode === "mixed") S.caseMode = raw.caseMode;
+    if(raw.count === 10 || raw.count === 26) S.count = raw.count;
+    if(typeof raw.sound === "boolean") S.sound = raw.sound;
+    if(typeof raw.strict === "boolean") S.strict = raw.strict;
+  }catch(e){}
+}
+
+function saveSettings(){
+  try{localStorage.setItem(SETTINGS_KEY, JSON.stringify(S));}catch(e){}
+}
+
+function loadBests(){
+  try{
+    var raw = JSON.parse(localStorage.getItem(BEST_KEY) || "{}");
+    if(raw && typeof raw === "object") bests = raw;
+  }catch(e){bests = {};}
+}
+
+function bestId(){
+  return S.caseMode + "-" + S.count + "-" + (S.strict ? "s" : "a");
+}
+
+function currentBest(){
+  var n = Number(bests[bestId()]);
+  return isFinite(n) && n > 0 ? n : 0;
+}
+
+function saveBest(n){
+  bests[bestId()] = n;
+  try{localStorage.setItem(BEST_KEY, JSON.stringify(bests));}catch(e){}
+}
+
+function modeLabel(mode){
+  if(mode === "lower") return "小楷";
+  if(mode === "mixed") return "混合";
+  return "大楷";
+}
+
+function renderBestNote(){
+  var el = $("bestNote");
+  if(!el) return;
+  var n = currentBest();
+  el.hidden = !(n > 0);
+  el.textContent = n > 0 ? ("呢個玩法最長連續 " + n + " 下") : "";
+}
+
+function renderSound(){
+  btnSound.textContent = S.sound ? "🔊" : "🔇";
+  btnSound.setAttribute("aria-pressed", S.sound ? "true" : "false");
+  btnSound.setAttribute("aria-label", S.sound ? "音效開住，撳一下閂" : "音效閂咗，撳一下開");
+  optSound.checked = S.sound;
+}
+
+function syncHome(){
+  var modes = document.querySelectorAll("[data-mode]");
+  for(var i = 0; i < modes.length; i++){
+    var on = modes[i].getAttribute("data-mode") === S.caseMode;
+    modes[i].classList.toggle("sel", on);
+    modes[i].setAttribute("aria-pressed", on ? "true" : "false");
+  }
+  var counts = document.querySelectorAll("[data-count]");
+  for(var c = 0; c < counts.length; c++){
+    var picked = Number(counts[c].getAttribute("data-count")) === S.count;
+    counts[c].classList.toggle("sel", picked);
+    counts[c].setAttribute("aria-pressed", picked ? "true" : "false");
+  }
+  optStrict.checked = S.strict;
+  renderSound();
+  renderBestNote();
+}
+
+function show(name){
+  screenName = name;
+  var ids = ["home", "play", "done"];
+  for(var i = 0; i < ids.length; i++){
+    var el = $(ids[i]);
+    var on = ids[i] === name;
+    el.classList.toggle("on", on);
+    if(on) el.scrollTop = 0;
+  }
+}
+
+function ensureAudio(){
+  if(!audioCtx){
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return null;
+    try{audioCtx = new AC();}catch(e){return null;}
+  }
+  if(audioCtx.state === "suspended") audioCtx.resume().catch(function(){});
+  return audioCtx;
+}
+
+function beep(freq, dur, type, vol){
+  if(!S.sound) return;
+  var ctx = ensureAudio();
+  if(!ctx) return;
+  var o = ctx.createOscillator();
+  var g = ctx.createGain();
+  o.type = type || "sine";
+  o.frequency.value = freq;
+  var v = vol || 0.1;
+  g.gain.setValueAtTime(v, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+  o.connect(g);
+  g.connect(ctx.destination);
+  o.start(ctx.currentTime);
+  o.stop(ctx.currentTime + dur + 0.02);
+}
+
+function sfxOk(){
+  beep(523, 0.1, "sine", 0.1);
+  setTimeout(function(){beep(659, 0.1, "sine", 0.1);}, 90);
+  setTimeout(function(){beep(784, 0.16, "sine", 0.1);}, 170);
+}
+
+function sfxNo(){beep(196, 0.16, "triangle", 0.07);}
+
+function sfxWin(){
+  [523, 659, 784, 1047].forEach(function(f, i){
+    setTimeout(function(){beep(f, 0.16, "sine", 0.09);}, i * 110);
+  });
+}
+
+function buildQueue(caseMode, count){
+  var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  shuffle(letters);
+  var picked = letters.slice(0, count);
+  if(caseMode === "upper") return picked;
+  if(caseMode === "lower") return picked.map(function(ch){return ch.toLowerCase();});
+  var flags = picked.map(function(_, i){return i < Math.ceil(picked.length / 2);});
+  shuffle(flags);
+  return picked.map(function(ch, i){return flags[i] ? ch : ch.toLowerCase();});
+}
+
+function buildKeys(){
+  for(var i = 0; i < 26; i++){
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "key letters";
+    var row = i < 21 ? Math.floor(i / 7) + 1 : 4;
+    var col = i < 21 ? (i % 7) + 1 : (i - 21) + 2;
+    btn.style.gridRow = String(row);
+    btn.style.gridColumn = String(col);
+    kb.appendChild(btn);
+  }
+}
+
+function applyCase(isUpper){
+  if(keysUpper === isUpper && kb.children.length === 26) return;
+  keysUpper = isUpper;
+  if(kb.children.length !== 26) buildKeys();
+  var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  for(var i = 0; i < 26; i++){
+    var ch = isUpper ? alphabet.charAt(i) : alphabet.charAt(i).toLowerCase();
+    var btn = kb.children[i];
+    btn.textContent = ch;
+    btn.setAttribute("data-letter", ch);
+    btn.setAttribute("aria-label", (isUpper ? "大楷 " : "小楷 ") + ch);
+  }
+}
+
+function clearKeyFlash(){
+  var keys = kb.children;
+  for(var i = 0; i < keys.length; i++) keys[i].classList.remove("good", "bad");
+}
+
+function flashKey(ch, cls){
+  clearKeyFlash();
+  var want = ch.toLowerCase();
+  var keys = kb.children;
+  for(var i = 0; i < keys.length; i++){
+    var letter = keys[i].getAttribute("data-letter") || "";
+    if(letter.toLowerCase() === want){
+      keys[i].classList.add(cls);
+      return;
+    }
+  }
+}
+
+function setStatus(msg, kind){
+  statusEl.textContent = msg;
+  statusEl.className = "status" + (kind ? " " + kind : "");
+  if(msg) live.textContent = msg;
+}
+
+function renderScores(){
+  starPill.textContent = "⭐ " + stars;
+  streakPill.textContent = "連續 " + streak;
+  streakPill.classList.toggle("hot", streak >= 3);
+  starPill.setAttribute("aria-label", "完成咗 " + stars + " 個");
+  streakPill.setAttribute("aria-label", "連續 " + streak + " 下");
+}
+
+function bump(el){
+  el.classList.remove("bump");
+  void el.offsetWidth;
+  el.classList.add("bump");
+}
+
+function renderLetter(){
+  var ch = queue[index];
+  var isUpper = ch === ch.toUpperCase();
+  glyph.textContent = ch;
+  glyph.classList.remove("pop");
+  void glyph.offsetWidth;
+  glyph.classList.add("pop");
+  caseTag.textContent = isUpper ? "大楷" : "小楷";
+  letterCard.setAttribute("data-case", isUpper ? "upper" : "lower");
+  letterCard.classList.remove("good", "bad");
+  setStatus("", "");
+  applyCase(isUpper);
+  clearKeyFlash();
+  prog.textContent = (index + 1) + " / " + queue.length;
+  barFill.style.width = ((index / queue.length) * 100) + "%";
+  modePill.textContent = modeLabel(S.caseMode);
+  loosePill.hidden = !!S.strict;
+  live.textContent = (isUpper ? "大楷 " : "小楷 ") + ch + "，第 " + (index + 1) + " 個，共 " + queue.length + " 個";
+  kb.classList.toggle("locked", false);
+  locked = false;
+}
+
+function clearTimer(){
+  if(timer){
+    clearTimeout(timer);
+    timer = 0;
+  }
+}
+
+function advance(){
+  timer = 0;
+  index += 1;
+  if(index >= queue.length){
+    finish();
+    return;
+  }
+  renderLetter();
+}
+
+function onCorrect(ch){
+  locked = true;
+  kb.classList.add("locked");
+  stars += 1;
+  streak += 1;
+  if(streak > roundBest) roundBest = streak;
+  flashKey(ch, "good");
+  letterCard.classList.remove("bad");
+  letterCard.classList.add("good");
+  glyph.classList.remove("pop");
+  void glyph.offsetWidth;
+  glyph.classList.add("pop");
+  var msg = streak >= 3 ? ("連續 " + streak + " 下！") : PRAISE[praiseI++ % PRAISE.length];
+  setStatus(msg, "ok");
+  renderScores();
+  bump(starPill);
+  sfxOk();
+  clearTimer();
+  timer = setTimeout(advance, 680);
+}
+
+function onWrong(ch, message){
+  streak = 0;
+  renderScores();
+  flashKey(ch, "bad");
+  letterCard.classList.remove("good", "bad");
+  void letterCard.offsetWidth;
+  letterCard.classList.add("bad");
+  setStatus(message, "no");
+  sfxNo();
+}
+
+function answer(raw){
+  if(screenName !== "play" || locked) return;
+  if(typeof raw !== "string" || !/^[a-zA-Z]$/.test(raw)) return;
+  var target = queue[index];
+  var sameLetter = raw.toLowerCase() === target.toLowerCase();
+  if(raw === target || (!S.strict && sameLetter)){
+    onCorrect(raw);
+    return;
+  }
+  if(sameLetter){
+    onWrong(raw, target === target.toUpperCase() ? "要大楷呀" : "要小楷呀");
+    return;
+  }
+  onWrong(raw, "再試下");
+}
+
+function finish(){
+  locked = true;
+  kb.classList.add("locked");
+  var prev = currentBest();
+  var perfect = roundBest === queue.length;
+  if(roundBest > prev) saveBest(roundBest);
+  $("endMark").textContent = perfect ? "⭐⭐⭐" : "⭐";
+  $("endTitle").textContent = perfect ? "全部打啱，好叻！" : "完成啦！";
+  $("endMode").textContent = modeLabel(S.caseMode) + " · " + (S.strict ? "要分大小楷" : "大細楷都得");
+  $("endDetail").textContent = queue.length + " 個字母都打到";
+  $("endStreak").textContent = "今次最長連續 " + roundBest + " 下";
+  var bestEl = $("endBest");
+  if(roundBest > prev && (prev > 0 || roundBest >= 3)) bestEl.textContent = "新高分！最長連續 " + roundBest + " 下";
+  else if(prev > 0 && roundBest === prev) bestEl.textContent = "追平最高紀錄 " + prev + " 下";
+  else if(prev > 0) bestEl.textContent = "最高紀錄 " + prev + " 下";
+  else bestEl.textContent = "";
+  sfxWin();
+  show("done");
+  renderBestNote();
+}
+
+function startRound(){
+  clearTimer();
+  queue = buildQueue(S.caseMode, S.count);
+  index = 0;
+  stars = 0;
+  streak = 0;
+  roundBest = 0;
+  praiseI = 0;
+  keysUpper = null;
+  saveSettings();
+  renderScores();
+  show("play");
+  renderLetter();
+}
+
+function goHome(){
+  clearTimer();
+  locked = false;
+  kb.classList.remove("locked");
+  show("home");
+  renderBestNote();
+}
+
+loadSettings();
+loadBests();
+var startBtn = $("btnStart");
+syncHome();
+show("home");
+
+document.querySelector(".modes").addEventListener("click", function(e){
+  var btn = e.target.closest("[data-mode]");
+  if(!btn) return;
+  S.caseMode = btn.getAttribute("data-mode");
+  saveSettings();
+  syncHome();
+});
+
+document.querySelector(".segs").addEventListener("click", function(e){
+  var btn = e.target.closest("[data-count]");
+  if(!btn) return;
+  S.count = Number(btn.getAttribute("data-count"));
+  saveSettings();
+  syncHome();
+});
+
+optSound.addEventListener("change", function(){
+  S.sound = optSound.checked;
+  if(S.sound) ensureAudio();
+  saveSettings();
+  renderSound();
+});
+
+optStrict.addEventListener("change", function(){
+  S.strict = optStrict.checked;
+  saveSettings();
+  renderBestNote();
+});
+
+startBtn.addEventListener("click", function(){
+  ensureAudio();
+  startRound();
+});
+
+$("btnHome").addEventListener("click", goHome);
+$("btnDoneHome").addEventListener("click", goHome);
+$("btnReplay").addEventListener("click", function(){
+  ensureAudio();
+  startRound();
+});
+
+btnSound.addEventListener("click", function(){
+  S.sound = !S.sound;
+  if(S.sound) ensureAudio();
+  saveSettings();
+  renderSound();
+});
+
+kb.addEventListener("click", function(e){
+  var btn = e.target.closest(".key");
+  if(!btn) return;
+  answer(btn.getAttribute("data-letter"));
+  btn.blur();
+});
+
+document.addEventListener("keydown", function(e){
+  if(e.key === "Escape" && (screenName === "play" || screenName === "done")){
+    e.preventDefault();
+    goHome();
+    return;
+  }
+  if(screenName !== "play") return;
+  if(e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
+  if(!/^[a-zA-Z]$/.test(e.key)) return;
+  e.preventDefault();
+  answer(e.key);
+});
+
+document.addEventListener("contextmenu", function(e){
+  if(e.target.closest && e.target.closest("button")) e.preventDefault();
+});
+})();
+</script>
+</body>
+</html>
