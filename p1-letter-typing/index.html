@@ -8,7 +8,7 @@
 <meta name="format-detection" content="telephone=no">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffe4f4">
-<meta name="description" content="小一英文字母打字：50 關，由小楷字母、大楷、詞語，玩到短文。每關最多三粒星。">
+<meta name="description" content="小一英文字母打字：52 關，由小楷字母、大楷、詞語，玩到短文，再練自己嘅 Google Classroom 帳號同密碼。每關最多三粒星。">
 <title>英文字母打字</title>
 <link rel="preload" href="andika-latin-700.woff2" as="font" type="font/woff2" crossorigin>
 <!-- Letterforms: Andika by SIL, Latin bold subset. License: OFL.txt -->
@@ -315,7 +315,58 @@ a.backsite:hover{text-decoration:underline}
 }
 .status.ok{color:var(--ok)}
 .status.no{color:var(--soft)}
-.letterCard.bad,.wordCard.bad,.textCard.bad{animation:shake .34s ease}
+.letterCard.bad,.wordCard.bad,.textCard.bad,.practiceCard.bad{animation:shake .34s ease}
+
+.practiceCard{
+  width:min(92vw,760px);
+  border-radius:32px;background:#fff;
+  border:6px solid transparent;
+  background:
+    linear-gradient(#fff,#fff) padding-box,
+    linear-gradient(135deg,#ff8ec8,#ffd15c,#7ddeb3,#7ecbff,#c9b6ff) border-box;
+  box-shadow:0 8px 0 #f3c3dc;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;
+  padding:12px 16px 14px;
+}
+.practiceTitle{
+  margin:0;text-align:center;
+  font-size:clamp(26px,4.2vw,44px);font-weight:900;line-height:1.2;
+}
+.practiceTip{
+  margin:0;width:100%;
+  padding:8px 14px;border-radius:16px;
+  background:#fff7cc;border:3px solid #ffd15c;
+  font-size:clamp(22px,3.4vw,36px);font-weight:900;line-height:1.35;text-align:center;
+}
+.practiceShape,.practiceDigit{
+  margin:0;text-align:center;font-weight:900;line-height:1.35;
+}
+.practiceShape{font-size:clamp(18px,2.6vw,28px);color:var(--ink)}
+.practiceDigit{font-size:clamp(15px,2.1vw,22px);color:var(--muted)}
+.practiceAttempt{
+  margin:0;text-align:center;
+  font-size:clamp(22px,3.2vw,34px);font-weight:900;color:var(--deep);
+}
+.practiceField{
+  width:min(100%,640px);min-height:76px;
+  border-radius:20px;background:#fff6fb;border:4px solid #ff8ec8;
+  display:flex;align-items:center;justify-content:center;gap:4px;
+  padding:8px 16px;
+}
+.practiceText{
+  font-size:clamp(36px,6vw,56px);letter-spacing:.08em;line-height:1.1;
+  word-break:break-all;text-align:center;
+}
+.practicePlaceholder{
+  font-size:clamp(22px,3vw,32px);font-weight:900;color:#c9a3c4;
+}
+.caret{
+  width:4px;height:1.05em;border-radius:2px;background:var(--deep);flex:none;
+  animation:blink 1s step-end infinite;
+}
+.practiceSubmit{margin-top:2px}
+@keyframes blink{50%{opacity:0}}
 
 .kbDock{
   flex:none;width:min(980px,calc(100% - 12px));
@@ -413,11 +464,18 @@ a.backsite:hover{text-decoration:underline}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-4px)}}
 @keyframes wiggle{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 @media (prefers-reduced-motion:reduce){
-  .glyph.pop,.lvl.just,.letterCard.bad,.wordCard.bad,.textCard.bad,.key.hot{animation:none}
+  .glyph.pop,.lvl.just,.letterCard.bad,.wordCard.bad,.textCard.bad,.practiceCard.bad,.key.hot,.caret{animation:none}
   .bar>span{transition:none}
+}
+.grid.sparse{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:1fr;
+  width:min(760px,100%);
+  margin-inline:auto;
 }
 @media (max-width:860px){
   .grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none}
+  .grid.sparse{grid-template-columns:1fr;width:min(420px,100%)}
   .mascot{width:48px;height:48px}
 }
 @media (max-height:760px){
@@ -439,18 +497,18 @@ a.backsite:hover{text-decoration:underline}
       <img class="mascot" src="../assets/mascot.jpg" alt="Q版白色小狗" width="64" height="64">
       <div>
         <h1>🌟 英文字母打字 🌟</h1>
-        <p class="brandSub">50 關 · 字母玩到短文</p>
+        <p class="brandSub">52 關 · 字母玩到帳號</p>
       </div>
     </div>
     <div class="statRow">
-      <div class="totalPill" id="totalPill">⭐ 0 / 150</div>
+      <div class="totalPill" id="totalPill">⭐ 0 / 156</div>
       <label class="soundToggle"><input type="checkbox" id="optSound" checked> 音效</label>
     </div>
     <p class="banner" id="banner" hidden></p>
     <div class="jumps" id="jumps" role="navigation" aria-label="跳去某一頁關卡"></div>
   </div>
   <div id="scroller" tabindex="-1"></div>
-  <p class="footNote"><a class="backsite" href="../">返遊戲站</a> · 唔使登入 · 重新整理會清走星星</p>
+  <p class="footNote"><a class="backsite" href="../">返遊戲站</a> · 唔使登入 · 重新整理會清走星星 · 帳號同密碼唔會儲存</p>
 </section>
 
 <section id="play" class="screen" aria-label="打字">
@@ -479,6 +537,19 @@ a.backsite:hover{text-decoration:underline}
     <div class="textCard" id="viewText" hidden>
       <p class="ask" id="textAsk">打呢段</p>
       <p class="passage letters" id="passage" lang="en"></p>
+    </div>
+    <div class="practiceCard" id="viewPractice" hidden>
+      <p class="practiceTitle" id="practiceTitle">Google Classroom 帳號</p>
+      <p class="practiceTip" id="practiceTip">請睇學生手冊第21頁</p>
+      <p class="practiceShape" id="practiceShape"></p>
+      <p class="practiceDigit" id="practiceDigit">數字要先撳藍色 123。</p>
+      <p class="practiceAttempt" id="practiceAttempt">第 1／5 次</p>
+      <div class="practiceField" id="practiceField" translate="no">
+        <span class="practiceText letters" id="practiceText" lang="en"></span>
+        <span class="practicePlaceholder" id="practicePlaceholder">打你嘅帳號</span>
+        <span class="caret" aria-hidden="true"></span>
+      </div>
+      <button type="button" class="bigbtn practiceSubmit" id="btnSubmit">提交</button>
     </div>
     <p class="coach" id="coach" aria-live="polite"></p>
     <p class="status" id="status"></p>
@@ -514,7 +585,7 @@ window.addEventListener("error", function(ev){
 });
 
 /* ============================================================
-   50 關課程（每頁 10 關，5 頁可以滾動）
+   52 關課程（每頁 10 關，最後一頁 2 關，6 頁可以滾動）
    由舊 100 關抽薄：每種技巧都仲會見到，同一種少練幾關。
    --------------------------------------------------------
    第 1–10 關   小楷入門（全鍵提示）：abc…yz、易混字母、a–z
@@ -531,26 +602,39 @@ window.addEventListener("error", function(ev){
    第 36 關     短句入門：只亮標點（先 123，再句號）
    第 37–40 關  短句，唔亮鍵
    第 41–50 關  短句同短文：完全唔亮鍵（包括第 48–49 關嘅數字）
+   第 51 關     Google Classroom 帳號：學生打自己本手冊嘅帳號，唔亮鍵
+   第 52 關     Google Classroom 密碼：學生打自己本手冊嘅密碼，唔亮鍵
 
    亮鍵規則：
    第 1–10 關小楷入門全鍵提示。第 11、29、34 關同樣亮而家要撳嘅鍵
    （大楷未開時連黃色 ⇧）。第 31 關只亮空格。第 36 關只亮標點：
-   字母鍵盤亮 123，去到數字鍵盤先亮句號。第 41–50 關永遠唔亮鍵。
+   字母鍵盤亮 123，去到數字鍵盤先亮句號。第 41 關起永遠唔亮鍵
+   （包括第 51–52 關練習）。
    其餘關唔亮字母鍵；空格、標點、數字若第一次出現喺第 41 關之前，
    仍然只亮嗰粒新鍵（鍵喺 123 層就先提示 123）。
 
+   第 51–52 關係自由練習，唔對答案，亦冇標準答案字串。
+   撳「提交」5 次（空白唔計）就有三粒星。
+   打咗嘅帳號同密碼只係暫時顯示，提交、離開或者完成就清走。
+   唔寫入 localStorage、sessionStorage、cookie、IndexedDB、
+   console，亦唔會傳去任何伺服器。
+
    星星（做完先計；中途離開唔改寫；同一頁內留最好嗰次）
+   第 1–50 關：
    ★★★  0 次打錯
    ★★   打錯 1–2 次
    ★    做完，但打錯 3 次或以上
+   第 51–52 關：做齊 5 次提交就係 ★★★。
    唔計速度，冇倒數，冇時限。
    星星唔寫入 localStorage，重新整理就由 0 開始。
    音效先至存 localStorage（p1letters_levels_v1，只存 sound）。
    ============================================================ */
 
 var STORE_KEY = "p1letters_levels_v1";
-var LEVEL_COUNT = 50;
+var LEVEL_COUNT = 52;
 var PAGE_SIZE = 10;
+var PRACTICE_TIMES = 5;
+var PRACTICE_MAX = 16;
 var JUMP_COLORS = ["#ffb3d4","#ffd15c","#9cf0c8","#9fd8ff","#d7c6ff","#ffc49a","#9af0e4","#ffb0c8","#c9d6ff","#ffe08a"];
 var CARD_COLORS = ["#ff7eb3","#ffb347","#f0c93a","#3dbe7a","#4dabf7","#8e7dff","#ff7ad9","#ff9a62","#2ec4b6","#ff8fab"];
 var PAGE_WASH = ["#ffe3f1","#fff4cc","#ddf8ea","#e3f3ff","#f3e8ff","#ffe8d6","#e5fff6","#ffe4ee","#eaf0ff","#fff6d8"];
@@ -559,7 +643,8 @@ var PAGE_META = [
   {title:"🦁 第 11–20 關 · 大楷同大細楷", blurb:"先撳黃色 ⇧ 打大楷，再大細楷夾埋"},
   {title:"🐱 第 21–30 關 · 詞語", blurb:"三字母、四字母，然後開頭大楷"},
   {title:"💬 第 31–40 關 · 詞組同短句", blurb:"第 31 關開始空格；第 36 關開始短句同句號"},
-  {title:"📖 第 41–50 關 · 短句同短文", blurb:"短句練完打兩句。第 48–49 關有數字"}
+  {title:"📖 第 41–50 關 · 短句同短文", blurb:"短句練完打兩句。第 48–49 關有數字"},
+  {title:"🏫 第 51–52 關 · Google Classroom", blurb:"睇學生手冊第21頁，練習自己嘅帳號同密碼"}
 ];
 
 var SPECS = [
@@ -618,10 +703,14 @@ var SPECS = [
   {kind:"text", text:"The sun is up. It is a hot day.", preview:"The sun is up…"},
   {kind:"text", text:"I see 1 cat. The cat is soft.", preview:"I see 1 cat…"},
   {kind:"text", text:"I have 2 pens. The pens are red.", preview:"I have 2 pens…"},
-  {kind:"text", text:"I am happy today. I can read and play.", preview:"I am happy today…"}
+  {kind:"text", text:"I am happy today. I can read and play.", preview:"I am happy today…"},
+
+  {kind:"practice", mode:"account", attempts:PRACTICE_TIMES, title:"Google Classroom 帳號", preview:"自己嘅帳號", tip:"請睇學生手冊第21頁", shape:"帳號係 sb，再加四個數字。", placeholder:"打你嘅帳號"},
+  {kind:"practice", mode:"password", attempts:PRACTICE_TIMES, title:"Google Classroom 密碼", preview:"自己嘅密碼", tip:"請睇學生手冊第21頁", shape:"密碼係四個英文字母，再加四個數字。", placeholder:"打你嘅密碼"}
 ];
 
 function specSource(spec){
+  if(spec.kind === "practice") return "";
   if(spec.words) return spec.words.join("");
   if(spec.text) return spec.text;
   return spec.letters || "";
@@ -693,6 +782,8 @@ function isUpper(ch){
 }
 
 function phaseOf(id){
+  if(id === 51) return {key:"account", label:"帳號", emoji:"🏫"};
+  if(id === 52) return {key:"password", label:"密碼", emoji:"🔑"};
   if(id <= 10) return {key:"lower", label:"小楷", emoji:"🐣"};
   if(id <= 16) return {key:"upper", label:"大楷", emoji:"🦁"};
   if(id <= 20) return {key:"mix", label:"混合", emoji:"🌈"};
@@ -708,9 +799,9 @@ function hasFullHints(id){
   return (id >= 1 && id <= 10) || id === 11 || id === 29 || id === 34;
 }
 
-/* 第 41–50 關覆蓋一切亮鍵，包括短句全鍵提示同第一次出現嘅數字。 */
+/* 第 41 關起覆蓋一切亮鍵。第 41–50 關同之前一樣；第 51–52 關練習亦唔亮鍵。 */
 function hintsOff(id){
-  return id >= 41 && id <= 50;
+  return id >= 41;
 }
 
 function flagsFromSpec(spec){
@@ -731,6 +822,7 @@ function taskCount(spec){
   }
   if(spec.kind === "sample") return spec.n + " 個字母";
   if(spec.kind === "words") return spec.words.length + " 個詞";
+  if(spec.kind === "practice") return spec.attempts + " 次練習";
   return spec.text.length + " 個字";
 }
 
@@ -777,6 +869,7 @@ function expand(spec){
   if(spec.kind === "each") return {kind:"letters", prompts:eachLetters(spec.letters, spec.times, spec.kase)};
   if(spec.kind === "sample") return {kind:"letters", prompts:sampleFrom(spec.letters, spec.n, spec.kase)};
   if(spec.kind === "words") return {kind:"words", prompts:spec.words.slice()};
+  if(spec.kind === "practice") return {kind:"practice", prompts:[""]};
   return {kind:"text", prompts:[spec.text]};
 }
 
@@ -839,6 +932,7 @@ function starsHtml(n){
 }
 
 function specBlob(spec){
+  if(spec.kind === "practice") return "";
   if(spec.words) return spec.words.join("\n");
   if(spec.text) return spec.text;
   return spec.letters || "";
@@ -885,7 +979,7 @@ function highlightKind(levelId, ch){
 function selfCheck(){
   var issues = [];
   if(LEVELS.length !== LEVEL_COUNT) issues.push("關卡數量 " + LEVELS.length);
-  if(PAGE_META.length !== LEVEL_COUNT / PAGE_SIZE) issues.push("頁數 " + PAGE_META.length);
+  if(PAGE_META.length !== Math.ceil(LEVEL_COUNT / PAGE_SIZE)) issues.push("頁數 " + PAGE_META.length);
   LEVELS.forEach(function(lv, i){
     if(lv.id !== i + 1) issues.push("id " + lv.id);
     if(lv.page !== Math.ceil(lv.id / PAGE_SIZE)) issues.push("page " + lv.id);
@@ -974,6 +1068,19 @@ function selfCheck(){
   if(hotKeysFor(48, ".", "numbers", 0)["."] || hotKeysFor(48, "a", "letters", 0).a) issues.push("第48關多餘亮鍵");
   if(hotKeysFor(49, "2", "numbers", 0)["2"] || hotKeysFor(49, "2", "letters", 0)["2"]) issues.push("第49關亮鍵");
   if(hotKeysFor(50, ".", "letters", 0).num || hotKeysFor(50, "a", "letters", 0).a) issues.push("第50關亮鍵");
+  var l51 = LEVELS[50];
+  var l52 = LEVELS[51];
+  if(!l51 || l51.spec.kind !== "practice" || l51.spec.mode !== "account" || l51.page !== 6) issues.push("第51關");
+  if(!l52 || l52.spec.kind !== "practice" || l52.spec.mode !== "password" || l52.page !== 6) issues.push("第52關");
+  if(!l51 || !l52 || l51.spec.attempts !== 5 || l52.spec.attempts !== 5) issues.push("練習次數");
+  if(!l51 || l51.spec.tip.indexOf("學生手冊第21頁") < 0 || !l52 || l52.spec.tip.indexOf("學生手冊第21頁") < 0) issues.push("手冊提示");
+  if(!l51 || specSource(l51.spec) !== "" || specBlob(l51.spec) !== "" || l51.spec.text || l51.spec.words || l51.spec.letters) issues.push("第51關唔應有答案");
+  if(!l52 || specSource(l52.spec) !== "" || specBlob(l52.spec) !== "" || l52.spec.text || l52.spec.words || l52.spec.letters) issues.push("第52關唔應有答案");
+  if(highlightKind(51, "s") !== "none" || highlightKind(51, "1") !== "none" || highlightKind(52, "a") !== "none" || highlightKind(52, "9") !== "none") issues.push("練習關提示");
+  var k51 = hotKeysFor(51, "s", "letters", 0);
+  var k52 = hotKeysFor(52, "1", "numbers", 0);
+  if(k51.s || k51.shift || hotKeysFor(51, "1", "letters", 0).num || k52["1"] || hotKeysFor(52, "a", "letters", 0).a) issues.push("練習關亮鍵");
+  if(calcStars(0) !== 3) issues.push("練習星星");
   if(FIRST_SPECIAL[" "] !== 31) issues.push("空格介紹關 " + FIRST_SPECIAL[" "]);
   if(FIRST_SPECIAL["."] !== 36) issues.push("句號介紹關 " + FIRST_SPECIAL["."]);
   if(FIRST_SPECIAL["1"] !== 48) issues.push("數字1介紹關 " + FIRST_SPECIAL["1"]);
@@ -1012,7 +1119,7 @@ function renderJumps(){
     btn.className = "jump";
     btn.style.setProperty("--jc", JUMP_COLORS[p - 1]);
     var from = (p - 1) * PAGE_SIZE + 1;
-    var to = p * PAGE_SIZE;
+    var to = Math.min(p * PAGE_SIZE, LEVEL_COUNT);
     btn.textContent = from + "–" + to;
     btn.setAttribute("data-page", String(p));
     btn.setAttribute("aria-label", "去第 " + btn.textContent + " 關");
@@ -1039,8 +1146,9 @@ function renderHome(focusId){
     html += '<div class="pageInner" style="--wash:' + PAGE_WASH[p - 1] + '">';
     html += "<h2>" + meta.title + "</h2>";
     html += '<p class="blurb">' + meta.blurb + "</p>";
-    html += '<div class="grid">';
-    for(var i = 0; i < PAGE_SIZE; i++){
+    var pageCount = Math.min(PAGE_SIZE, LEVELS.length - (p - 1) * PAGE_SIZE);
+    html += '<div class="grid' + (pageCount < PAGE_SIZE ? " sparse" : "") + '">';
+    for(var i = 0; i < pageCount; i++){
       var lv = LEVELS[(p - 1) * PAGE_SIZE + i];
       var stars = bestOf(lv.id);
       var just = focusId === lv.id ? " just" : "";
@@ -1244,12 +1352,30 @@ function renderHints(){
   });
 }
 
+function renderPractice(){
+  $("viewLetter").hidden = true;
+  $("viewWord").hidden = true;
+  $("viewText").hidden = true;
+  $("viewPractice").hidden = false;
+  var spec = run.level.spec;
+  $("practiceTitle").textContent = spec.title;
+  $("practiceTip").textContent = spec.tip;
+  $("practiceShape").textContent = spec.shape;
+  $("practiceDigit").textContent = "數字要先撳藍色 123。";
+  $("practiceAttempt").textContent = "第 " + (run.attempts + 1) + "／" + spec.attempts + " 次";
+  $("practiceText").textContent = run.buffer;
+  $("practicePlaceholder").hidden = run.buffer.length > 0;
+  $("practicePlaceholder").textContent = spec.placeholder;
+  setCoach();
+}
+
 function renderPrompt(){
   var kind = run.kind;
   var prompt = currentPrompt();
   $("viewLetter").hidden = kind !== "letters";
   $("viewWord").hidden = kind !== "words";
   $("viewText").hidden = kind !== "text";
+  $("viewPractice").hidden = true;
   if(kind === "letters"){
     var glyph = $("glyph");
     glyph.textContent = prompt;
@@ -1296,9 +1422,18 @@ function renderPrompt(){
 }
 
 function renderScores(){
-  var stars = calcStars(run.mistakes);
+  var stars = run.kind === "practice" ? 3 : calcStars(run.mistakes);
   $("lvPill").textContent = "第 " + run.level.id + " 關";
   $("phasePill").textContent = run.level.phase.emoji + " " + run.level.phase.label;
+  if(run.kind === "practice"){
+    $("progPill").textContent = "第 " + (run.attempts + 1) + "／" + run.level.spec.attempts + " 次";
+    $("missPill").hidden = true;
+    $("liveStarPill").textContent = "做齊 ★★★";
+    $("liveStarPill").setAttribute("aria-label", "做齊 " + run.level.spec.attempts + " 次就有 3 粒星");
+    $("barFill").style.width = ((run.attempts / run.level.spec.attempts) * 100) + "%";
+    return;
+  }
+  $("missPill").hidden = false;
   if(run.kind === "letters"){
     $("progPill").textContent = (run.promptIndex + 1) + " / " + run.prompts.length;
   }else if(run.kind === "words"){
@@ -1411,7 +1546,8 @@ function renderKeyboard(){
 }
 
 function renderAll(){
-  renderPrompt();
+  if(run && run.kind === "practice") renderPractice();
+  else renderPrompt();
   renderScores();
   renderKeyboard();
 }
@@ -1424,7 +1560,7 @@ function setStatus(msg, kind){
 }
 
 function flashCard(cls){
-  ["viewLetter","viewWord","viewText"].forEach(function(id){
+  ["viewLetter","viewWord","viewText","viewPractice"].forEach(function(id){
     var el = $(id);
     el.classList.remove("bad");
     if(cls){
@@ -1462,6 +1598,10 @@ function missMessage(got, want){
 }
 
 function speakPrompt(){
+  if(run.kind === "practice"){
+    $("live").textContent = "第 " + run.level.id + " 關，" + run.level.spec.title + "。" + run.level.spec.tip + "。第 " + (run.attempts + 1) + " 次，共 " + run.level.spec.attempts + " 次。";
+    return;
+  }
   var ch = currentChar();
   var say = ch === " " ? "空格" : ch;
   if(run.kind === "letters") $("live").textContent = "第 " + run.level.id + " 關，打 " + say;
@@ -1521,9 +1661,66 @@ function onMiss(got, want){
   renderKeyboard();
 }
 
+function practiceAllowed(ch){
+  return /^[A-Za-z0-9]$/.test(ch);
+}
+
+function clearPracticeField(){
+  if(!run) return;
+  run.buffer = "";
+  var field = $("practiceText");
+  if(field) field.textContent = "";
+  var placeholder = $("practicePlaceholder");
+  if(placeholder) placeholder.hidden = false;
+}
+
+function appendPractice(ch){
+  if(screenName !== "play" || !run || locked || run.over || run.kind !== "practice") return;
+  if(!practiceAllowed(ch)){
+    setStatus("呢關只打字母同數字", "no");
+    sfxNo();
+    flashCard("bad");
+    return;
+  }
+  if(run.buffer.length >= PRACTICE_MAX){
+    setStatus("夠長喇，可以撳提交", "no");
+    sfxNo();
+    return;
+  }
+  run.buffer += ch;
+  if(shiftMode === 1 && /^[A-Za-z]$/.test(ch)) shiftMode = 0;
+  setStatus("", "");
+  sfxTick();
+  renderAll();
+}
+
+function submitPractice(){
+  if(screenName !== "play" || !run || locked || run.over || run.kind !== "practice") return;
+  if(!run.buffer){
+    setStatus("請打啲字先，再撳提交", "no");
+    sfxNo();
+    flashCard("bad");
+    return;
+  }
+  clearPracticeField();
+  run.attempts += 1;
+  if(run.attempts >= run.level.spec.attempts){
+    finishLevel();
+    return;
+  }
+  setStatus("提交咗，再打一次", "ok");
+  sfxOk();
+  renderAll();
+  speakPrompt();
+}
+
 function submitChar(ch){
   if(screenName !== "play" || !run || locked || run.over) return;
   if(typeof ch !== "string" || ch.length !== 1) return;
+  if(run.kind === "practice"){
+    appendPractice(ch);
+    return;
+  }
   var want = currentChar();
   if(!want) return;
   if(ch === want) onHit(ch);
@@ -1532,6 +1729,13 @@ function submitChar(ch){
 
 function doBackspace(){
   if(screenName !== "play" || !run || locked || run.over) return;
+  if(run.kind === "practice"){
+    if(!run.buffer) return;
+    run.buffer = run.buffer.slice(0, -1);
+    setStatus("", "");
+    renderAll();
+    return;
+  }
   if(run.charIndex <= 0) return;
   run.charIndex -= 1;
   setStatus("", "");
@@ -1564,7 +1768,9 @@ function finishLevel(){
   run.over = true;
   locked = true;
   clearTimers();
-  var stars = calcStars(run.mistakes);
+  var practice = run.kind === "practice";
+  if(practice) clearPracticeField();
+  var stars = practice ? 3 : calcStars(run.mistakes);
   var prev = bestOf(run.level.id);
   var best = Math.max(prev, stars);
   if(stars > prev) store.stars[String(run.level.id)] = stars;
@@ -1572,11 +1778,15 @@ function finishLevel(){
   $("resultMark").textContent = stars === 3 ? "🎉" : stars === 2 ? "👏" : "💪";
   $("resultStars").innerHTML = starsHtml(stars);
   $("resultTitle").textContent = "第 " + run.level.id + " 關完成！";
-  $("resultWhy").textContent = explainStars(stars, run.mistakes);
+  $("resultWhy").textContent = practice
+    ? "做齊 " + run.level.spec.attempts + " 次，三粒星。"
+    : explainStars(stars, run.mistakes);
   var extra = stars > prev ? "新高分！主頁會見到 " + stars + " 粒星。"
     : prev > stars ? "今次 " + stars + " 粒星，主頁保持最佳 " + prev + " 粒星。"
     : "主頁最佳仍然係 " + best + " 粒星。";
-  $("resultNums").textContent = "打錯 " + run.mistakes + " 次。" + extra;
+  $("resultNums").textContent = practice
+    ? "練習咗 " + run.level.spec.attempts + " 次。呢關唔會記低你打嘅字。" + extra
+    : "打錯 " + run.mistakes + " 次。" + extra;
   $("result").classList.add("on");
   $("live").textContent = "第 " + run.level.id + " 關完成，拿到 " + stars + " 粒星。" + extra;
   sfxWin();
@@ -1590,6 +1800,7 @@ function finishLevel(){
 
 function goHome(focusId){
   clearTimers();
+  if(run && run.kind === "practice") clearPracticeField();
   locked = false;
   $("result").classList.remove("on");
   show("home");
@@ -1618,6 +1829,8 @@ function startLevel(id){
     promptIndex:0,
     charIndex:0,
     mistakes:0,
+    attempts:0,
+    buffer:"",
     over:false
   };
   locked = false;
@@ -1699,18 +1912,19 @@ $("btnSound").addEventListener("click", function(){
 });
 
 $("btnHome").addEventListener("click", function(){goHome(0);});
-$("btnResultNext").addEventListener("click", function(){
-  if(!run || run.level.id >= LEVELS.length) return;
-  startLevel(run.level.id + 1);
-});
 $("btnResultHome").addEventListener("click", function(){
   goHome(run ? run.level.id : 0);
 });
+/* 只掛一次。若掛兩次，撳「下一關」會連跳兩關，第 51 關仲會直接返主頁。 */
 $("btnResultNext").addEventListener("click", function(){
   if(!run) return;
   var id = run.level.id;
   if(id >= LEVELS.length) goHome(id);
   else startLevel(id + 1);
+});
+
+$("btnSubmit").addEventListener("click", function(){
+  submitPractice();
 });
 
 $("kb").addEventListener("click", function(e){
@@ -1739,6 +1953,11 @@ document.addEventListener("keydown", function(e){
   }
   if(screenName !== "play" || !run) return;
   if(e.metaKey || e.ctrlKey || e.altKey) return;
+  if(e.key === "Enter" && run.kind === "practice"){
+    e.preventDefault();
+    submitPractice();
+    return;
+  }
   if(e.key === "Backspace"){
     e.preventDefault();
     doBackspace();
