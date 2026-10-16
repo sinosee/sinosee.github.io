@@ -73,10 +73,14 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 .eqLine{font-size:clamp(20px,3.5vmin,34px);font-weight:900;color:#5a5a6e;text-align:center}
 
 .board{background:#fff;border-radius:22px;padding:clamp(12px,2.2vmin,24px) clamp(14px,2.5vmin,28px);
-  box-shadow:0 6px 0 #a8c8e0;width:min(94vw,420px);display:flex;flex-direction:column;align-items:center;gap:8px}
-.ld{display:grid;row-gap:2px;column-gap:0;justify-content:center;font-variant-numeric:tabular-nums;align-items:center}
-.ld .c{width:clamp(36px,8vmin,52px);height:clamp(40px,8.5vmin,56px);display:flex;align-items:center;justify-content:center;
-  font-size:clamp(22px,4.5vmin,36px);font-weight:900;border-radius:10px;position:relative}
+  box-shadow:0 6px 0 #a8c8e0;width:min(94vw,480px);display:flex;flex-direction:column;align-items:center;gap:8px}
+/* One fixed place column per dividend digit. The gutter (除數 + arc) sizes to its content
+   so a 2-digit divisor does not steal or shift the hundreds/tens/ones columns. */
+.ld{--digit:clamp(22px,4.5vmin,36px);--place:calc(var(--digit) * 0.62 + 16px);
+  display:grid;row-gap:2px;column-gap:0;justify-content:center;align-items:center;
+  font-size:var(--digit);font-weight:900;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+.ld .c{width:var(--place);height:calc(var(--digit) + 18px);min-width:0;display:flex;align-items:center;justify-content:center;
+  font-size:var(--digit);font-weight:900;border-radius:10px;position:relative}
 .ld .fixed{color:#2a2a3a}
 .ld .blank{background:#d6ebff;border:3px dashed #3b82f6;color:#1e56b5;box-shadow:inset 0 0 0 1px rgba(59,130,246,.25)}
 .ld .blank.filled{background:#c8e0ff;border-style:solid;color:#1e3a8a}
@@ -85,9 +89,10 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 .ld .blank.bad{background:#fee2e2;border-color:#ef4444;border-style:solid;color:#991b1b;animation:shake .35s}
 .ld .blank.reveal{background:#fef3c7;border-color:#f59e0b;border-style:solid;color:#92400e}
 .ld .empty{visibility:hidden}
-.ld .place{height:auto;min-height:0;width:clamp(36px,8vmin,52px);padding:0 0 1px;border-radius:0;
-  font-size:clamp(12px,1.9vmin,16px);font-weight:800;line-height:1.05;color:#6a5a4a}
-.ld .divSign{width:auto;background:none;border-radius:0;color:#2a2a3a;margin:0;padding:0 0 0 2px;gap:1px;
+.ld .place{height:auto;min-height:0;width:var(--place);padding:0 0 1px;border-radius:0;flex-direction:column;
+  font-size:clamp(12px,1.9vmin,16px);font-weight:800;line-height:1.05;color:#6a5a4a;gap:0}
+.ld .gutter{width:auto;min-width:0;height:0;padding:0}
+.ld .divSign{width:auto;min-width:max-content;background:none;border-radius:0;color:#2a2a3a;margin:0;padding:0 2px 0 2px;gap:1px;
   justify-content:flex-end;align-items:stretch}
 .ld .divSign .num{font-weight:900;padding:0 2px 0 2px;display:flex;align-items:center}
 .ld .divSign .paren{width:15px;align-self:stretch;display:block;position:relative;
@@ -99,8 +104,12 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 .ld .barLine.end{border-top-color:transparent}
 .ld .barLine.end::after{content:"";position:absolute;left:0;top:-4px;height:4px;width:calc(50% + 0.5ch);
   background:#2a2a3a;pointer-events:none}
-.ld .ruleRow{height:12px;min-height:12px;border-radius:0}
-.ld .ruleRow.ink{border-top:3px solid #2a2a3a}
+.ld .ruleRow{height:12px;min-height:12px;border-radius:0;border-top:3px solid transparent}
+/* Underline only the digits in this step: start at the left edge of the first digit
+   and stop at the right edge of the last, the same edge the vinculum uses. */
+.ld .ruleRow.ink::after{content:"";position:absolute;left:0;right:0;top:-3px;height:3px;background:#2a2a3a}
+.ld .ruleRow.ink.lineStart::after{left:calc(50% - 0.5ch)}
+.ld .ruleRow.ink.lineEnd::after{right:calc(50% - 0.5ch)}
 .ld .label{font-size:clamp(11px,1.6vmin,14px);font-weight:700;color:#9aa;position:absolute;top:1px;right:3px;line-height:1}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
@@ -167,7 +176,8 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 
 @media (max-height:560px){
   .key{min-height:42px;font-size:clamp(18px,3.5vmin,28px)}
-  .ld .c{width:clamp(30px,7vmin,44px);height:clamp(34px,7.5vmin,48px);font-size:clamp(18px,3.8vmin,28px)}
+  .ld{--digit:clamp(18px,3.8vmin,28px)}
+  .ld .c{height:calc(var(--digit) + 14px)}
   .iconbtn{min-width:44px;height:44px;font-size:22px}
 }
 </style>
@@ -495,13 +505,14 @@ function renderProblem(prob){
   // Grid: col0 = divisor/corner spacer, col1..cols = digit columns
   var gridCols = cols + 1;
   var el = $('ld');
-  el.style.gridTemplateColumns = 'auto repeat(' + cols + ', max-content)';
+  el.style.gridTemplateColumns = 'max-content repeat(' + cols + ', var(--place))';
   el.innerHTML = '';
   blanks = [];
   selId = null;
 
   function addCell(html, className, gridCol, gridRow){
     var d = document.createElement('div');
+    if(String(gridCol) === '1') className = (className ? className + ' ' : '') + 'gutter';
     d.className = 'c ' + (className || '');
     d.style.gridColumn = String(gridCol);
     d.style.gridRow = String(gridRow);
@@ -538,7 +549,7 @@ function renderProblem(prob){
   // 百位／十位／個位，對齊直式數位
   addCell('', 'place', 1, row);
   for(var p = 0; p < cols; p++){
-    addCell(places[cols - 1 - p] + '<br>位', 'place', p + 2, row);
+    addCell('<span>' + places[cols - 1 - p] + '</span><span>位</span>', 'place', p + 2, row);
   }
   row++;
 
@@ -604,7 +615,13 @@ function renderProblem(prob){
     addCell('', 'ruleRow', 1, row);
     for(var c4 = 0; c4 < cols; c4++){
       var onLine = c4 >= st.curStart && c4 <= st.atCol;
-      addCell('', 'ruleRow' + (onLine ? ' ink' : ''), c4 + 2, row);
+      var lineCls = 'ruleRow';
+      if(onLine){
+        lineCls += ' ink';
+        if(c4 === st.curStart) lineCls += ' lineStart';
+        if(c4 === st.atCol) lineCls += ' lineEnd';
+      }
+      addCell('', lineCls, c4 + 2, row);
     }
     row++;
 
