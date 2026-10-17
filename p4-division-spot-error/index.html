@@ -85,6 +85,9 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 .ld .blank{background:#d6ebff;border:3px dashed #3b82f6;color:#1e56b5;box-shadow:inset 0 0 0 1px rgba(59,130,246,.25)}
 .ld .blank.filled{background:#c8e0ff;border-style:solid;color:#1e3a8a}
 .ld .blank.sel{background:#fff1c9;border-color:#ff9f1c;border-style:solid;box-shadow:0 0 0 3px rgba(255,159,28,.35);transform:scale(1.06)}
+/* Next cell in the textbook cycle 商 → 乘 → 減. Pulse only while it is not the one being typed. */
+.ld .blank.due:not(.sel):not(.ok):not(.bad):not(.reveal){border-color:#ff9f1c;animation:duepulse 1.2s ease-in-out infinite}
+@keyframes duepulse{0%,100%{box-shadow:0 0 0 0 rgba(255,159,28,.2)}50%{box-shadow:0 0 0 4px rgba(255,159,28,.5)}}
 .ld .blank.ok{background:#d1fae5;border-color:#22c55e;border-style:solid;color:#166534}
 .ld .blank.bad{background:#fee2e2;border-color:#ef4444;border-style:solid;color:#991b1b;animation:shake .35s}
 .ld .blank.reveal{background:#fef3c7;border-color:#f59e0b;border-style:solid;color:#92400e}
@@ -186,7 +189,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 <div id="start" class="screen on">
   <div class="startInner">
     <h1 class="title"><span class="emoji">✏️</span>除法直式填空<span class="emoji">🔢</span></h1>
-    <p class="sub">直式留咗幾個藍色窿窿。先撳窿窿，先出九宮格！</p>
+    <p class="sub">三位數 ÷ 兩位數。跟課本順序填：商 → 乘 → 減。</p>
 
     <div class="modes">
       <button type="button" class="mode sel" data-mode="student" id="modeStudent">
@@ -204,16 +207,16 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
     <div class="infoCard">
       <strong>點樣玩：</strong><br>
       ① 先撳窿窿，先出九宮格　② 打數字　③ 全部填完撳「檢查」<br>
-      每局約 10 題 · 3 顆心 · 全部整除（無餘數）
+      每局 10 題 · 3 顆心 · 三位數 ÷ 兩位數 · 全部整除（無餘數）
     </div>
 
     <div class="toggles">
       <label class="toggle"><input type="checkbox" id="togSound" checked> 音效</label>
-      <label class="toggle"><input type="checkbox" id="togHard"> 較難（三位數）</label>
+      <label class="toggle"><input type="checkbox" id="togHard"> 較難（多填幾格）</label>
     </div>
 
     <button type="button" class="bigbtn" id="btnStart">開始！</button>
-    <p class="note">小四 · 除法直式 · 唔會彈出手機鍵盤</p>
+    <p class="note">小四 · 三位數 ÷ 兩位數 · 唔會彈出手機鍵盤</p>
   </div>
 </div>
 
@@ -227,7 +230,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
       ② 用<strong>九宮格</strong>打數字<br>
       ③ 全部填完 → 撳「檢查」
     </div>
-    <p class="tipHow">想睇清楚直式，撳「收起」或者撳九宮格外面。填錯可以改；心用完就結束。</p>
+    <p class="tipHow">題目係三位數 ÷ 兩位數。跟課本：先寫商，再寫積，再寫減出嚟嘅數（落下的數字已經喺減嗰一行）。閃住嘅格就係下一步。</p>
     <button type="button" class="bigbtn green" id="btnTipGo">明白，開始！</button>
   </div>
 </div>
@@ -244,12 +247,12 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
   </div>
   <div id="playWrap">
     <div class="playMain">
-      <div class="prompt" id="prompt">先撳藍色窿窿，先出九宮格</div>
+      <div class="prompt" id="prompt">下一步：寫商。跟課本：商 → 乘 → 減。</div>
       <div class="eqLine" id="eqLine"></div>
       <div class="board">
         <div class="ld" id="ld"></div>
       </div>
-      <div class="feedback hint" id="feedback">先撳窿窿，先出九宮格</div>
+      <div class="feedback hint" id="feedback">先撳閃住嘅格，跟課本：商 → 乘 → 減</div>
     </div>
     <div class="keypadWrap" id="keypadWrap" aria-hidden="true">
       <div class="keypadPanel" role="dialog" aria-label="九宮格">
@@ -416,31 +419,65 @@ function buildLongDiv(dividend, divisor){
   return {nStr: nStr, d: d, cols: cols, qDigits: qDigits, steps: steps, quotient: Math.floor(dividend / divisor)};
 }
 
-function pickProblem(hardMode){
-  var d = rand(2, 9);
-  var dividend, quotient;
-  if(hardMode){
-    // 3-digit dividend, exact
-    var maxQ = Math.floor(999 / d);
-    var minQ = Math.ceil(100 / d);
-    quotient = rand(Math.max(minQ, 12), Math.min(maxQ, 99));
-    dividend = d * quotient;
-  } else {
-    // 2-digit dividend mostly
-    var maxQ2 = Math.floor(99 / d);
-    var minQ2 = Math.ceil(10 / d);
-    // Prefer 2-digit quotients when possible, else 1-digit
-    if(maxQ2 >= 10 && Math.random() < 0.7){
-      quotient = rand(10, Math.min(maxQ2, 25));
+/* 三位數 ÷ 兩位數，整除。商的每一位都唔係 0，所以每一步都有「乘、減」可以填。
+   商是兩位數先至會出現減行（餘數連住落下的下一位）。大約四分三係呢種。 */
+function pickThreeByTwo(){
+  var guard = 0;
+  while(guard++ < 100){
+    var divisor = rand(10, 99);
+    var twoDigitQ = Math.random() < 0.75;
+    var minQ, maxQ, quotient;
+    if(twoDigitQ){
+      minQ = Math.max(11, Math.ceil(100 / divisor));
+      maxQ = Math.min(99, Math.floor(999 / divisor));
+      if(minQ > maxQ) continue;
+      quotient = rand(minQ, maxQ);
+      if(quotient % 10 === 0) continue;
     } else {
-      quotient = rand(Math.max(minQ2, 2), Math.min(maxQ2, 12));
+      minQ = Math.max(2, Math.ceil(100 / divisor));
+      maxQ = Math.min(9, Math.floor(999 / divisor));
+      if(minQ > maxQ) continue;
+      quotient = rand(minQ, maxQ);
     }
-    dividend = d * quotient;
-    // ensure 2-digit dividend
-    if(dividend < 10){ quotient = rand(Math.max(minQ2,2), maxQ2); dividend = d * quotient; }
+    var dividend = divisor * quotient;
+    if(dividend < 100 || dividend > 999) continue;
+    return {dividend: dividend, divisor: divisor};
   }
-  var ld = buildLongDiv(dividend, d);
+  return {dividend: 864, divisor: 24};
+}
+
+function pickProblem(hardMode){
+  var picked = pickThreeByTwo();
+  var ld = buildLongDiv(picked.dividend, picked.divisor);
   return makeBlankPlan(ld, hardMode);
+}
+
+/* EPH《小學數學新思維》第二版 P4 上 A 單元三 第7課 除法（二）、單元筆記 p.78：
+   每一位商的循環係 商 → 乘 → 減，再做下一位。
+   落下的數字寫在減嗰一行，唔另開一格。冇試商格、冇驗算格。
+   商前面唔夠除的 0 唔寫。 */
+function textbookOrderMap(ld){
+  var map = {};
+  var n = 0;
+  function put(kind, idx, digi){
+    map[kind + '-' + idx + '-' + (digi != null ? digi : 0)] = n++;
+  }
+  var stepByCol = {};
+  ld.steps.forEach(function(st, idx){ stepByCol[st.atCol] = idx; });
+  ld.qDigits.forEach(function(qd, qIdx){
+    put('q', qIdx, 0);
+    var sIdx = stepByCol[qd.atCol];
+    if(sIdx == null) return;
+    var st = ld.steps[sIdx];
+    st.prodDigits.forEach(function(_pd, di){ put('prod', sIdx, di); });
+    var next = ld.steps[sIdx + 1];
+    if(next && next.work){
+      next.work.forEach(function(w){
+        if(!w.bring) put('rem', sIdx + 1, w.remIndex);
+      });
+    }
+  });
+  return map;
 }
 
 function makeBlankPlan(ld, hardMode){
@@ -502,8 +539,8 @@ function cellKey(kind, idx, digi){ return kind + '-' + idx + '-' + (digi != null
 function renderProblem(prob){
   var ld = prob.ld;
   var cols = ld.cols;
+  var orderMap = textbookOrderMap(ld);
   // Grid: col0 = divisor/corner spacer, col1..cols = digit columns
-  var gridCols = cols + 1;
   var el = $('ld');
   el.style.gridTemplateColumns = 'max-content repeat(' + cols + ', var(--place))';
   el.innerHTML = '';
@@ -521,7 +558,7 @@ function renderProblem(prob){
     return d;
   }
 
-  function addBlankOrFixed(digit, kind, idx, digi, gridCol, gridRow, extraClass){
+  function addBlankOrFixed(digit, kind, idx, digi, gridCol, gridRow, extraClass, placeName){
     var key = cellKey(kind, idx, digi);
     var isBlank = Object.prototype.hasOwnProperty.call(prob.blankSet, key);
     if(isBlank){
@@ -532,12 +569,22 @@ function renderProblem(prob){
       b.style.gridRow = String(gridRow);
       b.dataset.id = key;
       b.dataset.answer = String(prob.blankSet[key]);
+      b.dataset.kind = kind;
+      b.dataset.order = String(Object.prototype.hasOwnProperty.call(orderMap, key) ? orderMap[key] : 1000);
       b.textContent = '';
-      b.setAttribute('aria-label', '藍色填空，撳咗先出九宮格');
+      b.setAttribute('aria-label', stepAria(kind, placeName));
       b.setAttribute('aria-pressed', 'false');
       b.addEventListener('click', function(){ if(!answered && !paused) selectBlank(key); });
       el.appendChild(b);
-      blanks.push({id: key, answer: String(prob.blankSet[key]), el: b, value: ''});
+      blanks.push({
+        id: key,
+        answer: String(prob.blankSet[key]),
+        el: b,
+        value: '',
+        kind: kind,
+        place: placeName || '',
+        order: Object.prototype.hasOwnProperty.call(orderMap, key) ? orderMap[key] : 1000
+      });
       return b;
     } else {
       return addCell(String(digit), 'fixed' + (extraClass ? ' ' + extraClass : ''), gridCol, gridRow);
@@ -559,7 +606,7 @@ function renderProblem(prob){
   ld.qDigits.forEach(function(qd, idx){ qByCol[qd.atCol] = {digit: qd.digit, idx: idx}; });
   for(var c = 0; c < cols; c++){
     if(qByCol[c] != null){
-      addBlankOrFixed(qByCol[c].digit, 'q', qByCol[c].idx, 0, c + 2, row, 'qDig');
+      addBlankOrFixed(qByCol[c].digit, 'q', qByCol[c].idx, 0, c + 2, row, 'qDig', places[cols - 1 - c]);
     } else {
       addCell('', 'empty', c + 2, row);
     }
@@ -643,6 +690,37 @@ function renderProblem(prob){
   });
 
   $('eqLine').textContent = ld.nStr + ' ÷ ' + ld.d + ' = ？';
+  blanks.sort(function(a, b){ return a.order - b.order; });
+  refreshGuide();
+}
+
+function stepLabel(kind, place){
+  if(kind === 'q') return '寫商的' + (place || '') + '位';
+  if(kind === 'prod') return '寫積（商 × 除數）';
+  return '寫減出嚟嘅數';
+}
+function stepAria(kind, place){
+  return stepLabel(kind, place) + '，撳咗先出九宮格';
+}
+function earliestEmpty(){
+  for(var i = 0; i < blanks.length; i++){
+    if(blanks[i].value === '') return blanks[i];
+  }
+  return null;
+}
+function refreshGuide(){
+  var next = earliestEmpty();
+  blanks.forEach(function(b){
+    b.el.classList.toggle('due', !!(next && b.id === next.id && !answered));
+  });
+  if(answered) return;
+  var focus = selId ? findBlank(selId) : next;
+  if(!focus){
+    $('prompt').textContent = '全部填好，撳「檢查」';
+    return;
+  }
+  var lead = selId ? '而家填：' : '下一步：';
+  $('prompt').textContent = lead + stepLabel(focus.kind, focus.place) + '。跟課本：商 → 乘 → 減。';
 }
 
 function findBlank(id){
@@ -683,7 +761,7 @@ function showKeypad(){
   wrap.setAttribute('aria-hidden', 'false');
   placeKeypad();
   var fb = $('feedback');
-  if(fb.textContent.indexOf('先撳窿窿') !== -1){
+  if(fb.textContent.indexOf('閃住') !== -1 || fb.textContent.indexOf('先撳') !== -1){
     fb.className = 'feedback hint';
     fb.textContent = '打數字，填完撳「檢查」。撳「收起」可收起九宮格';
   }
@@ -705,6 +783,7 @@ function hideKeypad(){
     b.el.classList.remove('sel');
     b.el.setAttribute('aria-pressed', 'false');
   });
+  if(!answered) refreshGuide();
 }
 
 function selectBlank(id){
@@ -716,6 +795,7 @@ function selectBlank(id){
     b.el.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
   showKeypad();
+  refreshGuide();
 }
 
 function typeDigit(dig){
@@ -727,12 +807,10 @@ function typeDigit(dig){
   b.el.classList.add('filled');
   b.el.classList.remove('bad','ok','reveal');
   beep(660, 0.06, 'sine', 0.06);
-  // auto next empty blank
-  var idx = blanks.findIndex(function(x){ return x.id === selId; });
-  for(var i = 1; i <= blanks.length; i++){
-    var nb = blanks[(idx + i) % blanks.length];
-    if(nb.value === ''){ selectBlank(nb.id); return; }
-  }
+  // Stay on the textbook cycle: the next empty cell is the earliest one still blank.
+  var next = earliestEmpty();
+  if(next) selectBlank(next.id);
+  else refreshGuide();
 }
 
 function deleteDigit(){
@@ -744,10 +822,12 @@ function deleteDigit(){
     b.el.textContent = '';
     b.el.classList.remove('filled','bad','ok','reveal');
     beep(320, 0.05, 'triangle', 0.05);
+    refreshGuide();
   } else {
-    // go to previous blank
+    // previous cell in textbook order
     var idx = blanks.findIndex(function(x){ return x.id === selId; });
     if(idx > 0) selectBlank(blanks[idx-1].id);
+    else refreshGuide();
   }
 }
 
@@ -816,6 +896,8 @@ function checkAnswer(){
     $('scorePill').textContent = '⭐ ' + score;
     $('feedback').className = 'feedback ok';
     $('feedback').textContent = '全部啱！👏 ' + cur.dividend + ' ÷ ' + cur.divisor + ' = ' + cur.quotient;
+    $('prompt').textContent = cur.dividend + ' ÷ ' + cur.divisor + ' = ' + cur.quotient;
+    refreshGuide();
     beep(523, 0.1); setTimeout(function(){ beep(659, 0.1); }, 100); setTimeout(function(){ beep(784, 0.15); }, 200);
     hideKeypad();
     $('nextRow').classList.add('on');
@@ -850,7 +932,9 @@ function revealAnswers(){
   });
   $('feedback').className = 'feedback hint';
   $('feedback').textContent = '答案：' + cur.dividend + ' ÷ ' + cur.divisor + ' = ' + cur.quotient;
+  $('prompt').textContent = cur.dividend + ' ÷ ' + cur.divisor + ' = ' + cur.quotient;
   answered = true;
+  refreshGuide();
   hideKeypad();
   $('nextRow').classList.add('on');
 }
@@ -878,7 +962,7 @@ function loadQuestion(){
   hideKeypad();
   $('qPill').textContent = '第 ' + (qIndex+1) + '／' + TOTAL_Q + ' 題';
   $('feedback').className = 'feedback hint';
-  $('feedback').textContent = '先撳窿窿，先出九宮格';
+  $('feedback').textContent = '先撳閃住嘅格，跟課本：商 → 乘 → 減';
   cur = pickProblem(hard);
   // Avoid too few blanks
   var tries = 0;
