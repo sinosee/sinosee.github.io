@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#7ec8e8">
+<meta name="description" content="百味小島：種植食材、煮東南亞同世界美食。全部食材免費，無需儲值。">
+<title>百味小島</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell" role="application" aria-label="百味小島">
+
+    <!-- 主畫面 -->
+    <section class="screen on" id="screen-home">
+      <div class="hero-island" aria-hidden="true">
+        <div class="hero-dish">
+          <span class="steam"></span>
+          <span class="steam s2"></span>
+          <span class="steam s3"></span>
+          🍛
+        </div>
+      </div>
+      <div class="home-copy">
+        <h1 class="brand">百味小島</h1>
+        <p class="tagline">種落去、澆一澆、收成入廚<br>東南亞 · 歐美 · 異國風情慢慢解鎖</p>
+        <span class="free-badge">全程免費 · 唔使儲值 · 靠關卡解鎖</span>
+        <button type="button" class="btn-start" id="btnStart">開始島上生活</button>
+        <p class="home-note">原創療癒種植料理 · 直向手機介面</p>
+      </div>
+    </section>
+
+    <!-- 遊戲 -->
+    <section class="screen" id="screen-play">
+      <header class="topbar">
+        <div class="pill" title="島幣"><span class="ic">🪙</span><span id="coinVal">0</span></div>
+        <div class="pill lv-pill" title="等級">
+          <span class="ic">⭐</span>Lv.<span id="lvVal">1</span>
+          <span class="xp-track"><i id="xpBar"></i></span>
+          <span id="xpTip" class="xp-tip">0/25</span>
+        </div>
+        <div class="spacer"></div>
+        <button type="button" class="icon-btn" id="btnReset" title="重新開始" aria-label="重新開始">↺</button>
+      </header>
+
+      <div class="main">
+        <!-- 農田 -->
+        <div class="panel on" data-panel="farm">
+          <h2 class="panel-title">農田</h2>
+          <p class="panel-sub">揀種子 → 點空地種植 → 澆水 → 收成</p>
+          <div class="seed-row" id="seedRow" role="listbox" aria-label="種子"></div>
+          <div class="farm-grid" id="farmGrid" aria-label="農田格子"></div>
+          <div class="farm-actions">
+            <button type="button" class="water" id="btnWaterAll">💧 全部澆水</button>
+            <button type="button" class="harvest-all" id="btnHarvestAll">✨ 全部收成</button>
+          </div>
+        </div>
+
+        <!-- 倉庫 -->
+        <div class="panel" data-panel="pantry">
+          <h2 class="panel-title">食材倉</h2>
+          <p class="panel-sub">升級慢慢解鎖 · 全程唔使俾錢</p>
+          <div class="scroll-list" id="pantryList"></div>
+        </div>
+
+        <!-- 市集 -->
+        <div class="panel" data-panel="market">
+          <h2 class="panel-title">島上市集</h2>
+          <p class="panel-sub">已解鎖嘅雞蛋、肉類、海鮮 —— 免費領</p>
+          <div class="scroll-list" id="marketList" style="grid-template-columns:1fr"></div>
+        </div>
+
+        <!-- 廚房 -->
+        <div class="panel" data-panel="kitchen">
+          <h2 class="panel-title">廚房</h2>
+          <p class="panel-sub">東南亞 · 歐美 · 異國 · 跟等級解鎖</p>
+          <div class="filter-row" role="tablist">
+            <button type="button" class="chip on" data-filter="all">全部</button>
+            <button type="button" class="chip" data-filter="sea">東南亞</button>
+            <button type="button" class="chip" data-filter="west">歐美</button>
+            <button type="button" class="chip" data-filter="exotic">異國</button>
+          </div>
+          <div class="recipe-list" id="recipeList"></div>
+        </div>
+
+        <!-- 客人 -->
+        <div class="panel" data-panel="guest">
+          <h2 class="panel-title">來客點餐</h2>
+          <p class="panel-sub">用新鮮食材煮俾客人，賺多啲島幣</p>
+          <div class="guest-card" id="guestCard"></div>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="主選單">
+        <button type="button" class="on" data-nav="farm"><span class="ni">🌱</span>農田</button>
+        <button type="button" data-nav="pantry"><span class="ni">🧺</span>倉庫</button>
+        <button type="button" data-nav="market"><span class="ni">🏪</span>市集</button>
+        <button type="button" data-nav="kitchen"><span class="ni">🍳</span>廚房</button>
+        <button type="button" data-nav="guest"><span class="ni">🛎️</span>來客</button>
+      </nav>
+    </section>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
