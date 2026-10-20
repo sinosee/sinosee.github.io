@@ -13,10 +13,13 @@
 
   function artIng(id) {
     const ing = byId[id];
-    return Art.ingredient(id, ing && ing.color);
+    if (Art && Art.ingredient) return Art.ingredient(id, ing && ing.color);
+    return `<span style="font-size:28px">${(ing && ing.emoji) || "🌱"}</span>`;
   }
   function artDish(id, hue) {
-    return Art.dish(id, hue);
+    if (Art && Art.dish) return Art.dish(id, hue);
+    const r = recipeById[id];
+    return `<span style="font-size:28px">${(r && r.dish) || "🍽️"}</span>`;
   }
 
   function levelFromXp(xp) {
@@ -569,21 +572,26 @@
   }
 
   function initChromeArt() {
-    const coin = $("#coinIcon");
-    if (coin) coin.innerHTML = artIng("corn");
-    const quest = $("#questIcon");
-    if (quest) quest.innerHTML = artIng("tomato");
-    const navMap = {
-      navFarm: () => artIng("lettuce"),
-      navPantry: () => artIng("carrot"),
-      navMarket: () => artIng("egg"),
-      navKitchen: () => artDish("tomato-egg", "#ffe8e0"),
-      navGuest: () => artDish("nasi-lemak", "#e8f5d0"),
-    };
-    Object.entries(navMap).forEach(([id, fn]) => {
-      const el = document.getElementById(id);
-      if (el) el.innerHTML = fn();
-    });
+    if (!Art) return;
+    try {
+      const coin = $("#coinIcon");
+      if (coin) coin.innerHTML = artIng("corn");
+      const quest = $("#questIcon");
+      if (quest) quest.innerHTML = artIng("tomato");
+      const navMap = {
+        navFarm: () => artIng("lettuce"),
+        navPantry: () => artIng("carrot"),
+        navMarket: () => artIng("egg"),
+        navKitchen: () => artDish("tomato-egg", "#ffe8e0"),
+        navGuest: () => artDish("nasi-lemak", "#e8f5d0"),
+      };
+      Object.entries(navMap).forEach(([id, fn]) => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = fn();
+      });
+    } catch (err) {
+      console.warn("art init failed", err);
+    }
   }
 
   function bind() {

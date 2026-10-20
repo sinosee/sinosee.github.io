@@ -1,5 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&family=ZCOOL+XiaoWei&display=swap");
-
+/* 唔依賴 Google Fonts，避免 iOS 私隱模式擋載入 */
 :root {
   --sky: #8ec8e8;
   --sky2: #b8dce8;
@@ -31,7 +30,7 @@ html, body {
   height: 100%;
   overflow: hidden;
   color: var(--ink);
-  font-family: "Noto Sans TC", "PingFang HK", "PingFang TC", sans-serif;
+  font-family: "PingFang HK", "PingFang TC", "Noto Sans CJK HK", "Microsoft JhengHei", sans-serif;
   background: linear-gradient(180deg, #6ab0d0 0%, #9ec8a0 100%);
   -webkit-user-select: none;
   user-select: none;
@@ -93,9 +92,13 @@ button:focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; }
 #screen-home {
   justify-content: flex-end;
   padding: 16px 18px calc(28px + var(--safe-b));
-  background:
+  background-color: #8ec8d8;
+  background-image:
     linear-gradient(180deg, transparent 28%, rgba(255,248,236,0.55) 55%, rgba(255,248,236,0.94) 78%),
-    url("assets/home-bg.jpg") center top / cover no-repeat;
+    url("assets/home-bg.jpg");
+  background-position: center top;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 .home-island {
   flex: 1;
@@ -139,8 +142,9 @@ button:focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; }
 }
 .brand {
   margin: 0;
-  font-family: "ZCOOL XiaoWei", serif;
+  font-family: "PingFang HK", "PingFang TC", "Hiragino Sans GB", sans-serif;
   font-size: clamp(40px, 11vw, 52px);
+  font-weight: 900;
   letter-spacing: 0.14em;
   color: var(--ink);
   text-shadow: 0 2px 0 rgba(255, 255, 255, 0.55);
@@ -295,6 +299,10 @@ button:focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; }
   padding: 2px 10px 6px;
 }
 .panel.on { display: flex; }
+.panel[data-panel="farm"].on {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
 
 .panel-head {
   flex: none;
@@ -303,7 +311,8 @@ button:focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; }
 }
 .panel-title {
   margin: 0;
-  font-family: "ZCOOL XiaoWei", serif;
+  font-family: "PingFang HK", "PingFang TC", sans-serif;
+  font-weight: 900;
   font-size: 24px;
   letter-spacing: 0.1em;
 }
@@ -314,83 +323,93 @@ button:focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; }
   color: var(--muted);
 }
 
-/* ========== FARM — isometric island ========== */
+/* ========== FARM — Safari-safe flat grid on painted island ========== */
 .farm-world {
-  flex: 1;
-  min-height: 0;
+  flex: 1 1 auto;
+  min-height: 220px;
   position: relative;
   border-radius: 24px;
   overflow: hidden;
-  background:
-    linear-gradient(180deg, rgba(255,248,236,0.08), rgba(40,70,60,0.12)),
-    url("assets/island-bg.jpg") center / cover no-repeat;
+  background-color: #8ec8a8;
+  background-image:
+    linear-gradient(180deg, rgba(255,248,236,0.1), rgba(40,70,60,0.18)),
+    url("assets/island-bg.jpg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   box-shadow: inset 0 0 0 3px rgba(255, 248, 236, 0.4);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 12px 10px 14px;
 }
 .farm-deco {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(126,188,224,0.12), transparent 30%, rgba(40,80,70,0.1) 100%);
+  background: linear-gradient(180deg, rgba(126,188,224,0.1), transparent 35%, rgba(40,80,70,0.12) 100%);
 }
 
 .iso-board {
-  position: absolute;
-  left: 50%;
-  top: 58%;
-  width: 200px;
-  height: 200px;
-  transform: translate(-50%, -50%) rotateX(58deg) rotateZ(-45deg);
-  transform-style: preserve-3d;
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: 340px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(4, 1fr);
-  gap: 7px;
-  z-index: 3;
-  perspective: 600px;
+  grid-auto-rows: minmax(56px, 1fr);
+  gap: 8px;
+  padding: 10px;
+  border-radius: 18px;
+  background: rgba(255, 248, 236, 0.28);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  box-shadow: 0 8px 20px rgba(40, 60, 50, 0.18);
 }
 .plot {
   position: relative;
   border: none;
-  border-radius: 10px;
-  background: linear-gradient(145deg, #c09060, var(--soil) 40%, var(--soil-dark));
+  border-radius: 14px;
+  aspect-ratio: 1 / 1;
+  min-height: 56px;
+  background: linear-gradient(160deg, #c89868, var(--soil) 45%, var(--soil-dark));
   box-shadow:
-    3px 3px 0 rgba(60, 40, 20, 0.28),
-    inset 0 2px 0 rgba(255, 220, 160, 0.2);
+    0 4px 0 rgba(60, 40, 20, 0.28),
+    inset 0 2px 0 rgba(255, 220, 160, 0.22);
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: visible;
-  min-height: 0;
-  transform: translateZ(2px);
+  overflow: hidden;
+  -webkit-appearance: none;
+  appearance: none;
 }
 .plot.empty::after {
-  content: "";
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 2px dashed rgba(255, 240, 200, 0.35);
+  content: "+";
+  font-size: 22px;
+  font-weight: 300;
+  color: rgba(255, 240, 200, 0.45);
+  line-height: 1;
 }
 .plot .crop-art {
-  width: 78%;
-  height: 78%;
-  transform: rotateZ(45deg) rotateX(-20deg) translateZ(12px);
-  filter: drop-shadow(0 4px 2px rgba(0,0,0,0.2));
+  width: 72%;
+  height: 72%;
   pointer-events: none;
+  filter: drop-shadow(0 3px 2px rgba(0,0,0,0.18));
 }
 .plot.growing .crop-art { animation: growpulse 1.2s ease-in-out infinite; }
 .plot.ready {
   box-shadow:
-    3px 3px 0 rgba(60, 40, 20, 0.28),
-    0 0 0 3px rgba(232, 184, 72, 0.75);
+    0 4px 0 rgba(60, 40, 20, 0.28),
+    0 0 0 3px rgba(232, 184, 72, 0.85);
 }
 .plot.ready .crop-art { animation: ripe 0.9s ease-in-out infinite; }
 @keyframes growpulse {
-  0%, 100% { transform: rotateZ(45deg) rotateX(-20deg) translateZ(12px) scale(0.88); }
-  50% { transform: rotateZ(45deg) rotateX(-20deg) translateZ(14px) scale(1); }
+  0%, 100% { transform: scale(0.88); }
+  50% { transform: scale(1); }
 }
 @keyframes ripe {
-  0%, 100% { transform: rotateZ(45deg) rotateX(-20deg) translateZ(14px) scale(1); }
-  50% { transform: rotateZ(45deg) rotateX(-20deg) translateZ(18px) scale(1.1); }
+  0%, 100% { transform: scale(1) rotate(-2deg); }
+  50% { transform: scale(1.08) rotate(2deg); }
 }
 .plot .bar {
   position: absolute;
@@ -399,7 +418,6 @@ button:focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; }
   border-radius: 999px;
   background: rgba(0,0,0,0.3);
   overflow: hidden;
-  transform: rotateZ(45deg);
 }
 .plot .bar > i {
   display: block;
@@ -409,22 +427,22 @@ button:focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; }
 }
 .plot .hint {
   position: absolute;
-  bottom: -2px;
-  font-size: 9px;
+  bottom: 6px;
+  font-size: 10px;
   font-weight: 900;
   color: #fff8e0;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-  transform: rotateZ(45deg);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.55);
   white-space: nowrap;
+  pointer-events: none;
 }
 .plot.locked-plot {
-  background: linear-gradient(145deg, #a8b0a0, #7a8478);
-  opacity: 0.85;
+  background: linear-gradient(160deg, #b0b8b0, #7a8478);
+  opacity: 0.92;
 }
 .plot.locked-plot .crop-art {
-  width: 50%;
-  height: 50%;
-  opacity: 0.85;
+  width: 42%;
+  height: 42%;
+  opacity: 0.9;
 }
 
 .seed-dock {
@@ -626,7 +644,8 @@ button:focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; }
 }
 .recipe .body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .recipe .nm {
-  font-family: "ZCOOL XiaoWei", serif;
+  font-family: "PingFang HK", "PingFang TC", sans-serif;
+  font-weight: 900;
   font-size: 18px;
   letter-spacing: 0.04em;
   line-height: 1.2;
@@ -705,7 +724,8 @@ button:focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; }
   padding: 6px;
 }
 .guest-card .who {
-  font-family: "ZCOOL XiaoWei", serif;
+  font-family: "PingFang HK", "PingFang TC", sans-serif;
+  font-weight: 900;
   font-size: 22px;
   margin: 0;
 }
