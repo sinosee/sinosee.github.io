@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="立體圖形">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffe4f4">
+<meta name="description" content="小一立體圖形對對碰：角錐、角柱、圓錐、圓柱、球。">
+<title>立體圖形對對碰</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="home" class="screen on">
+  <div class="wrap">
+    <a class="back" href="../#maths">返回</a>
+    <header class="hero">
+      <img class="mascot" src="../assets/mascot.jpg" width="512" height="512" alt="Q版白色小狗">
+      <div>
+        <h1>立體圖形對對碰</h1>
+        <p class="sub">睇住個圖，撳返正確嘅名</p>
+      </div>
+    </header>
+    <ul class="vocab" aria-label="五種立體圖形">
+      <li style="--c:#ff8ec8">角錐</li>
+      <li style="--c:#ffd15c">角柱</li>
+      <li style="--c:#7ddeb3">圓錐</li>
+      <li style="--c:#7ecbff">圓柱</li>
+      <li style="--c:#c9b6ff">球</li>
+    </ul>
+    <p class="blurb">一共 10 題</p>
+    <div class="actions">
+      <button type="button" class="bigbtn" id="btnStart">開始遊戲</button>
+    </div>
+    <p class="best" id="bestLine"></p>
+    <div class="foot">
+      <img class="qr" src="qrcode.png" width="280" height="340" alt="立體圖形對對碰遊戲網址二維碼">
+      <div>
+        <img class="dog" src="../assets/mascot.jpg" width="52" height="52" alt="">
+        <p>平板掃碼，打開呢一頁</p>
+        <a href="https://sinosee.github.io/p1-solid-shapes/">sinosee.github.io/p1-solid-shapes</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="play" class="screen">
+  <div class="wrap">
+    <div class="topbar">
+      <button type="button" class="iconbtn" id="btnHome" aria-label="返回主頁">🏠</button>
+      <span class="pill" id="prog">第 1／10 題</span>
+      <span class="pill score" id="scorePill">答啱 0</span>
+      <span class="spacer"></span>
+      <label class="sound"><input type="checkbox" id="chkSound" checked> 音效</label>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="barFill"></span></div>
+    <p class="prompt">呢個係邊種立體圖形？</p>
+    <div class="shapeCard"><div id="shape" class="shapeFrame"></div></div>
+    <p class="feedback" id="feedback" role="status" aria-live="polite">撳下面嘅名。</p>
+    <div class="choices" id="choices"></div>
+    <button type="button" class="bigbtn next" id="btnNext" hidden>下一題</button>
+  </div>
+</div>
+
+<div id="end" class="screen">
+  <div class="wrap endWrap">
+    <div class="stars" id="endStars" aria-label="星星"></div>
+    <h2 id="endTitle">做得好！</h2>
+    <p class="endScore" id="endScore">答啱 0／10</p>
+    <p class="best" id="endBest"></p>
+    <div class="endBtns">
+      <button type="button" class="bigbtn" id="btnAgain">再玩一次</button>
+      <button type="button" class="bigbtn alt" id="btnMenu">返回主頁</button>
+    </div>
+  </div>
+</div>
+
+<script src="shapes.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
