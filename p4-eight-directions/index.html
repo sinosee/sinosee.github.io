@@ -142,26 +142,66 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
 .endScore{font-size:clamp(20px,3.4vmin,34px);font-weight:900;color:#9a6700}
 .endDetail{font-size:clamp(16px,2.5vmin,24px);font-weight:800;color:#5d7380;line-height:1.45}
 .endBtns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.levels{display:flex;gap:clamp(10px,2vmin,16px);width:100%}
+.levelCard{flex:1;background:#fff;border-radius:22px;padding:clamp(10px,1.8vmin,16px) 12px;box-shadow:0 6px 0 var(--shadow);border:5px solid transparent;text-align:center}
+.levelCard.first{border-color:#ff8a3d;background:#fff8f2}
+.levelCard .ln{font-size:clamp(14px,2.1vmin,20px);font-weight:900;color:#0b7568;letter-spacing:1px}
+.levelCard .lt{font-size:clamp(22px,3.4vmin,34px);font-weight:900;margin:.08em 0;line-height:1.2}
+.levelCard .ld{font-size:clamp(14px,2vmin,18px);font-weight:800;color:var(--muted);line-height:1.35}
+#rose{background:linear-gradient(180deg,#d7f4ff 0%,#e7f8ea 48%,#fff6df 100%)}
+.roseBody{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 12px 8px;width:100%}
+.roseMain{flex:1;min-height:0;width:min(1100px,100%);display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;justify-items:stretch;align-items:stretch;gap:8px}
+.dialFrame{width:100%;height:100%;min-width:0;min-height:0;container-type:size;display:grid;place-items:center}
+.dialWrap{position:relative;width:min(100cqi,100cqb);height:min(100cqi,100cqb);container-type:size;touch-action:none}
+.dialWrap svg{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.roseSlots{position:absolute;inset:0;pointer-events:none}
+.slot{position:absolute;transform:translate(-50%,-50%);width:22cqi;height:22cqi;border-radius:18%;border:0.7cqi dashed #6f93a3;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;font-weight:900;color:#1c3d4e;pointer-events:auto;box-shadow:0 0.6cqi 0 rgba(183,216,207,.9)}
+.slot.north{border-style:solid;border-color:#d62828;background:#ffe8e8;color:#d62828;font-size:7.6cqi;letter-spacing:1px}
+.slot.filled{border-style:solid;border-color:#1f9d55;background:#e7f8ee}
+.slot.reveal{border-style:solid;border-color:#e0a106;background:#fff6d8;color:#8a5a00;font-size:6.5cqi}
+.slot.hot{border-color:#0f9d8a;background:#e5fff6;transform:translate(-50%,-50%) scale(1.06)}
+.slot.badflash{animation:slotshake .42s ease;border-color:#e23b3b;background:#ffe4e4}
+@keyframes slotshake{0%,100%{transform:translate(-50%,-50%)}25%{transform:translate(calc(-50% - 7px),-50%)}75%{transform:translate(calc(-50% + 7px),-50%)}}
+.tray{width:100%;display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:8px;min-height:0}
+.chipHold{display:flex}
+.chip{touch-action:none;min-width:clamp(92px,16vmin,150px);min-height:clamp(56px,9vmin,84px);padding:0 14px;border-radius:18px;background:#fff;box-shadow:0 5px 0 #c5d7ea;border:4px solid #d7e6f5;font-size:clamp(26px,4vmin,40px);font-weight:900;color:#1c3d4e;-webkit-user-drag:none;user-select:none}
+.chip.dragging{box-shadow:0 12px 24px rgba(28,61,78,.28);border-color:#0f9d8a;z-index:50}
+.chip.in{width:100%;height:100%;min-width:0;min-height:0;padding:0;border:none;box-shadow:none;background:transparent;font-size:6.4cqi;border-radius:14%}
+#bridge{align-items:center;justify-content:center;overflow:auto;
+  background:linear-gradient(160deg,#d7f4ff 0%,#e7fff4 48%,#fff6d4 100%)}
+.bridgeMark{font-size:clamp(18px,3vmin,28px);font-weight:900;color:#0b7568;background:#fff;border-radius:999px;padding:8px 18px;box-shadow:0 4px 0 var(--shadow)}
 
 @media (min-width:980px) and (min-height:560px){
   .playBody{flex-direction:row;align-items:stretch;gap:12px;padding:0 16px 10px}
   .mapCol{flex:1.15}
   .controls{flex:0.9;justify-content:center}
+  .roseMain{grid-template-columns:minmax(0,1.35fr) minmax(200px,.62fr);grid-template-rows:minmax(0,1fr);align-items:stretch}
+  .tray{flex-direction:column;flex-wrap:nowrap;align-items:stretch;justify-content:center;height:100%}
+  .chip{width:100%}
+  .chipHold{width:100%}
 }
 @media (max-height:760px){
-  .startInner{gap:8px;padding:8px 0 12px}
-  .heroImg{width:84px;height:84px}
-  h1{font-size:40px}
-  .mode{min-height:0;padding:8px 10px}
-  .mode .mt{font-size:26px}
-  .tip{padding:8px 12px}
-  .bigbtn{min-height:58px}
-  .startFoot img{width:72px;height:72px}
+  .startInner{gap:6px;padding:4px 0 6px}
+  .heroImg{width:72px;height:72px}
+  h1{font-size:36px}
+  .mode{min-height:0;padding:6px 10px}
+  .mode .mt{font-size:22px}
+  .mode .md{font-size:13px}
+  .levelCard{padding:6px 8px}
+  .levelCard .lt{font-size:22px}
+  .levelCard .ld{font-size:13px}
+  .tip{padding:6px 10px;font-size:15px}
+  .bigbtn{min-height:52px;font-size:26px}
+  .startFoot{padding:4px 10px 4px 4px}
+  .startFoot img{width:60px;height:60px}
+  .note{font-size:13px}
 }
 @media (max-height:680px){
   .iconbtn{min-width:46px;height:46px}
   .dir{min-height:54px;font-size:22px}
   .heroImg{width:72px;height:72px}
+  .chip{min-height:48px;min-width:76px;font-size:22px}
+  .chipHold{min-height:48px}
 }
 @media (prefers-reduced-motion:reduce){
   .mapCard.shake,.cheer.on,.heroImg{animation:none}
@@ -176,24 +216,36 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
       <img class="heroImg" src="assets/mascot-q.png" width="512" height="512" alt="白色小狗探險家">
       <div>
         <h1>八方探險</h1>
-        <p class="sub">帶小狗行地圖、一路尋寶</p>
+        <p class="sub">第一關填指南針，第二關帶小狗尋寶</p>
       </div>
     </div>
     <div class="modes">
       <button type="button" class="mode sel" id="modeStudent">
         <div class="mi">🧒</div>
         <div class="mt">學生模式</div>
-        <div class="md">自己點方向<br>即時知道對錯</div>
+        <div class="md">自己拖、自己點<br>即時知道對錯</div>
       </button>
       <button type="button" class="mode" id="modeTeacher">
         <div class="mi">👩‍🏫</div>
         <div class="mt">老師模式</div>
-        <div class="md">投影全班<br>可暫停、顯示方向</div>
+        <div class="md">投影全班<br>可暫停、顯示答案</div>
       </button>
     </div>
-    <p class="tip">紅針永遠指住<strong>北方</strong>。北不一定在上面。點八個方向，帶小狗去尋寶！</p>
+    <div class="levels">
+      <button type="button" class="levelCard first" id="btnPick1">
+        <div class="ln">第一關</div>
+        <div class="lt">填指南針</div>
+        <div class="ld">只標好「北」，把其餘七個方向拖到空位</div>
+      </button>
+      <button type="button" class="levelCard" id="btnPick2">
+        <div class="ln">第二關</div>
+        <div class="lt">八方探險</div>
+        <div class="ld">帶小狗行地圖、一路尋寶</div>
+      </button>
+    </div>
+    <p class="tip">紅針永遠指住<strong>北方</strong>。北不一定在上面。先填指南針，再去尋寶。</p>
     <label class="toggle"><input type="checkbox" id="togSound" checked> 音效</label>
-    <button type="button" class="bigbtn" id="btnStart">出發！</button>
+    <button type="button" class="bigbtn" id="btnStart">由第一關開始</button>
     <p class="note">小四 · 八個方向：北、東北、東、東南、南、西南、西、西北<br><a href="../">返教學小遊戲</a></p>
     <div class="startFoot">
       <img src="qrcode.png" width="86" height="86" alt="八方探險遊戲網址二維碼">
@@ -202,10 +254,58 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
   </div>
 </div>
 
+<div id="rose" class="screen">
+  <div class="topbar">
+    <button type="button" class="iconbtn" id="btnRoseHome" aria-label="回主選單">🏠</button>
+    <button type="button" class="iconbtn" id="btnRosePause" aria-label="暫停">⏸️</button>
+    <span class="pill">第一關</span>
+    <span class="pill" id="roseCount">指南針 1／4</span>
+    <span class="spacer"></span>
+    <span class="pill" id="roseMode">學生</span>
+  </div>
+  <div class="roseBody">
+    <p class="prompt" id="rosePrompt">紅針指住北方。把其餘方向拖到正確空位。</p>
+    <p class="subprompt" id="roseSub">「北」已經標好。北不一定在上面。</p>
+    <div class="roseMain">
+      <div class="dialFrame">
+        <div class="dialWrap" id="dialWrap">
+          <svg id="roseSvg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+          <div class="roseSlots" id="roseSlots"></div>
+          <div class="cheer" id="roseCheer"></div>
+        </div>
+      </div>
+      <div class="tray" id="roseTray" aria-label="可拖的方向"></div>
+    </div>
+    <p class="feedback hint" id="roseFeedback" role="status">把方向拖到空位。</p>
+  </div>
+  <div class="teachBar" id="roseTeach">
+    <button type="button" class="tbtn" id="btnRoseReveal">顯示答案</button>
+    <button type="button" class="tbtn" id="btnRoseNext">下一題</button>
+  </div>
+  <div class="paused" id="rosePaused">
+    <div class="pt">暫停</div>
+    <button type="button" class="bigbtn" id="btnRoseResume">繼續</button>
+  </div>
+</div>
+
+<div id="bridge" class="screen">
+  <div class="endInner">
+    <img class="endDog" src="assets/mascot-q.png" width="512" height="512" alt="">
+    <div class="bridgeMark">第一關完成</div>
+    <h2 class="endTitle">指南針填好啦！</h2>
+    <div class="endDetail">北已經認到。第二關帶小狗行地圖、一路尋寶。</div>
+    <div class="endBtns">
+      <button type="button" class="bigbtn green" id="btnToLevel2">進入第二關</button>
+      <button type="button" class="bigbtn blue" id="btnBridgeHome">返主頁</button>
+    </div>
+  </div>
+</div>
+
 <div id="play" class="screen">
   <div class="topbar">
     <button type="button" class="iconbtn" id="btnHome" aria-label="回主選單">🏠</button>
     <button type="button" class="iconbtn" id="btnPause" aria-label="暫停">⏸️</button>
+    <span class="pill" id="levelTag">第二關</span>
     <span class="pill" id="hearts" aria-label="生命"></span>
     <span class="pill" id="loot">★ 0</span>
     <div class="trail" id="trail" aria-label="探險進度"></div>
@@ -308,9 +408,11 @@ var MAPS = {
   }
 };
 
+var ROSE_R = 38;
 var mode = 'student';
 var soundOn = true;
 var hearts = 3, loot = 0, index = 0;
+var rose = {rounds:[], index:0, north:0, placed:{}, order:[], revealed:false, finishing:false, drag:null};
 var queue = [], cur = null;
 var paused = false, busy = false, ended = false, taughtMid = false;
 var session = 0, timer = null, pending = null;
@@ -320,6 +422,14 @@ var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-moti
 function $(id){ return document.getElementById(id); }
 function rand(a,b){ return a + Math.floor(Math.random() * (b - a + 1)); }
 function pick(arr){ return arr[rand(0, arr.length - 1)]; }
+function shuffle(arr){
+  var a = arr.slice();
+  for(var i = a.length - 1; i > 0; i--){
+    var j = rand(0, i);
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
 function mod8(n){ return ((n % 8) + 8) % 8; }
 function r1(n){ return Math.round(n * 10) / 10; }
 function esc(s){
@@ -340,7 +450,7 @@ window.addEventListener('resize', setVH);
 if(window.visualViewport) window.visualViewport.addEventListener('resize', setVH);
 
 function show(id){
-  ['start','play','end'].forEach(function(s){ $(s).classList.toggle('on', s === id); });
+  ['start','rose','bridge','play','end'].forEach(function(s){ $(s).classList.toggle('on', s === id); });
 }
 function beep(freq, dur, type, vol){
   if(!soundOn) return;
@@ -1076,8 +1186,296 @@ function goHome(){
   paused = false;
   busy = false;
   cur = null;
+  if(rose.drag && rose.drag.chip && rose.drag.chip.parentNode) rose.drag.chip.remove();
+  rose.drag = null;
   $('paused').classList.remove('on');
+  $('rosePaused').classList.remove('on');
   show('start');
+}
+
+/* 第一關：整盤指南針旋轉，只預先標「北」。
+   空位 i 的方向永遠是 DIRS[i]，畫面角度跟紅針一齊轉。 */
+function buildRoseRounds(){
+  var rounds = shuffle([0,1,2,3,4,5,6,7]).slice(0, 4);
+  var odd = false;
+  rounds.forEach(function(n){ if(n % 2) odd = true; });
+  if(!odd) rounds[3] = [1,3,5,7][rand(0, 3)];
+  if(rounds[0] === 0){
+    var k = 1 + rand(0, 2);
+    var t = rounds[0]; rounds[0] = rounds[k]; rounds[k] = t;
+  }
+  return rounds;
+}
+function roseAllFilled(){
+  for(var d = 1; d < 8; d++) if(!rose.placed[d]) return false;
+  return true;
+}
+function setRoseFeedback(text, kind){
+  var el = $('roseFeedback');
+  el.className = 'feedback ' + (kind || 'hint');
+  el.textContent = text;
+}
+function roseSvg(north, done){
+  var html = [];
+  html.push('<circle cx="50" cy="50" r="33" fill="#fffdf8" stroke="' + (done ? '#1f9d55' : '#1c3d4e') + '" stroke-width="1.7"/>');
+  html.push('<circle cx="50" cy="50" r="29.2" fill="none" stroke="#d7ebe4" stroke-width="0.7"/>');
+  for(var i = 0; i < 8; i++){
+    var inner = polar(i, north, 26.5);
+    var outer = polar(i, north, 32.2);
+    html.push('<line x1="' + r1(50 + inner.x) + '" y1="' + r1(50 + inner.y) + '" x2="' + r1(50 + outer.x) + '" y2="' + r1(50 + outer.y) + '" stroke="' + (i === 0 ? '#d62828' : '#9bb0b8') + '" stroke-width="' + (i % 2 ? 0.8 : 1.35) + '" stroke-linecap="round"/>');
+  }
+  var ang = screenAngle(0, north);
+  html.push('<g transform="rotate(' + ang + ' 50 50)">');
+  html.push('<polygon points="50,27 53.4,50 50,46.2 46.6,50" fill="#d62828"/>');
+  html.push('<polygon points="50,72 47.4,50 50,53.4 52.6,50" fill="#c5d0d8"/>');
+  html.push('<circle cx="50" cy="50" r="2.3" fill="#fffdf8" stroke="#1c3d4e" stroke-width="0.7"/>');
+  html.push('</g>');
+  return html.join('');
+}
+function makeChip(dir, inside){
+  var b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'chip' + (inside ? ' in' : '');
+  b.setAttribute('data-d', String(dir));
+  b.setAttribute('draggable', 'false');
+  b.textContent = DIRS[dir];
+  b.addEventListener('pointerdown', onChipDown, {passive:false});
+  return b;
+}
+function renderRose(){
+  $('roseCount').textContent = '指南針 ' + (rose.index + 1) + '／' + rose.rounds.length;
+  $('roseMode').textContent = mode === 'teacher' ? '老師' : '學生';
+  $('rosePrompt').textContent = '紅針指住北方。把其餘方向拖到正確空位。';
+  $('roseSub').textContent = '「北」已經標好。北不一定在上面。';
+  $('dialWrap').classList.toggle('done', roseAllFilled());
+  $('roseSvg').innerHTML = roseSvg(rose.north, roseAllFilled());
+  var slots = $('roseSlots');
+  slots.innerHTML = '';
+  for(var i = 0; i < 8; i++){
+    var slot = document.createElement('div');
+    slot.className = 'slot';
+    slot.setAttribute('data-d', String(i));
+    var p = polar(i, rose.north, ROSE_R);
+    slot.style.left = r1(50 + p.x) + '%';
+    slot.style.top = r1(50 + p.y) + '%';
+    if(i === 0){
+      slot.classList.add('north');
+      slot.textContent = '北';
+      slot.setAttribute('aria-label', '北，已標好');
+    } else if(rose.placed[i]){
+      slot.classList.add(rose.revealed ? 'reveal' : 'filled');
+      slot.setAttribute('aria-label', DIRS[i]);
+      if(rose.revealed) slot.textContent = DIRS[i];
+      else slot.appendChild(makeChip(i, true));
+    } else {
+      slot.setAttribute('aria-label', '空位');
+    }
+    slots.appendChild(slot);
+  }
+  var tray = $('roseTray');
+  tray.innerHTML = '';
+  rose.order.forEach(function(d){
+    if(rose.placed[d]) return;
+    var hold = document.createElement('div');
+    hold.className = 'chipHold';
+    hold.appendChild(makeChip(d, false));
+    tray.appendChild(hold);
+  });
+  updateRoseTeach();
+}
+function updateRoseTeach(){
+  var on = mode === 'teacher' && $('rose').classList.contains('on');
+  $('roseTeach').classList.toggle('on', on);
+  if(!on) return;
+  $('btnRoseReveal').disabled = !!(paused || rose.revealed || rose.finishing || roseAllFilled());
+  $('btnRoseNext').disabled = !!paused;
+}
+function beginRoseRound(){
+  rose.north = rose.rounds[rose.index];
+  rose.placed = {};
+  rose.revealed = false;
+  rose.finishing = false;
+  rose.order = shuffle([1,2,3,4,5,6,7]);
+  rose.drag = null;
+  $('roseCheer').className = 'cheer';
+  $('roseCheer').textContent = '';
+  $('rosePaused').classList.remove('on');
+  renderRose();
+  setRoseFeedback('把方向拖到空位。', 'hint');
+}
+function startRose(rounds){
+  bump();
+  ended = false;
+  paused = false;
+  busy = false;
+  cur = null;
+  soundOn = $('togSound').checked;
+  rose.rounds = rounds || buildRoseRounds();
+  rose.index = 0;
+  $('paused').classList.remove('on');
+  show('rose');
+  beginRoseRound();
+}
+function showBridge(){
+  bump();
+  paused = false;
+  rose.drag = null;
+  $('rosePaused').classList.remove('on');
+  show('bridge');
+}
+function advanceRose(){
+  if(rose.index >= rose.rounds.length - 1){ showBridge(); return; }
+  rose.index++;
+  beginRoseRound();
+}
+function finishRoseRound(){
+  if(rose.finishing) return;
+  rose.finishing = true;
+  beepOk();
+  $('roseCheer').textContent = '填好啦！';
+  $('roseCheer').className = 'cheer on good';
+  $('roseSvg').innerHTML = roseSvg(rose.north, true);
+  $('dialWrap').classList.add('done');
+  setRoseFeedback('八個方向都放好了！', 'ok');
+  updateRoseTeach();
+  if(mode === 'student') later(1500, advanceRose);
+}
+function revealRose(){
+  if(paused || rose.revealed || rose.finishing) return;
+  rose.revealed = true;
+  for(var d = 1; d < 8; d++) rose.placed[d] = true;
+  renderRose();
+  setRoseFeedback('正確方向已經顯示。紅針指住北方。', 'hint');
+}
+function tryPlace(dir, slotDir){
+  if(rose.revealed || rose.finishing) return 'closed';
+  if(slotDir === 0) return 'locked';
+  if(slotDir !== dir) return 'bad';
+  rose.placed[dir] = true;
+  return 'ok';
+}
+function nearestSlot(x, y){
+  var slots = document.querySelectorAll('#roseSlots .slot');
+  var best = null, bestD = 1e9;
+  for(var i = 0; i < slots.length; i++){
+    var s = slots[i];
+    var d = +s.getAttribute('data-d');
+    if(d !== 0 && rose.placed[d]) continue;
+    var r = s.getBoundingClientRect();
+    var dist = Math.hypot(x - (r.left + r.width / 2), y - (r.top + r.height / 2));
+    var limit = Math.max(r.width, r.height) * 0.95;
+    if(dist <= limit && dist < bestD){ best = s; bestD = dist; }
+  }
+  return best;
+}
+function clearHot(){
+  var hot = document.querySelectorAll('#roseSlots .slot.hot');
+  for(var i = 0; i < hot.length; i++) hot[i].classList.remove('hot');
+}
+function moveDrag(x, y){
+  var chip = rose.drag.chip;
+  chip.style.left = (x - rose.drag.w / 2) + 'px';
+  chip.style.top = (y - rose.drag.h / 2) + 'px';
+}
+function onChipDown(e){
+  if(paused || rose.revealed || rose.finishing || rose.drag) return;
+  if(e.button !== undefined && e.button !== 0) return;
+  var chip = e.currentTarget;
+  var dir = +chip.getAttribute('data-d');
+  var fromSlot = !!chip.closest('.slot');
+  if(fromSlot){
+    rose.placed[dir] = false;
+    chip.closest('.slot').classList.remove('filled');
+  }
+  e.preventDefault();
+  var rect = chip.getBoundingClientRect();
+  var size = getComputedStyle(chip).fontSize;
+  rose.drag = {dir:dir, chip:chip, pid:e.pointerId, fromSlot:fromSlot, w:rect.width, h:rect.height};
+  document.body.appendChild(chip);
+  chip.classList.add('dragging');
+  chip.classList.remove('in');
+  chip.style.position = 'fixed';
+  chip.style.left = rect.left + 'px';
+  chip.style.top = rect.top + 'px';
+  chip.style.width = rect.width + 'px';
+  chip.style.height = rect.height + 'px';
+  chip.style.fontSize = size;
+  chip.style.margin = '0';
+  chip.style.zIndex = '50';
+  chip.style.pointerEvents = 'none';
+  try{ chip.setPointerCapture(e.pointerId); }catch(err){}
+}
+function onRoseMove(e){
+  if(!rose.drag || e.pointerId !== rose.drag.pid) return;
+  if(e.cancelable) e.preventDefault();
+  moveDrag(e.clientX, e.clientY);
+  clearHot();
+  var slot = nearestSlot(e.clientX, e.clientY);
+  if(slot) slot.classList.add('hot');
+}
+function flashSlot(dir){
+  var slot = document.querySelector('#roseSlots .slot[data-d="' + dir + '"]');
+  if(!slot) return;
+  slot.classList.add('badflash');
+  setTimeout(function(){ slot.classList.remove('badflash'); }, 420);
+}
+function onRoseUp(e){
+  if(!rose.drag || (e.pointerId !== undefined && e.pointerId !== rose.drag.pid)) return;
+  var drag = rose.drag;
+  var slot = nearestSlot(e.clientX, e.clientY);
+  clearHot();
+  rose.drag = null;
+  if(drag.chip.parentNode) drag.chip.remove();
+  if(!slot){
+    if(drag.fromSlot) rose.placed[drag.dir] = true;
+    renderRose();
+    return;
+  }
+  var slotDir = +slot.getAttribute('data-d');
+  var result = tryPlace(drag.dir, slotDir);
+  if(result !== 'ok' && drag.fromSlot) rose.placed[drag.dir] = true;
+  renderRose();
+  if(result === 'ok'){
+    if(roseAllFilled()) finishRoseRound();
+    else {
+      beepTick();
+      setRoseFeedback('放對了！' + DIRS[drag.dir] + '放好了。', 'ok');
+    }
+    return;
+  }
+  beepBad();
+  var msg = '這個空位不是' + DIRS[drag.dir] + '。再試一次。';
+  if(result === 'locked') msg = '「北」已經標好了。';
+  setRoseFeedback(msg, 'bad');
+  flashSlot(slotDir);
+}
+function pauseActivity(){
+  if(ended) return;
+  var onPlay = $('play').classList.contains('on');
+  var onRose = $('rose').classList.contains('on');
+  if(!onPlay && !onRose) return;
+  if(rose.drag){
+    var drag = rose.drag;
+    rose.drag = null;
+    if(drag.chip.parentNode) drag.chip.remove();
+    if(drag.fromSlot) rose.placed[drag.dir] = true;
+    renderRose();
+  }
+  paused = true;
+  $('paused').classList.toggle('on', onPlay);
+  $('rosePaused').classList.toggle('on', onRose);
+  updatePad();
+  updateTeach();
+  updateRoseTeach();
+}
+function resumeActivity(){
+  paused = false;
+  $('paused').classList.remove('on');
+  $('rosePaused').classList.remove('on');
+  updatePad();
+  updateTeach();
+  updateRoseTeach();
+  if(pending){ var fn = pending; pending = null; fn(); }
 }
 
 $('modeStudent').addEventListener('click', function(){
@@ -1090,24 +1488,27 @@ $('modeTeacher').addEventListener('click', function(){
   $('modeTeacher').classList.add('sel');
   $('modeStudent').classList.remove('sel');
 });
-$('btnStart').addEventListener('click', startRun);
+$('btnStart').addEventListener('click', function(){ startRose(); });
+$('btnPick1').addEventListener('click', function(){ startRose(); });
+$('btnPick2').addEventListener('click', startRun);
+$('btnToLevel2').addEventListener('click', startRun);
+$('btnBridgeHome').addEventListener('click', goHome);
+$('btnRoseHome').addEventListener('click', goHome);
+$('btnRosePause').addEventListener('click', pauseActivity);
+$('btnRoseResume').addEventListener('click', resumeActivity);
+$('btnRoseReveal').addEventListener('click', revealRose);
+$('btnRoseNext').addEventListener('click', function(){
+  if(paused || mode !== 'teacher') return;
+  advanceRose();
+});
+window.addEventListener('pointermove', onRoseMove, {passive:false});
+window.addEventListener('pointerup', onRoseUp);
+window.addEventListener('pointercancel', onRoseUp);
 $('btnAgain').addEventListener('click', startRun);
 $('btnMenu').addEventListener('click', goHome);
 $('btnHome').addEventListener('click', goHome);
-$('btnPause').addEventListener('click', function(){
-  if(ended) return;
-  paused = true;
-  $('paused').classList.add('on');
-  updatePad();
-  updateTeach();
-});
-$('btnResume').addEventListener('click', function(){
-  paused = false;
-  $('paused').classList.remove('on');
-  updatePad();
-  updateTeach();
-  if(pending){ var fn = pending; pending = null; fn(); }
-});
+$('btnPause').addEventListener('click', pauseActivity);
+$('btnResume').addEventListener('click', resumeActivity);
 $('btnReveal').addEventListener('click', reveal);
 $('btnTeachNext').addEventListener('click', function(){
   if(!resolved() || paused) return;
@@ -1239,6 +1640,62 @@ function runSelfTest(){
     assert(DIRS.indexOf(lab) >= 0, 'bad label ' + lab);
     assert(lab.indexOf('方') < 0, 'button has 方');
   });
+  for(var rn = 0; rn < 8; rn++){
+    for(var ri = 0; ri < 8; ri++){
+      var rp = polar(ri, rn, ROSE_R);
+      var rang = Math.atan2(rp.x, -rp.y) * 180 / Math.PI;
+      if(rang < 0) rang += 360;
+      var wantAng = screenAngle(ri, rn);
+      var gap = Math.abs(rang - wantAng);
+      if(gap > 180) gap = 360 - gap;
+      assert(gap < 0.2, 'rose angle n=' + rn + ' i=' + ri);
+      assert(DIRS[ri] && (ri !== 0 || DIRS[ri] === '北'), 'rose name');
+    }
+  }
+  var bookRose = polar(2, 6, 1);
+  assert(bookRose.y < -0.9 && Math.abs(bookRose.x) < 0.05, '北向左時東在上');
+  $('togSound').checked = false;
+  mode = 'student';
+  startRose([6]);
+  assert($('rose').classList.contains('on'), 'rose screen');
+  assert(rose.north === 6, 'north faces left');
+  assert($('roseSlots').querySelector('.slot.north').textContent === '北', 'only north prefilled');
+  assert($('roseSlots').querySelectorAll('.slot.filled').length === 0, 'seven blanks');
+  var chipNames = [];
+  $('roseTray').querySelectorAll('.chip').forEach(function(c){ chipNames.push(c.textContent); });
+  var wantChips = {'東北':1,'東':1,'東南':1,'南':1,'西南':1,'西':1,'西北':1};
+  assert(chipNames.length === 7, 'seven chips');
+  chipNames.forEach(function(lab){
+    assert(wantChips[lab] === 1, 'chip ' + lab);
+    assert(lab.indexOf('方') < 0, 'chip 方');
+    wantChips[lab] = 0;
+  });
+  var eastSlot = $('roseSlots').querySelector('.slot[data-d="2"]');
+  var eastPos = polar(2, 6, ROSE_R);
+  assert(Math.abs(parseFloat(eastSlot.style.top) - (50 + eastPos.y)) < 0.15, 'east slot up');
+  assert(Math.abs(parseFloat(eastSlot.style.left) - (50 + eastPos.x)) < 0.15, 'east slot x');
+  assert(tryPlace(3, 1) === 'bad' && !rose.placed[3], 'wrong slot rejected');
+  assert(tryPlace(2, 0) === 'locked', 'north locked');
+  assert(tryPlace(2, 2) === 'ok' && rose.placed[2], 'east accepted');
+  renderRose();
+  assert($('roseSlots').querySelector('.slot[data-d="2"]').textContent === '東', 'east snapped');
+  assert($('roseTray').querySelectorAll('.chip').length === 6, 'tray lost east');
+  for(var fill = 1; fill < 8; fill++) tryPlace(fill, fill);
+  finishRoseRound();
+  advanceRose();
+  assert($('bridge').classList.contains('on'), 'bridge after last rose');
+  mode = 'teacher';
+  startRose([1, 3]);
+  assert($('roseTeach').classList.contains('on'), 'teacher bar');
+  revealRose();
+  assert(rose.revealed && $('roseSlots').querySelector('.slot[data-d="5"]').textContent === '西南', 'reveal southwest');
+  assert(!$('btnRoseNext').disabled, 'teacher can advance');
+  advanceRose();
+  assert(rose.north === 3 && !rose.revealed, 'next rose round');
+  startRun();
+  assert($('play').classList.contains('on') && queue.length === 10 && $('levelTag').textContent === '第二關', 'level 2 adventure');
+  goHome();
+  assert($('start').classList.contains('on'), 'home');
   return issues;
 }
 
@@ -1254,20 +1711,40 @@ if(selftest){
   var pv = /[?&]preview=([a-z]+)/.exec(location.search);
   if(pv){
     if(/[?&]mode=teacher/.test(location.search)) mode = 'teacher';
-    bump();
-    ended = false; paused = false; hearts = 3; loot = 0; index = 0; taughtMid = false;
+    $('togSound').checked = false;
     soundOn = false;
     var kind = pv[1];
-    if(kind === 'where') queue = [makeWhere({place:'青草地', theme:'meadow', north:1, goalDir:5, goalName:'寶箱', goalIcon:'chest'})];
-    else if(kind === 'path') queue = [makePath({place:'花園徑', theme:'garden', map:'garden', north:6, prefer:['寶箱'], route:{from:'gate', via:'pond', to:'chest', d1:0, d2:2}})];
-    else if(kind === 'town') queue = [makePath({place:'小社區', theme:'town', map:'town', north:1, route:{from:'station', via:'kg', to:'home', d1:5, d2:3}})];
-    else if(kind === 'turn') queue = [makeTurn({place:'大樹下', facing:3, left:true, n:3, north:2})];
-    else if(kind === 'compass') queue = [makeCompass({place:'露營角', trap:false, north:1, dial:3, objectDir:5})];
-    else if(kind === 'trap') queue = [makeCompass({place:'觀景台', trap:true, north:6, dial:2, objectDir:3})];
-    else queue = buildAdventure();
-    $('modeTag').textContent = mode === 'teacher' ? '老師' : '學生';
-    show('play');
-    showStage();
+    if(kind === 'bridge'){
+      show('bridge');
+    } else if(kind === 'rose'){
+      var nm = /[?&]north=(\d)/.exec(location.search);
+      var n0 = nm ? ((+nm[1]) % 8) : 6;
+      var seq = [n0];
+      for(var k = 0; k < 8 && seq.length < 4; k++) if(seq.indexOf(k) < 0) seq.push(k);
+      startRose(seq);
+      var pm = /[?&]placed=(\d)/.exec(location.search);
+      if(pm){
+        var pd = +pm[1];
+        if(pd >= 1 && pd <= 7){
+          tryPlace(pd, pd);
+          renderRose();
+          setRoseFeedback('放對了！' + DIRS[pd] + '放好了。', 'ok');
+        }
+      }
+    } else {
+      bump();
+      ended = false; paused = false; hearts = 3; loot = 0; index = 0; taughtMid = false;
+      if(kind === 'where') queue = [makeWhere({place:'青草地', theme:'meadow', north:1, goalDir:5, goalName:'寶箱', goalIcon:'chest'})];
+      else if(kind === 'path') queue = [makePath({place:'花園徑', theme:'garden', map:'garden', north:6, prefer:['寶箱'], route:{from:'gate', via:'pond', to:'chest', d1:0, d2:2}})];
+      else if(kind === 'town') queue = [makePath({place:'小社區', theme:'town', map:'town', north:1, route:{from:'station', via:'kg', to:'home', d1:5, d2:3}})];
+      else if(kind === 'turn') queue = [makeTurn({place:'大樹下', facing:3, left:true, n:3, north:2})];
+      else if(kind === 'compass') queue = [makeCompass({place:'露營角', trap:false, north:1, dial:3, objectDir:5})];
+      else if(kind === 'trap') queue = [makeCompass({place:'觀景台', trap:true, north:6, dial:2, objectDir:3})];
+      else queue = buildAdventure();
+      $('modeTag').textContent = mode === 'teacher' ? '老師' : '學生';
+      show('play');
+      showStage();
+    }
   }
 }
 })();
