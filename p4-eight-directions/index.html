@@ -6,144 +6,166 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="robots" content="noindex">
-<title>八個方向</title>
+<meta name="theme-color" content="#c9f2ff">
+<title>八方探險</title>
 <style>
 :root{
   --vh:100vh;
   --ink:#1c3d4e;
   --muted:#5d7380;
-  --card:#fff;
   --teal:#0f9d8a;
   --teal-d:#0b7568;
   --red:#d62828;
-  --sun:#f59e0b;
-  --sky:#3b82f6;
+  --gold:#f5b301;
   --shadow:#b7d8cf;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;overflow:hidden;background:#e7f7f2;color:var(--ink);
+html,body{margin:0;height:100%;background:#dff6ea;color:var(--ink);
   font-family:"PingFang HK","PingFang TC","Noto Sans CJK HK","Noto Sans CJK TC","Microsoft JhengHei","Heiti TC",sans-serif;
   -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation;-webkit-text-size-adjust:100%}
-button{font-family:inherit;touch-action:manipulation;cursor:pointer;border:none;color:inherit;background:none;padding:0}
+button,img{font-family:inherit;touch-action:manipulation}
+button{cursor:pointer;border:none;color:inherit;background:none;padding:0}
 button:focus-visible{outline:4px solid var(--teal);outline-offset:3px}
-.screen{position:fixed;left:0;top:0;width:100%;height:var(--vh);display:none;flex-direction:column;overflow:hidden}
+.screen{position:fixed;inset:0;width:100%;height:var(--vh);display:none;flex-direction:column;overflow:hidden}
 .screen.on{display:flex}
 
-#start{overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;align-items:center;
+#start{overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;align-items:center;
   background:
-    radial-gradient(circle at 12% 0, #fff 0, transparent 28%),
-    radial-gradient(circle at 100% 8%, #ffe7c2 0, transparent 26%),
-    linear-gradient(165deg,#e5f8ff 0%,#e7f7f2 46%,#fff4e4 100%)}
-.startInner{width:min(1080px,94vw);margin:auto;padding:16px 0 28px;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2vmin,18px)}
-.hero{display:flex;align-items:center;gap:14px}
-.hero svg{width:clamp(72px,12vmin,108px);height:auto;flex:none}
-h1.title{margin:0;font-size:clamp(32px,6vmin,64px);font-weight:900;letter-spacing:2px;text-align:center;line-height:1.15}
-.sub{margin:0;font-size:clamp(16px,2.8vmin,26px);text-align:center;color:var(--muted);line-height:1.45;font-weight:700}
-.modes{display:flex;gap:clamp(10px,2vmin,20px);width:100%}
-.mode{flex:1 1 0;background:var(--card);border-radius:22px;padding:clamp(12px,2vmin,22px);box-shadow:0 6px 0 var(--shadow);border:5px solid transparent;text-align:center;min-height:90px}
+    radial-gradient(circle at 8% 0,#fff 0,transparent 28%),
+    radial-gradient(circle at 100% 0,#ffe7a8 0,transparent 26%),
+    linear-gradient(180deg,#c9f4ff 0%,#e5fbe7 42%,#fff6d4 100%)}
+.startInner{width:min(1080px,94vw);margin:auto;padding:18px 0 28px;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2vmin,16px)}
+.hero{display:flex;align-items:center;gap:16px}
+.heroImg{width:clamp(92px,16vmin,140px);height:clamp(92px,16vmin,140px);border-radius:50%;object-fit:cover;background:#fff;border:4px solid #fff;box-shadow:0 8px 0 #f3b7d0}
+h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2px;line-height:1.1}
+.sub{margin:0;font-size:clamp(16px,2.6vmin,26px);font-weight:800;color:var(--muted);text-align:center;line-height:1.4}
+.modes{display:flex;gap:clamp(10px,2vmin,18px);width:100%}
+.mode{flex:1;background:#fff;border-radius:22px;padding:clamp(12px,2vmin,20px);box-shadow:0 6px 0 var(--shadow);border:5px solid transparent;text-align:center;min-height:96px}
 .mode.sel{border-color:#ff9f1c;background:#fffbea}
-.mode .mi{font-size:clamp(32px,5.5vmin,56px);line-height:1.1}
-.mode .mt{font-size:clamp(22px,3.8vmin,40px);font-weight:900;margin:.1em 0}
-.mode .md{font-size:clamp(14px,2.2vmin,22px);line-height:1.35;color:var(--muted);font-weight:700}
-.infoCard{width:100%;background:#fff;border-radius:20px;padding:14px 18px;box-shadow:0 4px 0 var(--shadow);font-size:clamp(15px,2.4vmin,22px);font-weight:700;line-height:1.55;color:#243044;text-align:left}
-.infoCard strong{color:var(--teal-d)}
-.toggles{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
-.toggle{display:flex;align-items:center;gap:8px;background:#fff;padding:8px 16px;border-radius:16px;box-shadow:0 3px 0 var(--shadow);font-size:clamp(15px,2.4vmin,22px);font-weight:800}
+.mode .mi{font-size:clamp(30px,5vmin,48px);line-height:1}
+.mode .mt{font-size:clamp(22px,3.6vmin,36px);font-weight:900;margin:.12em 0}
+.mode .md{font-size:clamp(14px,2.1vmin,20px);line-height:1.35;color:var(--muted);font-weight:800}
+.tip{width:100%;background:#fff;border-radius:18px;padding:12px 16px;box-shadow:0 4px 0 var(--shadow);font-size:clamp(16px,2.5vmin,24px);font-weight:800;line-height:1.5;text-align:center}
+.tip strong{color:var(--red)}
+.toggles{display:flex;gap:12px}
+.toggle{display:flex;align-items:center;gap:8px;background:#fff;padding:8px 16px;border-radius:16px;box-shadow:0 3px 0 var(--shadow);font-size:clamp(16px,2.3vmin,22px);font-weight:800}
 .toggle input{width:22px;height:22px;accent-color:var(--teal)}
-.bigbtn{min-width:220px;min-height:clamp(64px,10vmin,96px);padding:0 32px;border-radius:999px;background:#ff8a3d;color:#fff;font-size:clamp(24px,4.6vmin,46px);font-weight:900;box-shadow:0 7px 0 #d2651c;letter-spacing:2px}
-.bigbtn:active,.iconbtn:active,.mode:active,.choice:active,.tbtn:active{transform:translateY(3px)}
+.bigbtn{min-width:min(280px,86vw);min-height:clamp(64px,10vmin,92px);padding:0 28px;border-radius:999px;background:#ff8a3d;color:#fff;font-size:clamp(24px,4.2vmin,42px);font-weight:900;box-shadow:0 7px 0 #d2651c;letter-spacing:2px}
 .bigbtn.green{background:var(--teal);box-shadow:0 7px 0 var(--teal-d)}
-.bigbtn.blue{background:var(--sky);box-shadow:0 7px 0 #1e56b5}
-.bigbtn:disabled{opacity:.45;transform:none}
-.note{font-size:clamp(13px,2vmin,18px);color:#6d838c;text-align:center;font-weight:700}
+.bigbtn.blue{background:#3b82f6;box-shadow:0 7px 0 #1e56b5}
+.bigbtn:active,.mode:active,.dir:active,.spinBtn:active,.tbtn:active{transform:translateY(3px)}
+.bigbtn:disabled,.tbtn:disabled{opacity:.45;transform:none}
+.note{font-size:clamp(13px,2vmin,18px);color:#5d7380;text-align:center;font-weight:800;line-height:1.45}
 .note a{color:var(--teal-d);font-weight:900}
-.startFoot{display:flex;align-items:center;gap:12px;background:#fff;border-radius:18px;padding:8px 12px 8px 8px;box-shadow:0 4px 0 var(--shadow)}
-.startFoot img{width:86px;height:86px;display:block;border-radius:8px}
-.startFoot span{font-size:clamp(13px,2vmin,16px);font-weight:800;color:var(--muted);line-height:1.4;text-align:left}
+.startFoot{display:flex;align-items:center;gap:12px;background:#fff;border-radius:18px;padding:8px 14px 8px 8px;box-shadow:0 4px 0 var(--shadow)}
+.startFoot img{width:86px;height:86px;border-radius:8px}
+.startFoot span{font-size:clamp(13px,2vmin,16px);font-weight:800;color:var(--muted);line-height:1.4}
 .startFoot a{color:var(--teal-d);text-decoration:none}
 
-#tip{align-items:center;justify-content:center;background:rgba(20,60,70,.45);z-index:20}
-.tipCard{width:min(720px,94vw);max-height:calc(var(--vh) - 24px);overflow:auto;background:#fff;border-radius:28px;padding:clamp(18px,3vmin,32px);box-shadow:0 12px 40px rgba(0,0,0,.25);text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(8px,1.6vmin,14px)}
-.tipEmoji{width:clamp(68px,11vmin,100px);height:clamp(68px,11vmin,100px);border-radius:28px;display:flex;align-items:center;justify-content:center;
-  font-size:clamp(34px,6vmin,56px);background:linear-gradient(160deg,#ff8a8a,#d62828);box-shadow:0 6px 0 #9d1c1c}
-.tipTitle{margin:0;font-size:clamp(26px,4.6vmin,44px);font-weight:900}
-.tipRule{background:#e7f7f2;border-radius:18px;padding:12px 16px;font-size:clamp(16px,2.8vmin,26px);font-weight:800;color:#0b7568;line-height:1.55;width:100%;text-align:left}
-.tipHow{font-size:clamp(15px,2.4vmin,22px);color:var(--muted);font-weight:700;line-height:1.45;text-align:left;width:100%}
-
-#play{background:linear-gradient(180deg,#d9f4ff 0%,#e7f7f2 42%,#fff6e8 100%)}
-.topbar{flex:none;display:flex;align-items:center;gap:8px;padding:8px 10px 4px;flex-wrap:wrap;z-index:5}
-.iconbtn{min-width:54px;height:54px;border-radius:16px;background:#fff;box-shadow:0 4px 0 var(--shadow);font-size:26px;display:flex;align-items:center;justify-content:center}
-.pill{font-size:clamp(15px,2.4vmin,24px);font-weight:800;background:#fff;padding:6px 12px;border-radius:999px;white-space:nowrap;box-shadow:0 3px 0 var(--shadow)}
-#hearts{letter-spacing:2px;background:#ffe8e8;color:#c62828}
-#scorePill{background:#e5f8ea;color:#0b7568}
-#qPill{background:#fff4d6;color:#8a5a00}
-#modeTag{font-size:clamp(13px,2vmin,20px);background:#e7f0ff;color:#1e56b5}
+#play{background:linear-gradient(180deg,#d7f4ff 0%,#e7f8ea 48%,#fff6df 100%)}
+.topbar{flex:none;display:flex;align-items:center;gap:8px;padding:8px 10px 4px;flex-wrap:wrap}
+.iconbtn{min-width:52px;height:52px;border-radius:16px;background:#fff;box-shadow:0 4px 0 var(--shadow);font-size:26px;display:flex;align-items:center;justify-content:center}
+.pill{font-size:clamp(16px,2.4vmin,22px);font-weight:900;background:#fff;padding:6px 12px;border-radius:999px;box-shadow:0 3px 0 var(--shadow);white-space:nowrap}
+#hearts{letter-spacing:1px;background:#ffe8e8}
+.heart{color:#e23b4a}
+.heart.off{color:#efc7cc}
+#loot{background:#fff6d8;color:#9a6700}
+#modeTag{background:#e7f0ff;color:#1e56b5;font-size:clamp(13px,2vmin,18px)}
+.trail{display:flex;gap:5px;align-items:center;background:#fff;padding:8px 10px;border-radius:999px;box-shadow:0 3px 0 var(--shadow)}
+.dot{width:12px;height:12px;border-radius:50%;background:#d5e4ea;display:block}
+.dot.now{width:16px;height:16px;background:#ff8a3d}
+.dot.ok{background:#f5b301}
+.dot.miss{background:#f3b4b4}
+.dot.show{background:#8eb6f5}
 .spacer{flex:1}
-
-#playWrap{position:relative;flex:1 1 auto;display:flex;flex-direction:column;min-height:0;overflow:hidden}
-.playMain{flex:1 1 auto;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px 12px 10px}
-.prompt{width:min(980px,96vw);font-size:clamp(20px,3.4vmin,38px);font-weight:900;text-align:center;line-height:1.35;color:#1c3d4e}
-.warn{display:none;width:min(920px,96vw);background:#fff4d6;color:#8a5a00;border-radius:14px;padding:8px 12px;font-weight:800;text-align:center;font-size:clamp(15px,2.3vmin,22px);line-height:1.4}
-.warn.on{display:block}
-.sceneCard{width:min(96vw,720px);background:#fff;border-radius:28px;box-shadow:0 6px 0 var(--shadow);padding:8px 8px 6px}
-.scene{width:auto;height:auto;max-width:100%;max-height:min(42vh,460px);display:block;margin:0 auto}
-.scene text{font-family:"PingFang HK","PingFang TC","Noto Sans CJK HK","Microsoft JhengHei",sans-serif;font-weight:800}
-.dirLabel{font-size:22px;fill:#1c3d4e;paint-order:stroke fill;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
-.smallLab{font-size:18px}
-.northLab{fill:#d62828;font-size:24px}
-.blankText{font-size:20px;fill:#0f9d8a;stroke:none}
-.placeName{font-size:18px;fill:#1c3d4e;paint-order:stroke fill;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
-.stepNum{font-size:16px;fill:#fff;font-weight:900;stroke:none}
-.turnCount{font-size:18px;fill:#b45309}
-.blankBox{fill:#e7fffb;stroke:#0f9d8a;stroke-width:3;stroke-dasharray:6 4}
-.blankBox.focus{stroke:#f59e0b;fill:#fff6dd;stroke-dasharray:0}
-.blankBox.filled{stroke:#0f9d8a;fill:#fff;stroke-dasharray:0}
-.blankBox.solved{fill:#e5f8ea;stroke:#1f9d55;stroke-dasharray:0}
-.blankBox.pulse{animation:pulse 1.15s ease-in-out infinite}
-.blankHit{cursor:pointer}
-@keyframes pulse{0%,100%{stroke-opacity:1}50%{stroke-opacity:.35}}
-.caption{min-height:1.3em;text-align:center;font-weight:800;color:#5d7380;font-size:clamp(14px,2.1vmin,20px);padding:2px 6px 4px}
-.choices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;width:min(920px,96vw)}
-.choices.few,.choices.pairs{grid-template-columns:repeat(2,minmax(0,1fr));width:min(720px,96vw)}
-.choice{min-height:clamp(58px,8vmin,84px);border-radius:18px;background:#fff;box-shadow:0 4px 0 #b7d0ea;border:4px solid transparent;font-size:clamp(20px,3.2vmin,32px);font-weight:900;color:#1c3d4e}
-.choices.pairs .choice{font-size:clamp(18px,2.8vmin,30px)}
-.choice:disabled{cursor:default}
-.choice.ok{background:#dff8ea;border-color:#1f9d55;box-shadow:0 4px 0 #1f9d55}
-.choice.bad{background:#ffe4e4;border-color:#e23b3b;box-shadow:0 4px 0 #e23b3b;animation:shake .35s}
-.choice.reveal{background:#fff6d8;border-color:#e0a106;box-shadow:0 4px 0 #e0a106}
-.choice.ok::after{content:" ✓"}
-.choice.bad::after{content:" ✗"}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.feedback{min-height:2.4em;width:min(920px,96vw);font-size:clamp(16px,2.6vmin,26px);font-weight:900;text-align:center;line-height:1.4}
+.playBody{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;padding:0 10px 8px}
+.mapCol{flex:1 1 46%;min-height:0;display:flex;flex-direction:column;align-items:center;gap:4px}
+.placeBanner{font-size:clamp(22px,3.4vmin,36px);font-weight:900;letter-spacing:1px;line-height:1.2;text-align:center}
+.mapCard{position:relative;width:min(100%,920px);flex:1;min-height:0;background:#fff;border-radius:28px;box-shadow:0 6px 0 var(--shadow);overflow:hidden;display:flex}
+.scene{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+.scene svg{width:100%;height:100%;display:block}
+.scene svg text{font-family:"PingFang HK","PingFang TC","Noto Sans CJK HK","Microsoft JhengHei",sans-serif}
+.placeName{font-size:24px;font-weight:900;fill:#1c3d4e;paint-order:stroke fill;stroke:#fff;stroke-width:5px;stroke-linejoin:round}
+.northLab{font-size:28px;font-weight:900;fill:#d62828;paint-order:stroke fill;stroke:#fff;stroke-width:5px}
+.dirTag{font-size:24px;font-weight:900;fill:#8a5a00;paint-order:stroke fill;stroke:#fff;stroke-width:5px}
+.caption{margin:0;min-height:1.3em;font-size:clamp(14px,2.1vmin,20px);font-weight:800;color:#5d7380;text-align:center}
+.cheer{position:absolute;left:50%;top:8%;transform:translateX(-50%) scale(.6);opacity:0;pointer-events:none;
+  background:#fff;border-radius:999px;padding:8px 18px;font-size:clamp(26px,4.6vmin,44px);font-weight:900;
+  box-shadow:0 6px 0 #d7efe4;white-space:nowrap;z-index:3}
+.cheer.on{animation:cheer .45s ease forwards}
+.cheer.good{color:#0b7568}
+.cheer.bad{color:#d62828;box-shadow:0 6px 0 #f3c1c1}
+.mapCard.shake{animation:shake .42s ease}
+@keyframes cheer{0%{opacity:0;transform:translateX(-50%) scale(.6)}60%{opacity:1;transform:translateX(-50%) scale(1.06)}100%{opacity:1;transform:translateX(-50%) scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.controls{flex:none;display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
+.prompt{margin:0;width:min(640px,100%);text-align:center;font-size:clamp(22px,3.4vmin,40px);font-weight:900;line-height:1.35}
+.subprompt{margin:0;min-height:1.3em;width:min(640px,100%);text-align:center;font-size:clamp(15px,2.3vmin,22px);font-weight:800;color:#5d7380;line-height:1.35}
+.spinRow{display:none;gap:10px;width:min(640px,100%)}
+.spinRow.on{display:flex}
+.spinBtn{flex:1;min-height:clamp(58px,8vmin,80px);border-radius:18px;background:#fff;box-shadow:0 5px 0 #f0c36a;border:4px solid #ffd56a;font-size:clamp(20px,3vmin,30px);font-weight:900}
+.spinBtn:disabled{opacity:.4}
+.pad{width:min(640px,100%);display:grid;grid-template-columns:repeat(3,1fr);grid-template-areas:"nw n ne" "w mid e" "sw s se";gap:8px}
+.dir{grid-area:auto;min-height:clamp(60px,10vmin,96px);border-radius:18px;background:#fff;box-shadow:0 5px 0 #c5d7ea;border:4px solid transparent;font-size:clamp(26px,4.2vmin,42px);font-weight:900;color:#1c3d4e}
+.dir[data-d="0"]{grid-area:n;color:#d62828}
+.dir[data-d="1"]{grid-area:ne}
+.dir[data-d="2"]{grid-area:e}
+.dir[data-d="3"]{grid-area:se}
+.dir[data-d="4"]{grid-area:s}
+.dir[data-d="5"]{grid-area:sw}
+.dir[data-d="6"]{grid-area:w}
+.dir[data-d="7"]{grid-area:nw}
+.mid{grid-area:mid;display:grid;place-items:center}
+.mid img{width:clamp(48px,8vmin,72px);height:clamp(48px,8vmin,72px);border-radius:50%;object-fit:cover;background:#ffe4f0;pointer-events:none}
+.dir:disabled{opacity:.42}
+.dir.ok,.dir.bad,.dir.reveal{opacity:1}
+.dir.ok{background:#dff8ea;border-color:#1f9d55;box-shadow:0 5px 0 #1f9d55}
+.dir.bad{background:#ffe4e4;border-color:#e23b3b;box-shadow:0 5px 0 #e23b3b}
+.dir.reveal{background:#fff6d8;border-color:#e0a106;box-shadow:0 5px 0 #e0a106}
+.feedback{margin:0;min-height:2.4em;width:min(640px,100%);text-align:center;font-size:clamp(16px,2.5vmin,24px);font-weight:900;line-height:1.35}
 .feedback.ok{color:#0b7568}
 .feedback.bad{color:#d62828}
 .feedback.hint{color:#5d7380}
-
-.nextRow{display:none;justify-content:center;gap:10px;padding:2px 10px 6px;position:relative;z-index:14;flex:none}
-.nextRow.on{display:flex}
-.teachBar{flex:none;display:none;justify-content:center;gap:12px;padding:4px 10px 10px;flex-wrap:wrap;position:relative;z-index:14}
+.teachBar{flex:none;display:none;justify-content:center;gap:10px;padding:0 10px 10px;flex-wrap:wrap}
 .teachBar.on{display:flex}
-.tbtn{min-height:52px;padding:0 20px;border-radius:16px;background:#fff;box-shadow:0 4px 0 var(--shadow);font-size:clamp(16px,2.6vmin,24px);font-weight:800}
-.tbtn:disabled{opacity:.4}
-.pausedOverlay{position:absolute;inset:0;background:rgba(20,50,60,.55);z-index:15;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px}
-.pausedOverlay.on{display:flex}
-.pausedOverlay .pt{font-size:clamp(32px,6vmin,56px);font-weight:900;color:#fff;text-shadow:0 3px 8px rgba(0,0,0,.3)}
+.tbtn{min-height:52px;padding:0 18px;border-radius:16px;background:#fff;box-shadow:0 4px 0 var(--shadow);font-size:clamp(16px,2.5vmin,22px);font-weight:900}
+.paused{position:absolute;inset:0;background:rgba(20,50,60,.55);z-index:8;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.paused.on{display:flex}
+.paused .pt{font-size:clamp(32px,6vmin,56px);font-weight:900;color:#fff;text-shadow:0 3px 8px rgba(0,0,0,.3)}
 
-#end{align-items:center;justify-content:center;background:linear-gradient(160deg,#e5f8ff 0%,#fff4d6 48%,#ffe0ea 100%)}
-.endInner{text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(12px,2.5vmin,26px);padding:20px}
-.endStars{font-size:clamp(44px,9vmin,96px);letter-spacing:6px}
-.endTitle{font-size:clamp(32px,6.5vmin,68px);font-weight:900;margin:0}
-.endScore{font-size:clamp(22px,3.8vmin,40px);font-weight:800;color:#5d7380}
-.endDetail{font-size:clamp(16px,2.6vmin,26px);color:#5d7380;font-weight:700;line-height:1.5}
-.endBtns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+#end{align-items:center;justify-content:center;overflow:auto;
+  background:linear-gradient(160deg,#d7f4ff 0%,#fff6d4 50%,#ffe3ef 100%)}
+.endInner{text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2vmin,18px);padding:20px}
+.endDog{width:clamp(96px,16vmin,140px);height:clamp(96px,16vmin,140px);border-radius:50%;object-fit:cover;background:#fff;border:4px solid #fff;box-shadow:0 8px 0 #f3b7d0}
+.endStars{font-size:clamp(42px,8vmin,84px);letter-spacing:8px;color:#f5b301;line-height:1}
+.endTitle{margin:0;font-size:clamp(32px,6vmin,60px);font-weight:900}
+.endScore{font-size:clamp(20px,3.4vmin,34px);font-weight:900;color:#9a6700}
+.endDetail{font-size:clamp(16px,2.5vmin,24px);font-weight:800;color:#5d7380;line-height:1.45}
+.endBtns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 
-@media (max-height:640px){
-  .scene{max-height:min(34vh,280px)}
+@media (min-width:980px) and (min-height:560px){
+  .playBody{flex-direction:row;align-items:stretch;gap:12px;padding:0 16px 10px}
+  .mapCol{flex:1.15}
+  .controls{flex:0.9;justify-content:center}
+}
+@media (max-height:760px){
+  .startInner{gap:8px;padding:8px 0 12px}
+  .heroImg{width:84px;height:84px}
+  h1{font-size:40px}
+  .mode{min-height:0;padding:8px 10px}
+  .mode .mt{font-size:26px}
+  .tip{padding:8px 12px}
+  .bigbtn{min-height:58px}
+  .startFoot img{width:72px;height:72px}
+}
+@media (max-height:680px){
   .iconbtn{min-width:46px;height:46px}
-  .choice{min-height:52px}
+  .dir{min-height:54px;font-size:22px}
+  .heroImg{width:72px;height:72px}
 }
 @media (prefers-reduced-motion:reduce){
-  .blankBox.pulse,.choice.bad{animation:none}
+  .mapCard.shake,.cheer.on,.heroImg{animation:none}
+  .cheer.on{opacity:1;transform:translateX(-50%)}
 }
 </style>
 </head>
@@ -151,58 +173,32 @@ h1.title{margin:0;font-size:clamp(32px,6vmin,64px);font-weight:900;letter-spacin
 <div id="start" class="screen on">
   <div class="startInner">
     <div class="hero">
-      <svg viewBox="0 0 88 88" aria-hidden="true">
-        <circle cx="44" cy="44" r="40" fill="#fff" stroke="#1c3d4e" stroke-width="6"/>
-        <polygon points="44,10 52,46 44,40 36,46" fill="#d62828"/>
-        <polygon points="44,78 36,46 44,52 52,46" fill="#d5dde6"/>
-        <circle cx="44" cy="44" r="5" fill="#1c3d4e"/>
-      </svg>
-      <h1 class="title">八個方向</h1>
+      <img class="heroImg" src="assets/mascot-q.png" width="512" height="512" alt="白色小狗探險家">
+      <div>
+        <h1>八方探險</h1>
+        <p class="sub">帶小狗行地圖、一路尋寶</p>
+      </div>
     </div>
-    <p class="sub">小四 · 方向（一）（二） · 點選答案</p>
-
     <div class="modes">
       <button type="button" class="mode sel" id="modeStudent">
         <div class="mi">🧒</div>
         <div class="mt">學生模式</div>
-        <div class="md">自己點選答案<br>即時知道對錯</div>
+        <div class="md">自己點方向<br>即時知道對錯</div>
       </button>
       <button type="button" class="mode" id="modeTeacher">
         <div class="mi">👩‍🏫</div>
         <div class="mt">老師模式</div>
-        <div class="md">投影全班<br>可暫停、顯示答案</div>
+        <div class="md">投影全班<br>可暫停、顯示方向</div>
       </button>
     </div>
-
-    <div class="infoCard">
-      <strong>點樣玩：</strong>每局 10 題 · 3 顆心 · 剩下的心就是星星。<br>
-      方向玫瑰、地圖「甲在乙的哪一方」、轉向直角、指南針紅針、沿路兩段方向。
-    </div>
-
-    <div class="toggles">
-      <label class="toggle"><input type="checkbox" id="togSound" checked> 音效</label>
-    </div>
-
-    <button type="button" class="bigbtn" id="btnStart">開始！</button>
-    <p class="note">小四 · 八個方向 · 只需點選，不會彈出鍵盤 · <a href="../">返教學小遊戲</a></p>
+    <p class="tip">紅針永遠指住<strong>北方</strong>。北不一定在上面。點八個方向，帶小狗去尋寶！</p>
+    <label class="toggle"><input type="checkbox" id="togSound" checked> 音效</label>
+    <button type="button" class="bigbtn" id="btnStart">出發！</button>
+    <p class="note">小四 · 八個方向：北、東北、東、東南、南、西南、西、西北<br><a href="../">返教學小遊戲</a></p>
     <div class="startFoot">
-      <img src="qrcode.png" width="86" height="86" alt="八個方向遊戲網址二維碼">
-      <span>平板掃碼開啟<br><a href="https://sinosee.github.io/p4-eight-directions/">sinosee.github.io/<br>p4-eight-directions</a></span>
+      <img src="qrcode.png" width="86" height="86" alt="八方探險遊戲網址二維碼">
+      <span>平板掃碼，一起探險<br><a href="https://sinosee.github.io/p4-eight-directions/">sinosee.github.io/<br>p4-eight-directions</a></span>
     </div>
-  </div>
-</div>
-
-<div id="tip" class="screen">
-  <div class="tipCard">
-    <div class="tipEmoji" aria-hidden="true">🧭</div>
-    <h2 class="tipTitle">方向小提示</h2>
-    <div class="tipRule">
-      四個主要方向：東、南、西、北；其餘四個夾在中間。<br>
-      紅色指針總是指向北方。<br>
-      指南針方向不隨人轉身而變（左／右會變）。
-    </div>
-    <p class="tipHow">向左轉或向右轉一個直角（90°），沿八個方向跳兩格。北不一定在圖的上方，先找紅針或紅色「北」。</p>
-    <button type="button" class="bigbtn green" id="btnTipGo">明白，開始！</button>
   </div>
 </div>
 
@@ -210,46 +206,61 @@ h1.title{margin:0;font-size:clamp(32px,6vmin,64px);font-weight:900;letter-spacin
   <div class="topbar">
     <button type="button" class="iconbtn" id="btnHome" aria-label="回主選單">🏠</button>
     <button type="button" class="iconbtn" id="btnPause" aria-label="暫停">⏸️</button>
-    <span class="pill" id="hearts">❤️❤️❤️</span>
-    <span class="pill" id="scorePill">對 0</span>
-    <span class="pill" id="qPill">第 1／10 題</span>
+    <span class="pill" id="hearts" aria-label="生命"></span>
+    <span class="pill" id="loot">★ 0</span>
+    <div class="trail" id="trail" aria-label="探險進度"></div>
     <span class="spacer"></span>
     <span class="pill" id="modeTag">學生</span>
   </div>
-  <div id="playWrap">
-    <div class="playMain">
-      <div class="prompt" id="prompt"></div>
-      <div class="warn" id="warn"></div>
-      <div class="sceneCard">
-        <div id="scene"></div>
-        <div class="caption" id="caption"></div>
+  <div class="playBody">
+    <div class="mapCol">
+      <div class="placeBanner" id="placeBanner">青草地</div>
+      <div class="mapCard" id="mapCard">
+        <div class="scene" id="scene"></div>
+        <div class="cheer" id="cheer"></div>
       </div>
-      <div class="choices" id="choices"></div>
-      <div class="feedback hint" id="feedback" role="status">點選答案。</div>
+      <p class="caption" id="caption"></p>
     </div>
-    <div class="nextRow" id="nextRow">
-      <button type="button" class="bigbtn blue" id="btnCheck">檢查</button>
-      <button type="button" class="bigbtn green" id="btnNext">下一題 ▶</button>
+    <div class="controls">
+      <p class="prompt" id="prompt"></p>
+      <p class="subprompt" id="subprompt"></p>
+      <div class="spinRow" id="spinRow">
+        <button type="button" class="spinBtn" id="btnRotL">↺ 轉左</button>
+        <button type="button" class="spinBtn" id="btnRotR">轉右 ↻</button>
+      </div>
+      <div class="pad" id="pad">
+        <button type="button" class="dir" data-d="7">西北</button>
+        <button type="button" class="dir" data-d="0">北</button>
+        <button type="button" class="dir" data-d="1">東北</button>
+        <button type="button" class="dir" data-d="6">西</button>
+        <div class="mid"><img src="assets/mascot-q.png" width="72" height="72" alt=""></div>
+        <button type="button" class="dir" data-d="2">東</button>
+        <button type="button" class="dir" data-d="5">西南</button>
+        <button type="button" class="dir" data-d="4">南</button>
+        <button type="button" class="dir" data-d="3">東南</button>
+      </div>
+      <p class="feedback hint" id="feedback" role="status">點一個方向。</p>
     </div>
-    <div class="teachBar" id="teachBar">
-      <button type="button" class="tbtn" id="btnReveal">顯示答案</button>
-      <button type="button" class="tbtn" id="btnTeachNext">下一題</button>
-    </div>
-    <div class="pausedOverlay" id="pausedOverlay">
-      <div class="pt">暫停中</div>
-      <button type="button" class="bigbtn" id="btnResume">繼續</button>
-    </div>
+  </div>
+  <div class="teachBar" id="teachBar">
+    <button type="button" class="tbtn" id="btnReveal">顯示方向</button>
+    <button type="button" class="tbtn" id="btnTeachNext">下一關</button>
+  </div>
+  <div class="paused" id="paused">
+    <div class="pt">暫停探險</div>
+    <button type="button" class="bigbtn" id="btnResume">繼續</button>
   </div>
 </div>
 
 <div id="end" class="screen">
   <div class="endInner">
-    <div class="endStars" id="endStars">⭐⭐⭐</div>
-    <h2 class="endTitle" id="endTitle">完成！</h2>
-    <div class="endScore" id="endScore">答對 0 題</div>
+    <img class="endDog" src="assets/mascot-q.png" width="512" height="512" alt="">
+    <div class="endStars" id="endStars">★★★</div>
+    <h2 class="endTitle" id="endTitle">探險完成！</h2>
+    <div class="endScore" id="endScore">搵到 0 份寶藏</div>
     <div class="endDetail" id="endDetail"></div>
     <div class="endBtns">
-      <button type="button" class="bigbtn green" id="btnAgain">再玩一次</button>
+      <button type="button" class="bigbtn green" id="btnAgain">再去探險</button>
       <button type="button" class="bigbtn blue" id="btnMenu">主選單</button>
     </div>
   </div>
@@ -259,99 +270,67 @@ h1.title{margin:0;font-size:clamp(32px,6vmin,64px);font-weight:900;letter-spacin
 (function(){
 'use strict';
 
-/* 八個方向，由北起順時針。句子才加「方」，方向名本身不加。 */
+/* 方向名只用課本八個：北、東北、東、東南、南、西南、西、西北。
+   句子才加「方」。紅針＝北方。一個直角＝順時針兩格＝90°。 */
 var DIRS = ['北','東北','東','東南','南','西南','西','西北'];
-var PLACES = [
-  {name:'公園', icon:'park'},
-  {name:'街市', icon:'market'},
-  {name:'鐵路站', icon:'station'},
-  {name:'圖書館', icon:'library'},
-  {name:'學校', icon:'school'},
-  {name:'商場', icon:'mall'},
-  {name:'幼稚園', icon:'kg'},
-  {name:'巴士站', icon:'bus'},
-  {name:'餐廳', icon:'food'},
-  {name:'遊樂場', icon:'play'}
-];
-var PEOPLE = [
-  {name:'仲謙', color:'#3b82f6'},
-  {name:'樂怡', color:'#ff7a9c'},
-  {name:'詠桐', color:'#0f9d8a'},
-  {name:'卓楠', color:'#f59e0b'},
-  {name:'諾言', color:'#8b5cf6'}
-];
-var MAPS = [
-  {
+var BETWEEN = {
+  1:'東北在東與北之間。',
+  3:'東南在東與南之間。',
+  5:'西南在西與南之間。',
+  7:'西北在西與北之間。'
+};
+var MAPS = {
+  garden:{
     nodes:[
-      {id:'school', name:'學校', icon:'school', e:0, n:0},
-      {id:'lib', name:'圖書館', icon:'library', e:2, n:0},
-      {id:'park', name:'公園', icon:'park', e:2, n:-2},
-      {id:'market', name:'街市', icon:'market', e:0, n:-2},
-      {id:'station', name:'鐵路站', icon:'station', e:-2, n:0}
+      {id:'gate', name:'入口', icon:'gate', e:0, n:0},
+      {id:'pond', name:'池塘', icon:'pond', e:0, n:2},
+      {id:'flower', name:'花田', icon:'flower', e:2, n:0},
+      {id:'tree', name:'大樹', icon:'tree', e:0, n:-2},
+      {id:'chest', name:'寶箱', icon:'chest', e:2, n:2}
     ],
     edges:[
-      ['school','lib'],['lib','park'],['park','market'],['market','school'],
-      ['station','school'],['station','market']
-    ],
-    routes:[
-      ['school','lib','park'],
-      ['station','school','market'],
-      ['park','market','school'],
-      ['lib','park','market'],
-      ['market','school','lib'],
-      ['market','school','station'],
-      ['lib','school','station']
+      ['gate','pond'],['gate','flower'],['gate','tree'],
+      ['pond','chest'],['flower','chest'],['tree','flower']
     ]
   },
-  {
+  town:{
     nodes:[
-      {id:'kg', name:'幼稚園', icon:'kg', e:-2, n:2},
-      {id:'station', name:'鐵路站', icon:'station', e:2, n:2},
-      {id:'mall', name:'商場', icon:'mall', e:-2, n:0},
-      {id:'home', name:'仲謙家', icon:'home', e:0, n:0},
-      {id:'lib', name:'圖書館', icon:'library', e:-2, n:-2},
-      {id:'market', name:'街市', icon:'market', e:0, n:-2},
-      {id:'park', name:'公園', icon:'park', e:2, n:-2}
+      {id:'kg', name:'幼稚園', icon:'kg', e:0, n:2},
+      {id:'station', name:'鐵路站', icon:'station', e:2, n:4},
+      {id:'home', name:'仲謙家', icon:'home', e:2, n:0},
+      {id:'market', name:'街市', icon:'market', e:4, n:-2},
+      {id:'park', name:'公園', icon:'park', e:6, n:0}
     ],
     edges:[
-      ['kg','station'],['kg','home'],['station','home'],['station','park'],
-      ['mall','home'],['home','park'],['home','market'],['lib','market'],
-      ['lib','home'],['market','park']
-    ],
-    routes:[
-      ['station','kg','home'],
-      ['market','home','station'],
-      ['lib','home','park'],
-      ['mall','home','market'],
-      ['kg','station','park'],
-      ['park','station','kg'],
-      ['lib','market','home'],
-      ['home','station','kg']
+      ['station','kg'],['kg','home'],['home','market'],
+      ['station','park'],['market','park'],['home','park']
     ]
   }
-];
+};
 
-var TOTAL_Q = 10;
 var mode = 'student';
 var soundOn = true;
-var hearts = 3, correct = 0, qIndex = 0, totalQ = TOTAL_Q;
-var paused = false, answered = false;
+var hearts = 3, loot = 0, index = 0;
 var queue = [], cur = null;
-var audioCtx = null, session = 0, endTimer = null;
+var paused = false, busy = false, ended = false, taughtMid = false;
+var session = 0, timer = null, pending = null;
+var audioCtx = null;
+var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function $(id){ return document.getElementById(id); }
 function rand(a,b){ return a + Math.floor(Math.random() * (b - a + 1)); }
-function shuffle(arr){
-  for(var i=arr.length-1;i>0;i--){
-    var j = Math.floor(Math.random()*(i+1));
-    var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
-  }
-  return arr;
-}
+function pick(arr){ return arr[rand(0, arr.length - 1)]; }
+function mod8(n){ return ((n % 8) + 8) % 8; }
+function r1(n){ return Math.round(n * 10) / 10; }
 function esc(s){
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
-function r1(n){ return Math.round(n * 10) / 10; }
+function fang(d){ return DIRS[mod8(d)] + '方'; }
+function gcd(a,b){
+  a = Math.abs(a); b = Math.abs(b);
+  while(b){ var t = a % b; a = b; b = t; }
+  return a || 1;
+}
 function setVH(){
   var h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
   document.documentElement.style.setProperty('--vh', h + 'px');
@@ -361,7 +340,7 @@ window.addEventListener('resize', setVH);
 if(window.visualViewport) window.visualViewport.addEventListener('resize', setVH);
 
 function show(id){
-  ['start','tip','play','end'].forEach(function(s){ $(s).classList.toggle('on', s===id); });
+  ['start','play','end'].forEach(function(s){ $(s).classList.toggle('on', s === id); });
 }
 function beep(freq, dur, type, vol){
   if(!soundOn) return;
@@ -371,7 +350,7 @@ function beep(freq, dur, type, vol){
     var g = audioCtx.createGain();
     o.type = type || 'sine';
     o.frequency.value = freq;
-    g.gain.value = vol || 0.08;
+    g.gain.value = vol || 0.07;
     o.connect(g); g.connect(audioCtx.destination);
     o.start();
     g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + (dur || 0.12));
@@ -381,837 +360,723 @@ function beep(freq, dur, type, vol){
 function beepOk(){
   beep(523, 0.09);
   setTimeout(function(){ beep(659, 0.09); }, 90);
-  setTimeout(function(){ beep(784, 0.14); }, 180);
+  setTimeout(function(){ beep(784, 0.16); }, 180);
 }
-function beepBad(){ beep(180, 0.22, 'sawtooth', 0.06); }
+function beepBad(){ beep(180, 0.22, 'triangle', 0.06); }
+function beepTick(){ beep(740, 0.05, 'sine', 0.05); }
+function later(ms, fn){
+  var s = session;
+  clearTimeout(timer);
+  timer = setTimeout(function(){
+    if(s !== session) return;
+    if(paused){ pending = fn; return; }
+    fn();
+  }, ms);
+}
+function bump(){
+  session++;
+  clearTimeout(timer);
+  pending = null;
+}
 
-function angleToXY(deg, radius){
-  var rad = deg * Math.PI / 180;
+function screenAngle(dir, north){ return mod8(north + dir) * 45; }
+function polar(dir, north, radius){
+  var rad = screenAngle(dir, north) * Math.PI / 180;
   return {x: Math.sin(rad) * radius, y: -Math.cos(rad) * radius};
 }
-function screenAngle(dir, northSteps){
-  return ((northSteps + dir) % 8) * 45;
-}
-function project(e, n, northSteps){
-  var tn = northSteps * Math.PI / 4;
+function project(e, n, north){
+  var tn = north * Math.PI / 4;
   var te = tn + Math.PI / 2;
   return {
     x: e * Math.sin(te) + n * Math.sin(tn),
-    y: -e * Math.cos(te) - n * Math.cos(tn)
+    y: -(e * Math.cos(te) + n * Math.cos(tn))
   };
-}
-function vectorToDir(dx, dy, northSteps){
-  var deg = Math.atan2(dx, -dy) * 180 / Math.PI;
-  if(deg < 0) deg += 360;
-  var rel = deg - northSteps * 45;
-  rel = ((rel % 360) + 360) % 360;
-  return Math.round(rel / 45) % 8;
 }
 function turnDir(facing, left, n){
-  var step = (left ? -2 : 2) * n;
-  return (facing + step + 80) % 8;
+  return mod8(facing + (left ? -2 : 2) * n);
 }
-function placeByName(name){
-  for(var i=0;i<PLACES.length;i++) if(PLACES[i].name===name) return PLACES[i];
-  return PLACES[0];
+function vecDir(de, dn){
+  if(de === 0 && dn === 0) return null;
+  var g = gcd(de, dn);
+  de = Math.round(de / g);
+  dn = Math.round(dn / g);
+  var key = de + ',' + dn;
+  var table = {
+    '0,1':0, '1,1':1, '1,0':2, '1,-1':3,
+    '0,-1':4, '-1,-1':5, '-1,0':6, '-1,1':7
+  };
+  return Object.prototype.hasOwnProperty.call(table, key) ? table[key] : null;
 }
-function personByName(name){
-  for(var i=0;i<PEOPLE.length;i++) if(PEOPLE[i].name===name) return PEOPLE[i];
-  return PEOPLE[0];
-}
-function nodeById(m, id){
-  for(var i=0;i<m.nodes.length;i++) if(m.nodes[i].id===id) return m.nodes[i];
+function edgeDir(a, b){ return vecDir(b.e - a.e, b.n - a.n); }
+function nodeById(map, id){
+  for(var i = 0; i < map.nodes.length; i++) if(map.nodes[i].id === id) return map.nodes[i];
   return null;
 }
-function legDir(m, a, b){
-  var A = nodeById(m, a), B = nodeById(m, b);
-  if(!A || !B) return null;
-  var de = B.e - A.e, dn = B.n - A.n;
-  if(de===0 && dn===0) return null;
-  var se = de===0 ? 0 : (de>0 ? 1 : -1);
-  var sn = dn===0 ? 0 : (dn>0 ? 1 : -1);
-  if(de!==0 && dn!==0 && Math.abs(de)!==Math.abs(dn)) return null;
-  if(se===0 && sn===1) return 0;
-  if(se===1 && sn===1) return 1;
-  if(se===1 && sn===0) return 2;
-  if(se===1 && sn===-1) return 3;
-  if(se===0 && sn===-1) return 4;
-  if(se===-1 && sn===-1) return 5;
-  if(se===-1 && sn===0) return 6;
-  if(se===-1 && sn===1) return 7;
-  return null;
+function nodeName(map, id){
+  var n = nodeById(map, id);
+  return n ? n.name : '';
 }
-function validRoutes(m){
-  if(m.valid) return m.valid;
-  var out = [];
-  for(var i=0;i<m.routes.length;i++){
-    var r = m.routes[i];
-    var d1 = legDir(m, r[0], r[1]);
-    var d2 = legDir(m, r[1], r[2]);
-    if(d1===null || d2===null || d1===d2) continue;
-    out.push({from:r[0], via:r[1], to:r[2], d1:d1, d2:d2});
-  }
-  m.valid = out;
-  return out;
+function twoLegRoutes(map){
+  var adj = {};
+  map.nodes.forEach(function(n){ adj[n.id] = []; });
+  map.edges.forEach(function(e){
+    var a = nodeById(map, e[0]), b = nodeById(map, e[1]);
+    var d1 = edgeDir(a, b), d2 = edgeDir(b, a);
+    if(d1 === null || d2 === null) return;
+    adj[a.id].push({to:b.id, dir:d1});
+    adj[b.id].push({to:a.id, dir:d2});
+  });
+  var routes = [];
+  map.nodes.forEach(function(start){
+    adj[start.id].forEach(function(e1){
+      adj[e1.to].forEach(function(e2){
+        if(e2.to === start.id) return;
+        if(e1.dir === e2.dir) return;
+        routes.push({from:start.id, via:e1.to, to:e2.to, d1:e1.dir, d2:e2.dir});
+      });
+    });
+  });
+  return routes;
 }
-function dirChoices(){
-  var out = [];
-  for(var i=0;i<8;i++) out.push({key:String(i), label:DIRS[i]});
-  return out;
+function pickRoute(map, prefer){
+  var routes = twoLegRoutes(map);
+  var best = routes.filter(function(r){ return prefer.indexOf(nodeName(map, r.to)) >= 0; });
+  var pool = best.length ? best : routes;
+  return pool[rand(0, pool.length - 1)];
 }
-function pairChoices(d1, d2){
-  var correct = d1 + '-' + d2;
-  var seeds = [
-    d2 + '-' + d1,
-    ((d1+4)%8) + '-' + ((d2+4)%8),
-    ((d1+2)%8) + '-' + d2,
-    d1 + '-' + ((d2+2)%8),
-    ((d1+6)%8) + '-' + ((d2+6)%8),
-    ((d1+1)%8) + '-' + ((d2+7)%8),
-    ((d1+2)%8) + '-' + ((d2+6)%8)
+function makeWhere(o){
+  return {
+    flavour:'where', place:o.place, theme:o.theme, north:o.north,
+    goalDir:o.goalDir, goalName:o.goalName, goalIcon:o.goalIcon
+  };
+}
+function makePath(o){
+  var map = MAPS[o.map];
+  return {
+    flavour:'path', place:o.place, theme:o.theme, north:o.north,
+    map:map, route:o.route || pickRoute(map, o.prefer || [])
+  };
+}
+function makeTurn(o){
+  var facing = o.facing != null ? o.facing : rand(0, 7);
+  var left = o.left != null ? o.left : Math.random() < 0.5;
+  var n = o.n;
+  return {
+    flavour:'turn', place:o.place, theme:o.theme || 'meadow',
+    north:o.north != null ? o.north : rand(0, 7),
+    facing:facing, left:!!left, n:n, answerDir:turnDir(facing, left, n)
+  };
+}
+function makeCompass(o){
+  var dial = o.dial != null ? o.dial : rand(1, 7);
+  return {
+    flavour:'compass', place:o.place, theme:'compass',
+    north:o.north != null ? o.north : rand(0, 7),
+    trap:!!o.trap, dial:dial, dial0:dial,
+    objectDir:o.objectDir != null ? o.objectDir : rand(1, 7)
+  };
+}
+function buildAdventure(){
+  return [
+    makeWhere({place:'青草地', theme:'meadow', north:pick([0,2,4,6]), goalDir:pick([0,2,4,6]), goalName:'寶箱', goalIcon:'chest'}),
+    makeWhere({place:'商店街', theme:'street', north:pick([1,3,5,7]), goalDir:pick([1,3,5,7]), goalName:'商店', goalIcon:'shop'}),
+    makePath({place:'花園徑', theme:'garden', map:'garden', north:pick([0,2,4,6]), prefer:['寶箱']}),
+    makeTurn({place:'大樹下', theme:'meadow', n:1, north:pick([0,2,4,6])}),
+    makeCompass({place:'露營角', trap:false, north:rand(0,7)}),
+    makeWhere({place:'車站廣場', theme:'plaza', north:rand(0,7), goalDir:rand(0,7), goalName:'鐵路站', goalIcon:'station'}),
+    makePath({place:'小社區', theme:'town', map:'town', north:Math.random() < 0.5 ? 1 : rand(0,7), prefer:['公園','街市','鐵路站']}),
+    makeTurn({place:'石橋邊', theme:'meadow', n:pick([2,3]), north:rand(0,7)}),
+    makeCompass({place:'觀景台', trap:true, north:rand(0,7)}),
+    makeWhere({place:'寶藏島', theme:'island', north:rand(0,7), goalDir:rand(0,7), goalName:'寶箱', goalIcon:'chest'})
   ];
-  var seen = {};
-  seen[correct] = true;
-  var wrong = [];
-  for(var i=0;i<seeds.length;i++){
-    if(seen[seeds[i]]) continue;
-    seen[seeds[i]] = true;
-    wrong.push(seeds[i]);
-  }
-  shuffle(wrong);
-  var keys = [correct, wrong[0], wrong[1], wrong[2]];
-  var out = [];
-  for(var k=0;k<keys.length;k++){
-    var parts = keys[k].split('-');
-    out.push({key:keys[k], label:DIRS[+parts[0]] + ' → ' + DIRS[+parts[1]]});
-  }
-  return shuffle(out);
 }
-
-function makeRose(opts){
-  opts = opts || {};
-  var single = opts.single !== false;
-  var north;
-  if(opts.north != null) north = opts.north;
-  else if(single && opts.easy) north = [0,2,4,6][rand(0,3)];
-  else north = rand(0,7);
-  var blanks;
-  if(opts.blanks) blanks = opts.blanks.slice();
-  else if(opts.blank != null) blanks = [opts.blank];
-  else if(single) blanks = [rand(1,7)];
-  else {
-    var a = rand(1,7), b = rand(1,7), guard = 0;
-    while(b===a && guard<12){ b = rand(1,7); guard++; }
-    blanks = [a, b];
-  }
-  blanks.sort(function(x,y){ return x-y; });
-  var shown;
-  if(opts.shown) shown = opts.shown.slice();
-  else {
-    shown = [0];
-    var cand = [];
-    for(var i=1;i<8;i++) if(blanks.indexOf(i)<0) cand.push(i);
-    shuffle(cand);
-    if(cand.length) shown.push(cand[0]);
-    if(cand.length>1) shown.push(cand[1]);
-  }
-  return {
-    type:'rose',
-    north:north,
-    blanks:blanks,
-    shown:shown,
-    fills:{},
-    focus:blanks[0],
-    prompt: blanks.length>1 ? '點選空格，再點方向，填好兩個空格。' : '紅色北箭咀已經標好。閃動的空格是哪個方向？',
-    caption:'紅色箭咀是北方',
-    choices:dirChoices(),
-    answer: blanks.length===1 ? String(blanks[0]) : blanks.join(',')
-  };
+function expectedDir(s){
+  if(s.flavour === 'where') return s.goalDir;
+  if(s.flavour === 'turn') return s.answerDir;
+  if(s.flavour === 'compass') return s.objectDir;
+  return s.step ? s.route.d2 : s.route.d1;
 }
-function makeRelative(opts){
-  opts = opts || {};
-  var bag = PLACES.slice();
-  shuffle(bag);
-  var ref = opts.ref ? placeByName(opts.ref) : bag[0];
-  var used = {};
-  used[ref.name] = true;
-  var target = opts.target ? placeByName(opts.target) : null;
-  if(!target){
-    for(var i=0;i<bag.length;i++) if(!used[bag[i].name]){ target = bag[i]; break; }
-  }
-  used[target.name] = true;
-  var targetDir = opts.targetDir != null ? opts.targetDir : rand(0,7);
-  var decoyDirs = [];
-  for(var d=0;d<8;d++) if(d!==targetDir) decoyDirs.push(d);
-  shuffle(decoyDirs);
-  var spots = [{name:target.name, icon:target.icon, dir:targetDir}];
-  for(var k=0;k<3;k++){
-    var p = (opts.decoys && opts.decoys[k]) ? placeByName(opts.decoys[k]) : null;
-    if(!p){
-      for(var j=0;j<bag.length;j++) if(!used[bag[j].name]){ p = bag[j]; break; }
-    }
-    used[p.name] = true;
-    spots.push({name:p.name, icon:p.icon, dir:decoyDirs[k]});
-  }
-  return {
-    type:'relative',
-    north: opts.north != null ? opts.north : rand(0,7),
-    ref:ref.name,
-    refIcon:ref.icon,
-    target:target.name,
-    spots:spots,
-    answerDir:targetDir,
-    answer:String(targetDir),
-    choices:dirChoices(),
-    prompt: target.name + '在' + ref.name + '的哪一方？',
-    caption:'藍圈是' + ref.name + '　橙圈是' + target.name
-  };
-}
-function makeWho(opts){
-  opts = opts || {};
-  var bag = PLACES.slice();
-  shuffle(bag);
-  var ref = opts.ref ? placeByName(opts.ref) : bag[0];
-  var used = {};
-  used[ref.name] = true;
-  var dir = opts.dir != null ? opts.dir : rand(0,7);
-  var dirPool = [];
-  for(var d=0;d<8;d++) if(d!==dir) dirPool.push(d);
-  shuffle(dirPool);
-  var spots = [];
-  for(var k=0;k<4;k++){
-    var p = (opts.names && opts.names[k]) ? placeByName(opts.names[k]) : null;
-    if(!p){
-      for(var j=0;j<bag.length;j++) if(!used[bag[j].name]){ p = bag[j]; break; }
-    }
-    used[p.name] = true;
-    spots.push({name:p.name, icon:p.icon, dir: k===0 ? dir : dirPool[k-1]});
-  }
-  var choices = [];
-  for(var c=0;c<spots.length;c++) choices.push({key:spots[c].name, label:spots[c].name});
-  shuffle(choices);
-  return {
-    type:'who',
-    north: opts.north != null ? opts.north : rand(0,7),
-    ref:ref.name,
-    refIcon:ref.icon,
-    dir:dir,
-    spots:spots,
-    answer:spots[0].name,
-    answerDir:dir,
-    choices:choices,
-    prompt:'誰在' + ref.name + '的' + DIRS[dir] + '方？',
-    caption:'藍圈是' + ref.name
-  };
-}
-function makeTurn(opts){
-  opts = opts || {};
-  var person = opts.person ? personByName(opts.person) : PEOPLE[rand(0, PEOPLE.length-1)];
-  var facing = opts.facing != null ? opts.facing : rand(0,7);
-  var left = opts.left != null ? opts.left : Math.random()<0.5;
-  var n = opts.n != null ? opts.n : rand(1,3);
-  var answerDir = turnDir(facing, left, n);
-  return {
-    type:'turn',
-    person:person.name,
-    color:person.color,
-    facing:facing,
-    left:!!left,
-    n:n,
-    north: opts.north != null ? opts.north : rand(0,7),
-    answerDir:answerDir,
-    answer:String(answerDir),
-    choices:dirChoices(),
-    prompt: person.name + '面向' + DIRS[facing] + '方，向' + (left?'左':'右') + '轉 ' + n + ' 個直角。之後面向哪一方？',
-    caption:'中間的箭咀是現在面向的方向'
-  };
-}
-function makeCompass(opts){
-  opts = opts || {};
-  var trap = !!opts.trap;
-  var person = opts.person ? personByName(opts.person) : PEOPLE[rand(0, PEOPLE.length-1)];
-  var place = opts.object ? placeByName(opts.object) : PLACES[rand(0, PLACES.length-1)];
-  var objectDir = opts.objectDir != null ? opts.objectDir : rand(0,7);
-  var north = opts.north != null ? opts.north : rand(0,7);
-  var dialOffset = opts.dialOffset != null ? opts.dialOffset : (trap ? [1,2,6,7][rand(0,3)] : 0);
-  return {
-    type:'compass',
-    person:person.name,
-    color:person.color,
-    object:place.name,
-    icon:place.icon,
-    objectDir:objectDir,
-    north:north,
-    dialOffset:dialOffset,
-    answerDir:objectDir,
-    answer:String(objectDir),
-    choices:dirChoices(),
-    prompt: place.name + '在' + person.name + '的哪一方？',
-    warn: dialOffset
-      ? '注意：「北」字未與紅色指針重疊。以紅針為北方。'
-      : '紅針與「北」字重疊。以紅針為北方。',
-    caption: person.name + '的指南針' + (dialOffset ? ' · 北字未對準紅針' : ' · 紅針對準北')
-  };
-}
-function makePath(opts){
-  opts = opts || {};
-  var m = opts.map != null ? MAPS[opts.map] : MAPS[rand(0, MAPS.length-1)];
-  var routes = validRoutes(m);
-  var route = null;
-  if(opts.route){
-    for(var i=0;i<routes.length;i++){
-      if(routes[i].from===opts.route[0] && routes[i].via===opts.route[1] && routes[i].to===opts.route[2]) route = routes[i];
-    }
-  }
-  if(!route) route = routes[rand(0, routes.length-1)];
-  var fromN = nodeById(m, route.from).name;
-  var toN = nodeById(m, route.to).name;
-  return {
-    type:'path',
-    north: opts.north != null ? opts.north : rand(0,7),
-    nodes:m.nodes,
-    edges:m.edges,
-    route:route,
-    leg1:route.d1,
-    leg2:route.d2,
-    answer: route.d1 + '-' + route.d2,
-    choices: pairChoices(route.d1, route.d2),
-    prompt:'由' + fromN + '沿橙色路走到' + toN + '，先向哪一方，再向哪一方？',
-    caption:'橙色 1 先走，2 再走 · 藍圈是起點，橙圈是終點'
-  };
-}
-function buildRun(){
-  var first = makeRose({single:true, easy:true});
-  var pool = [
-    makeRose({single:false}),
-    makeRelative(),
-    makeRelative(),
-    makeWho(),
-    makeTurn(),
-    makeTurn(),
-    makeCompass({trap:false}),
-    makeCompass({trap:true}),
-    makePath()
-  ];
-  shuffle(pool);
-  pool.unshift(first);
-  return pool;
-}
-function explain(q){
-  if(q.type==='rose'){
-    var bits = [];
-    for(var i=0;i<q.blanks.length;i++) bits.push(DIRS[q.blanks[i]]);
-    return bits.length===1 ? ('空格是' + bits[0] + '。') : ('兩個空格是' + bits[0] + '和' + bits[1] + '。');
-  }
-  if(q.type==='relative') return q.target + '在' + q.ref + '的' + DIRS[q.answerDir] + '方。';
-  if(q.type==='who') return q.answer + '在' + q.ref + '的' + DIRS[q.dir] + '方。';
-  if(q.type==='turn') return '向' + (q.left?'左':'右') + '轉 ' + q.n + ' 個直角後，面向' + DIRS[q.answerDir] + '方。';
-  if(q.type==='compass'){
-    var s = q.object + '在' + q.person + '的' + DIRS[q.answerDir] + '方。';
-    if(q.dialOffset) s += '紅色指針總是指向北方。';
-    return s;
-  }
-  if(q.type==='path') return '先向' + DIRS[q.leg1] + '方，再向' + DIRS[q.leg2] + '方。';
-  return '';
+function resolved(){
+  return !!(cur && (cur.cleared || cur.failed || cur.revealed));
 }
 
 function iconSvg(kind){
   switch(kind){
+    case 'chest':
+      return '<path d="M8 22 q16-16 32 0 v6 H8 z" fill="#ffd56a" stroke="#b7791f" stroke-width="2"/>'
+        + '<rect x="8" y="24" width="32" height="16" rx="2" fill="#f5b301" stroke="#b7791f" stroke-width="2"/>'
+        + '<rect x="20" y="28" width="8" height="7" rx="1" fill="#b7791f"/>';
     case 'park':
-      return '<circle cx="16" cy="28" r="10" fill="#86d58a"/><circle cx="30" cy="24" r="12" fill="#2f9d62"/><rect x="22" y="30" width="4" height="12" rx="1" fill="#8d5a32"/>';
-    case 'market':
-      return '<path d="M8 22 h32 l-3 16 h-26 z" fill="#fff7e8"/><path d="M6 22 q6-12 12 0 q6-12 12 0 q6-12 12 0 v4 h-36 z" fill="#ef5d5d"/>';
+      return '<rect x="21" y="26" width="6" height="14" rx="1" fill="#8d5a32"/>'
+        + '<circle cx="24" cy="18" r="12" fill="#2f9d62"/>';
+    case 'shop':
+      return '<path d="M6 20 h36 l-4-10 H10 z" fill="#ef5d5d"/>'
+        + '<rect x="10" y="20" width="28" height="18" fill="#fff7ea" stroke="#e07a3d" stroke-width="2"/>'
+        + '<rect x="20" y="26" width="8" height="12" fill="#f5b301"/>';
     case 'station':
-      return '<rect x="6" y="20" width="36" height="14" rx="6" fill="#3b82f6"/><rect x="12" y="23" width="8" height="6" rx="1" fill="#fff"/><rect x="22" y="23" width="8" height="6" rx="1" fill="#fff"/><circle cx="16" cy="36" r="3" fill="#1c3d4e"/><circle cx="32" cy="36" r="3" fill="#1c3d4e"/>';
-    case 'library':
-      return '<path d="M8 14 h11 v24 h-11 z" fill="#5b8def"/><path d="M19 14 h11 v24 h-11 z" fill="#8eb0f5"/><path d="M30 16 h10 v22 h-10 z" fill="#f2c14e"/>';
-    case 'school':
-      return '<polygon points="24,8 42,22 6,22" fill="#d62828"/><rect x="12" y="22" width="24" height="16" fill="#fff3d6"/><rect x="20" y="28" width="8" height="10" fill="#d62828"/>';
-    case 'mall':
-      return '<rect x="10" y="14" width="28" height="22" rx="3" fill="#c084fc"/><rect x="15" y="18" width="7" height="7" fill="#fff"/><rect x="26" y="18" width="7" height="7" fill="#fff"/><rect x="20" y="28" width="8" height="8" fill="#fff"/>';
+      return '<rect x="6" y="18" width="36" height="16" rx="6" fill="#3b82f6"/>'
+        + '<rect x="12" y="22" width="8" height="6" fill="#fff"/><rect x="24" y="22" width="8" height="6" fill="#fff"/>'
+        + '<circle cx="16" cy="36" r="3" fill="#1c3d4e"/><circle cx="32" cy="36" r="3" fill="#1c3d4e"/>';
+    case 'pond':
+      return '<ellipse cx="24" cy="28" rx="16" ry="9" fill="#7ec8e3"/>'
+        + '<ellipse cx="20" cy="26" rx="6" ry="3" fill="#e7f7ff"/>';
+    case 'flower':
+      return '<circle cx="24" cy="18" r="6" fill="#ff7a9c"/><circle cx="14" cy="26" r="6" fill="#ffd56a"/>'
+        + '<circle cx="34" cy="26" r="6" fill="#c4b5fd"/><circle cx="24" cy="26" r="5" fill="#fff"/>';
+    case 'tree':
+      return '<rect x="21" y="28" width="6" height="12" fill="#8d5a32"/>'
+        + '<circle cx="24" cy="18" r="13" fill="#3cb371"/>';
+    case 'gate':
+      return '<ellipse cx="24" cy="30" rx="16" ry="8" fill="#e7eef5" stroke="#64748b" stroke-width="3"/>'
+        + '<ellipse cx="24" cy="28" rx="8" ry="3" fill="#fff"/>';
     case 'kg':
-      return '<polygon points="24,8 40,22 8,22" fill="#f59e0b"/><rect x="14" y="22" width="20" height="16" fill="#fff"/><circle cx="24" cy="29" r="4" fill="#ff7a9c"/>';
+      return '<polygon points="24,8 42,22 6,22" fill="#f59e0b"/>'
+        + '<rect x="12" y="22" width="24" height="16" fill="#fff"/>'
+        + '<circle cx="24" cy="28" r="4" fill="#ff7a9c"/>';
     case 'home':
-      return '<polygon points="24,8 42,22 6,22" fill="#f59e0b"/><rect x="12" y="22" width="24" height="16" fill="#fff7e8"/><rect x="21" y="28" width="6" height="10" fill="#d97706"/>';
-    case 'bus':
-      return '<rect x="22" y="6" width="4" height="12" fill="#64748b"/><circle cx="24" cy="22" r="8" fill="#fde68a" stroke="#f59e0b" stroke-width="3"/><rect x="14" y="28" width="20" height="4" rx="2" fill="#3b82f6"/>';
-    case 'food':
-      return '<ellipse cx="24" cy="30" rx="16" ry="7" fill="#fff"/><path d="M8 28 q16 18 32 0" fill="#fb7185"/><rect x="22" y="10" width="4" height="12" rx="1" fill="#f59e0b"/>';
-    case 'play':
-      return '<rect x="12" y="10" width="3" height="26" fill="#64748b"/><rect x="33" y="10" width="3" height="26" fill="#64748b"/><path d="M15 14 q9 12 18 0" fill="none" stroke="#0f9d8a" stroke-width="3"/><circle cx="24" cy="24" r="4" fill="#ff7a9c"/>';
+      return '<polygon points="24,8 42,22 6,22" fill="#f59e0b"/>'
+        + '<rect x="12" y="22" width="24" height="16" fill="#fff7e8"/>'
+        + '<rect x="21" y="26" width="6" height="12" fill="#d97706"/>';
+    case 'market':
+      return '<path d="M8 22 h32 l-3 16 H11 z" fill="#fff7e8"/>'
+        + '<path d="M6 22 q6-12 12 0 q6-12 12 0 q6-12 12 0 v4 H6 z" fill="#ef5d5d"/>';
     default:
       return '<circle cx="24" cy="24" r="10" fill="#94a3b8"/>';
   }
 }
-function placeMarker(name, icon, x, y, role){
-  var stroke = role==='ref' ? '#3b82f6' : role==='target' ? '#f59e0b' : '#ffffff';
-  var sw = role==='normal' ? 3 : 5;
-  return '<g transform="translate(' + r1(x) + ' ' + r1(y) + ')">'
-    + '<circle r="30" fill="#fff" stroke="' + stroke + '" stroke-width="' + sw + '"/>'
-    + '<g transform="translate(-24 -28)">' + iconSvg(icon) + '</g>'
-    + '<text y="48" text-anchor="middle" class="placeName">' + esc(name) + '</text>'
+function svgOpen(w, h, label){
+  return '<svg viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + esc(label) + '">'
+    + '<defs><clipPath id="dogClip"><circle r="36"/></clipPath></defs>';
+}
+function scenery(theme, W, H){
+  var sky = '#d7f4ff', hill = '#8ed67a', ground = '#c6f3a5', sun = '#ffe27a';
+  if(theme === 'street'){ sky = '#fff1d0'; hill = '#f0c48a'; ground = '#ffe1b5'; sun = '#ffb703'; }
+  if(theme === 'plaza'){ sky = '#d9f1ff'; hill = '#c5d8ea'; ground = '#e7f0f8'; sun = '#ffd166'; }
+  if(theme === 'island'){ sky = '#b7e9ff'; hill = '#7ec8e3'; ground = '#f6d9a0'; sun = '#ffd166'; }
+  if(theme === 'garden'){ sky = '#e7fff2'; hill = '#7dce7a'; ground = '#d4f5c4'; }
+  if(theme === 'town'){ sky = '#e7f6ff'; hill = '#9ed688'; ground = '#d9f3c8'; }
+  if(theme === 'compass'){ sky = '#e7f3ff'; hill = '#d5e8f8'; ground = '#f7fbff'; }
+  var html = '<rect width="' + W + '" height="' + H + '" fill="' + sky + '"/>';
+  html += '<circle cx="78" cy="70" r="28" fill="' + sun + '"/>';
+  html += '<ellipse cx="' + r1(W * 0.34) + '" cy="' + r1(H * 0.9) + '" rx="' + r1(W * 0.5) + '" ry="' + r1(H * 0.22) + '" fill="' + hill + '"/>';
+  html += '<ellipse cx="' + r1(W * 0.7) + '" cy="' + r1(H * 0.96) + '" rx="' + r1(W * 0.46) + '" ry="' + r1(H * 0.16) + '" fill="' + ground + '"/>';
+  if(theme === 'island'){
+    html += '<ellipse cx="' + (W / 2) + '" cy="' + (H * 0.62) + '" rx="' + (W * 0.28) + '" ry="' + (H * 0.22) + '" fill="#f6e2b3"/>';
+    html += '<rect x="120" y="' + r1(H * 0.48) + '" width="8" height="54" rx="2" fill="#8d5a32"/>';
+    html += '<ellipse cx="124" cy="' + r1(H * 0.48) + '" rx="26" ry="10" fill="#2f9d62"/>';
+  }
+  html += '<g fill="#fff"><ellipse cx="168" cy="58" rx="26" ry="14"/><ellipse cx="194" cy="54" rx="18" ry="12"/>'
+    + '<ellipse cx="250" cy="78" rx="22" ry="12"/></g>';
+  return html;
+}
+function northBadge(x, y, north){
+  var rot = north * 45;
+  var tip = polar(0, north, 54);
+  return '<g transform="translate(' + x + ' ' + y + ')">'
+    + '<circle r="42" fill="#fff" stroke="#f6c9c9" stroke-width="4"/>'
+    + '<g transform="rotate(' + rot + ')">'
+    + '<polygon points="0,-32 10,10 0,2 -10,10" fill="#d62828" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>'
+    + '<polygon points="0,26 7,6 0,10 -7,6" fill="#d5dde6"/>'
+    + '</g>'
+    + '<text x="' + r1(tip.x) + '" y="' + r1(tip.y) + '" dy="0.35em" text-anchor="middle" class="northLab">北</text>'
     + '</g>';
 }
-function compassWidget(x, y, northSteps, len){
-  var rot = northSteps * 45;
-  var tip = angleToXY(rot, len + 20);
-  return '<g transform="translate(' + x + ' ' + y + ')">'
-    + '<circle r="' + (len + 10) + '" fill="#fff" stroke="#f3c1c1" stroke-width="3"/>'
-    + '<g transform="rotate(' + rot + ')">'
-    + '<polygon points="0,' + (-len) + ' 8,8 0,2 -8,8" fill="#d62828" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>'
-    + '<polygon points="0,' + r1(len*0.62) + ' 6,2 0,8 -6,2" fill="#c5ced8" stroke="#fff" stroke-width="1.5"/>'
-    + '</g></g>'
-    + '<text x="' + r1(x + tip.x) + '" y="' + r1(y + tip.y) + '" dy="0.35em" text-anchor="middle" class="dirLabel northLab">北</text>';
+function dogSprite(x, y, hop){
+  var anim = (hop && !reduceMotion)
+    ? '<animateTransform attributeName="transform" type="translate" values="0,0;0,-18;0,0" dur="0.55s" repeatCount="1"/>'
+    : '';
+  return '<g transform="translate(' + r1(x) + ' ' + r1(y) + ')">'
+    + '<ellipse cx="0" cy="36" rx="26" ry="8" fill="rgba(40,70,50,.16)"/>'
+    + '<g>' + anim
+    + '<image href="assets/mascot-q.png" xlink:href="assets/mascot-q.png" x="-36" y="-36" width="72" height="72" clip-path="url(#dogClip)"/>'
+    + '</g></g>';
 }
-
-function renderRose(q){
-  var S = 420, c = 210;
-  var html = [];
-  html.push('<svg class="scene" viewBox="0 0 ' + S + ' ' + S + '" role="img" aria-label="八個方向玫瑰">');
-  html.push('<circle cx="' + c + '" cy="' + c + '" r="188" fill="#f3fffb"/>');
-  html.push('<circle cx="' + c + '" cy="' + c + '" r="118" fill="none" stroke="#e5f6f1" stroke-width="10"/>');
-  for(var i=0;i<8;i++){
-    var ang = screenAngle(i, q.north);
-    var outer = angleToXY(ang, i===0 ? 108 : 112);
-    var inner = angleToXY(ang, 22);
-    html.push('<line x1="' + r1(c+inner.x) + '" y1="' + r1(c+inner.y) + '" x2="' + r1(c+outer.x) + '" y2="' + r1(c+outer.y) + '" stroke="' + (i===0?'#d62828':'#b7cdc6') + '" stroke-width="' + (i===0?6:3) + '" stroke-linecap="round"/>');
-    if(i===0){
-      html.push('<g transform="translate(' + c + ' ' + c + ') rotate(' + ang + ')"><polygon points="0,-132 13,-104 -13,-104" fill="#d62828"/></g>');
-    }
+function marker(x, y, icon, label, gold, pulse){
+  var ring = '';
+  if(pulse && !reduceMotion){
+    ring = '<circle r="34" fill="none" stroke="#f5b301" stroke-width="3">'
+      + '<animate attributeName="r" values="30;40;30" dur="1.3s" repeatCount="indefinite"/>'
+      + '<animate attributeName="stroke-opacity" values="1;.25;1" dur="1.3s" repeatCount="indefinite"/></circle>';
+  } else if(gold){
+    ring = '<circle r="34" fill="none" stroke="#f5b301" stroke-width="4"/>';
   }
-  for(var j=0;j<8;j++){
-    var ang2 = screenAngle(j, q.north);
-    var p = angleToXY(ang2, 162);
-    var x = c + p.x, y = c + p.y;
-    var isBlank = q.blanks.indexOf(j) >= 0;
-    var isShown = q.shown.indexOf(j) >= 0;
-    if(isBlank){
-      var label = '';
-      var cls = 'blankBox';
-      if(q.showAnswer){ label = DIRS[j]; cls += ' solved'; }
-      else if(q.fills && q.fills[j] != null){ label = DIRS[q.fills[j]]; cls += ' filled'; }
-      else cls += ' pulse';
-      if(q.blanks.length>1 && q.focus===j && !q.showAnswer) cls += ' focus';
-      html.push('<g data-blank="' + j + '" class="blankHit">');
-      html.push('<rect x="' + r1(x-39) + '" y="' + r1(y-22) + '" width="78" height="44" rx="12" class="' + cls + '"/>');
-      html.push('<text x="' + r1(x) + '" y="' + r1(y) + '" dy="0.35em" text-anchor="middle" class="dirLabel blankText">' + label + '</text>');
-      html.push('</g>');
-    } else if(isShown){
-      html.push('<text x="' + r1(x) + '" y="' + r1(y) + '" dy="0.35em" text-anchor="middle" class="dirLabel' + (j===0?' northLab':'') + '">' + DIRS[j] + '</text>');
-    } else {
-      html.push('<circle cx="' + r1(x) + '" cy="' + r1(y) + '" r="5" fill="#c5ddd6"/>');
-    }
+  return '<g transform="translate(' + r1(x) + ' ' + r1(y) + ')">'
+    + '<circle r="30" fill="#fff" stroke="' + (gold ? '#f5b301' : '#ffffff') + '" stroke-width="4"/>'
+    + ring
+    + '<g transform="translate(-24 -28)">' + iconSvg(icon) + '</g>'
+    + (label ? '<text y="52" text-anchor="middle" class="placeName">' + esc(label) + '</text>' : '')
+    + '</g>';
+}
+function sparkles(x, y){
+  if(reduceMotion) return '';
+  var star = '0,-9 2.2,-2.4 9,-2.2 3.4,2 5.6,9 0,4.6 -5.6,9 -3.4,2 -9,-2.2 -2.2,-2.4';
+  var html = '';
+  for(var i = 0; i < 6; i++){
+    var a = i / 6 * Math.PI * 2;
+    var px = x + Math.cos(a) * 52;
+    var py = y + Math.sin(a) * 34 - 8;
+    html += '<polygon points="' + star + '" fill="' + (i % 2 ? '#fff' : '#ffd56a') + '" transform="translate(' + r1(px) + ' ' + r1(py) + ')">'
+      + '<animate attributeName="opacity" values="0;1;0" dur="0.9s" repeatCount="1"/></polygon>';
   }
-  html.push('<circle cx="' + c + '" cy="' + c + '" r="14" fill="#fff" stroke="#d62828" stroke-width="4"/>');
+  return html;
+}
+function dashArrow(x1, y1, x2, y2){
+  var dx = x2 - x1, dy = y2 - y1;
+  var len = Math.sqrt(dx * dx + dy * dy) || 1;
+  var ux = dx / len, uy = dy / len;
+  var sx = x1 + ux * 48, sy = y1 + uy * 48;
+  var ex = x2 - ux * 48, ey = y2 - uy * 48;
+  var rot = Math.atan2(ey - sy, ex - sx) * 180 / Math.PI;
+  return '<line x1="' + r1(sx) + '" y1="' + r1(sy) + '" x2="' + r1(ex) + '" y2="' + r1(ey) + '" stroke="#e0a106" stroke-width="6" stroke-dasharray="8 8" stroke-linecap="round"/>'
+    + '<g transform="translate(' + r1(ex) + ' ' + r1(ey) + ') rotate(' + r1(rot) + ')"><polygon points="-12,-8 8,0 -12,8" fill="#e0a106"/></g>';
+}
+function dirTag(x, y, dir){
+  return '<g transform="translate(' + r1(x) + ' ' + r1(y - 58) + ')">'
+    + '<rect x="-42" y="-18" width="84" height="36" rx="12" fill="#fff6d8" stroke="#e0a106" stroke-width="3"/>'
+    + '<text dy="0.35em" text-anchor="middle" class="dirTag">' + DIRS[dir] + '</text></g>';
+}
+function renderWhere(s){
+  var W = 720, H = 540, cx = 330, cy = 286, R = 168;
+  var goal = polar(s.goalDir, s.north, R);
+  var gx = cx + goal.x, gy = cy + goal.y;
+  var html = [svgOpen(W, H, s.place), scenery(s.theme, W, H)];
+  var used = {};
+  used[s.goalDir] = true;
+  for(var d = 0; d < 8; d++){
+    var dist = Math.min(mod8(d - s.goalDir), mod8(s.goalDir - d));
+    if(d === s.goalDir || dist < 2) continue;
+    if(Object.keys(used).length >= 3) break;
+    var p = polar(d, s.north, 112);
+    var px = cx + p.x, py = cy + p.y;
+    if(Math.abs(px - 640) < 90 && py < 150) continue;
+    used[d] = true;
+    var kind = ['tree','flower','pond'][Object.keys(used).length % 3];
+    html.push(marker(px, py, kind, '', false, false));
+  }
+  html.push(northBadge(640, 86, s.north));
+  var show = s.fix || s.cleared;
+  if(show) html.push(dashArrow(cx, cy, gx, gy));
+  html.push(marker(gx, gy, s.goalIcon, s.goalName, true, !s.failed && !s.revealed));
+  if(show) html.push(dirTag(gx, gy, s.goalDir));
+  if(s.cleared) html.push(sparkles(gx, gy));
+  html.push(dogSprite(cx, cy, !!s.cleared));
   html.push('</svg>');
   return html.join('');
 }
-function renderMap(q){
-  var S = 560, c = 270, R = 176;
-  var html = [];
-  html.push('<svg class="scene" viewBox="0 0 ' + S + ' ' + S + '" role="img" aria-label="地圖">');
-  html.push('<rect width="' + S + '" height="' + S + '" rx="28" fill="#e5f6ea"/>');
-  html.push('<ellipse cx="280" cy="300" rx="230" ry="190" fill="#d4f0da"/>');
-  html.push('<ellipse cx="270" cy="268" rx="188" ry="156" fill="#f4fff6"/>');
-  html.push(compassWidget(478, 78, q.north, 30));
-  var highlight = q.type==='relative';
-  html.push(placeMarker(q.ref, q.refIcon, c, c, 'ref'));
-  for(var i=0;i<q.spots.length;i++){
-    var s = q.spots[i];
-    var p = angleToXY(screenAngle(s.dir, q.north), R);
-    var role = (highlight && s.name===q.target) ? 'target' : 'normal';
-    html.push(placeMarker(s.name, s.icon, c+p.x, c+p.y, role));
+function layoutNodes(nodes, north, box){
+  var raw = nodes.map(function(n){ return project(n.e, n.n, north); });
+  var minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
+  raw.forEach(function(p){
+    if(p.x < minX) minX = p.x; if(p.x > maxX) maxX = p.x;
+    if(p.y < minY) minY = p.y; if(p.y > maxY) maxY = p.y;
+  });
+  if(maxX - minX < 0.01){ minX -= 1; maxX += 1; }
+  if(maxY - minY < 0.01){ minY -= 1; maxY += 1; }
+  var s = Math.min((box.right - box.left) / (maxX - minX), (box.bottom - box.top) / (maxY - minY));
+  var ox = box.left + ((box.right - box.left) - s * (maxX - minX)) / 2 - s * minX;
+  var oy = box.top + ((box.bottom - box.top) - s * (maxY - minY)) / 2 - s * minY;
+  var pos = {};
+  nodes.forEach(function(n, i){
+    pos[n.id] = {x: ox + s * raw[i].x, y: oy + s * raw[i].y};
+  });
+  return pos;
+}
+function road(a, b, color, width){
+  return '<line x1="' + r1(a.x) + '" y1="' + r1(a.y) + '" x2="' + r1(b.x) + '" y2="' + r1(b.y) + '" stroke="' + color + '" stroke-width="' + width + '" stroke-linecap="round"/>';
+}
+function footprints(a, b, hot){
+  var html = '';
+  var n = 5;
+  for(var i = 1; i <= n; i++){
+    var t = i / (n + 1);
+    var x = a.x + (b.x - a.x) * t;
+    var y = a.y + (b.y - a.y) * t;
+    html += '<circle cx="' + r1(x) + '" cy="' + r1(y) + '" r="' + (hot ? 7 : 5) + '" fill="' + (hot ? '#ff8a3d' : '#e7b07a') + '" stroke="#fff" stroke-width="2"/>';
   }
+  var mx = a.x + (b.x - a.x) * 0.62;
+  var my = a.y + (b.y - a.y) * 0.62;
+  var rot = Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI;
+  html += '<g transform="translate(' + r1(mx) + ' ' + r1(my) + ') rotate(' + r1(rot) + ')"><polygon points="-7,-8 10,0 -7,8" fill="#fff" stroke="#e07a3d" stroke-width="3"/></g>';
+  return html;
+}
+function renderPath(s){
+  var W = 720, H = 540;
+  var pos = layoutNodes(s.map.nodes, s.north, {left:86, top:108, right:560, bottom:460});
+  var route = s.route;
+  var at = s.cleared ? route.to : (s.step ? route.via : route.from);
+  var html = [svgOpen(W, H, s.place), scenery(s.theme, W, H), northBadge(652, 84, s.north)];
+  s.map.edges.forEach(function(e){
+    html.push(road(pos[e[0]], pos[e[1]], '#efd3a4', 18));
+    html.push(road(pos[e[0]], pos[e[1]], '#fff8ea', 4));
+  });
+  var legs = [[route.from, route.via, 0], [route.via, route.to, 1]];
+  legs.forEach(function(leg){
+    var walked = s.cleared || s.step > leg[2];
+    var hot = !walked && s.step === leg[2];
+    if(walked) html.push(road(pos[leg[0]], pos[leg[1]], '#ffb15a', 12));
+    html.push(footprints(pos[leg[0]], pos[leg[1]], hot || walked));
+    if(s.fix && s.step === leg[2]){
+      var A = pos[leg[0]], B = pos[leg[1]];
+      var dir = leg[2] === 0 ? route.d1 : route.d2;
+      html.push(dirTag((A.x + B.x) / 2, (A.y + B.y) / 2, dir));
+    }
+  });
+  s.map.nodes.forEach(function(n){
+    if(n.id === at){
+      html.push('<text x="' + r1(pos[n.id].x) + '" y="' + r1(pos[n.id].y + 58) + '" text-anchor="middle" class="placeName">' + esc(n.name) + '</text>');
+      return;
+    }
+    var goal = n.id === route.to;
+    html.push(marker(pos[n.id].x, pos[n.id].y, n.icon, n.name, goal, goal && !s.cleared));
+  });
+  if(s.cleared) html.push(sparkles(pos[route.to].x, pos[route.to].y));
+  html.push(dogSprite(pos[at].x, pos[at].y, !!s.cleared || s.step > 0));
   html.push('</svg>');
   return html.join('');
 }
-function renderTurn(q){
-  var S = 420, c = 210;
-  var html = [];
-  html.push('<svg class="scene" viewBox="0 0 ' + S + ' ' + S + '" role="img" aria-label="面向與轉向">');
-  html.push('<circle cx="' + c + '" cy="' + c + '" r="188" fill="#f3fffb"/>');
-  for(var i=0;i<8;i++){
-    var ang = screenAngle(i, q.north);
-    var outer = angleToXY(ang, 112);
-    var inner = angleToXY(ang, 58);
-    html.push('<line x1="' + r1(c+inner.x) + '" y1="' + r1(c+inner.y) + '" x2="' + r1(c+outer.x) + '" y2="' + r1(c+outer.y) + '" stroke="' + (i===0?'#d62828':'#b7cdc6') + '" stroke-width="' + (i===0?6:3) + '" stroke-linecap="round"/>');
-    if(i===0){
-      html.push('<g transform="translate(' + c + ' ' + c + ') rotate(' + ang + ')"><polygon points="0,-128 12,-104 -12,-104" fill="#d62828"/></g>');
+function localPolar(deg, radius){
+  var rad = deg * Math.PI / 180;
+  return {x: Math.sin(rad) * radius, y: -Math.cos(rad) * radius};
+}
+function renderTurn(s){
+  var W = 640, H = 560, c = 320, cy = 286;
+  var faceAng = screenAngle(s.cleared ? s.answerDir : s.facing, s.north);
+  var fromDeg = 0;
+  if(s.cleared) fromDeg = s.left ? 90 * s.n : -90 * s.n;
+  var html = [svgOpen(W, H, '轉向'), scenery(s.theme, W, H)];
+  html.push('<g transform="translate(' + c + ' ' + cy + ')">');
+  for(var i = 0; i < 8; i++){
+    var ang = screenAngle(i, s.north);
+    var a = localPolar(ang, 78), b = localPolar(ang, i % 2 === 0 ? 132 : 118);
+    html.push('<line x1="' + r1(a.x) + '" y1="' + r1(a.y) + '" x2="' + r1(b.x) + '" y2="' + r1(b.y) + '" stroke="' + (i === 0 ? '#d62828' : '#b7cdc6') + '" stroke-width="' + (i === 0 ? 8 : 4) + '" stroke-linecap="round"/>');
+    if(i === 0){
+      html.push('<g transform="rotate(' + ang + ')"><polygon points="0,-150 14,-118 -14,-118" fill="#d62828"/></g>');
     }
-    var lp = angleToXY(ang, 162);
-    html.push('<text x="' + r1(c+lp.x) + '" y="' + r1(c+lp.y) + '" dy="0.35em" text-anchor="middle" class="dirLabel' + (i===0?' northLab':'') + '">' + DIRS[i] + '</text>');
+    var lp = localPolar(ang, 196);
+    var cls = i === 0 ? 'northLab' : 'placeName';
+    var weight = (s.fix || s.cleared) && i === s.answerDir ? ' dirTag' : '';
+    html.push('<text x="' + r1(lp.x) + '" y="' + r1(lp.y) + '" dy="0.35em" text-anchor="middle" class="' + cls + weight + '">' + DIRS[i] + '</text>');
   }
-  var face = screenAngle(q.facing, q.north);
-  html.push('<g transform="translate(' + c + ' ' + c + ')">');
-  html.push('<g transform="rotate(' + face + ')"><polygon points="0,-50 11,-26 -11,-26" fill="' + q.color + '"/></g>');
-  html.push('<circle r="20" fill="' + q.color + '"/>');
-  html.push('<circle cx="-6" cy="-3" r="2.4" fill="#fff"/><circle cx="6" cy="-3" r="2.4" fill="#fff"/>');
-  html.push('<path d="M-6 6 Q0 11 6 6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/>');
+  var start = screenAngle(s.facing, s.north);
+  var sweep = s.left ? -46 : 46;
+  var p1 = localPolar(start, 108);
+  var p2 = localPolar(start + sweep, 108);
+  var flag = s.left ? 0 : 1;
+  html.push('<path d="M ' + r1(p1.x) + ' ' + r1(p1.y) + ' A 108 108 0 0 ' + flag + ' ' + r1(p2.x) + ' ' + r1(p2.y) + '" fill="none" stroke="#f59e0b" stroke-width="6" stroke-linecap="round"/>');
+  var head = start + sweep + (s.left ? 180 : 0);
+  html.push('<g transform="translate(' + r1(p2.x) + ' ' + r1(p2.y) + ') rotate(' + r1(head) + ')"><polygon points="-8,-7 10,0 -8,7" fill="#f59e0b"/></g>');
+  var mid = localPolar(start + sweep / 2, 148);
+  html.push('<g transform="translate(' + r1(mid.x) + ' ' + r1(mid.y) + ')"><circle r="16" fill="#fff6d8" stroke="#f59e0b" stroke-width="3"/>'
+    + '<text dy="0.35em" text-anchor="middle" class="dirTag">×' + s.n + '</text></g>');
+  var anim = (s.cleared && !reduceMotion)
+    ? '<animateTransform attributeName="transform" type="rotate" from="' + fromDeg + '" to="0" dur="0.7s" fill="freeze"/>'
+    : '';
+  html.push('<g transform="rotate(' + faceAng + ')"><g>' + anim
+    + '<polygon points="0,-78 16,-36 -16,-36" fill="#ff8a3d" stroke="#fff" stroke-width="3"/>'
+    + '</g></g>');
+  if(s.cleared){
+    var chest = localPolar(screenAngle(s.answerDir, s.north), 118);
+    html.push('<g transform="translate(' + r1(chest.x) + ' ' + r1(chest.y) + ')">' + marker(0, 0, 'chest', '', true, false) + '</g>');
+    html.push(sparkles(chest.x, chest.y));
+  }
   html.push('</g>');
-  if(q.left){
-    html.push('<path d="M' + (c-18) + ' ' + (c-52) + ' A 54 54 0 0 0 ' + (c-52) + ' ' + (c-8) + '" fill="none" stroke="#f59e0b" stroke-width="5" stroke-linecap="round"/>');
-    html.push('<polygon points="' + (c-52) + ',' + (c-8) + ' ' + (c-34) + ',' + (c-24) + ' ' + (c-30) + ',' + (c+2) + '" fill="#f59e0b"/>');
-  } else {
-    html.push('<path d="M' + (c+18) + ' ' + (c-52) + ' A 54 54 0 0 1 ' + (c+52) + ' ' + (c-8) + '" fill="none" stroke="#f59e0b" stroke-width="5" stroke-linecap="round"/>');
-    html.push('<polygon points="' + (c+52) + ',' + (c-8) + ' ' + (c+34) + ',' + (c-24) + ' ' + (c+30) + ',' + (c+2) + '" fill="#f59e0b"/>');
-  }
+  html.push(dogSprite(c, cy, !!s.cleared));
   html.push('</svg>');
   return html.join('');
 }
-function renderCompass(q){
-  var S = 560, c = 280, dialR = 116, labelR = 78, needleL = 100, objR = 198;
-  var html = [];
-  html.push('<svg class="scene" viewBox="0 0 ' + S + ' ' + S + '" role="img" aria-label="指南針">');
-  html.push('<rect width="' + S + '" height="' + S + '" rx="28" fill="#e7f4fb"/>');
-  var ang = screenAngle(q.objectDir, q.north);
-  var op = angleToXY(ang, objR);
-  var rim = angleToXY(ang, dialR + 8);
-  var near = angleToXY(ang, objR - 36);
-  html.push('<line x1="' + r1(c+rim.x) + '" y1="' + r1(c+rim.y) + '" x2="' + r1(c+near.x) + '" y2="' + r1(c+near.y) + '" stroke="#f59e0b" stroke-width="4" stroke-dasharray="7 6" stroke-linecap="round"/>');
-  html.push('<circle cx="' + c + '" cy="' + c + '" r="' + dialR + '" fill="#fffdf8" stroke="#1c3d4e" stroke-width="10"/>');
-  var dialRot = ((q.north + q.dialOffset) % 8 + 8) % 8 * 45;
-  html.push('<g transform="translate(' + c + ' ' + c + ') rotate(' + dialRot + ')">');
-  for(var i=0;i<8;i++){
-    var p1 = angleToXY(i*45, dialR - 18);
-    var p2 = angleToXY(i*45, dialR - 4);
-    html.push('<line x1="' + r1(p1.x) + '" y1="' + r1(p1.y) + '" x2="' + r1(p2.x) + '" y2="' + r1(p2.y) + '" stroke="#1c3d4e" stroke-width="' + (i%2===0?4:2) + '" stroke-linecap="round"/>');
-    var lp = angleToXY(i*45, labelR);
-    var cls = i===0 ? 'dirLabel northLab' : 'dirLabel smallLab';
+function renderCompass(s){
+  var W = 680, H = 640, c = 340, cy = 318;
+  var dialR = 150, labelR = 108, needleL = 122, objR = 214;
+  var dialRot = mod8(s.north + s.dial) * 45;
+  var needleRot = mod8(s.north) * 45;
+  var goal = polar(s.objectDir, s.north, objR);
+  var gx = c + goal.x, gy = cy + goal.y;
+  var dim = !s.trap && !s.aligned && !s.revealed;
+  var html = [svgOpen(W, H, '指南針'), scenery('compass', W, H)];
+  html.push('<g opacity="' + (dim ? '0.55' : '1') + '">');
+  html.push(marker(gx, gy, 'chest', '寶箱', true, s.aligned || s.trap));
+  if(s.fix || s.cleared) html.push(dirTag(gx, gy, s.objectDir));
+  html.push('</g>');
+  html.push('<circle cx="' + c + '" cy="' + cy + '" r="' + (dialR + 8) + '" fill="#fffdf8" stroke="' + (s.aligned && !s.trap ? '#1f9d55' : '#1c3d4e') + '" stroke-width="10"/>');
+  html.push('<g transform="translate(' + c + ' ' + cy + ') rotate(' + dialRot + ')">');
+  for(var i = 0; i < 8; i++){
+    var t1 = localPolar(i * 45, dialR - 16);
+    var t2 = localPolar(i * 45, dialR - 2);
+    html.push('<line x1="' + r1(t1.x) + '" y1="' + r1(t1.y) + '" x2="' + r1(t2.x) + '" y2="' + r1(t2.y) + '" stroke="#1c3d4e" stroke-width="' + (i % 2 === 0 ? 5 : 3) + '" stroke-linecap="round"/>');
+    var lp = localPolar(i * 45, labelR);
+    var cls = i === 0 ? 'northLab' : 'placeName';
     html.push('<text x="' + r1(lp.x) + '" y="' + r1(lp.y) + '" dy="0.35em" text-anchor="middle" class="' + cls + '" transform="rotate(' + (-dialRot) + ' ' + r1(lp.x) + ' ' + r1(lp.y) + ')">' + DIRS[i] + '</text>');
   }
   html.push('</g>');
-  var needleRot = ((q.north % 8) + 8) % 8 * 45;
-  html.push('<g transform="translate(' + c + ' ' + c + ') rotate(' + needleRot + ')">');
-  html.push('<polygon points="0,-' + needleL + ' 10,-10 0,-24 -10,-10" fill="#d62828" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>');
-  html.push('<polygon points="0,72 8,10 0,22 -8,10" fill="#d5dde6" stroke="#fff" stroke-width="2"/>');
-  html.push('<circle r="9" fill="#fffdf8" stroke="#1c3d4e" stroke-width="3"/>');
+  html.push('<g transform="translate(' + c + ' ' + cy + ') rotate(' + needleRot + ')">');
+  html.push('<polygon points="0,-' + needleL + ' 12,-6 0,-24 -12,-6" fill="#d62828" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>');
+  html.push('<polygon points="0,74 8,6 0,18 -8,6" fill="#d5dde6" stroke="#fff" stroke-width="2"/>');
+  html.push('<circle r="7" fill="#fffdf8" stroke="#1c3d4e" stroke-width="3"/>');
   html.push('</g>');
-  html.push(placeMarker(q.object, q.icon, c+op.x, c+op.y, 'target'));
+  html.push(dogSprite(c, cy, !!s.cleared));
+  if(s.cleared) html.push(sparkles(gx, gy));
   html.push('</svg>');
   return html.join('');
 }
-function segmentArrow(A, B){
-  var mx = A.x + (B.x-A.x)*0.58;
-  var my = A.y + (B.y-A.y)*0.58;
-  var rot = Math.atan2(B.y-A.y, B.x-A.x) * 180 / Math.PI;
-  return '<g transform="translate(' + r1(mx) + ' ' + r1(my) + ') rotate(' + r1(rot) + ')">'
-    + '<polygon points="-9,-8 12,0 -9,8" fill="#fff" stroke="#ff8a3d" stroke-width="3"/>'
-    + '</g>';
-}
-function stepBadge(A, B, label, nodes){
-  var mx = A.x + (B.x-A.x)*0.5;
-  var my = A.y + (B.y-A.y)*0.5;
-  var px = -(B.y-A.y), py = B.x-A.x;
-  var plen = Math.sqrt(px*px + py*py) || 1;
-  var ox = px/plen, oy = py/plen;
-  function clearOf(x, y){
-    for(var i=0;i<nodes.length;i++){
-      var dx = nodes[i].x - x, dy = nodes[i].y - y;
-      if(dx*dx + dy*dy < 74*74) return false;
-    }
-    return true;
-  }
-  var x = mx, y = my, found = false;
-  var dists = [32, 46, 58];
-  for(var d=0; d<dists.length && !found; d++){
-    var cands = [
-      {x: mx + ox*dists[d], y: my + oy*dists[d]},
-      {x: mx - ox*dists[d], y: my - oy*dists[d]}
-    ];
-    for(var c=0;c<cands.length;c++){
-      if(clearOf(cands[c].x, cands[c].y)){ x = cands[c].x; y = cands[c].y; found = true; break; }
-    }
-  }
-  return '<g><circle cx="' + r1(x) + '" cy="' + r1(y) + '" r="15" fill="#ff8a3d" stroke="#fff" stroke-width="2"/>'
-    + '<text x="' + r1(x) + '" y="' + r1(y) + '" dy="0.35em" text-anchor="middle" class="stepNum">' + label + '</text></g>';
-}
-function renderPath(q){
-  var W = 680, H = 500, left = 86, top = 78, right = W - 150, bottom = H - 86;
-  var raw = [];
-  var minX=1e9, maxX=-1e9, minY=1e9, maxY=-1e9;
-  for(var i=0;i<q.nodes.length;i++){
-    var p = project(q.nodes[i].e, q.nodes[i].n, q.north);
-    raw.push(p);
-    if(p.x<minX) minX=p.x; if(p.x>maxX) maxX=p.x;
-    if(p.y<minY) minY=p.y; if(p.y>maxY) maxY=p.y;
-  }
-  if(maxX===minX){ maxX += 1; minX -= 1; }
-  if(maxY===minY){ maxY += 1; minY -= 1; }
-  var s = Math.min((right-left)/(maxX-minX), (bottom-top)/(maxY-minY));
-  var ox = left + ((right-left) - s*(maxX-minX))/2 - s*minX;
-  var oy = top + ((bottom-top) - s*(maxY-minY))/2 - s*minY;
-  var byId = {};
-  for(var k=0;k<q.nodes.length;k++){
-    byId[q.nodes[k].id] = {x: ox + s*raw[k].x, y: oy + s*raw[k].y};
-  }
-  var html = [];
-  html.push('<svg class="scene" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="路線圖">');
-  html.push('<rect width="' + W + '" height="' + H + '" rx="24" fill="#e7f6ea"/>');
-  html.push(compassWidget(W-74, 68, q.north, 28));
-  for(var e=0;e<q.edges.length;e++){
-    var a = byId[q.edges[e][0]], b = byId[q.edges[e][1]];
-    html.push('<line x1="'+r1(a.x)+'" y1="'+r1(a.y)+'" x2="'+r1(b.x)+'" y2="'+r1(b.y)+'" stroke="#d5ebe4" stroke-width="12" stroke-linecap="round"/>');
-  }
-  var legs = [[q.route.from, q.route.via],[q.route.via, q.route.to]];
-  for(var L=0;L<legs.length;L++){
-    var A = byId[legs[L][0]], B = byId[legs[L][1]];
-    html.push('<line x1="'+r1(A.x)+'" y1="'+r1(A.y)+'" x2="'+r1(B.x)+'" y2="'+r1(B.y)+'" stroke="#ff8a3d" stroke-width="8" stroke-linecap="round"/>');
-  }
-  for(var n=0;n<q.nodes.length;n++){
-    var pt = byId[q.nodes[n].id];
-    var node = q.nodes[n];
-    var role = 'normal';
-    if(node.id===q.route.from) role = 'ref';
-    if(node.id===q.route.to) role = 'target';
-    html.push(placeMarker(node.name, node.icon, pt.x, pt.y, role));
-  }
-  var nodePts = [];
-  for(var np=0; np<q.nodes.length; np++) nodePts.push(byId[q.nodes[np].id]);
-  for(var L2=0;L2<legs.length;L2++){
-    var A2 = byId[legs[L2][0]], B2 = byId[legs[L2][1]];
-    html.push(segmentArrow(A2, B2));
-    html.push(stepBadge(A2, B2, String(L2+1), nodePts));
-  }
-  html.push('</svg>');
-  return html.join('');
-}
-function renderScene(q){
-  if(q.type==='rose') return renderRose(q);
-  if(q.type==='relative' || q.type==='who') return renderMap(q);
-  if(q.type==='turn') return renderTurn(q);
-  if(q.type==='compass') return renderCompass(q);
-  if(q.type==='path') return renderPath(q);
+function renderScene(){
+  if(!cur) return '';
+  if(cur.flavour === 'where') return renderWhere(cur);
+  if(cur.flavour === 'path') return renderPath(cur);
+  if(cur.flavour === 'turn') return renderTurn(cur);
+  if(cur.flavour === 'compass') return renderCompass(cur);
   return '';
 }
 
+function promptText(){
+  var s = cur;
+  if(s.flavour === 'where') return s.goalName + '在小狗的哪一方？';
+  if(s.flavour === 'path'){
+    var from = nodeName(s.map, s.route.from);
+    var via = nodeName(s.map, s.route.via);
+    var to = nodeName(s.map, s.route.to);
+    if(!s.step) return '沿住腳印，由' + from + '走到' + to + '。先向哪一方？';
+    return '轉彎了！由' + via + '走到' + to + '，向哪一方？';
+  }
+  if(s.flavour === 'turn'){
+    return '幫小狗向' + (s.left ? '左' : '右') + '轉 ' + s.n + ' 下。點牠轉完望向的方向。';
+  }
+  if(s.trap) return '「北」字未貼住紅針。寶箱在小狗的哪一方？';
+  if(!s.aligned) return '轉動字盤，等「北」字貼住紅針。';
+  return '對準了！寶箱在小狗的哪一方？';
+}
+function subText(){
+  var s = cur;
+  if(s.flavour === 'turn') return '小狗正望着' + fang(s.facing) + '。每下轉一個直角。';
+  if(s.flavour === 'compass' && s.trap) return '紅針才是北方，不是字盤上的北。';
+  if(s.flavour === 'compass' && !s.aligned) return '紅針不會動。慢慢轉，直到重疊。';
+  if(s.flavour === 'path' && s.step === 1 && !resolved()) return '第一步走對了。';
+  return '';
+}
+function captionText(){
+  if(!cur) return '';
+  if(cur.flavour === 'compass'){
+    if(cur.trap) return '紅針總是指向北方。字盤上的北還未對準。';
+    return '紅針總是指向北方。';
+  }
+  return '紅色箭咀指向北方。';
+}
+function missText(){
+  var s = cur;
+  if(s.flavour === 'path' && !s.step) return '正確是先向' + fang(s.route.d1) + '，再向' + fang(s.route.d2) + '。';
+  if(s.flavour === 'path') return '正確是再向' + fang(s.route.d2) + '。';
+  if(s.flavour === 'turn') return '轉完望向' + fang(s.answerDir) + '。';
+  if(s.flavour === 'compass' && s.trap) return '寶箱在' + fang(s.objectDir) + '。紅針才是北方。';
+  return '正確是向' + fang(expectedDir(s)) + '。';
+}
+function revealText(){
+  var s = cur;
+  if(s.flavour === 'path' && !s.step) return '方向：先向' + fang(s.route.d1) + '，再向' + fang(s.route.d2) + '。';
+  if(s.flavour === 'path') return '方向：再向' + fang(s.route.d2) + '。';
+  if(s.flavour === 'turn') return '方向：轉完望向' + fang(s.answerDir) + '。';
+  if(s.flavour === 'compass'){
+    var line = '方向：寶箱在' + fang(s.objectDir) + '。';
+    if(s.trap) line += '紅針才是北方。';
+    else line += '先讓北字貼住紅針。';
+    return line;
+  }
+  return '方向：' + cur.goalName + '在' + fang(cur.goalDir) + '。';
+}
+function setFeedback(text, kind){
+  var el = $('feedback');
+  el.className = 'feedback ' + (kind || 'hint');
+  el.textContent = text;
+}
+function showCheer(text, good){
+  var el = $('cheer');
+  el.textContent = text;
+  el.className = 'cheer on ' + (good ? 'good' : 'bad');
+}
+function clearCheer(){
+  $('cheer').className = 'cheer';
+  $('cheer').textContent = '';
+}
 function updateHearts(){
-  var s = '';
-  for(var i=0;i<3;i++) s += i < hearts ? '❤️' : '🖤';
-  $('hearts').textContent = s;
+  var html = '';
+  for(var i = 0; i < 3; i++) html += '<span class="heart' + (i < hearts ? '' : ' off') + '">❤</span>';
+  $('hearts').innerHTML = html;
 }
-function clearEndTimer(){
-  if(endTimer){ clearTimeout(endTimer); endTimer = null; }
-}
-function roseReady(){
-  if(!cur || cur.type!=='rose' || cur.blanks.length<2) return false;
-  for(var i=0;i<cur.blanks.length;i++) if(cur.fills[cur.blanks[i]] == null) return false;
-  return true;
-}
-function roseMultiOk(q){
-  for(var i=0;i<q.blanks.length;i++){
-    if(q.fills[q.blanks[i]] !== q.blanks[i]) return false;
+function updateTop(){
+  updateHearts();
+  $('loot').textContent = '★ ' + loot;
+  $('placeBanner').textContent = cur ? cur.place : '';
+  $('modeTag').textContent = mode === 'teacher' ? '老師' : '學生';
+  var trail = $('trail');
+  var label = '進度 ' + (index + 1) + '／' + queue.length + '，寶藏 ' + loot;
+  trail.setAttribute('aria-label', label);
+  trail.innerHTML = '';
+  for(var i = 0; i < queue.length; i++){
+    var dot = document.createElement('i');
+    dot.className = 'dot';
+    if(i === index && !ended) dot.className += ' now';
+    else if(queue[i].result === 'ok') dot.className += ' ok';
+    else if(queue[i].result === 'miss') dot.className += ' miss';
+    else if(queue[i].result === 'show') dot.className += ' show';
+    trail.appendChild(dot);
   }
-  return true;
 }
-function syncBars(){
-  var both = !answered && roseReady();
-  $('btnCheck').style.display = both ? '' : 'none';
-  $('btnNext').style.display = (mode==='student' && answered) ? '' : 'none';
-  $('nextRow').classList.toggle('on', both || (mode==='student' && answered));
-  var teacher = mode==='teacher';
+function updatePad(){
+  var lock = !cur || paused || busy || resolved() || (cur.flavour === 'compass' && !cur.trap && !cur.aligned);
+  var want = (cur && (cur.fix || cur.cleared)) ? expectedDir(cur) : null;
+  var buttons = document.querySelectorAll('.dir');
+  for(var i = 0; i < buttons.length; i++){
+    var b = buttons[i];
+    var d = +b.getAttribute('data-d');
+    b.disabled = !!lock;
+    b.classList.toggle('ok', !!(cur && cur.cleared && d === want));
+    b.classList.toggle('bad', !!(cur && cur.failed && d === cur.picked));
+    b.classList.toggle('reveal', !!(cur && want != null && d === want && (cur.failed || cur.revealed) && !cur.cleared));
+  }
+  var spinning = !!(cur && cur.flavour === 'compass' && !cur.trap && !cur.aligned && !resolved() && !paused);
+  $('spinRow').classList.toggle('on', spinning);
+  $('btnRotL').disabled = !spinning;
+  $('btnRotR').disabled = !spinning;
+}
+function updateTeach(){
+  var teacher = mode === 'teacher';
   $('teachBar').classList.toggle('on', teacher);
-  $('btnReveal').disabled = !!answered;
-  $('btnTeachNext').disabled = !answered;
+  if(!teacher) return;
+  $('btnReveal').disabled = !cur || resolved() || paused;
+  $('btnTeachNext').disabled = !cur || !resolved() || paused;
 }
-function roseHint(){
-  if(!cur || cur.type!=='rose' || cur.blanks.length<2 || answered) return;
-  var idx = cur.blanks.indexOf(cur.focus);
-  if(idx<0) idx = 0;
-  $('feedback').className = 'feedback hint';
-  $('feedback').textContent = roseReady() ? '兩個空格都填了，按「檢查」。' : ('正在填第 ' + (idx+1) + ' 個空格，可再點空格改選。');
+function renderAll(){
+  if(!cur) return;
+  $('mapCard').className = 'mapCard' + (cur.failed ? ' shake' : '');
+  $('prompt').textContent = promptText();
+  $('subprompt').textContent = subText();
+  $('caption').textContent = captionText();
+  $('scene').innerHTML = renderScene();
+  updateTop();
+  updatePad();
+  updateTeach();
 }
-function bindBlanks(){
-  var nodes = $('scene').querySelectorAll('[data-blank]');
-  for(var i=0;i<nodes.length;i++){
-    nodes[i].addEventListener('click', function(){
-      if(answered || paused || !cur || cur.blanks.length<2) return;
-      cur.focus = parseInt(this.getAttribute('data-blank'), 10);
-      drawScene();
-      roseHint();
-    });
+
+function showStage(){
+  cur = queue[index];
+  cur.step = 0;
+  cur.cleared = false;
+  cur.failed = false;
+  cur.revealed = false;
+  cur.fix = false;
+  cur.picked = null;
+  cur.result = null;
+  if(cur.flavour === 'compass'){
+    cur.dial = cur.dial0;
+    cur.aligned = false;
   }
+  busy = false;
+  clearCheer();
+  renderAll();
+  if(cur.flavour === 'compass' && !cur.trap) setFeedback('先對準紅針。', 'hint');
+  else setFeedback('點一個方向。', 'hint');
 }
-function drawScene(){
-  $('scene').innerHTML = renderScene(cur);
-  bindBlanks();
+function nextStage(){
+  busy = false;
+  if(hearts <= 0 || index >= queue.length - 1){ endGame(); return; }
+  index++;
+  showStage();
 }
-function drawChoices(){
-  var box = $('choices');
-  var few = cur.choices.length <= 4;
-  box.className = 'choices' + (cur.type==='path' ? ' pairs' : few ? ' few' : '');
-  box.innerHTML = '';
-  for(var i=0;i<cur.choices.length;i++){
-    (function(c){
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'choice';
-      b.setAttribute('data-key', c.key);
-      b.textContent = c.label;
-      b.addEventListener('click', function(){ onChoice(c.key); });
-      box.appendChild(b);
-    })(cur.choices[i]);
-  }
-}
-function drawAll(){
-  $('prompt').textContent = cur.prompt;
-  if(cur.warn){
-    $('warn').textContent = cur.warn;
-    $('warn').classList.add('on');
-  } else {
-    $('warn').textContent = '';
-    $('warn').classList.remove('on');
-  }
-  $('caption').textContent = cur.caption || '';
-  drawScene();
-  drawChoices();
-  syncBars();
-}
-function markChoices(){
-  var buttons = $('choices').querySelectorAll('button.choice');
-  var correctKeys = {};
-  if(cur.type==='rose'){
-    for(var i=0;i<cur.blanks.length;i++) correctKeys[String(cur.blanks[i])] = true;
-  } else {
-    correctKeys[String(cur.answer)] = true;
-  }
-  var picked = {};
-  if(!cur.revealed){
-    if(cur.type==='rose' && cur.blanks.length>1){
-      for(var b=0;b<cur.blanks.length;b++){
-        var f = cur.fills[cur.blanks[b]];
-        if(f != null) picked[String(f)] = true;
-      }
-    } else if(cur.picked != null){
-      picked[String(cur.picked)] = true;
+function applyDir(dir){
+  if(!cur || paused || busy || resolved()) return;
+  if(cur.flavour === 'compass' && !cur.trap && !cur.aligned) return;
+  var want = expectedDir(cur);
+  if(dir === want){
+    if(cur.flavour === 'path' && !cur.step){
+      cur.step = 1;
+      beepTick();
+      busy = true;
+      renderAll();
+      setFeedback('行對了！再點下一個方向。', 'ok');
+      later(380, function(){ busy = false; updatePad(); updateTeach(); });
+      return;
     }
-  }
-  for(var k=0;k<buttons.length;k++){
-    var btn = buttons[k];
-    btn.disabled = true;
-    var key = btn.getAttribute('data-key');
-    if(cur.revealed && correctKeys[key]) btn.classList.add('reveal');
-    else if(correctKeys[key] && picked[key]) btn.classList.add('ok');
-    else if(correctKeys[key]) btn.classList.add('reveal');
-    else if(picked[key]) btn.classList.add('bad');
-  }
-}
-function grade(key){
-  if(answered || paused || !cur) return;
-  answered = true;
-  cur.picked = key;
-  cur.showAnswer = true;
-  var ok = (cur.type==='rose' && cur.blanks.length>1) ? roseMultiOk(cur) : String(key)===String(cur.answer);
-  if(ok){
-    correct++;
-    $('feedback').className = 'feedback ok';
-    $('feedback').textContent = '答對了！' + explain(cur);
+    cur.cleared = true;
+    cur.fix = true;
+    cur.result = 'ok';
+    loot++;
+    var extra = '';
+    if(!taughtMid && BETWEEN[want]){ taughtMid = true; extra = BETWEEN[want]; }
     beepOk();
-  } else {
-    hearts--;
-    updateHearts();
-    $('feedback').className = 'feedback bad';
-    $('feedback').textContent = '再想一想。' + explain(cur);
-    beepBad();
-  }
-  $('scorePill').textContent = '對 ' + correct;
-  drawScene();
-  markChoices();
-  syncBars();
-  if(hearts<=0){
-    var s = session;
-    clearEndTimer();
-    endTimer = setTimeout(function(){
-      if(s!==session) return;
-      if(hearts<=0) endGame();
-    }, 1400);
-  }
-}
-function onChoice(key){
-  if(answered || paused || !cur) return;
-  if(cur.type==='rose' && cur.blanks.length>1){
-    var dir = parseInt(key, 10);
-    var focus = cur.focus;
-    for(var i=0;i<cur.blanks.length;i++){
-      var b = cur.blanks[i];
-      if(b!==focus && cur.fills[b]===dir) cur.fills[b] = null;
-    }
-    cur.fills[focus] = dir;
-    var next = null;
-    for(var j=0;j<cur.blanks.length;j++){
-      if(cur.fills[cur.blanks[j]] == null){ next = cur.blanks[j]; break; }
-    }
-    if(next != null) cur.focus = next;
-    beep(640, 0.05, 'sine', 0.05);
-    drawScene();
-    roseHint();
-    syncBars();
+    showCheer('搵到寶啦！', true);
+    setFeedback(extra || '寶藏到手！', 'ok');
+    renderAll();
+    if(mode === 'student') later(1500, nextStage);
     return;
   }
-  grade(key);
+  cur.failed = true;
+  cur.fix = true;
+  cur.picked = dir;
+  cur.result = 'miss';
+  hearts--;
+  beepBad();
+  showCheer('差一點！', false);
+  setFeedback(missText(), 'bad');
+  renderAll();
+  if(mode === 'student') later(2200, nextStage);
+}
+function spinDial(delta){
+  if(!cur || paused || busy || resolved()) return;
+  if(cur.flavour !== 'compass' || cur.trap || cur.aligned) return;
+  cur.dial = mod8(cur.dial + delta);
+  beepTick();
+  if(cur.dial === 0){
+    cur.aligned = true;
+    beepOk();
+    setFeedback('對準了！現在點寶箱的方向。', 'ok');
+  }
+  renderAll();
 }
 function reveal(){
-  if(answered || paused || !cur) return;
-  answered = true;
-  cur.showAnswer = true;
-  cur.revealed = true;
-  if(cur.type==='rose'){
-    for(var i=0;i<cur.blanks.length;i++) cur.fills[cur.blanks[i]] = cur.blanks[i];
+  if(!cur || paused || busy || resolved()) return;
+  if(cur.flavour === 'compass' && !cur.trap){
+    cur.dial = 0;
+    cur.aligned = true;
   }
-  $('feedback').className = 'feedback hint';
-  $('feedback').textContent = '答案：' + explain(cur);
-  drawScene();
-  markChoices();
-  syncBars();
-}
-function loadQuestion(){
-  clearEndTimer();
-  answered = false;
-  paused = false;
-  $('pausedOverlay').classList.remove('on');
-  cur = queue[qIndex];
-  cur.showAnswer = false;
-  cur.revealed = false;
-  cur.picked = null;
-  cur.fills = {};
-  if(cur.blanks) cur.focus = cur.blanks[0];
-  $('qPill').textContent = '第 ' + (qIndex+1) + '／' + totalQ + ' 題';
-  $('feedback').className = 'feedback hint';
-  $('feedback').textContent = (cur.type==='rose' && cur.blanks.length>1) ? '先點橙色空格，再點方向。' : '點選答案。';
-  drawAll();
-  if(cur.type==='rose' && cur.blanks.length>1) roseHint();
-}
-function nextQuestion(){
-  if(!answered) return;
-  if(hearts<=0){ endGame(); return; }
-  qIndex++;
-  if(qIndex>=totalQ){ endGame(); return; }
-  loadQuestion();
+  cur.revealed = true;
+  cur.fix = true;
+  cur.result = 'show';
+  setFeedback(revealText(), 'hint');
+  renderAll();
 }
 function endGame(){
-  clearEndTimer();
+  if(ended) return;
+  ended = true;
+  busy = false;
   show('end');
-  var stars = hearts>=3 ? '⭐⭐⭐' : hearts===2 ? '⭐⭐' : hearts===1 ? '⭐' : '💫';
-  $('endStars').textContent = stars;
-  $('endTitle').textContent = hearts>0 ? '完成！' : '再試一次！';
-  $('endScore').textContent = '答對 ' + correct + ' 題';
-  $('endDetail').textContent = '答對 ' + correct + '／' + totalQ + ' 題 · 剩餘 ' + hearts + ' 顆心';
+  var star = hearts > 0 ? '★'.repeat(hearts) : '☆☆☆';
+  $('endStars').textContent = star;
+  $('endStars').style.opacity = hearts > 0 ? '1' : '.4';
+  $('endTitle').textContent = hearts > 0 ? '探險完成！' : '再出發吧！';
+  $('endScore').textContent = '搵到 ' + loot + ' 份寶藏';
+  $('endDetail').textContent = hearts > 0
+    ? '剩下 ' + hearts + ' 顆心，得到 ' + hearts + ' 顆星。'
+    : '心用完了。紅針仍然指向北方，再試一次！';
 }
-function startGame(){
-  session++;
-  clearEndTimer();
+function startRun(){
+  bump();
+  ended = false;
+  paused = false;
+  $('paused').classList.remove('on');
   soundOn = $('togSound').checked;
-  hearts = 3; correct = 0; qIndex = 0; totalQ = TOTAL_Q;
-  queue = buildRun();
-  updateHearts();
-  $('scorePill').textContent = '對 0';
-  $('modeTag').textContent = mode==='teacher' ? '老師' : '學生';
-  show('tip');
+  hearts = 3;
+  loot = 0;
+  index = 0;
+  taughtMid = false;
+  queue = buildAdventure();
+  show('play');
+  showStage();
 }
 function goHome(){
-  session++;
-  clearEndTimer();
+  bump();
+  ended = false;
   paused = false;
-  $('pausedOverlay').classList.remove('on');
+  busy = false;
+  cur = null;
+  $('paused').classList.remove('on');
   show('start');
 }
 
@@ -1225,195 +1090,184 @@ $('modeTeacher').addEventListener('click', function(){
   $('modeTeacher').classList.add('sel');
   $('modeStudent').classList.remove('sel');
 });
-$('btnStart').addEventListener('click', startGame);
-$('btnTipGo').addEventListener('click', function(){
-  show('play');
-  loadQuestion();
-});
-$('btnCheck').addEventListener('click', function(){
-  if(roseReady()) grade('multi');
-});
-$('btnNext').addEventListener('click', nextQuestion);
-$('btnTeachNext').addEventListener('click', nextQuestion);
-$('btnReveal').addEventListener('click', reveal);
+$('btnStart').addEventListener('click', startRun);
+$('btnAgain').addEventListener('click', startRun);
+$('btnMenu').addEventListener('click', goHome);
 $('btnHome').addEventListener('click', goHome);
 $('btnPause').addEventListener('click', function(){
+  if(ended) return;
   paused = true;
-  $('pausedOverlay').classList.add('on');
+  $('paused').classList.add('on');
+  updatePad();
+  updateTeach();
 });
 $('btnResume').addEventListener('click', function(){
   paused = false;
-  $('pausedOverlay').classList.remove('on');
+  $('paused').classList.remove('on');
+  updatePad();
+  updateTeach();
+  if(pending){ var fn = pending; pending = null; fn(); }
 });
-$('btnAgain').addEventListener('click', startGame);
-$('btnMenu').addEventListener('click', goHome);
-
-document.addEventListener('focusin', function(e){
-  if(e.target && e.target.tagName==='INPUT' && e.target.type!=='checkbox') e.target.blur();
+$('btnReveal').addEventListener('click', reveal);
+$('btnTeachNext').addEventListener('click', function(){
+  if(!resolved() || paused) return;
+  nextStage();
 });
-
-function previewQuestion(kind){
-  if(kind==='rose') return makeRose({single:true, north:6, blank:1, shown:[0,2,4]});
-  if(kind==='rose2') return makeRose({single:false, north:5, blanks:[5,7], shown:[0,1,3,4,6]});
-  if(kind==='map') return makeRelative({north:1, ref:'鐵路站', target:'公園', targetDir:5, decoys:['圖書館','街市','學校']});
-  if(kind==='who') return makeWho({north:2, ref:'街市', dir:7, names:['圖書館','公園','學校','商場']});
-  if(kind==='turn') return makeTurn({person:'諾言', facing:3, left:true, n:3, north:0});
-  if(kind==='compass') return makeCompass({trap:false, person:'仲謙', object:'餐廳', objectDir:3, north:0, dialOffset:0});
-  if(kind==='trap') return makeCompass({trap:true, person:'卓楠', object:'遊樂場', objectDir:7, north:1, dialOffset:6});
-  if(kind==='path'){
-    var north = 1, map = 1;
-    var ns = /[?&]north=(\d)/.exec(location.search);
-    var ms = /[?&]map=(\d)/.exec(location.search);
-    if(ns) north = +ns[1];
-    if(ms) map = +ms[1];
-    var route = map===0 ? ['school','lib','park'] : ['station','kg','home'];
-    return makePath({map:map, route:route, north:north});
-  }
-  return makeRose({single:true, easy:true});
-}
+$('btnRotL').addEventListener('click', function(){ spinDial(-1); });
+$('btnRotR').addEventListener('click', function(){ spinDial(1); });
+document.querySelectorAll('.dir').forEach(function(b){
+  b.addEventListener('click', function(){ applyDir(+b.getAttribute('data-d')); });
+});
 
 function runSelfTest(){
   var issues = [];
   function assert(cond, msg){ if(!cond) issues.push(msg); }
-  assert(DIRS.join('、')==='北、東北、東、東南、南、西南、西、西北', 'direction names');
-  assert(turnDir(3, true, 3)===5, '東南左轉3個直角應為西南');
-  assert(turnDir(0, false, 1)===2, '北右轉1應為東');
-  assert(turnDir(0, false, 2)===4, '北右轉2應為南');
-  assert(turnDir(0, true, 1)===6, '北左轉1應為西');
-  assert(turnDir(2, true, 3)===4, '東左轉3應為南');
+  assert(DIRS.join('、') === '北、東北、東、東南、南、西南、西、西北', 'names');
+  assert(turnDir(3, true, 3) === 5, '東南左轉3應為西南');
+  assert(turnDir(0, false, 1) === 2, '北右轉1＝東');
+  assert(turnDir(0, false, 2) === 4, '北右轉2＝南');
+  assert(turnDir(0, true, 1) === 6, '北左轉1＝西');
+  assert(turnDir(2, true, 3) === 4, '東左轉3＝南');
   var steps = [
     {e:0,n:1},{e:1,n:1},{e:1,n:0},{e:1,n:-1},
     {e:0,n:-1},{e:-1,n:-1},{e:-1,n:0},{e:-1,n:1}
   ];
-  for(var north=0; north<8; north++){
-    for(var d=0; d<8; d++){
+  for(var north = 0; north < 8; north++){
+    for(var d = 0; d < 8; d++){
       var st = steps[d];
+      assert(vecDir(st.e, st.n) === d, 'vec ' + d);
       var p = project(st.e, st.n, north);
-      var back = vectorToDir(p.x, p.y, north);
-      if(back!==d) issues.push('roundtrip n='+north+' d='+d+' got '+back);
-      var ang = screenAngle(d, north);
-      var xy = angleToXY(ang, 10);
-      if(vectorToDir(xy.x, xy.y, north)!==d) issues.push('screen n='+north+' d='+d);
-    }
-  }
-  var eastWhenNorthLeft = project(1, 0, 6);
-  assert(eastWhenNorthLeft.y < -0.5 && Math.abs(eastWhenNorthLeft.x)<0.2, '北向左時東在上');
-  var northLeft = project(0, 1, 6);
-  assert(northLeft.x < -0.5 && Math.abs(northLeft.y)<0.2, '北向左');
-  assert(screenAngle(3, 5)%360===0, '北偏左下時東南在上');
-  assert(screenAngle(0, 5)===225, '該圖的北在左下');
-  for(var mi=0; mi<MAPS.length; mi++){
-    var routes = validRoutes(MAPS[mi]);
-    assert(routes.length>=4, 'map '+mi+' routes '+routes.length);
-    for(var r=0;r<routes.length;r++){
-      assert(legDir(MAPS[mi], routes[r].from, routes[r].via)===routes[r].d1, 'leg1');
-      assert(legDir(MAPS[mi], routes[r].via, routes[r].to)===routes[r].d2, 'leg2');
-      var pc = pairChoices(routes[r].d1, routes[r].d2);
-      assert(pc.length===4, 'pairs');
-      var keys = {};
-      var hit = false;
-      for(var pi=0; pi<pc.length; pi++){
-        keys[pc[pi].key] = true;
-        if(pc[pi].key===routes[r].d1+'-'+routes[r].d2) hit = true;
-        assert(/^[\u4e00-\u9fff]+ → [\u4e00-\u9fff]+$/.test(pc[pi].label), 'pair label '+pc[pi].label);
+      var len = Math.sqrt(st.e * st.e + st.n * st.n);
+      var back = polar(d, north, len);
+      if(Math.abs(p.x - back.x) > 0.02 || Math.abs(p.y - back.y) > 0.02){
+        issues.push('project mismatch n=' + north + ' d=' + d);
       }
-      assert(hit, 'correct pair missing');
-      assert(Object.keys(keys).length===4, 'pair unique');
     }
   }
-  var forbidden = {'東北方':1,'東南方':1,'西南方':1,'西北方':1,'北方':1,'南方':1,'東方':1,'西方':1};
-  function checkQ(q, tag){
-    assert(q.prompt && q.choices && q.choices.length>=2, tag+' shape');
-    var seen = {};
-    var hasAns = false;
-    for(var i=0;i<q.choices.length;i++){
-      var lab = q.choices[i].label;
-      assert(!forbidden[lab], tag+' bad label '+lab);
-      seen[q.choices[i].key] = true;
-      if(String(q.choices[i].key)===String(q.answer)) hasAns = true;
-    }
-    assert(Object.keys(seen).length===q.choices.length, tag+' dup choice');
-    if(q.type!=='rose' || q.blanks.length===1) assert(hasAns, tag+' answer not in choices '+q.answer);
-    if(q.type==='rose'){
-      assert(q.shown.indexOf(0)>=0, 'rose shows 北');
-      for(var b=0;b<q.blanks.length;b++){
-        assert(q.shown.indexOf(q.blanks[b])<0, 'blank also shown');
-        assert(q.blanks[b]>=1 && q.blanks[b]<=7, 'blank range');
-      }
-      for(var c=0;c<q.choices.length;c++) assert(q.choices[c].label===DIRS[c], 'rose choice order');
-    }
-    if(q.type==='relative'){
-      var found = false;
-      for(var s=0;s<q.spots.length;s++) if(q.spots[s].name===q.target) found = q.spots[s].dir===q.answerDir;
-      assert(found, 'relative target dir');
-      assert(q.prompt.indexOf('的哪一方')>0, 'relative prompt');
-      assert(explain(q).indexOf('方')>0, 'relative explain');
-    }
-    if(q.type==='who'){
-      var whoOk = false;
-      for(var w=0;w<q.spots.length;w++) if(q.spots[w].name===q.answer) whoOk = q.spots[w].dir===q.dir;
-      assert(whoOk, 'who spot');
-      assert(q.prompt.indexOf('方？')>0, 'who prompt');
-    }
-    if(q.type==='turn'){
-      assert(q.answerDir===turnDir(q.facing, q.left, q.n), 'turn math');
-      assert(q.n>=1 && q.n<=3, 'turn n');
-    }
-    if(q.type==='compass'){
-      assert(q.answerDir===q.objectDir, 'needle not dial');
-      assert(String(q.answer)===String(q.objectDir), 'compass key');
-      if(q.dialOffset) assert(q.warn.indexOf('未與')>=0, 'trap warn');
-    }
-    if(q.type==='path'){
-      assert(q.answer===q.leg1+'-'+q.leg2, 'path key');
-      assert(explain(q).indexOf('先向')===0, 'path explain');
-    }
+  var east = project(1, 0, 6);
+  assert(east.y < -0.5 && Math.abs(east.x) < 0.2, '北向左時東在上');
+  assert(screenAngle(5, 1) === 270, '北在右上時西南向左');
+  ['garden','town'].forEach(function(id){
+    var routes = twoLegRoutes(MAPS[id]);
+    assert(routes.length >= 4, id + ' routes ' + routes.length);
+    routes.forEach(function(r){
+      var a = nodeById(MAPS[id], r.from);
+      var b = nodeById(MAPS[id], r.via);
+      var c = nodeById(MAPS[id], r.to);
+      assert(edgeDir(a, b) === r.d1, id + ' leg1');
+      assert(edgeDir(b, c) === r.d2, id + ' leg2');
+      assert(r.d1 !== r.d2, 'two dirs');
+    });
+  });
+  var townRoutes = twoLegRoutes(MAPS.town);
+  var book = townRoutes.filter(function(r){ return r.from === 'station' && r.via === 'kg' && r.to === 'home'; })[0];
+  assert(book && book.d1 === 5 && book.d2 === 3, '鐵路站西南到幼稚園再東南到家');
+  assert(edgeDir(nodeById(MAPS.town,'market'), nodeById(MAPS.town,'park')) === 1, '公園在街市東北');
+  var trap = makeCompass({trap:true, north:1, dial:6, objectDir:7, place:'觀景台'});
+  assert(trap.dial !== 0, 'trap offset');
+  assert((trap.objectDir - trap.dial + 8) % 8 !== trap.objectDir, 'dial reading differs');
+  assert(expectedDir(trap) === 7, 'trap uses needle');
+  var align = makeCompass({trap:false, north:3, dial:2, objectDir:4, place:'露營角'});
+  assert(align.dial0 === 2 && !align.trap, 'align starts offset');
+  var bookTurn = makeTurn({place:'大樹下', facing:3, left:true, n:3, north:0});
+  assert(bookTurn.answerDir === 5, 'book turn');
+  for(var n = 0; n < 40; n++){
+    var run = buildAdventure();
+    assert(run.length === 10, 'len');
+    var flav = {};
+    var traps = 0;
+    run.forEach(function(s){
+      flav[s.flavour] = (flav[s.flavour] || 0) + 1;
+      if(s.flavour === 'compass' && s.trap) traps++;
+      if(s.flavour === 'compass') assert(s.dial0 >= 1 && s.dial0 <= 7, 'dial');
+      if(s.flavour === 'turn') assert(s.answerDir === turnDir(s.facing, s.left, s.n) && s.n >= 1 && s.n <= 3, 'turn');
+      if(s.flavour === 'path') assert(s.route.d1 !== s.route.d2, 'path');
+      assert(s.place && s.place.indexOf('題') < 0, 'place');
+    });
+    assert(flav.where === 4 && flav.path === 2 && flav.turn === 2 && flav.compass === 2, 'mix ' + JSON.stringify(flav));
+    assert(traps === 1, 'one trap');
+    assert(run[0].goalDir % 2 === 0 && run[0].north % 2 === 0, 'warm start');
+    assert(run[1].goalDir % 2 === 1, 'intermediate second');
   }
-  var bookRose = makeRose({single:true, north:6, blank:1, shown:[0,2,4]});
-  checkQ(bookRose, 'book rose');
-  assert(screenAngle(1, 6)===315, '東北在左上');
-  var book2 = makeRose({single:false, north:5, blanks:[5,7], shown:[0,1,3,4,6]});
-  checkQ(book2, 'book rose2');
-  assert(screenAngle(4, 5)===45, '南在右上');
-  var turnBook = makeTurn({person:'諾言', facing:3, left:true, n:3, north:0});
-  checkQ(turnBook, 'book turn');
-  assert(turnBook.answerDir===5, 'book turn answer');
-  var trap = makeCompass({trap:true, person:'卓楠', object:'遊樂場', objectDir:7, north:1, dialOffset:6});
-  checkQ(trap, 'trap');
-  assert(trap.answer==='7', 'trap uses needle');
-  assert(((trap.north + trap.dialOffset) % 8) !== trap.north, 'dial not on needle');
-  for(var n=0;n<80;n++){
-    checkQ(makeRose({single:n%2===0}), 'rose'+n);
-    checkQ(makeRelative(), 'rel'+n);
-    checkQ(makeWho(), 'who'+n);
-    checkQ(makeTurn(), 'turn'+n);
-    checkQ(makeCompass({trap:n%3===0}), 'comp'+n);
-    checkQ(makePath(), 'path'+n);
-  }
-  var run = buildRun();
-  assert(run.length===10, 'run length');
-  assert(run[0].type==='rose' && run[0].blanks.length===1, 'first rose');
-  var types = {};
-  for(var qi=0;qi<run.length;qi++) types[run[qi].type] = (types[run[qi].type]||0)+1;
-  assert(types.rose===2 && types.relative===2 && types.who===1 && types.turn===2 && types.compass===2 && types.path===1, 'mix '+JSON.stringify(types));
+  mode = 'student';
+  hearts = 3; loot = 0; index = 0; taughtMid = false; ended = false; paused = false; busy = false;
+  queue = [makeWhere({place:'青草地', theme:'meadow', north:6, goalDir:2, goalName:'寶箱', goalIcon:'chest'})];
+  showStage();
+  var svg = $('scene').innerHTML;
+  assert(svg.indexOf('寶箱') > 0 && svg.indexOf('mascot-q.png') > 0 && svg.indexOf('>北<') > 0, 'where svg');
+  assert($('prompt').textContent.indexOf('哪一方') > 0, 'where prompt');
+  assert($('prompt').textContent.indexOf('題') < 0, 'no 題');
+  applyDir(0);
+  assert(hearts === 2 && cur.failed && cur.fix, 'wrong loses heart');
+  assert($('feedback').textContent.indexOf('東方') > 0, 'shows 東方');
+  bump();
+  hearts = 3; loot = 0; busy = false; paused = false;
+  queue = [makeWhere({place:'青草地', theme:'meadow', north:0, goalDir:1, goalName:'商店', goalIcon:'shop'})];
+  index = 0; ended = false;
+  showStage();
+  applyDir(1);
+  assert(cur.cleared && loot === 1 && hearts === 3, 'correct loot');
+  assert($('feedback').textContent.indexOf('東與北') > 0, 'between');
+  assert($('cheer').textContent === '搵到寶啦！', 'cheer');
+  bump();
+  busy = false; paused = false; ended = false; loot = 0; hearts = 3;
+  queue = [makeCompass({trap:false, north:1, dial:3, objectDir:2, place:'露營角'})];
+  index = 0;
+  showStage();
+  applyDir(2);
+  assert(!cur.cleared && !cur.failed && hearts === 3, 'ignore dir before align');
+  spinDial(1); spinDial(1); spinDial(1);
+  assert(cur.dial === 6 && !cur.aligned, 'spin');
+  spinDial(-1); spinDial(-1); spinDial(-1); spinDial(-1); spinDial(-1); spinDial(-1);
+  assert(cur.aligned && cur.dial === 0, 'aligned on needle');
+  applyDir(2);
+  assert(cur.cleared && loot === 1, 'read after align');
+  bump();
+  busy = false; ended = false; hearts = 3; loot = 0; paused = false;
+  mode = 'teacher';
+  queue = [makeCompass({trap:true, north:4, dial:2, objectDir:5, place:'觀景台'})];
+  index = 0;
+  showStage();
+  assert($('spinRow').className.indexOf('on') < 0, 'trap has no dial buttons');
+  reveal();
+  assert(cur.revealed && cur.dial === 2, 'trap reveal keeps offset');
+  assert($('feedback').textContent.indexOf('西南方') > 0, 'trap reveal');
+  var labels = [];
+  document.querySelectorAll('.dir').forEach(function(b){ labels.push(b.textContent); });
+  assert(labels.join(',') === '西北,北,東北,西,東,西南,南,東南', 'button order ' + labels.join(','));
+  labels.forEach(function(lab){
+    assert(DIRS.indexOf(lab) >= 0, 'bad label ' + lab);
+    assert(lab.indexOf('方') < 0, 'button has 方');
+  });
   return issues;
 }
 
 var selftest = /[?&]selftest=1/.test(location.search);
 if(selftest){
-  var issues = runSelfTest();
-  document.body.innerHTML = '<pre id="selftest">' + (issues.length ? issues.join('\n') : 'OK') + '</pre>';
+  try{
+    var issues = runSelfTest();
+    document.body.innerHTML = '<pre id="selftest">' + (issues.length ? issues.join('\n') : 'OK') + '</pre>';
+  }catch(err){
+    document.body.innerHTML = '<pre id="selftest">ERR ' + esc(err && err.stack || err) + '</pre>';
+  }
 } else {
-  var pv = /[?&]preview=([a-z0-9]+)/.exec(location.search);
+  var pv = /[?&]preview=([a-z]+)/.exec(location.search);
   if(pv){
     if(/[?&]mode=teacher/.test(location.search)) mode = 'teacher';
-    session++;
-    correct = 0; hearts = 3; qIndex = 0; totalQ = 1;
-    queue = [previewQuestion(pv[1])];
-    updateHearts();
-    $('modeTag').textContent = mode==='teacher' ? '老師' : '學生';
+    bump();
+    ended = false; paused = false; hearts = 3; loot = 0; index = 0; taughtMid = false;
+    soundOn = false;
+    var kind = pv[1];
+    if(kind === 'where') queue = [makeWhere({place:'青草地', theme:'meadow', north:1, goalDir:5, goalName:'寶箱', goalIcon:'chest'})];
+    else if(kind === 'path') queue = [makePath({place:'花園徑', theme:'garden', map:'garden', north:6, prefer:['寶箱'], route:{from:'gate', via:'pond', to:'chest', d1:0, d2:2}})];
+    else if(kind === 'town') queue = [makePath({place:'小社區', theme:'town', map:'town', north:1, route:{from:'station', via:'kg', to:'home', d1:5, d2:3}})];
+    else if(kind === 'turn') queue = [makeTurn({place:'大樹下', facing:3, left:true, n:3, north:2})];
+    else if(kind === 'compass') queue = [makeCompass({place:'露營角', trap:false, north:1, dial:3, objectDir:5})];
+    else if(kind === 'trap') queue = [makeCompass({place:'觀景台', trap:true, north:6, dial:2, objectDir:3})];
+    else queue = buildAdventure();
+    $('modeTag').textContent = mode === 'teacher' ? '老師' : '學生';
     show('play');
-    loadQuestion();
+    showStage();
   }
 }
 })();
