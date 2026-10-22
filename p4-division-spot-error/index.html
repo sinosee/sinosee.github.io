@@ -25,7 +25,35 @@ button:focus-visible{outline:4px solid #7c4dff;outline-offset:3px}
 
 #start{overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;align-items:center;
   background:linear-gradient(165deg,#e8f4ff 0%,#d4ecff 40%,#ffe8f0 100%)}
-.startInner{width:min(1080px,94vw);margin:auto;padding:16px 0 28px;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2vmin,20px)}
+.startInner{width:min(1080px,94vw);margin:0 auto;padding:16px 0 28px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(8px,1.6vmin,18px);flex:1 0 auto}
+.startSide{width:100%;display:flex;flex-direction:column;align-items:center;gap:clamp(8px,1.6vmin,18px)}
+@media (min-width:1000px){
+  .startInner{
+    width:min(1120px,96vw);
+    display:grid;
+    grid-template-columns:minmax(0,1.25fr) minmax(300px,.85fr);
+    grid-template-areas:
+      "title title"
+      "sub sub"
+      "rank modes"
+      "best modes"
+      "info side"
+      "note note";
+    align-content:safe center;
+    justify-items:stretch;
+    gap:clamp(8px,1.4vmin,16px) clamp(14px,2vmin,24px);
+  }
+  #start .title{grid-area:title}
+  #start .sub{grid-area:sub}
+  #start .rankBadge{grid-area:rank;align-self:end}
+  #start .bestRow{grid-area:best;align-self:start}
+  #start .modes{grid-area:modes;align-self:stretch;align-items:stretch}
+  #start .mode{display:flex;flex-direction:column;justify-content:center}
+  #start .infoCard{grid-area:info;align-self:center}
+  #start .startSide{grid-area:side;align-self:center;align-items:stretch}
+  #start .startSide .bigbtn{width:100%}
+  #start .note{grid-area:note}
+}
 h1.title{margin:0;font-size:clamp(28px,5.5vmin,64px);font-weight:900;letter-spacing:2px;text-align:center;line-height:1.2}
 h1.title .emoji{display:inline-block;margin:0 .12em}
 .sub{margin:0;font-size:clamp(16px,2.8vmin,28px);text-align:center;color:#5a5a6e;line-height:1.45}
@@ -47,6 +75,20 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 .bigbtn.purple{background:var(--purple);box-shadow:0 7px 0 #5430b0}
 .bigbtn:disabled{opacity:.45;transform:none}
 .note{font-size:clamp(13px,2vmin,18px);color:#7a8a9a;text-align:center}
+.rankBadge{width:100%;background:#fff;border-radius:22px;padding:clamp(12px,1.8vmin,20px) clamp(14px,2.2vmin,26px);box-shadow:0 6px 0 #b8d4e8;text-align:center}
+.rankKicker{font-size:clamp(14px,2.2vmin,22px);font-weight:800;color:#5a5a6e}
+.rankName{font-size:clamp(28px,4.8vmin,52px);font-weight:900;color:#5b3fc4;margin:.06em 0;line-height:1.2}
+.rankStars{font-size:clamp(18px,3vmin,32px);font-weight:800;color:#8a5a00}
+.progressWrap{margin-top:8px;text-align:left}
+.progressLabel{display:flex;justify-content:space-between;gap:10px;font-size:clamp(13px,2.1vmin,22px);font-weight:800;color:#5a5a6e;margin-bottom:6px}
+.progressLabel span:last-child{flex:none;font-variant-numeric:tabular-nums}
+.bar{height:clamp(14px,2.4vmin,22px);background:#e8eef8;border-radius:999px;overflow:hidden;box-shadow:inset 0 2px 4px rgba(0,0,0,.06)}
+.barFill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#ffc94a,#ff8c1a);transition:width .35s ease}
+.bestRow{display:flex;gap:clamp(8px,1.6vmin,16px);width:100%}
+.bestCard{flex:1 1 0;min-width:0;background:#fff;border-radius:18px;padding:clamp(8px,1.5vmin,16px) 8px;box-shadow:0 4px 0 #b8d4e8;text-align:center}
+.bestK{font-size:clamp(13px,2.1vmin,22px);font-weight:800;color:#5a5a6e}
+.bestV{font-size:clamp(20px,3.4vmin,36px);font-weight:900;margin-top:2px;letter-spacing:2px;line-height:1.25;min-height:1.25em}
+.bestV.empty{color:#9aa3b2;letter-spacing:0;font-size:clamp(16px,2.6vmin,28px)}
 
 #tip{align-items:center;justify-content:center;background:rgba(40,60,90,.45);z-index:20}
 .tipCard{width:min(640px,92vw);background:#fff;border-radius:28px;padding:clamp(20px,3vmin,36px);box-shadow:0 12px 40px rgba(0,0,0,.25);text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2vmin,18px)}
@@ -169,13 +211,42 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 .pausedOverlay.on{display:flex}
 .pausedOverlay .pt{font-size:clamp(32px,6vmin,56px);font-weight:900;color:#fff;text-shadow:0 3px 8px rgba(0,0,0,.3)}
 
-#end{align-items:center;justify-content:center;background:linear-gradient(160deg,#e8f4ff 0%,#ffe0b8 50%,#ffd0e8 100%)}
-.endInner{text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(12px,2.5vmin,26px);padding:20px}
-.endStars{font-size:clamp(44px,9vmin,96px);letter-spacing:6px}
+#end{align-items:center;justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  background:linear-gradient(160deg,#e8f4ff 0%,#ffe0b8 50%,#ffd0e8 100%)}
+.endInner{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(10px,2vmin,22px);padding:20px 16px 28px;width:min(640px,94vw);margin:0 auto;flex:1 0 auto}
+.endStars{font-size:clamp(44px,9vmin,96px);letter-spacing:6px;line-height:1.1;filter:drop-shadow(0 3px 0 rgba(200,140,0,.28))}
 .endTitle{font-size:clamp(32px,6.5vmin,68px);font-weight:900;margin:0}
-.endScore{font-size:clamp(22px,3.8vmin,40px);font-weight:800;color:#5a5a6e}
-.endDetail{font-size:clamp(16px,2.6vmin,26px);color:#6a6a7e;font-weight:700;line-height:1.5}
+.endScore{font-size:clamp(20px,3.6vmin,38px);font-weight:800;color:#5a5a6e}
+.endGain{background:#fff1b8;color:#8a5a00;font-size:clamp(18px,3.2vmin,34px);font-weight:900;padding:.38em .9em;border-radius:999px;box-shadow:0 4px 0 #e0c060}
+.levelupBanner{display:none;width:100%;background:linear-gradient(90deg,#ffd700,#ffb347,#ffd700);border:3px solid #e0a000;border-radius:18px;padding:clamp(10px,1.8vmin,16px) clamp(12px,2vmin,20px);box-shadow:0 4px 0 #c98a00,0 0 18px rgba(255,200,0,.4)}
+.levelupBanner.on{display:block}
+.levelupBanner .lbT{font-size:clamp(18px,3.2vmin,32px);font-weight:900;color:#7a4a00}
+.levelupBanner .lbPath{font-size:clamp(16px,2.8vmin,28px);font-weight:800;color:#5a3a00;margin-top:2px}
+.endDetail{font-size:clamp(16px,2.6vmin,26px);color:#6a6a7e;font-weight:700;line-height:1.55}
+.endDetail strong{color:#1e4a7a}
 .endBtns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+
+#levelup{align-items:center;justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  background:linear-gradient(160deg,#fff8e0 0%,#ffe0a0 40%,#ffd0e8 100%)}
+.luConfetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.luConfetti span{position:absolute;font-size:clamp(18px,3.2vmin,30px);opacity:.88;animation:confetti 2.8s ease-in-out infinite}
+.luConfetti span:nth-child(odd){animation-duration:3.4s}
+.luConfetti span:nth-child(3n){animation-delay:.4s}
+@keyframes confetti{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(12px) rotate(14deg)}}
+.luInner{position:relative;z-index:1;width:min(560px,94vw);margin:0 auto;padding:28px 8px 32px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(10px,2vmin,18px);text-align:center;flex:1 0 auto}
+.luCrown{font-size:clamp(56px,12vmin,100px);line-height:1;filter:drop-shadow(0 4px 0 rgba(200,140,0,.28))}
+.luTitle{margin:0;font-size:clamp(32px,6.5vmin,64px);font-weight:900;color:#c9620b;text-shadow:0 2px 0 #ffe8a0}
+.luCard{width:100%;background:#fff;border-radius:24px;padding:clamp(14px,2.4vmin,24px) clamp(14px,2.4vmin,22px);border:3px solid #ffd700;box-shadow:0 6px 0 #e0b060}
+.luFrom{font-size:clamp(16px,2.8vmin,28px);font-weight:800;color:#8a8a9a;text-decoration:line-through}
+.luArrow{font-size:clamp(22px,4vmin,36px);margin:4px 0}
+.luTo{font-size:clamp(26px,5vmin,48px);font-weight:900;color:#5b3fc4;line-height:1.25}
+.luMsg{margin:.4em 0 0;font-size:clamp(15px,2.6vmin,26px);font-weight:700;color:#5a5a6e;line-height:1.5}
+.luStars{font-size:clamp(16px,2.8vmin,28px);font-weight:900;color:#8a5a00;background:#fff1b8;padding:.4em .95em;border-radius:999px;box-shadow:0 3px 0 #e0c060}
+.luInner .bigbtn{width:100%}
+@media (prefers-reduced-motion: reduce){
+  .barFill{transition:none}
+  .luConfetti span{animation:none}
+}
 
 @media (max-height:560px){
   .key{min-height:42px;font-size:clamp(18px,3.5vmin,28px)}
@@ -190,6 +261,32 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
   <div class="startInner">
     <h1 class="title"><span class="emoji">✏️</span>除法直式填空<span class="emoji">🔢</span></h1>
     <p class="sub">三位數 ÷ 兩位數。跟課本順序填：商 → 乘 → 減。</p>
+
+    <div class="rankBadge">
+      <div class="rankKicker">而家頭銜</div>
+      <div class="rankName" id="rankName">🌱 試商新手</div>
+      <div class="rankStars" id="rankStars">累積 ⭐ 0</div>
+      <div class="progressWrap">
+        <div class="progressLabel">
+          <span id="progressNext">下一級：商位學徒</span>
+          <span id="progressCount">0／6</span>
+        </div>
+        <div class="bar" id="rankBar" role="progressbar" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0" aria-valuetext="0／6，下一級 商位學徒" aria-labelledby="progressNext">
+          <div class="barFill" id="barFill"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bestRow">
+      <div class="bestCard">
+        <div class="bestK">普通 · 最高</div>
+        <div class="bestV empty" id="bestNormal">未有</div>
+      </div>
+      <div class="bestCard">
+        <div class="bestK">較難 · 最高</div>
+        <div class="bestV empty" id="bestHard">未有</div>
+      </div>
+    </div>
 
     <div class="modes">
       <button type="button" class="mode sel" data-mode="student" id="modeStudent">
@@ -207,16 +304,18 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
     <div class="infoCard">
       <strong>點樣玩：</strong><br>
       ① 先撳窿窿，先出九宮格　② 打數字　③ 全部填完撳「檢查」<br>
-      每局 10 題 · 3 顆心 · 三位數 ÷ 兩位數 · 全部整除（無餘數）
+      每局 10 題 · 3 顆心 · 三位數 ÷ 兩位數 · 全部整除（無餘數）<br>
+      玩完先計星：剩 3 心 ⭐⭐⭐、2 心 ⭐⭐、1 心 ⭐、0 心 💫（0 星）
     </div>
 
-    <div class="toggles">
-      <label class="toggle"><input type="checkbox" id="togSound" checked> 音效</label>
-      <label class="toggle"><input type="checkbox" id="togHard"> 較難（多填幾格）</label>
+    <div class="startSide">
+      <div class="toggles">
+        <label class="toggle"><input type="checkbox" id="togSound" checked> 音效</label>
+        <label class="toggle"><input type="checkbox" id="togHard"> 較難（多填幾格）</label>
+      </div>
+      <button type="button" class="bigbtn" id="btnStart">開始！</button>
     </div>
-
-    <button type="button" class="bigbtn" id="btnStart">開始！</button>
-    <p class="note">小四 · 三位數 ÷ 兩位數 · 唔會彈出手機鍵盤</p>
+    <p class="note">小四 · 三位數 ÷ 兩位數 · 本機攞星 · 唔會彈出手機鍵盤</p>
   </div>
 </div>
 
@@ -288,11 +387,44 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
     <div class="endStars" id="endStars">⭐⭐⭐</div>
     <h2 class="endTitle" id="endTitle">完成！</h2>
     <div class="endScore" id="endScore">得分 0</div>
-    <div class="endDetail" id="endDetail"></div>
-    <div class="endBtns">
-      <button type="button" class="bigbtn green" id="btnAgain">再玩一次</button>
-      <button type="button" class="bigbtn purple" id="btnMenu">主選單</button>
+    <div class="endGain" id="endGain">今局 +0 星</div>
+    <div class="levelupBanner" id="levelupBanner" aria-hidden="true">
+      <div class="lbT">🎉 升等！</div>
+      <div class="lbPath" id="levelupPath"></div>
     </div>
+    <div class="endDetail" id="endDetail">
+      <div id="endTotalLine"></div>
+      <div id="endBestLine"></div>
+    </div>
+    <div class="endBtns">
+      <button type="button" class="bigbtn green" id="btnAgain">再玩一局</button>
+      <button type="button" class="bigbtn blue" id="btnMenu">返主頁</button>
+    </div>
+  </div>
+</div>
+
+<div id="levelup" class="screen" role="dialog" aria-modal="true" aria-labelledby="luTitle">
+  <div class="luConfetti" aria-hidden="true">
+    <span style="top:8%;left:8%">✨</span>
+    <span style="top:12%;right:10%">⭐</span>
+    <span style="top:24%;left:6%">🎊</span>
+    <span style="top:20%;right:8%">💛</span>
+    <span style="top:42%;left:12%">🌟</span>
+    <span style="top:46%;right:14%">🎊</span>
+    <span style="bottom:22%;left:10%">⭐</span>
+    <span style="bottom:18%;right:8%">✨</span>
+  </div>
+  <div class="luInner">
+    <div class="luCrown">👑</div>
+    <h2 class="luTitle" id="luTitle">升等啦！</h2>
+    <div class="luCard">
+      <div class="luFrom" id="luFrom">試商新手</div>
+      <div class="luArrow">⬇️</div>
+      <div class="luTo" id="luTo">🎓 商位學徒</div>
+      <p class="luMsg" id="luMsg"></p>
+    </div>
+    <div class="luStars" id="luStars">累積 ⭐ 0</div>
+    <button type="button" class="bigbtn" id="btnLevelup">繼續！</button>
   </div>
 </div>
 
@@ -315,6 +447,18 @@ var hard = false;
 var hearts = 3, score = 0, qIndex = 0;
 var paused = false;
 var answered = false;
+var runClosed = false;
+
+/* Offline only. bestStars is per 普通/較難; totalStars is shared and sets the rank. */
+var STORAGE_KEY = 'p4-division-spot-error-progress-v1';
+var RANKS = [
+  {min: 0, name: '試商新手', icon: '🌱'},
+  {min: 6, name: '商位學徒', icon: '🎓'},
+  {min: 15, name: '直式小師傅', icon: '✏️'},
+  {min: 30, name: '除法達人', icon: '🌟'},
+  {min: 50, name: '除法王者', icon: '👑'}
+];
+var progressCache = null;
 var cur = null; // current problem
 var blanks = []; // {id, answer, el, value}
 var selId = null;
@@ -322,7 +466,8 @@ var audioCtx = null;
 
 function $(id){ return document.getElementById(id); }
 function show(id){
-  ['start','tip','play','end'].forEach(function(s){ $(s).classList.toggle('on', s===id); });
+  ['start','tip','play','end','levelup'].forEach(function(s){ $(s).classList.toggle('on', s===id); });
+  if(id === 'start') renderStartProgress();
 }
 function rand(a,b){ return a + Math.floor(Math.random()* (b-a+1)); }
 function shuffle(arr){
@@ -918,6 +1063,8 @@ function checkAnswer(){
       });
     }, 800);
     if(hearts <= 0){
+      answered = true;
+      hideKeypad();
       setTimeout(endGame, 700);
     }
   }
@@ -975,16 +1122,172 @@ function loadQuestion(){
   }
 }
 
+function toInt(v, min, max){
+  var n = Math.floor(Number(v));
+  if(!isFinite(n)) n = min;
+  if(n < min) n = min;
+  if(n > max) n = max;
+  return n;
+}
+function emptyProgress(){
+  return {totalStars: 0, bestNormal: 0, bestHard: 0};
+}
+function copyProgress(p){
+  return {totalStars: p.totalStars, bestNormal: p.bestNormal, bestHard: p.bestHard};
+}
+function readStoredProgress(){
+  var raw = localStorage.getItem(STORAGE_KEY);
+  if(!raw) return null;
+  var data = JSON.parse(raw);
+  if(!data || typeof data !== 'object') return emptyProgress();
+  var best = data.bestStars && typeof data.bestStars === 'object' ? data.bestStars : {};
+  return {
+    totalStars: toInt(data.totalStars, 0, 100000),
+    bestNormal: toInt(best.normal, 0, 3),
+    bestHard: toInt(best.hard, 0, 3)
+  };
+}
+function loadProgress(){
+  if(progressCache) return copyProgress(progressCache);
+  try{
+    var stored = readStoredProgress();
+    if(stored) progressCache = stored;
+  }catch(e){}
+  if(progressCache) return copyProgress(progressCache);
+  return emptyProgress();
+}
+function saveProgress(p){
+  progressCache = {
+    totalStars: toInt(p.totalStars, 0, 100000),
+    bestNormal: toInt(p.bestNormal, 0, 3),
+    bestHard: toInt(p.bestHard, 0, 3)
+  };
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      totalStars: progressCache.totalStars,
+      bestStars: {normal: progressCache.bestNormal, hard: progressCache.bestHard}
+    }));
+  }catch(e){}
+}
+function rankAt(total){
+  var idx = 0;
+  for(var i = 0; i < RANKS.length; i++){
+    if(total >= RANKS[i].min) idx = i;
+  }
+  return idx;
+}
+function heartsToStars(h){
+  if(h >= 3) return 3;
+  if(h === 2) return 2;
+  if(h === 1) return 1;
+  return 0;
+}
+function starMarks(n){
+  var s = '';
+  for(var i = 0; i < n; i++) s += '⭐';
+  return s;
+}
+function bestLabel(n){
+  return n > 0 ? starMarks(n) : '未有';
+}
+function setBestEl(el, n){
+  el.textContent = bestLabel(n);
+  el.classList.toggle('empty', n <= 0);
+}
+function renderStartProgress(){
+  var p = loadProgress();
+  var idx = rankAt(p.totalStars);
+  var rank = RANKS[idx];
+  var next = RANKS[idx + 1];
+  $('rankName').textContent = rank.icon + ' ' + rank.name;
+  $('rankStars').textContent = '累積 ⭐ ' + p.totalStars;
+  var bar = $('rankBar');
+  if(next){
+    $('progressNext').textContent = '下一級：' + next.name;
+    $('progressCount').textContent = p.totalStars + '／' + next.min;
+    var span = next.min - rank.min;
+    var pct = span > 0 ? ((p.totalStars - rank.min) / span) * 100 : 100;
+    if(pct < 0) pct = 0;
+    if(pct > 100) pct = 100;
+    $('barFill').style.width = pct + '%';
+    bar.setAttribute('aria-valuemin', String(rank.min));
+    bar.setAttribute('aria-valuemax', String(next.min));
+    bar.setAttribute('aria-valuenow', String(p.totalStars));
+    bar.setAttribute('aria-valuetext', p.totalStars + '／' + next.min + '，下一級 ' + next.name);
+  } else {
+    $('progressNext').textContent = '已達最高頭銜';
+    $('progressCount').textContent = p.totalStars + ' 星';
+    $('barFill').style.width = '100%';
+    bar.setAttribute('aria-valuemin', '0');
+    bar.setAttribute('aria-valuemax', String(rank.min));
+    bar.setAttribute('aria-valuenow', String(p.totalStars));
+    bar.setAttribute('aria-valuetext', '已達最高頭銜，累積 ' + p.totalStars + ' 星');
+  }
+  setBestEl($('bestNormal'), p.bestNormal);
+  setBestEl($('bestHard'), p.bestHard);
+}
+function fillEndDetail(beforeTotal, after){
+  var line = $('endTotalLine');
+  line.textContent = '';
+  line.appendChild(document.createTextNode('累積星：' + beforeTotal + ' → '));
+  var strong = document.createElement('strong');
+  strong.textContent = String(after.totalStars);
+  line.appendChild(strong);
+  $('endBestLine').textContent = '普通最高：' + bestLabel(after.bestNormal) + '　較難最高：' + bestLabel(after.bestHard);
+}
+function fanfare(){
+  beep(523, 0.1);
+  setTimeout(function(){ beep(659, 0.1); }, 120);
+  setTimeout(function(){ beep(784, 0.1); }, 240);
+  setTimeout(function(){ beep(1046, 0.22); }, 360);
+}
+
 function endGame(){
-  show('end');
-  var stars = hearts >= 3 ? '⭐⭐⭐' : hearts === 2 ? '⭐⭐' : hearts === 1 ? '⭐' : '💫';
-  $('endStars').textContent = stars;
-  $('endTitle').textContent = hearts > 0 ? '完成！' : '再試過啦！';
-  $('endScore').textContent = '得分 ' + score;
-  $('endDetail').textContent = '答中 ' + Math.floor(score / (hard ? 15 : 10)) + ' 題 · 剩餘 ' + hearts + ' 心';
+  if(runClosed) return;
+  runClosed = true;
+  var earned = heartsToStars(hearts);
+  var before = loadProgress();
+  var after = {
+    totalStars: before.totalStars + earned,
+    bestNormal: hard ? before.bestNormal : Math.max(before.bestNormal, earned),
+    bestHard: hard ? Math.max(before.bestHard, earned) : before.bestHard
+  };
+  saveProgress(after);
+  var oldIdx = rankAt(before.totalStars);
+  var newIdx = rankAt(after.totalStars);
+  var rankedUp = newIdx > oldIdx;
+  var correct = Math.floor(score / (hard ? 15 : 10));
+
+  $('endStars').textContent = earned > 0 ? starMarks(earned) : '💫';
+  $('endTitle').textContent = earned >= 3 ? '做得好！' : (earned > 0 ? '完成！' : '再試過啦！');
+  $('endScore').textContent = '得分 ' + score + ' · 答啱 ' + correct + '／' + TOTAL_Q;
+  $('endGain').textContent = '今局 +' + earned + ' 星';
+  fillEndDetail(before.totalStars, after);
+  var banner = $('levelupBanner');
+  if(rankedUp){
+    banner.classList.add('on');
+    banner.removeAttribute('aria-hidden');
+    $('levelupPath').textContent = RANKS[oldIdx].name + ' → ' + RANKS[newIdx].name;
+    $('luFrom').textContent = RANKS[oldIdx].name;
+    $('luTo').textContent = RANKS[newIdx].icon + ' ' + RANKS[newIdx].name;
+    var next = RANKS[newIdx + 1];
+    $('luMsg').textContent = '累積星達到 ' + RANKS[newIdx].min + '！' + (next
+      ? '繼續挑戰，下一級係「' + next.name + '」（' + next.min + ' 星）。'
+      : '你已經係最高頭銜，繼續保持！');
+    $('luStars').textContent = '累積 ⭐ ' + after.totalStars;
+    show('levelup');
+    fanfare();
+    setTimeout(function(){ try{ $('btnLevelup').focus(); }catch(e){} }, 40);
+  } else {
+    banner.classList.remove('on');
+    banner.setAttribute('aria-hidden', 'true');
+    show('end');
+  }
+  renderStartProgress();
 }
 
 function startGame(){
+  runClosed = false;
   soundOn = $('togSound').checked;
   hard = $('togHard').checked;
   hearts = 3; score = 0; qIndex = 0;
@@ -1040,6 +1343,8 @@ $('btnResume').addEventListener('click', function(){
 });
 $('btnAgain').addEventListener('click', startGame);
 $('btnMenu').addEventListener('click', function(){ show('start'); });
+$('btnLevelup').addEventListener('click', function(){ show('end'); });
+renderStartProgress();
 
 // Prevent system keyboard / focus issues
 document.addEventListener('focusin', function(e){
