@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#e6eeeb">
+<title>圖形分割和拼砌</title>
+<style>
+:root{
+  --bg:#e6eeeb;
+  --ink:#1c2b33;
+  --muted:#52656e;
+  --card:#ffffff;
+  --line:#c9d9d4;
+  --accent:#1a7a6d;
+  --accent-d:#0e534a;
+  --soft:#e5f3f0;
+  --ok:#1d7a45;
+  --ok-bg:#e5f6ec;
+  --bad:#8a3d24;
+  --bad-bg:#fbf0ea;
+  --hint:#3d5c78;
+  --hint-bg:#eef3f8;
+  --shadow:0 1px 0 rgba(28,43,51,.08);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{
+  min-height:100dvh;
+  color:var(--ink);
+  background:var(--bg);
+  font-family:"PingFang HK","PingFang TC","Noto Sans CJK HK","Noto Sans CJK TC","Microsoft JhengHei","Heiti TC",sans-serif;
+  font-size:18px;
+  line-height:1.45;
+}
+button,a{font-family:inherit}
+button{cursor:pointer;border:none;background:none;color:inherit;padding:0}
+button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.wrap{width:min(1080px,calc(100% - 28px));margin:0 auto;padding:18px 0 36px}
+.top{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  margin-bottom:14px;
+}
+.back{
+  display:inline-flex;align-items:center;min-height:48px;padding:0 16px;
+  border-radius:999px;background:#fff;border:2px solid var(--line);
+  color:var(--accent-d);font-weight:800;font-size:18px;text-decoration:none;
+}
+h1{margin:0;font-size:clamp(32px,5vw,46px);letter-spacing:.04em;line-height:1.2;font-weight:900}
+.sub{margin:6px 0 0;color:var(--muted);font-weight:700;font-size:clamp(16px,2.2vw,20px)}
+.modes{display:flex;gap:12px;margin:18px 0}
+.mode{
+  flex:1;text-align:left;background:#fff;border:3px solid var(--line);border-radius:18px;
+  padding:14px 16px;min-height:92px;
+}
+.mode.sel{border-color:var(--accent);background:var(--soft)}
+.mode b{display:block;font-size:clamp(22px,3vw,28px);margin-bottom:4px}
+.mode span{color:var(--muted);font-weight:700;font-size:16px}
+.lessons{display:grid;gap:12px}
+@media(min-width:800px){.lessons{grid-template-columns:1fr 1fr}}
+.lesson{
+  display:flex;flex-direction:column;align-items:flex-start;gap:6px;
+  min-height:148px;padding:22px 20px;border-radius:22px;background:#fff;
+  border:3px solid var(--line);text-align:left;
+}
+.lesson:active{transform:translateY(1px)}
+.lesson b{font-size:clamp(28px,4vw,36px)}
+.lesson span{color:var(--muted);font-weight:700;font-size:18px}
+.note{
+  margin:16px 0 0;padding:14px 16px;background:#fff;border-radius:16px;
+  border:2px solid var(--line);color:var(--muted);font-weight:700;
+}
+.foot{
+  display:flex;align-items:center;gap:16px;margin-top:18px;padding:12px;
+  background:#fff;border-radius:18px;border:2px solid var(--line);
+}
+.foot img.qr{width:112px;height:auto;border-radius:8px}
+.foot .dog{width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid #fff;box-shadow:var(--shadow)}
+.foot p{margin:0 0 4px;font-weight:800}
+.foot a{color:var(--accent-d);font-weight:800;word-break:break-all}
+.group{margin:18px 0 8px;font-size:18px;font-weight:900;color:var(--accent-d)}
+.tasklist{display:grid;gap:8px}
+.taskbtn{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  width:100%;min-height:72px;padding:12px 16px;border-radius:16px;
+  background:#fff;border:2px solid var(--line);text-align:left;
+}
+.taskbtn b{display:block;font-size:clamp(18px,2.4vw,22px)}
+.taskbtn small{display:block;color:var(--muted);font-weight:700;margin-top:2px}
+.tag{
+  flex:0 0 auto;font-size:14px;font-weight:800;color:var(--accent-d);
+  background:var(--soft);border-radius:999px;padding:6px 10px;
+}
+.stageHead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{
+  min-height:44px;padding:0 14px;border-radius:999px;background:#fff;border:2px solid var(--line);
+  font-weight:800;font-size:16px;
+}
+.pill.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.prompt{
+  margin:12px 0;padding:14px 16px;background:#fff;border-radius:16px;border:2px solid var(--line);
+  font-size:clamp(20px,2.7vw,28px);font-weight:800;line-height:1.45;
+}
+.boardCard{background:#fff;border-radius:18px;border:2px solid var(--line);padding:8px;touch-action:none}
+#board{width:100%;height:auto;max-height:58vh;display:block;touch-action:none;user-select:none}
+#board text{font-family:"PingFang HK","PingFang TC","Noto Sans CJK HK","Microsoft JhengHei",sans-serif}
+#board [data-pid]{cursor:grab}
+#board .dot{cursor:crosshair}
+.tools{
+  position:sticky;bottom:0;display:flex;flex-wrap:wrap;gap:8px;
+  padding:10px 0 6px;background:linear-gradient(180deg,rgba(230,238,235,0),var(--bg) 28%);
+}
+.btn{
+  min-height:54px;padding:0 18px;border-radius:14px;background:#fff;border:2px solid var(--line);
+  font-size:20px;font-weight:900;
+}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn:disabled{opacity:.45}
+.feedback{
+  min-height:52px;margin:8px 0 0;padding:12px 14px;border-radius:14px;
+  font-size:clamp(18px,2.4vw,24px);font-weight:800;background:#fff;border:2px solid var(--line);
+}
+.feedback.ok{background:var(--ok-bg);border-color:#b7e0c6;color:var(--ok)}
+.feedback.bad{background:var(--bad-bg);border-color:#f0d0c4;color:var(--bad)}
+.feedback.hint{background:var(--hint-bg);border-color:#d5e2ee;color:var(--hint)}
+.choices{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.choice{
+  min-height:56px;padding:10px 14px;border-radius:14px;background:#fff;border:3px solid var(--line);
+  text-align:left;font-size:clamp(18px,2.4vw,22px);font-weight:800;
+}
+.choice.sel{border-color:var(--accent);background:var(--soft)}
+.yn{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#fff;border:2px solid var(--line);border-radius:14px;padding:8px 10px;margin-top:8px}
+.yn b{min-width:7em;font-size:20px}
+.yn button{min-height:48px;padding:0 14px;border-radius:12px;border:2px solid var(--line);background:#fff;font-weight:900;font-size:18px}
+.yn button.sel{border-color:var(--accent);background:var(--soft)}
+.yn.good{border-color:#b7e0c6;background:var(--ok-bg)}
+.yn.nope{border-color:#f0d0c4;background:var(--bad-bg)}
+.pause{
+  position:fixed;inset:0;background:rgba(232,238,236,.94);z-index:20;
+  display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;
+}
+.pause.on{display:flex}
+.pause p{margin:0;font-size:clamp(40px,8vw,72px);font-weight:900}
+.navrow{display:flex;gap:8px;margin-top:8px}
+.fine{color:var(--muted);font-weight:700;font-size:15px;margin:8px 0 0}
+@media(max-width:640px){
+  .wrap{width:min(1080px,calc(100% - 16px))}
+  .mode{min-height:0;padding:10px 12px}
+  .lesson{min-height:120px;padding:16px}
+}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div class="pause" id="pause"><p>暫停</p><button type="button" class="btn primary" id="btnResume">繼續</button></div>
+<script src="geom.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
