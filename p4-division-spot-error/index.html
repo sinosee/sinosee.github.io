@@ -110,7 +110,8 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 .spacer{flex:1}
 
 #playWrap{position:relative;flex:1 1 0;display:flex;flex-direction:column;min-height:0;overflow:hidden}
-.playMain{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:clamp(6px,1.2vmin,12px);padding:4px 10px 6px;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0}
+.playStage{flex:1 1 0;display:flex;flex-direction:column;min-height:0;min-width:0}
+.playMain{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:clamp(6px,1.2vmin,12px);padding:4px 10px 6px;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0;min-width:0}
 .prompt{font-size:clamp(16px,2.6vmin,26px);font-weight:900;text-align:center;color:#1e4a7a}
 .eqLine{font-size:clamp(20px,3.5vmin,34px);font-weight:900;color:#5a5a6e;text-align:center}
 
@@ -124,6 +125,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 .ld .c{width:var(--place);height:calc(var(--digit) + 18px);min-width:0;display:flex;align-items:center;justify-content:center;
   font-size:var(--digit);font-weight:900;border-radius:10px;position:relative}
 .ld .fixed{color:#2a2a3a}
+.ld .fixed.remFinal{color:#1e56b5}
 .ld .blank{background:#d6ebff;border:3px dashed #3b82f6;color:#1e56b5;box-shadow:inset 0 0 0 1px rgba(59,130,246,.25)}
 .ld .blank.filled{background:#c8e0ff;border-style:solid;color:#1e3a8a}
 .ld .blank.sel{background:#fff1c9;border-color:#ff9f1c;border-style:solid;box-shadow:0 0 0 3px rgba(255,159,28,.35);transform:scale(1.06)}
@@ -185,6 +187,25 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 .keypadHead{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .keypadTitle{font-size:clamp(16px,2.6vmin,24px);font-weight:900;color:#1e56b5}
 .keypadHint{margin:0;font-size:clamp(13px,2vmin,18px);font-weight:700;color:#5a6a7a;line-height:1.35}
+/* Wide classroom / projector: 直式 on the left, keypad docked on the right.
+   Narrow phones keep the keypad as a sheet under the board. */
+@media (min-width:800px) and (min-height:520px){
+  .playStage{flex-direction:row;align-items:stretch;gap:clamp(10px,1.6vmin,20px);padding:0 12px 6px 8px}
+  .playMain{flex:1 1 auto;justify-content:center}
+  .keypadWrap{
+    position:relative;left:auto;right:auto;bottom:auto;
+    display:flex;flex:0 0 clamp(320px,36vw,460px);width:clamp(320px,36vw,460px);max-width:46vw;
+    align-items:center;justify-content:center;
+    padding:4px 0 8px;pointer-events:auto;z-index:6;
+  }
+  .keypadPanel{width:100%;max-height:100%;margin-bottom:0}
+  .keypadClose{display:none}
+  .board{width:min(100%,560px)}
+  .feedback{width:min(100%,560px)}
+  .ld{--digit:clamp(22px,3.6vmin,44px)}
+  .key{min-height:clamp(52px,8vmin,78px);font-size:clamp(26px,4.2vmin,42px)}
+  .actionRow .bigbtn{min-height:clamp(56px,8vmin,80px)}
+}
 .keypadClose{
   flex:none;min-height:48px;min-width:84px;padding:0 16px;border-radius:14px;
   background:#eef2f6;box-shadow:0 3px 0 #c5d0dc;
@@ -254,13 +275,17 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
   .ld .c{height:calc(var(--digit) + 14px)}
   .iconbtn{min-width:44px;height:44px;font-size:22px}
 }
+@media (min-width:800px) and (max-height:560px) and (min-height:520px){
+  .key{min-height:48px;font-size:clamp(22px,4vmin,32px)}
+  .ld{--digit:clamp(20px,3.2vmin,30px)}
+}
 </style>
 </head>
 <body>
 <div id="start" class="screen on">
   <div class="startInner">
     <h1 class="title"><span class="emoji">✏️</span>除法直式填空<span class="emoji">🔢</span></h1>
-    <p class="sub">三位數 ÷ 兩位數。跟課本順序填：商 → 乘 → 減。</p>
+    <p class="sub">三位數 ÷ 兩位數。跟課本順序填：商 → 乘 → 減。有餘數就最後填。</p>
 
     <div class="rankBadge">
       <div class="rankKicker">而家頭銜</div>
@@ -304,7 +329,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
     <div class="infoCard">
       <strong>點樣玩：</strong><br>
       ① 先撳窿窿，先出九宮格　② 打數字　③ 全部填完撳「檢查」<br>
-      每局 10 題 · 3 顆心 · 三位數 ÷ 兩位數 · 全部整除（無餘數）<br>
+      每局 10 題 · 3 顆心 · 三位數 ÷ 兩位數 · 有啲題目有餘數<br>
       玩完先計星：剩 3 心 ⭐⭐⭐、2 心 ⭐⭐、1 心 ⭐、0 心 💫（0 星）
     </div>
 
@@ -329,7 +354,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
       ② 用<strong>九宮格</strong>打數字<br>
       ③ 全部填完 → 撳「檢查」
     </div>
-    <p class="tipHow">題目係三位數 ÷ 兩位數。跟課本：先寫商，再寫積，再寫減出嚟嘅數（落下的數字已經喺減嗰一行）。閃住嘅格就係下一步。</p>
+    <p class="tipHow">題目係三位數 ÷ 兩位數，有啲有餘數。跟課本：先寫商，再寫積，再寫減出嚟嘅數（落下的數字已經喺減嗰一行）。有餘數嘅題，最後填餘數。大畫面個九宮格喺直式右邊，電話就喺下面。閃住嘅格就係下一步。</p>
     <button type="button" class="bigbtn green" id="btnTipGo">明白，開始！</button>
   </div>
 </div>
@@ -345,6 +370,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
     <span class="pill" id="modeTag">學生</span>
   </div>
   <div id="playWrap">
+    <div class="playStage">
     <div class="playMain">
       <div class="prompt" id="prompt">下一步：寫商。跟課本：商 → 乘 → 減。</div>
       <div class="eqLine" id="eqLine"></div>
@@ -358,7 +384,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
         <div class="keypadHead">
           <div>
             <div class="keypadTitle">九宮格</div>
-            <p class="keypadHint">撳「收起」或畫面其他地方，可以收起</p>
+            <p class="keypadHint">先撳閃住嘅格，再用九宮格打數字</p>
           </div>
           <button type="button" class="keypadClose" id="btnCloseKeypad">收起</button>
         </div>
@@ -367,6 +393,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
           <button type="button" class="bigbtn blue" id="btnCheck">檢查</button>
         </div>
       </div>
+    </div>
     </div>
     <div class="nextRow" id="nextRow">
       <button type="button" class="bigbtn green" id="btnNext">下一題 ▶</button>
@@ -460,6 +487,7 @@ var RANKS = [
 ];
 var progressCache = null;
 var cur = null; // current problem
+var runPlan = []; // true = 有餘數, one flag per question in this run of 10
 var blanks = []; // {id, answer, el, value}
 var selId = null;
 var audioCtx = null;
@@ -496,8 +524,10 @@ function beep(freq, dur, type, vol){
    商 sits above the dividend, in the column that was just divided.
    The division sign is 除數)被除數: the ) meets a line above the dividend.
    Each step is 乘 then 減. Digits stay in their place-value columns.
-   A remainder of 0 is not written. The next dividend digit is brought down
-   into its own column. A quotient of 0 is written, but 0×除數 is not. */
+   A remainder of 0 is not written. A final remainder of 1 or more is written
+   under the last subtraction line, in its place columns. The next dividend
+   digit is brought down into its own column. A quotient of 0 is written,
+   but 0×除數 is not. */
 function buildLongDiv(dividend, divisor){
   var nStr = String(dividend);
   var digits = nStr.split('').map(function(ch){ return parseInt(ch, 10); });
@@ -561,38 +591,63 @@ function buildLongDiv(dividend, divisor){
     carry = placeRem(newRem, i);
   }
 
-  return {nStr: nStr, d: d, cols: cols, qDigits: qDigits, steps: steps, quotient: Math.floor(dividend / divisor)};
+  var remainder = steps.length ? steps[steps.length - 1].rem : (dividend % divisor);
+  return {nStr: nStr, d: d, cols: cols, qDigits: qDigits, steps: steps, quotient: Math.floor(dividend / divisor), remainder: remainder};
 }
 
-/* 三位數 ÷ 兩位數，整除。商的每一位都唔係 0，所以每一步都有「乘、減」可以填。
-   商是兩位數先至會出現減行（餘數連住落下的下一位）。大約四分三係呢種。 */
-function pickThreeByTwo(){
+/* 三位數 ÷ 兩位數。商的每一位都唔係 0，所以每一步都有「乘、減」可以填。
+   商是兩位數先至會出現減行（餘數連住落下的下一位）。大約四分三係呢種。
+   withRemainder：1 ≤ 餘數 < 除數。否則餘數是 0，直式唔寫 0。 */
+function pickThreeByTwo(withRemainder){
   var guard = 0;
-  while(guard++ < 100){
+  while(guard++ < 250){
     var divisor = rand(10, 99);
     var twoDigitQ = Math.random() < 0.75;
     var minQ, maxQ, quotient;
     if(twoDigitQ){
       minQ = Math.max(11, Math.ceil(100 / divisor));
       maxQ = Math.min(99, Math.floor(999 / divisor));
-      if(minQ > maxQ) continue;
-      quotient = rand(minQ, maxQ);
-      if(quotient % 10 === 0) continue;
     } else {
       minQ = Math.max(2, Math.ceil(100 / divisor));
       maxQ = Math.min(9, Math.floor(999 / divisor));
-      if(minQ > maxQ) continue;
-      quotient = rand(minQ, maxQ);
     }
-    var dividend = divisor * quotient;
+    if(withRemainder){
+      maxQ = Math.min(maxQ, Math.floor((999 - (divisor - 1)) / divisor));
+    }
+    if(minQ > maxQ) continue;
+    quotient = rand(minQ, maxQ);
+    if(twoDigitQ && quotient % 10 === 0) continue;
+    var rem = 0;
+    if(withRemainder) rem = rand(1, divisor - 1);
+    var dividend = divisor * quotient + rem;
     if(dividend < 100 || dividend > 999) continue;
-    return {dividend: dividend, divisor: divisor};
+    var ld = buildLongDiv(dividend, divisor);
+    if(ld.quotient !== quotient || ld.remainder !== rem) continue;
+    if(!ld.qDigits.length || ld.qDigits.some(function(qd){ return qd.digit === 0; })) continue;
+    if(twoDigitQ && ld.qDigits.length < 2) continue;
+    if(ld.qDigits.length >= 2 && (!ld.steps.length || ld.steps[0].rem <= 0)) continue;
+    if(withRemainder){
+      if(ld.remainder < 1 || ld.remainder >= divisor) continue;
+      var last = ld.steps[ld.steps.length - 1];
+      if(!last || last.rem !== ld.remainder) continue;
+      if(last.atCol - String(ld.remainder).length + 1 < 0) continue;
+    } else if(ld.remainder !== 0) continue;
+    return {dividend: dividend, divisor: divisor, remainder: rem};
   }
-  return {dividend: 864, divisor: 24};
+  if(withRemainder) return {dividend: 865, divisor: 24, remainder: 1};
+  return {dividend: 864, divisor: 24, remainder: 0};
 }
 
-function pickProblem(hardMode){
-  var picked = pickThreeByTwo();
+/* 每局 10 題：4、5 或 6 題有餘數（40%–60%），其餘整除。次序打亂。 */
+function planRun(){
+  var nRem = rand(4, 6);
+  runPlan = [];
+  for(var i = 0; i < TOTAL_Q; i++) runPlan.push(i < nRem);
+  shuffle(runPlan);
+}
+
+function pickProblem(hardMode, withRemainder){
+  var picked = pickThreeByTwo(!!withRemainder);
   var ld = buildLongDiv(picked.dividend, picked.divisor);
   return makeBlankPlan(ld, hardMode);
 }
@@ -609,6 +664,7 @@ function textbookOrderMap(ld){
   }
   var stepByCol = {};
   ld.steps.forEach(function(st, idx){ stepByCol[st.atCol] = idx; });
+  var placedFinal = false;
   ld.qDigits.forEach(function(qd, qIdx){
     put('q', qIdx, 0);
     var sIdx = stepByCol[qd.atCol];
@@ -620,14 +676,24 @@ function textbookOrderMap(ld){
       next.work.forEach(function(w){
         if(!w.bring) put('rem', sIdx + 1, w.remIndex);
       });
+    } else if(st.rem > 0){
+      String(st.rem).split('').forEach(function(_ch, di){ put('final', sIdx, di); });
+      placedFinal = true;
     }
   });
+  if(!placedFinal){
+    var lastIdx = ld.steps.length - 1;
+    var last = lastIdx >= 0 ? ld.steps[lastIdx] : null;
+    if(last && last.rem > 0){
+      String(last.rem).split('').forEach(function(_ch, di){ put('final', lastIdx, di); });
+    }
+  }
   return map;
 }
 
 function makeBlankPlan(ld, hardMode){
-  // Build a list of fillable cells with answers
-  // Cell kinds: q0,q1,... prod0, rem0, etc.
+  // Build a list of fillable cells with answers.
+  // Cell kinds: q, prod, rem (中間減), final (最後餘數).
   var candidates = [];
   ld.qDigits.forEach(function(qd, idx){
     candidates.push({kind:'q', idx: idx, answer: qd.digit, label: '商'});
@@ -644,27 +710,35 @@ function makeBlankPlan(ld, hardMode){
       });
     }
   });
+  var lastIdx = ld.steps.length - 1;
+  var finals = [];
+  if(lastIdx >= 0 && ld.steps[lastIdx].rem > 0){
+    String(ld.steps[lastIdx].rem).split('').forEach(function(ch, di){
+      finals.push({kind:'final', idx: lastIdx, digi: di, answer: parseInt(ch, 10), label: '餘數'});
+    });
+  }
 
-  // Always include at least one quotient blank
-  var must = candidates.filter(function(c){ return c.kind === 'q'; });
+  var quotients = candidates.filter(function(c){ return c.kind === 'q'; });
   var others = candidates.filter(function(c){ return c.kind !== 'q'; });
   shuffle(others);
-  var nBlanks = hardMode ? rand(4, Math.min(7, candidates.length)) : rand(3, Math.min(5, candidates.length));
-  var chosen = [];
-  // take all q or most
-  must.forEach(function(m){ chosen.push(m); });
-  if(chosen.length > nBlanks){
-    // keep at least 1 quotient
-    shuffle(chosen);
-    chosen = chosen.slice(0, Math.max(1, nBlanks - 1));
-  }
-  for(var i=0; i<others.length && chosen.length < nBlanks; i++){
+  var pool = quotients.length + others.length + finals.length;
+  var lo = hardMode ? 4 : 3;
+  var hi = hardMode ? 7 : 5;
+  var nBlanks = pool ? rand(Math.min(lo, pool), Math.min(hi, pool)) : 0;
+  // 餘數整段一齊填，商的位都留，再至少一格乘或減。較難就喺呢個底之上再加格。
+  var remKeep = finals.slice();
+  var qKeep = quotients.slice();
+  var wantOther = others.length ? 1 : 0;
+  var minKeep = qKeep.length + remKeep.length + wantOther;
+  if(nBlanks < minKeep) nBlanks = Math.min(pool, minKeep);
+
+  var chosen = qKeep.concat(remKeep);
+  for(var i = 0; i < others.length && chosen.length < nBlanks; i++){
     chosen.push(others[i]);
   }
-  // Deduplicate by kind+idx+digi
   var seen = {};
   chosen = chosen.filter(function(c){
-    var k = c.kind + '-' + c.idx + '-' + (c.digi||0);
+    var k = c.kind + '-' + c.idx + '-' + (c.digi != null ? c.digi : 0);
     if(seen[k]) return false;
     seen[k] = true;
     return true;
@@ -675,7 +749,7 @@ function makeBlankPlan(ld, hardMode){
     blankSet[c.kind + '-' + c.idx + '-' + (c.digi != null ? c.digi : 0)] = c.answer;
   });
 
-  return {ld: ld, blankSet: blankSet, chosen: chosen, dividend: parseInt(ld.nStr,10), divisor: ld.d, quotient: ld.quotient};
+  return {ld: ld, blankSet: blankSet, chosen: chosen, dividend: parseInt(ld.nStr,10), divisor: ld.d, quotient: ld.quotient, remainder: ld.remainder};
 }
 
 /* ---------- render long division ---------- */
@@ -817,7 +891,7 @@ function renderProblem(prob){
     }
     row++;
 
-    // 餘數不是 0 先寫在積的下一行。整除就唔寫 0。
+    // 餘數不是 0 先寫在積的下一行。整除就唔寫 0。有餘數可以係最後一個窿窿。
     if(sIdx === ld.steps.length - 1 && st.rem > 0){
       var remStr = String(st.rem);
       var remStart = st.atCol - remStr.length + 1;
@@ -825,7 +899,7 @@ function renderProblem(prob){
       for(var cr = 0; cr < cols; cr++){
         var rAt = cr - remStart;
         if(rAt >= 0 && rAt < remStr.length){
-          addCell(remStr.charAt(rAt), 'fixed remFinal', cr + 2, row);
+          addBlankOrFixed(parseInt(remStr.charAt(rAt), 10), 'final', sIdx, rAt, cr + 2, row, 'remFinal', places[cols - 1 - cr]);
         } else {
           addCell('', 'empty', cr + 2, row);
         }
@@ -842,8 +916,20 @@ function renderProblem(prob){
 function stepLabel(kind, place){
   if(kind === 'q') return '寫商的' + (place || '') + '位';
   if(kind === 'prod') return '寫積（商 × 除數）';
+  if(kind === 'final') return '寫餘數' + (place ? '的' + place + '位' : '');
   return '寫減出嚟嘅數';
 }
+function cyclePhrase(){
+  var hasFinal = blanks.some(function(b){ return b.kind === 'final'; });
+  return hasFinal ? '跟課本：商 → 乘 → 減 → 餘數' : '跟課本：商 → 乘 → 減';
+}
+function answerEquation(p){
+  var eq = p.dividend + ' ÷ ' + p.divisor + ' = ' + p.quotient;
+  if(p.remainder > 0) eq += '（餘 ' + p.remainder + '）';
+  return eq;
+}
+var DOCK_MQ = '(min-width: 800px) and (min-height: 520px)';
+function keypadDocked(){ return window.matchMedia(DOCK_MQ).matches; }
 function stepAria(kind, place){
   return stepLabel(kind, place) + '，撳咗先出九宮格';
 }
@@ -865,7 +951,7 @@ function refreshGuide(){
     return;
   }
   var lead = selId ? '而家填：' : '下一步：';
-  $('prompt').textContent = lead + stepLabel(focus.kind, focus.place) + '。跟課本：商 → 乘 → 減。';
+  $('prompt').textContent = lead + stepLabel(focus.kind, focus.place) + '。' + cyclePhrase() + '。';
 }
 
 function findBlank(id){
@@ -876,7 +962,7 @@ function findBlank(id){
 function placeKeypad(){
   var wrap = $('keypadWrap');
   var main = document.querySelector('#play .playMain');
-  if(!wrap.classList.contains('on')){
+  if(keypadDocked() || !wrap.classList.contains('on')){
     wrap.style.bottom = '';
     if(main) main.style.paddingBottom = '';
     return;
@@ -890,6 +976,12 @@ function placeKeypad(){
 
 function keepBlankVisible(){
   var b = findBlank(selId);
+  if(keypadDocked()){
+    if(b && b.el && b.el.scrollIntoView){
+      try{ b.el.scrollIntoView({block:'nearest', inline:'nearest'}); }catch(e){}
+    }
+    return;
+  }
   var main = document.querySelector('#play .playMain');
   var panel = document.querySelector('#keypadWrap.on .keypadPanel');
   if(!b || !b.el || !main || !panel) return;
@@ -908,7 +1000,7 @@ function showKeypad(){
   var fb = $('feedback');
   if(fb.textContent.indexOf('閃住') !== -1 || fb.textContent.indexOf('先撳') !== -1){
     fb.className = 'feedback hint';
-    fb.textContent = '打數字，填完撳「檢查」。撳「收起」可收起九宮格';
+    fb.textContent = keypadDocked() ? '打數字，填完撳「檢查」' : '打數字，填完撳「檢查」。撳「收起」可收起九宮格';
   }
   requestAnimationFrame(function(){
     placeKeypad();
@@ -919,7 +1011,7 @@ function showKeypad(){
 function hideKeypad(){
   var wrap = $('keypadWrap');
   wrap.classList.remove('on');
-  wrap.setAttribute('aria-hidden', 'true');
+  wrap.setAttribute('aria-hidden', keypadDocked() ? 'false' : 'true');
   wrap.style.bottom = '';
   var main = document.querySelector('#play .playMain');
   if(main) main.style.paddingBottom = '';
@@ -944,7 +1036,12 @@ function selectBlank(id){
 }
 
 function typeDigit(dig){
-  if(answered || paused || !selId) return;
+  if(answered || paused) return;
+  if(!selId){
+    var due = earliestEmpty();
+    if(!due) return;
+    selectBlank(due.id);
+  }
   var b = findBlank(selId);
   if(!b) return;
   b.value = String(dig);
@@ -1040,8 +1137,8 @@ function checkAnswer(){
     score += 10 + (hard ? 5 : 0);
     $('scorePill').textContent = '⭐ ' + score;
     $('feedback').className = 'feedback ok';
-    $('feedback').textContent = '全部啱！👏 ' + cur.dividend + ' ÷ ' + cur.divisor + ' = ' + cur.quotient;
-    $('prompt').textContent = cur.dividend + ' ÷ ' + cur.divisor + ' = ' + cur.quotient;
+    $('feedback').textContent = '全部啱！👏 ' + answerEquation(cur);
+    $('prompt').textContent = answerEquation(cur);
     refreshGuide();
     beep(523, 0.1); setTimeout(function(){ beep(659, 0.1); }, 100); setTimeout(function(){ beep(784, 0.15); }, 200);
     hideKeypad();
@@ -1078,8 +1175,8 @@ function revealAnswers(){
     b.el.classList.remove('bad','sel','ok');
   });
   $('feedback').className = 'feedback hint';
-  $('feedback').textContent = '答案：' + cur.dividend + ' ÷ ' + cur.divisor + ' = ' + cur.quotient;
-  $('prompt').textContent = cur.dividend + ' ÷ ' + cur.divisor + ' = ' + cur.quotient;
+  $('feedback').textContent = '答案：' + answerEquation(cur);
+  $('prompt').textContent = answerEquation(cur);
   answered = true;
   refreshGuide();
   hideKeypad();
@@ -1109,12 +1206,18 @@ function loadQuestion(){
   hideKeypad();
   $('qPill').textContent = '第 ' + (qIndex+1) + '／' + TOTAL_Q + ' 題';
   $('feedback').className = 'feedback hint';
-  $('feedback').textContent = '先撳閃住嘅格，跟課本：商 → 乘 → 減';
-  cur = pickProblem(hard);
-  // Avoid too few blanks
+  if(runPlan.length !== TOTAL_Q) planRun();
+  var wantRem = !!runPlan[qIndex];
+  cur = pickProblem(hard, wantRem);
+  // Avoid too few blanks, and keep this question's 整除／有餘數 plan.
   var tries = 0;
-  while(Object.keys(cur.blankSet).length < 2 && tries < 8){ cur = pickProblem(hard); tries++; }
+  while(tries < 8 && (Object.keys(cur.blankSet).length < 2 || (wantRem ? cur.remainder < 1 : cur.remainder !== 0))){
+    cur = pickProblem(hard, wantRem);
+    tries++;
+  }
   renderProblem(cur);
+  $('feedback').textContent = '先撳閃住嘅格，' + cyclePhrase();
+  if(keypadDocked()) $('keypadWrap').setAttribute('aria-hidden', 'false');
   if(mode === 'teacher'){
     $('teachBar').classList.add('on');
   } else {
@@ -1291,6 +1394,7 @@ function startGame(){
   soundOn = $('togSound').checked;
   hard = $('togHard').checked;
   hearts = 3; score = 0; qIndex = 0;
+  planRun();
   updateHearts();
   $('scorePill').textContent = '⭐ 0';
   $('modeTag').textContent = mode === 'teacher' ? '老師' : '學生';
