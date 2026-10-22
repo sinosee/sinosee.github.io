@@ -12,15 +12,20 @@
   const RECT2 = [[0, 0], [4, 0], [4, 2], [0, 2]];
   const CENTER_TRI = [[0, 0], [2, 0], [1, 1]];
 
+  const PASTEL = ['#ff8ec8', '#ffb347', '#ffd15c', '#7ddeb3', '#7ecbff', '#c9b6ff'];
   const COL = {
-    same: '#7eb6d4',
-    a: '#7eb6d4',
-    b: '#e2b15c',
-    c: '#8fbf9f',
-    d: '#d9897a',
-    e: '#b7a4d4',
-    part: '#f0c2a0'
+    same: '#ff8ec8',
+    a: '#7ecbff',
+    b: '#ffd15c',
+    c: '#7ddeb3',
+    d: '#ff8ec8',
+    e: '#c9b6ff',
+    part: '#ffb3de'
   };
+  function pieceColor(src, i) {
+    if (!src || src.color === COL.same) return PASTEL[i % PASTEL.length];
+    return src.color;
+  }
 
   function goalText(parts) {
     const bits = parts.map(function (p) { return p.count + ' 個' + p.name; });
@@ -372,13 +377,13 @@
     }
     if (t.kind === 'tri') {
       for (let i = 0; i < t.count; i++) {
-        S.pieces.push({ id: 'p' + i, down: i % 2 === 1, p: 0, q: 0, placed: false, color: COL.same });
+        S.pieces.push({ id: 'p' + i, down: i % 2 === 1, p: 0, q: 0, placed: false, color: PASTEL[i % PASTEL.length] });
       }
     }
     if (t.kind === 'join' || t.kind === 'fill' || t.kind === 'yesno') {
       t.pieces.forEach(function (src, i) {
         S.pieces.push({
-          id: 'p' + i, local: src.local, color: src.color, k: 0,
+          id: 'p' + i, local: src.local, color: pieceColor(src, i), k: 0,
           tx: 0, ty: 0, placed: t.kind === 'yesno'
         });
       });
@@ -391,7 +396,7 @@
     if (t.kind === 'missing') {
       t.palette.forEach(function (src, i) {
         S.pieces.push({
-          id: 'p' + i, local: src.local, color: src.color, name: src.name,
+          id: 'p' + i, local: src.local, color: pieceColor(src, i), name: src.name,
           k: 0, tx: 0, ty: 0, placed: false
         });
       });
@@ -537,7 +542,7 @@
     const w = (b.maxX - b.minX) * CELL + PAD * 2;
     const h = (b.maxY - b.minY) * CELL + PAD * 2;
     let s = '<svg id="board" viewBox="0 0 ' + w + ' ' + h + '" role="application" aria-label="方格圖形">';
-    s += gridLines(b, w, h);
+    s += boardBg() + gridLines(b, w, h);
     if (S.view === 'result' && S.result && S.result.length) {
       S.result.forEach(function (p, i) {
         const off = S.offsets[i] || [0, 0];
@@ -553,29 +558,29 @@
       });
       (t.cuts || []).forEach(function (c) {
         const a = g2s(c[0][0], c[0][1]), d = g2s(c[1][0], c[1][1]);
-        s += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + d[0] + '" y2="' + d[1] + '" stroke="#c05621" stroke-width="4" stroke-dasharray="10 8" pointer-events="none"/>';
+        s += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + d[0] + '" y2="' + d[1] + '" stroke="#c43b86" stroke-width="4" stroke-dasharray="10 8" pointer-events="none"/>';
       });
     } else {
-      s += polyShape(t.poly, [0, 0], '#8ec5d6', false, '');
+      s += polyShape(t.poly, [0, 0], '#7ecbff', false, '');
       S.cuts.forEach(function (c) {
         const a = g2s(c[0][0], c[0][1]), d = g2s(c[1][0], c[1][1]);
-        s += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + d[0] + '" y2="' + d[1] + '" stroke="#c05621" stroke-width="5" stroke-linecap="round" pointer-events="none"/>';
+        s += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + d[0] + '" y2="' + d[1] + '" stroke="#c43b86" stroke-width="5" stroke-linecap="round" pointer-events="none"/>';
       });
       if (S.draft) {
         const a = g2s(S.draft[0][0], S.draft[0][1]);
         const d = g2s(S.draft[1][0], S.draft[1][1]);
-        s += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + d[0] + '" y2="' + d[1] + '" stroke="#c05621" stroke-width="4" stroke-dasharray="8 6" pointer-events="none"/>';
+        s += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + d[0] + '" y2="' + d[1] + '" stroke="#c43b86" stroke-width="4" stroke-dasharray="8 6" pointer-events="none"/>';
       }
       G.bboxGridPoints(t.poly).forEach(function (p) {
         const at = g2s(p[0], p[1]);
-        s += '<circle class="dot" cx="' + at[0] + '" cy="' + at[1] + '" r="7" fill="#1a6a84" data-x="' + p[0] + '" data-y="' + p[1] + '"/>';
+        s += '<circle class="dot" cx="' + at[0] + '" cy="' + at[1] + '" r="8" fill="#ff8ec8" stroke="#5a2d78" stroke-width="2" data-x="' + p[0] + '" data-y="' + p[1] + '"/>';
       });
     }
     s += '</svg>';
     return s;
   }
 
-  const COLS = ['#7eb6d4', '#e2b15c', '#8fbf9f', '#d9897a', '#b7a4d4', '#e0c36a'];
+  const COLS = PASTEL;
 
   function g2s(x, y) {
     return [PAD + (x - frame.minX) * CELL, PAD + (frame.maxY - y) * CELL];
@@ -586,24 +591,28 @@
     const y0 = Math.ceil(b.minY), y1 = Math.floor(b.maxY);
     for (let x = x0; x <= x1; x++) {
       const a = g2s(x, b.minY), c = g2s(x, b.maxY);
-      s += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + c[0] + '" y2="' + c[1] + '" stroke="#d5e2ea" stroke-width="2"/>';
+      s += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + c[0] + '" y2="' + c[1] + '" stroke="#f3c3dc" stroke-width="2"/>';
     }
     for (let y = y0; y <= y1; y++) {
       const a = g2s(b.minX, y), c = g2s(b.maxX, y);
-      s += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + c[0] + '" y2="' + c[1] + '" stroke="#d5e2ea" stroke-width="2"/>';
+      s += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + c[0] + '" y2="' + c[1] + '" stroke="#f3c3dc" stroke-width="2"/>';
     }
     return s;
+  }
+  function boardBg() {
+    return '<rect width="100%" height="100%" fill="#fff8fc"/>';
   }
   function polyShape(xy, off, fill, interactive, extra) {
     const pts = xy.map(function (p) {
       const at = g2s(p[0] + (off ? off[0] : 0), p[1] + (off ? off[1] : 0));
       return at[0] + ',' + at[1];
     }).join(' ');
-    return '<polygon points="' + pts + '" fill="' + fill + '" stroke="#1c4e63" stroke-width="3" stroke-linejoin="round" '
+    const stroke = extra && extra.indexOf('stroke=') >= 0 ? '' : ' stroke="#5a2d78" stroke-width="3"';
+    return '<polygon points="' + pts + '" fill="' + fill + '"' + stroke + ' stroke-linejoin="round" '
       + (interactive ? '' : 'pointer-events="none" ') + extra + '/>';
   }
   function label(x, y, text) {
-    return '<text x="' + x + '" y="' + y + '" text-anchor="middle" dominant-baseline="middle" font-size="20" font-weight="800" fill="#1c2b33" stroke="#fff" stroke-width="6" paint-order="stroke" pointer-events="none">' + esc(text) + '</text>';
+    return '<text x="' + x + '" y="' + y + '" text-anchor="middle" dominant-baseline="middle" font-size="20" font-weight="800" fill="#5a2d78" stroke="#fff" stroke-width="6" paint-order="stroke" pointer-events="none">' + esc(text) + '</text>';
   }
 
   function polySvg(t) {
@@ -623,22 +632,22 @@
     const w = (b.maxX - b.minX) * CELL + PAD * 2;
     const h = (b.maxY - b.minY) * CELL + PAD * 2;
     let s = '<svg id="board" viewBox="0 0 ' + w + ' ' + h + '" role="application" aria-label="拼圖方格">';
-    s += gridLines(t.bounds);
+    s += boardBg() + gridLines(t.bounds);
     if (t.target) {
       const pts = t.target.map(function (p) { const at = g2s(p[0], p[1]); return at[0] + ',' + at[1]; }).join(' ');
-      s += '<polygon points="' + pts + '" fill="rgba(232,240,243,.95)" stroke="#3e6574" stroke-width="4" stroke-dasharray="9 7" stroke-linejoin="round" pointer-events="none"/>';
+      s += '<polygon points="' + pts + '" fill="rgba(255,214,234,.72)" stroke="#c43b86" stroke-width="4" stroke-dasharray="9 7" stroke-linejoin="round" pointer-events="none"/>';
     }
     if (t.partial) s += polyShape(t.partial, [0, 0], COL.part, false, '');
     if (tray) {
       const a = g2s(b.minX, trayY), c = g2s(b.maxX, b.minY);
-      s += '<rect x="' + Math.min(a[0], c[0]) + '" y="' + Math.min(a[1], c[1]) + '" width="' + Math.abs(c[0] - a[0]) + '" height="' + Math.abs(c[1] - a[1]) + '" fill="#f4f7f8" stroke="#d5e2ea"/>';
+      s += '<rect x="' + Math.min(a[0], c[0]) + '" y="' + Math.min(a[1], c[1]) + '" width="' + Math.abs(c[0] - a[0]) + '" height="' + Math.abs(c[1] - a[1]) + '" fill="#fff0f8" stroke="#ffb3de"/>';
       const lab = g2s(b.minX + 0.2, b.minY + 2.55);
-      s += '<text x="' + (PAD + 8) + '" y="' + lab[1] + '" font-size="18" font-weight="800" fill="#52656e">圖形（拖上方格）</text>';
+      s += '<text x="' + (PAD + 8) + '" y="' + lab[1] + '" font-size="18" font-weight="800" fill="#7a568f">圖形（拖上方格）</text>';
     }
     S.pieces.forEach(function (p) {
       const xy = G.placePoly(p.local, p.k, p.tx, p.ty);
       const sel = S.selected === p.id;
-      s += polyShape(xy, [0, 0], p.color, true, 'data-pid="' + p.id + '"' + (sel ? ' stroke="#0e534a" stroke-width="5"' : ''));
+      s += polyShape(xy, [0, 0], p.color, true, 'data-pid="' + p.id + '"' + (sel ? ' stroke="#c43b86" stroke-width="5"' : ''));
     });
     s += '</svg>';
     return s;
@@ -678,20 +687,21 @@
     const w = (maxX - minX) * SC + PAD * 2;
     const h = (maxY - minY) * SC + PAD * 2;
     let s = '<svg id="board" viewBox="0 0 ' + w + ' ' + h + '" role="application" aria-label="等邊三角形拼圖">';
+    s += boardBg();
     cells.forEach(function (c) {
       const ct = G.cellCenter(c);
       if (ct.y < -0.2) return;
       const at = w2s(ct.x, ct.y);
-      s += '<circle cx="' + at[0] + '" cy="' + at[1] + '" r="3.5" fill="#c5d5df" pointer-events="none"/>';
+      s += '<circle cx="' + at[0] + '" cy="' + at[1] + '" r="3.5" fill="#f3c3dc" pointer-events="none"/>';
     });
     const trayTop = w2s(minX, -0.15);
-    s += '<text x="' + (PAD + 6) + '" y="' + (trayTop[1] + 28) + '" font-size="18" font-weight="800" fill="#52656e">圖形（拖上去拼）</text>';
+    s += '<text x="' + (PAD + 6) + '" y="' + (trayTop[1] + 28) + '" font-size="18" font-weight="800" fill="#7a568f">圖形（拖上去拼）</text>';
     ensureTriParked();
     S.pieces.forEach(function (p) {
       const world = triPieceWorld(p);
       const pts = world.map(function (pt) { const at = w2s(pt.x, pt.y); return at[0] + ',' + at[1]; }).join(' ');
       const sel = S.selected === p.id;
-      s += '<polygon points="' + pts + '" fill="' + COL.same + '" stroke="' + (sel ? '#0e534a' : '#1c4e63') + '" stroke-width="' + (sel ? 5 : 3) + '" stroke-linejoin="round" data-pid="' + p.id + '"/>';
+      s += '<polygon points="' + pts + '" fill="' + p.color + '" stroke="' + (sel ? '#c43b86' : '#5a2d78') + '" stroke-width="' + (sel ? 5 : 3) + '" stroke-linejoin="round" data-pid="' + p.id + '"/>';
     });
     s += '</svg>';
     return s;
@@ -958,7 +968,7 @@
     ln.setAttribute('id', 'draft-line');
     ln.setAttribute('x1', a[0]); ln.setAttribute('y1', a[1]);
     ln.setAttribute('x2', b[0]); ln.setAttribute('y2', b[1]);
-    ln.setAttribute('stroke', '#c05621');
+    ln.setAttribute('stroke', '#c43b86');
     ln.setAttribute('stroke-width', '4');
     ln.setAttribute('stroke-dasharray', '8 6');
     ln.setAttribute('pointer-events', 'none');
