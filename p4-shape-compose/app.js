@@ -36,8 +36,8 @@
 
   const ACTIVITIES = [
     {
-      id: 'name-h', lesson: 'split', group: '沿虛線講名稱',
-      title: '橫虛線：長方形', aim: '講出分成咩圖形',
+      id: 'name-h', lesson: 'split', group: '沿虛線說出名稱',
+      title: '橫虛線：長方形', aim: '說出分成什麼圖形',
       kind: 'name', poly: RECT, cuts: [[[0, 2], [6, 2]]],
       prompt: '長方形沿虛線剪開。可以拖開兩塊，再選出正確描述。',
       choices: [
@@ -48,8 +48,8 @@
       ]
     },
     {
-      id: 'name-s', lesson: 'split', group: '沿虛線講名稱',
-      title: '斜虛線：長方形', aim: '講出分成咩圖形',
+      id: 'name-s', lesson: 'split', group: '沿虛線說出名稱',
+      title: '斜虛線：長方形', aim: '說出分成什麼圖形',
       kind: 'name', poly: RECT, cuts: [[[0, 1], [6, 3]]],
       prompt: '同一塊長方形，沿斜虛線剪開。拖開兩塊，再選出正確描述。',
       choices: [
@@ -149,7 +149,7 @@
     },
     {
       id: 'tri2', lesson: 'join', group: '用相同的圖形拼砌',
-      title: '2 個等邊三角形', aim: '拼好再講名稱',
+      title: '2 個等邊三角形', aim: '拼好後說出名稱',
       kind: 'tri', count: 2,
       accept: ['菱形'],
       names: ['菱形', '梯形', '平行四邊形', '正方形'],
@@ -158,7 +158,7 @@
     },
     {
       id: 'tri3', lesson: 'join', group: '用相同的圖形拼砌',
-      title: '3 個等邊三角形', aim: '拼好再講名稱',
+      title: '3 個等邊三角形', aim: '拼好後說出名稱',
       kind: 'tri', count: 3,
       accept: ['梯形'],
       names: ['菱形', '梯形', '平行四邊形', '三角形'],
@@ -185,7 +185,7 @@
     },
     {
       id: 'iso2', lesson: 'join', group: '用相同的圖形拼砌',
-      title: '2 個等腰直角三角形', aim: '拼好再講名稱',
+      title: '2 個等腰直角三角形', aim: '拼好後說出名稱',
       kind: 'join',
       pieces: [
         { local: TRI, color: COL.same },
@@ -242,7 +242,7 @@
     },
     {
       id: 'miss-r', lesson: 'join', group: '補上缺少的一塊',
-      title: '補成一個長方形', aim: '由下面揀一塊',
+      title: '補成一個長方形', aim: '從下面選一塊',
       kind: 'missing',
       targetName: '長方形',
       target: [[0, 0], [6, 0], [6, 4], [0, 4]],
@@ -251,11 +251,11 @@
       solutionIndex: 0,
       solution: { k: 0, tx: 2, ty: 2 },
       bounds: { minX: -1, minY: -1, maxX: 8, maxY: 6 },
-      prompt: '橘色圖形缺了一塊。從下面揀一塊補上，拼成一個長方形。只需用一塊。'
+      prompt: '橘色圖形缺了一塊。從下面選一塊補上，拼成一個長方形。只需用一塊。'
     },
     {
       id: 'miss-s', lesson: 'join', group: '補上缺少的一塊',
-      title: '補成一個正方形', aim: '由下面揀一塊',
+      title: '補成一個正方形', aim: '從下面選一塊',
       kind: 'missing',
       targetName: '正方形',
       target: [[0, 0], [4, 0], [4, 4], [0, 4]],
@@ -264,11 +264,11 @@
       solutionIndex: 1,
       solution: { k: 1, tx: 4, ty: 0 },
       bounds: { minX: -1, minY: -1, maxX: 7, maxY: 6 },
-      prompt: '橘色圖形缺了一角。從下面揀一塊補上，拼成一個正方形。'
+      prompt: '橘色圖形缺了一角。從下面選一塊補上，拼成一個正方形。'
     },
     {
       id: 'miss-t', lesson: 'join', group: '補上缺少的一塊',
-      title: '補成一個三角形', aim: '由下面揀一塊',
+      title: '補成一個三角形', aim: '從下面選一塊',
       kind: 'missing',
       targetName: '三角形',
       target: [[0, 0], [6, 0], [0, 6]],
@@ -277,10 +277,10 @@
       solutionIndex: 2,
       solution: { k: 0, tx: 2, ty: 0 },
       bounds: { minX: -2, minY: -1, maxX: 8, maxY: 8 },
-      prompt: '橘色圖形缺了一塊。從下面揀一塊補上，拼成一個三角形。'
+      prompt: '橘色圖形缺了一塊。從下面選一塊補上，拼成一個三角形。'
     },
     {
-      id: 'yesno', lesson: 'join', group: '可唔可以拼成',
+      id: 'yesno', lesson: 'join', group: '可不可以拼成',
       title: '三塊圖形可以拼成嗎', aim: '可以先試拼',
       kind: 'yesno',
       pieces: [
@@ -423,14 +423,14 @@
       + modeBtn('teacher', '老師模式', '投影時可暫停、顯示答案')
       + '</div>'
       + '<div class="lessons">'
-      + '<button type="button" class="lesson" id="go-split"><b>圖形分割</b><span>沿虛線講名稱，或在方格上畫線切開</span></button>'
-      + '<button type="button" class="lesson" id="go-join"><b>圖形拼砌</b><span>拖動圖形拼埋，或補上缺少的一塊</span></button>'
+      + '<button type="button" class="lesson" id="go-split"><b>圖形分割</b><span>沿虛線說出名稱，或在方格上畫線切開</span></button>'
+      + '<button type="button" class="lesson" id="go-join"><b>圖形拼砌</b><span>拖動圖形拼合，或補上缺少的一塊</span></button>'
       + '</div>'
-      + '<p class="note">點住圓點拖出線段，就可以切開圖形。拼砌時拖動圖形，貼住方格，需要就可以旋轉。</p>'
+      + '<p class="note">按住圓點拖出線段，就可以切開圖形。拼砌時拖動圖形，對準方格，需要時可以旋轉。</p>'
       + '<div class="foot">'
       + '<img class="qr" src="qrcode.png" width="112" height="132" alt="圖形分割和拼砌二維碼">'
       + '<div><img class="dog" src="assets/mascot.jpg" width="52" height="52" alt="">'
-      + '<p>平板掃碼，打開呢一頁</p>'
+      + '<p>用平板掃描二維碼，打開這一頁</p>'
       + '<a href="https://sinosee.github.io/p4-shape-compose/">sinosee.github.io/p4-shape-compose</a></div>'
       + '</div>';
   }
@@ -441,7 +441,7 @@
   function listHtml() {
     const title = S.lesson === 'split' ? '圖形分割' : '圖形拼砌';
     let html = '<div class="top"><button type="button" class="back" id="go-home">返回</button></div>';
-    html += '<h1>' + title + '</h1><p class="sub">揀一道題目。做完可以再揀下一題。</p>';
+    html += '<h1>' + title + '</h1><p class="sub">選擇一道題目。做完可以再選下一題。</p>';
     let group = '';
     lessonTasks().forEach(function (a) {
       if (a.group !== group) {
@@ -506,7 +506,7 @@
     if (idx < list.length - 1) html += '<button type="button" class="btn" id="btn-next">下一題</button>';
     html += '</div>';
     if (t.kind === 'draw' && S.view === 'edit') {
-      html += '<p class="fine">已畫 ' + S.cuts.length + ' 條線段。點住圓點，拖到另一個圓點。</p>';
+      html += '<p class="fine">已畫 ' + S.cuts.length + ' 條線段。按住圓點，拖到另一個圓點。</p>';
     }
     return html;
   }
@@ -949,7 +949,7 @@
         });
         if (dup) {
           p.placed = false;
-          setFeedback('呢個位置已經有一塊。', 'hint');
+          setFeedback('這個位置已經有一塊。', 'hint');
         }
       }
       render();
@@ -1014,9 +1014,9 @@
     const after = G.splitPolygon(t.poly, trial);
     if (!after.ok) {
       const msg = {
-        outside: '呢條線有部分在圖形外面。請由一邊畫到另一邊，線要留在圖形裏面。',
+        outside: '這條線有部分在圖形外面。請由一邊畫到另一邊，線要留在圖形裡面。',
         dangling: '線的兩端要放在圖形的邊上，或者接到另一條線。',
-        'not-split': '呢條線還沒有把圖形切開。請由一邊畫到另一邊。',
+        'not-split': '這條線還沒有把圖形切開。請由一邊畫到另一邊。',
         short: '請拖到另一個點。'
       }[after.code] || '這條線不能用。';
       setFeedback(msg, 'hint');
@@ -1025,7 +1025,7 @@
     }
     const before = G.splitPolygon(t.poly, S.cuts);
     if (before.ok && after.pieces.length === before.pieces.length) {
-      setFeedback('呢條線沒有再切開圖形。', 'hint');
+      setFeedback('這條線沒有再切開圖形。', 'hint');
       render();
       return;
     }
@@ -1135,14 +1135,14 @@
     if (!u.ok) {
       const msg = {
         overlap: '有三角形疊住了。',
-        disconnected: '三角形還沒拼在一起。邊要貼住邊。',
-        'not-simple': '請把邊完全貼住，不要只碰一個角。'
+        disconnected: '三角形還沒拼在一起。邊要對齊邊。',
+        'not-simple': '請把邊完全對齊，不要只碰一個角。'
       }[u.code] || '還沒拼成一個完整圖形。';
       setFeedback(msg, 'bad');
       return;
     }
     if (!u.convex) {
-      setFeedback('你拼出的圖形凹了進去。試下拼一個凸出來的多邊形。', 'bad');
+      setFeedback('你拼出的圖形凹了進去。請試著拼一個凸出來的多邊形。', 'bad');
       return;
     }
     if (t.accept.indexOf(u.name) < 0) {
@@ -1167,14 +1167,14 @@
     const u = G.unionOutline(polys);
     if (!u.ok) {
       const msg = {
-        overlap: '有圖形疊住了。分開少少再試。',
-        disconnected: '圖形還沒拼在一起。邊要貼住邊。'
+        overlap: '有圖形重疊了。分開一點再試。',
+        disconnected: '圖形還沒拼在一起。邊要對齊邊。'
       }[u.code] || '還沒拼成一個完整圖形。';
       setFeedback(msg, 'bad');
       return;
     }
     if (!u.convex) {
-      setFeedback('你拼出的圖形凹了進去。試下拼一個凸出來的多邊形。', 'bad');
+      setFeedback('你拼出的圖形凹了進去。請試著拼一個凸出來的多邊形。', 'bad');
       return;
     }
     if (t.accept.indexOf(u.name) < 0) {
@@ -1203,8 +1203,8 @@
     const r = G.fillsTarget(t.target, polys);
     if (r.ok) setFeedback('正確。拼成了' + t.targetName + '。', 'ok');
     else if (r.code === 'outside') setFeedback('有圖形伸出了虛線框。', 'bad');
-    else if (r.code === 'overlap') setFeedback('有圖形疊住了，或者沒有對準缺口。', 'bad');
-    else setFeedback('虛線框還沒填滿。可以旋轉，再移一移。', 'bad');
+    else if (r.code === 'overlap') setFeedback('有圖形重疊了，或沒有對準缺口。', 'bad');
+    else setFeedback('虛線框還沒填滿。可以旋轉，再移動一下。', 'bad');
   }
 
   function checkYes(t) {

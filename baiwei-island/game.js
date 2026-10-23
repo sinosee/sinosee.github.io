@@ -267,7 +267,7 @@
 
   function plantAt(i) {
     if (i >= unlockedPlots(level())) {
-      toast("呢格農田未解鎖，繼續升級啦");
+      toast("這一格農田尚未解鎖，請繼續升級");
       return;
     }
     const plot = state.plots[i];
@@ -280,7 +280,7 @@
         waterAt(i);
         return;
       }
-      toast("仲喺度長大，等等啦～");
+      toast("還在生長，請稍等～");
       return;
     }
     const seed = byId[state.selectedSeed];
@@ -291,7 +291,7 @@
     plot.watered = false;
     save();
     renderFarm();
-    toast(`種咗${seed.name}！記得澆水`);
+    toast(`已種下${seed.name}！記得澆水`);
   }
 
   function waterAt(i) {
@@ -301,7 +301,7 @@
     plot.plantedAt = Date.now();
     save();
     renderFarm();
-    toast("澆好水啦，等佢長大～");
+    toast("已澆好水，等它長大～");
   }
 
   function waterAll() {
@@ -314,11 +314,11 @@
         n++;
       }
     });
-    if (n === 0) toast("冇需要澆水嘅作物");
+    if (n === 0) toast("沒有需要澆水的作物");
     else {
       save();
       renderFarm();
-      toast(`澆好 ${n} 格水啦～`);
+      toast(`已為 ${n} 格澆水～`);
     }
   }
 
@@ -347,8 +347,8 @@
     save();
     renderFarm();
     updateTop();
-    if (n === 0) toast("仲未有成熟嘅作物");
-    else toast(`一次過收成 ${n} 格！`);
+    if (n === 0) toast("還沒有成熟的作物");
+    else toast(`一次收成 ${n} 格！`);
   }
 
   function spawnFxArt(html) {
@@ -391,7 +391,7 @@
         <div class="art">${artIng("lettuce")}</div>
         <div class="copy">
           <div class="nm">已解鎖補給包</div>
-          <div class="sub">已解鎖市集食材各 ×3 · 完全免費 · 唔使儲值</div>
+          <div class="sub">已解鎖市集食材各 ×3 · 完全免費 · 不用儲值</div>
         </div>
         <button type="button" class="get" id="btnFreePack">領取</button>
       </div>` +
@@ -426,7 +426,7 @@
     state.inv[id] = (state.inv[id] || 0) + 2;
     save();
     renderMarket();
-    toast(`免費拎咗 ${ing.name} ×2`);
+    toast(`已免費領取 ${ing.name} ×2`);
   }
 
   function getFreePack() {
@@ -468,7 +468,7 @@
             <div class="body">
               <div class="nm">？？？</div>
               <div class="meta">Lv.${r.unlock || 1} 解鎖 · ${r.regionLabel}</div>
-              <div class="desc">種植、煮菜、招呼客人升級 · 唔使俾錢</div>
+              <div class="desc">種植、烹飪、招呼客人即可升級 · 不用付錢</div>
             </div>
             <button type="button" class="cook" disabled>鎖</button>
           </div>`;
@@ -498,7 +498,7 @@
   function cook(id) {
     const r = recipeById[id];
     if (!r || !canCook(r)) {
-      toast("食材唔夠呀");
+      toast("食材不足");
       return;
     }
     Object.entries(r.need).forEach(([k, n]) => {
@@ -531,7 +531,7 @@
       $("#guestCard").innerHTML = `
         <div class="face">${artIng("basil")}</div>
         <h3 class="who">暫未有客人</h3>
-        <p class="say">多種種、煮煮菜升級，解鎖更多菜式之後就有人嚟啦。</p>`;
+        <p class="say">多加種植、多做菜來升級，解鎖更多菜式之後就會有客人到來。</p>`;
       return;
     }
     const r = recipeById[g.want];
@@ -542,9 +542,9 @@
       <p class="say">「${g.say}」</p>
       <p class="say" style="color:var(--leaf)">想要：${r.name}</p>
       <button type="button" class="serve" id="btnServe" ${have ? "" : "disabled"}>
-        ${have ? `端上「${r.name}」` : "未有足夠食材煮呢道菜"}
+        ${have ? `端上「${r.name}」` : "尚未有足夠食材烹調這道菜"}
       </button>
-      <p class="splash-free">升級解鎖新食材 · 全程唔使儲值</p>
+      <p class="splash-free">升級即可解鎖新食材 · 全程不用儲值</p>
     `;
   }
 
@@ -553,7 +553,7 @@
     if (!g) return;
     const r = recipeById[g.want];
     if (!canCook(r)) {
-      toast("未夠食材");
+      toast("食材不足");
       return;
     }
     Object.entries(r.need).forEach(([k, n]) => {
@@ -568,7 +568,7 @@
     save();
     updateTop();
     renderGuest();
-    toast(`${g.name}好開心！+${tip}島幣`);
+    toast(`${g.name}很高興！+${tip}島幣`);
   }
 
   function initChromeArt() {
@@ -655,7 +655,7 @@
     });
 
     $("#btnReset").addEventListener("click", () => {
-      if (confirm("確定清檔重來？全部進度會冇晒。")) {
+      if (confirm("確定清除存檔並重新開始？全部進度將會消失。")) {
         state = defaultState();
         save();
         updateTop();

@@ -8,7 +8,7 @@
 <meta name="format-detection" content="telephone=no">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffe4f4">
-<meta name="description" content="小一立體圖形：第一課睇圖認名稱，第二課疊起同滾動。">
+<meta name="description" content="小一立體圖形：第一課看圖認名稱，第二課疊起和滾動。">
 <title>立體圖形</title>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../qr.css">
@@ -20,7 +20,7 @@
       <img class="mascot" src="../assets/mascot.jpg" width="512" height="512" alt="Q版白色小狗">
       <div>
         <h1>立體圖形</h1>
-        <p class="sub">揀一課開始</p>
+        <p class="sub">選一課開始</p>
       </div>
     </header>
     <ul class="vocab" aria-label="五種立體圖形">
@@ -34,19 +34,19 @@
       <button type="button" class="mode sel" id="modeStudent" data-mode="student" aria-pressed="true">
         <div class="mi" aria-hidden="true">🧒</div>
         <div class="mt">學生模式</div>
-        <div class="md">填班別同學號<br>成績入龍虎榜</div>
+        <div class="md">填寫班別和學號<br>成績記入龍虎榜</div>
       </button>
       <button type="button" class="mode" id="modeTeacher" data-mode="teacher" aria-pressed="false">
         <div class="mi" aria-hidden="true">📺</div>
         <div class="mt">老師投影</div>
-        <div class="md">唔問班別學號<br>呢局唔會上榜</div>
+        <div class="md">不用填寫班別學號<br>本局不會上榜</div>
       </button>
     </div>
-    <p class="modeNote" id="modeNote">學生要填班別同學號，完成第一課先入龍虎榜。</p>
+    <p class="modeNote" id="modeNote">學生要填寫班別和學號，完成第一課才記入龍虎榜。</p>
     <div class="lessonGrid">
       <article class="lessonCard">
         <p class="kicker">第一課</p>
-        <h2>睇圖撳正確名稱</h2>
+        <h2>看圖點選正確名稱</h2>
         <p class="lessonLead">角錐、角柱、圓錐、圓柱、球</p>
         <p class="blurb">一共 10 題</p>
         <div class="actions">
@@ -57,9 +57,9 @@
       </article>
       <article class="lessonCard l2">
         <p class="kicker">第二課</p>
-        <h2>疊起同滾動</h2>
-        <p class="lessonLead">邊啲能疊穩？邊啲能滾動？</p>
-        <p class="blurb">一共 10 題 · 星星留喺呢部機</p>
+        <h2>疊起和滾動</h2>
+        <p class="lessonLead">哪些能疊穩？哪些能滾動？</p>
+        <p class="blurb">一共 10 題 · 星星留在這部裝置</p>
         <div class="actions">
           <button type="button" class="bigbtn" id="btnStart2">開始第二課</button>
         </div>
@@ -70,7 +70,7 @@
       <img class="qr" src="qrcode.png" width="112" height="132" alt="立體圖形對對碰遊戲網址二維碼">
       <div>
         <img class="dog" src="../assets/mascot.jpg" width="52" height="52" alt="">
-        <p>平板掃碼，打開呢一頁</p>
+        <p>用平板掃描二維碼，打開這一頁</p>
         <a href="https://sinosee.github.io/p1-solid-shapes/">sinosee.github.io/p1-solid-shapes</a>
       </div>
     </div>
@@ -82,16 +82,16 @@
     <div class="topbar">
       <button type="button" class="iconbtn" id="btnHome" aria-label="返回主頁">🏠</button>
       <span class="pill" id="prog">第 1／10 題</span>
-      <span class="pill score" id="scorePill">答啱 0</span>
+      <span class="pill score" id="scorePill">答對 0</span>
       <span class="pill who" id="whoPill" hidden></span>
       <span class="pill who" id="modePill" hidden>老師投影</span>
       <span class="spacer"></span>
       <label class="sound"><input type="checkbox" id="chkSound" checked> 音效</label>
     </div>
     <div class="bar" aria-hidden="true"><span id="barFill"></span></div>
-    <p class="prompt">呢個係邊種立體圖形？</p>
+    <p class="prompt">這是哪一種立體圖形？</p>
     <div class="shapeCard"><div id="shape" class="shapeFrame"></div></div>
-    <p class="feedback" id="feedback" role="status" aria-live="polite">撳下面嘅名。</p>
+    <p class="feedback" id="feedback" role="status" aria-live="polite">點選下面的名稱。</p>
     <div class="choices" id="choices"></div>
     <button type="button" class="bigbtn next" id="btnNext" hidden>下一題</button>
   </div>
@@ -101,7 +101,7 @@
   <div class="wrap endWrap">
     <div class="stars" id="endStars" aria-label="星星"></div>
     <h2 id="endTitle">做得好！</h2>
-    <p class="endScore" id="endScore">答啱 0／10</p>
+    <p class="endScore" id="endScore">答對 0／10</p>
     <p class="best" id="endBest"></p>
     <div class="endBtns">
       <button type="button" class="bigbtn" id="btnAgain">再玩一次</button>
@@ -115,7 +115,7 @@
   <div class="wrap">
     <div class="gateCard">
       <h2>班別學號</h2>
-      <p class="sub">用英文字母同數字，唔好打中文名。</p>
+      <p class="sub">請用英文字母和數字，不要輸入中文姓名。</p>
       <form id="gateForm" class="gateForm" autocomplete="off">
         <div class="gateFields">
           <label class="field" for="gateClass">班別
@@ -136,11 +136,11 @@
 <div id="board" class="screen">
   <div class="wrap boardWrap">
     <h2>龍虎榜</h2>
-    <p class="sub">每位同學的最高分。未玩都可以睇。</p>
+    <p class="sub">每位同學的最高分。未玩也可以查看。</p>
     <div class="teacherBox" id="teacherBox">
       <button type="button" class="gateBack" id="btnTeacherOpen">老師模式：刪除成績</button>
       <form id="teacherForm" class="teacherForm" hidden autocomplete="off">
-        <p class="lbHint">輸入老師密碼，先可以刪走其中一筆成績。學生唔好輸入。</p>
+        <p class="lbHint">輸入老師密碼，才可以刪除其中一筆成績。學生請勿輸入。</p>
         <label class="field" for="teacherPin">老師密碼
           <input id="teacherPin" name="teacher-pin" type="password" inputmode="numeric" maxlength="8" pattern="[0-9]*" placeholder="4 至 8 位數字" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-describedby="teacherErr">
         </label>
@@ -151,7 +151,7 @@
         </div>
       </form>
       <div id="teacherOn" hidden>
-        <p class="lbMsg" id="teacherStatus">已解鎖。撳「刪除」清走一筆最高分。</p>
+        <p class="lbMsg" id="teacherStatus">已解鎖。按「刪除」清除一筆最高分。</p>
         <button type="button" class="gateBack" id="btnTeacherLock">離開老師刪除</button>
       </div>
     </div>
@@ -168,7 +168,7 @@
     <div class="topbar">
       <button type="button" class="iconbtn" id="btnHome2" aria-label="返回主頁">🏠</button>
       <span class="pill" id="prog2">第 1／10 題</span>
-      <span class="pill score" id="scorePill2">答啱 0</span>
+      <span class="pill score" id="scorePill2">答對 0</span>
       <span class="pill who" id="modePill2" hidden>老師投影</span>
       <span class="spacer"></span>
       <label class="sound"><input type="checkbox" id="chkSound2" checked> 音效</label>
@@ -186,9 +186,9 @@
   <div class="wrap endWrap">
     <div class="stars" id="end2Stars" aria-label="星星"></div>
     <h2 id="end2Title">做得好！</h2>
-    <p class="endScore" id="end2Score">答啱 0／10</p>
+    <p class="endScore" id="end2Score">答對 0／10</p>
     <p class="best" id="end2Best"></p>
-    <p class="lbHint" id="end2Note">第二課星星留喺呢部機，唔會入第一課龍虎榜。</p>
+    <p class="lbHint" id="end2Note">第二課星星留在這部裝置，不會記入第一課龍虎榜。</p>
     <div class="endBtns">
       <button type="button" class="bigbtn" id="btnAgain2">再玩一次</button>
       <button type="button" class="bigbtn alt" id="btnMenu2">返回主頁</button>

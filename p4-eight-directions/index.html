@@ -305,12 +305,12 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
       <button type="button" class="mode sel" id="modeStudent">
         <div class="mi">🧒</div>
         <div class="mt">學生模式</div>
-        <div class="md">自己拖、自己點<br>即時知道對錯</div>
+        <div class="md">自己拖放、自己點選<br>即時知道對錯</div>
       </button>
       <button type="button" class="mode" id="modeTeacher">
         <div class="mi">👩‍🏫</div>
         <div class="mt">老師模式</div>
-        <div class="md">投影全班<br>可暫停、顯示答案<br>唔會上龍虎榜</div>
+        <div class="md">投影全班<br>可暫停、顯示答案<br>不會登上龍虎榜</div>
       </button>
     </div>
     <div class="levels">
@@ -322,22 +322,22 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
       <button type="button" class="levelCard" id="btnPick2">
         <div class="ln">第二關</div>
         <div class="lt">八方探險</div>
-        <div class="ld">帶小狗行地圖、一路尋寶</div>
+        <div class="ld">帶小狗走地圖、一路尋寶</div>
       </button>
     </div>
-    <p class="tip">紅針永遠指住<strong>北方</strong>。北不一定在上面。先填指南針，再去尋寶。</p>
+    <p class="tip">紅針永遠指向<strong>北方</strong>。北不一定在上面。先填指南針，再去尋寶。</p>
     <label class="toggle"><input type="checkbox" id="togSound" checked> 音效</label>
   </div>
   <div class="startActions">
     <button type="button" class="bigbtn" id="btnStart">由第一關開始</button>
     <button type="button" class="bigbtn blue" id="btnOpenBoard">查看龍虎榜</button>
   </div>
-  <p class="note">小四 · 八個方向：北、東北、東、東南、南、西南、西、西北<br>第一關同第二關各有一條龍虎榜，完關先上該關的榜。<br><a href="../">返教學小遊戲</a></p>
+  <p class="note">小四 · 八個方向：北、東北、東、東南、南、西南、西、西北<br>第一關和第二關各有一條龍虎榜，完成關卡後才登上該關的榜。<br><a href="../">返回教學小遊戲</a></p>
   <div class="qrFoot">
     <img class="qr" src="qrcode.png" width="112" height="132" alt="八方探險遊戲網址二維碼">
     <div>
       <img class="dog" src="../assets/mascot.jpg" width="52" height="52" alt="">
-      <p>平板掃碼，打開呢一頁</p>
+      <p>用平板掃描二維碼，打開這一頁</p>
       <a href="https://sinosee.github.io/p4-eight-directions/">sinosee.github.io/p4-eight-directions</a>
     </div>
   </div>
@@ -353,7 +353,7 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
     <span class="pill" id="roseMode">學生</span>
   </div>
   <div class="roseBody">
-    <p class="prompt" id="rosePrompt">紅針指住北方。把其餘方向拖到正確空位。</p>
+    <p class="prompt" id="rosePrompt">紅針指向北方。把其餘方向拖到正確空位。</p>
     <p class="subprompt" id="roseSub">「北」已經標好。北不一定在上面。</p>
     <div class="roseMain">
       <div class="dialFrame">
@@ -381,14 +381,14 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
   <div class="endInner">
     <img class="endDog" src="assets/mascot-q.png" width="512" height="512" alt="">
     <div class="bridgeMark">第一關完成</div>
-    <h2 class="endTitle">指南針填好啦！</h2>
+    <h2 class="endTitle">指南針填好了！</h2>
     <div class="endStars" id="bridgeStars">★★★</div>
     <div class="endScore" id="bridgeScore">放對 0 次</div>
-    <div class="endDetail" id="bridgeDetail">北已經認到。第二關帶小狗行地圖、一路尋寶。</div>
+    <div class="endDetail" id="bridgeDetail">已經認出北方。第二關帶小狗走地圖、一路尋寶。</div>
     <div class="endWho" id="bridgeWho"></div>
     <div class="endBtns">
       <button type="button" class="bigbtn green" id="btnToLevel2">進入第二關</button>
-      <button type="button" class="bigbtn blue" id="btnBridgeHome">返主頁</button>
+      <button type="button" class="bigbtn blue" id="btnBridgeHome">返回主頁</button>
     </div>
     <div class="lbPanel" id="bridgeBoard" aria-live="polite"></div>
   </div>
@@ -418,8 +418,8 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
       <p class="prompt" id="prompt"></p>
       <p class="subprompt" id="subprompt"></p>
       <div class="spinRow" id="spinRow">
-        <button type="button" class="spinBtn" id="btnRotL">↺ 轉左</button>
-        <button type="button" class="spinBtn" id="btnRotR">轉右 ↻</button>
+        <button type="button" class="spinBtn" id="btnRotL">↺ 向左轉</button>
+        <button type="button" class="spinBtn" id="btnRotR">向右轉 ↻</button>
       </div>
       <div class="pad" id="pad">
         <button type="button" class="dir" data-d="7">西北</button>
@@ -432,7 +432,7 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
         <button type="button" class="dir" data-d="4">南</button>
         <button type="button" class="dir" data-d="3">東南</button>
       </div>
-      <p class="feedback hint" id="feedback" role="status">點一個方向。</p>
+      <p class="feedback hint" id="feedback" role="status">點選一個方向。</p>
     </div>
   </div>
   <div class="teachBar" id="teachBar">
@@ -450,7 +450,7 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
     <img class="endDog" src="assets/mascot-q.png" width="512" height="512" alt="">
     <div class="endStars" id="endStars">★★★</div>
     <h2 class="endTitle" id="endTitle">探險完成！</h2>
-    <div class="endScore" id="endScore">搵到 0 份寶藏</div>
+    <div class="endScore" id="endScore">找到 0 份寶藏</div>
     <div class="endDetail" id="endDetail"></div>
     <div class="endWho" id="endWho"></div>
     <div class="endBtns">
@@ -465,7 +465,7 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
   <div class="gateWrap">
     <div class="gateCard">
       <h2>班別學號</h2>
-      <p class="sub">用英文字母同數字，唔好打中文名。</p>
+      <p class="sub">請用英文字母和數字，不要輸入中文姓名。</p>
       <form id="gateForm" class="gateForm" autocomplete="off">
         <div class="gateFields">
           <label class="field" for="gateClass">班別
@@ -486,15 +486,15 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
 <div id="board" class="screen">
   <div class="boardWrap">
     <h2>龍虎榜</h2>
-    <p class="sub">揀第一關或第二關。未玩都可以睇。</p>
-    <div class="segs" id="boardPick" role="tablist" aria-label="揀關卡龍虎榜">
+    <p class="sub">選擇第一關或第二關。未玩也可以查看。</p>
+    <div class="segs" id="boardPick" role="tablist" aria-label="選擇關卡龍虎榜">
       <button type="button" class="seg sel" data-level="1" role="tab" aria-selected="true">第一關 填指南針</button>
       <button type="button" class="seg" data-level="2" role="tab" aria-selected="false">第二關 八方探險</button>
     </div>
     <div class="teacherBox" id="teacherBox">
       <button type="button" class="gateBack" id="btnTeacherOpen">老師模式：刪除成績</button>
       <form id="teacherForm" class="teacherForm" hidden autocomplete="off">
-        <p class="lbHint">輸入老師密碼，先可以刪走其中一筆成績。學生唔好輸入。</p>
+        <p class="lbHint">輸入老師密碼，才可以刪除其中一筆成績。學生請勿輸入。</p>
         <label class="field" for="teacherPin">老師密碼
           <input id="teacherPin" name="teacher-pin" type="password" inputmode="numeric" maxlength="8" pattern="[0-9]*" placeholder="4 至 8 位數字" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-describedby="teacherErr">
         </label>
@@ -505,7 +505,7 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
         </div>
       </form>
       <div id="teacherOn" hidden>
-        <p class="lbMsg" id="teacherStatus">已解鎖。撳「刪除」清走一筆最高分。</p>
+        <p class="lbMsg" id="teacherStatus">已解鎖。按「刪除」清除一筆最高分。</p>
         <button type="button" class="gateBack" id="btnTeacherLock">離開老師刪除</button>
       </div>
     </div>
@@ -1100,14 +1100,14 @@ function promptText(){
     var from = nodeName(s.map, s.route.from);
     var via = nodeName(s.map, s.route.via);
     var to = nodeName(s.map, s.route.to);
-    if(!s.step) return '沿住腳印，由' + from + '走到' + to + '。先向哪一方？';
+    if(!s.step) return '沿着腳印，由' + from + '走到' + to + '。先向哪一方？';
     return '轉彎了！由' + via + '走到' + to + '，向哪一方？';
   }
   if(s.flavour === 'turn'){
-    return '幫小狗向' + (s.left ? '左' : '右') + '轉 ' + s.n + ' 下。點牠轉完望向的方向。';
+    return '請幫小狗向' + (s.left ? '左' : '右') + '轉 ' + s.n + ' 次。點選牠轉完後面向的方向。';
   }
-  if(s.trap) return '「北」字未貼住紅針。寶箱在小狗的哪一方？';
-  if(!s.aligned) return '轉動字盤，等「北」字貼住紅針。';
+  if(s.trap) return '「北」字尚未對準紅針。寶箱在小狗的哪一方？';
+  if(!s.aligned) return '轉動字盤，使「北」字對準紅針。';
   return '對準了！寶箱在小狗的哪一方？';
 }
 function subText(){
@@ -1124,7 +1124,7 @@ function captionText(){
     if(cur.trap) return '紅針總是指向北方。字盤上的北還未對準。';
     return '紅針總是指向北方。';
   }
-  return '紅色箭咀指向北方。';
+  return '紅色箭頭指向北方。';
 }
 function missText(){
   var s = cur;
@@ -1142,7 +1142,7 @@ function revealText(){
   if(s.flavour === 'compass'){
     var line = '方向：寶箱在' + fang(s.objectDir) + '。';
     if(s.trap) line += '紅針才是北方。';
-    else line += '先讓北字貼住紅針。';
+    else line += '請先讓「北」字對準紅針。';
     return line;
   }
   return '方向：' + cur.goalName + '在' + fang(cur.goalDir) + '。';
@@ -1238,7 +1238,7 @@ function showStage(){
   clearCheer();
   renderAll();
   if(cur.flavour === 'compass' && !cur.trap) setFeedback('先對準紅針。', 'hint');
-  else setFeedback('點一個方向。', 'hint');
+  else setFeedback('點選一個方向。', 'hint');
 }
 function nextStage(){
   busy = false;
@@ -1256,7 +1256,7 @@ function applyDir(dir){
       beepTick();
       busy = true;
       renderAll();
-      setFeedback('行對了！再點下一個方向。', 'ok');
+      setFeedback('走對了！再點選下一個方向。', 'ok');
       later(380, function(){ busy = false; updatePad(); updateTeach(); });
       return;
     }
@@ -1267,7 +1267,7 @@ function applyDir(dir){
     var extra = '';
     if(!taughtMid && BETWEEN[want]){ taughtMid = true; extra = BETWEEN[want]; }
     beepOk();
-    showCheer('搵到寶啦！', true);
+    showCheer('找到寶藏了！', true);
     setFeedback(extra || '寶藏到手！', 'ok');
     renderAll();
     if(mode === 'student') later(1500, nextStage);
@@ -1317,14 +1317,14 @@ function endGame(){
   $('endStars').textContent = star;
   $('endStars').style.opacity = hearts > 0 ? '1' : '.4';
   $('endTitle').textContent = hearts > 0 ? '探險完成！' : '再出發吧！';
-  $('endScore').textContent = '搵到 ' + loot + ' 份寶藏';
+  $('endScore').textContent = '找到 ' + loot + ' 份寶藏';
   $('endDetail').textContent = hearts > 0
     ? '剩下 ' + hearts + ' 顆心，得到 ' + hearts + ' 顆星。'
     : '心用完了。紅針仍然指向北方，再試一次！';
-  /* 第二關龍虎榜：寶藏 0–10，星星＝剩低嘅心。老師投影唔寫分。 */
+  /* 第二關龍虎榜：寶藏 0–10，星星＝剩下的愛心。老師投影不寫分。 */
   if($('endWho')){
-    if(mode === 'student' && player) $('endWho').textContent = player.classId + ' · ' + player.studentNo + '　今次 ' + loot + ' 分上第二關龍虎榜';
-    else if(mode === 'teacher') $('endWho').textContent = '老師投影模式，呢局唔會上榜。';
+    if(mode === 'student' && player) $('endWho').textContent = player.classId + ' · ' + player.studentNo + '　這次 ' + loot + ' 分上第二關龍虎榜';
+    else if(mode === 'teacher') $('endWho').textContent = '老師投影模式，本局不會上榜。';
     else $('endWho').textContent = '';
   }
   publishLevelResult('2', loot, hearts, $('endBoard'), '第二關龍虎榜', true);
@@ -1508,10 +1508,10 @@ function askDeleteScore(levelId, row){
   var board = window.DirLeaderboard;
   if(!teacherUnlocked || teacherBusy || !board) return;
   var who = row.classId + ' · ' + row.studentNo;
-  if(!window.confirm('確定刪除 ' + who + ' 的 ' + row.score + ' 分？刪除後唔可以還原。')) return;
+  if(!window.confirm('確定刪除 ' + who + ' 的 ' + row.score + ' 分？刪除後不可以還原。')) return;
   teacherBusy = true;
   var status = $('teacherStatus');
-  if(status) status.textContent = '刪除緊…';
+  if(status) status.textContent = '刪除中…';
   board.deleteScore(levelId, row, teacherPin).then(function(res){
     teacherBusy = false;
     if(status) status.textContent = (res && res.message) || (res && res.ok ? '已刪除。' : '刪除失敗。');
@@ -1523,7 +1523,7 @@ function askDeleteScore(levelId, row){
 }
 
 /* 第一關：整盤指南針旋轉，只預先標「北」。
-   空位 i 的方向永遠是 DIRS[i]，畫面角度跟紅針一齊轉。 */
+   空位 i 的方向永遠是 DIRS[i]，畫面角度跟紅針一起轉。 */
 function buildRoseRounds(){
   var rounds = shuffle([0,1,2,3,4,5,6,7]).slice(0, 4);
   var odd = false;
@@ -1574,7 +1574,7 @@ function makeChip(dir, inside){
 function renderRose(){
   $('roseCount').textContent = '指南針 ' + (rose.index + 1) + '／' + rose.rounds.length;
   $('roseMode').textContent = mode === 'teacher' ? '老師' : '學生';
-  $('rosePrompt').textContent = '紅針指住北方。把其餘方向拖到正確空位。';
+  $('rosePrompt').textContent = '紅針指向北方。把其餘方向拖到正確空位。';
   $('roseSub').textContent = '「北」已經標好。北不一定在上面。';
   $('dialWrap').classList.toggle('done', roseAllFilled());
   $('roseSvg').innerHTML = roseSvg(rose.north, roseAllFilled());
@@ -1662,13 +1662,13 @@ function showBridge(){
     $('bridgeStars').style.opacity = stars > 0 ? '1' : '.4';
   }
   if($('bridgeDetail')){
-    $('bridgeDetail').textContent = '放錯 ' + mistakes + ' 次，得到 ' + stars + ' 顆星。北已經認到。第二關帶小狗行地圖、一路尋寶。';
+    $('bridgeDetail').textContent = '放錯 ' + mistakes + ' 次，得到 ' + stars + ' 顆星。已經認出北方。第二關帶小狗走地圖、一路尋寶。';
   }
   if($('bridgeWho')){
     if(mode === 'student' && player && rose.rounds.length === 4){
-      $('bridgeWho').textContent = player.classId + ' · ' + player.studentNo + '　今次 ' + score + ' 分上第一關龍虎榜';
+      $('bridgeWho').textContent = player.classId + ' · ' + player.studentNo + '　這次 ' + score + ' 分上第一關龍虎榜';
     } else if(mode === 'teacher'){
-      $('bridgeWho').textContent = '老師投影模式，呢局唔會上榜。';
+      $('bridgeWho').textContent = '老師投影模式，本局不會上榜。';
     } else $('bridgeWho').textContent = '';
   }
   show('bridge');
@@ -1687,7 +1687,7 @@ function finishRoseRound(){
   if(rose.finishing) return;
   rose.finishing = true;
   beepOk();
-  $('roseCheer').textContent = '填好啦！';
+  $('roseCheer').textContent = '填好了！';
   $('roseCheer').className = 'cheer on good';
   $('roseSvg').innerHTML = roseSvg(rose.north, true);
   $('dialWrap').classList.add('done');
@@ -1700,7 +1700,7 @@ function revealRose(){
   rose.revealed = true;
   for(var d = 1; d < 8; d++) rose.placed[d] = true;
   renderRose();
-  setRoseFeedback('正確方向已經顯示。紅針指住北方。', 'hint');
+  setRoseFeedback('正確方向已經顯示。紅針指向北方。', 'hint');
 }
 function tryPlace(dir, slotDir){
   if(rose.revealed || rose.finishing) return 'closed';
@@ -1938,7 +1938,7 @@ $('teacherForm').addEventListener('submit', function(ev){
     teacherBusy = false;
     btn.disabled = false;
     if(!res || !res.ok){
-      err.textContent = (res && res.message) || '老師密碼唔正確。';
+      err.textContent = (res && res.message) || '老師密碼不正確。';
       pinEl.focus();
       return;
     }
@@ -1946,7 +1946,7 @@ $('teacherForm').addEventListener('submit', function(ev){
     pinEl.value = '';
     teacherUnlocked = true;
     teacherFormOpen = false;
-    $('teacherStatus').textContent = '已解鎖。撳「刪除」清走一筆最高分。如果仲有其他紀錄，會顯示下一筆。';
+    $('teacherStatus').textContent = '已解鎖。按「刪除」清除一筆最高分。如果還有其他紀錄，會顯示下一筆。';
     syncTeacherBox();
     refreshBoard();
   }).catch(function(){
@@ -2058,7 +2058,7 @@ function runSelfTest(){
   applyDir(1);
   assert(cur.cleared && loot === 1 && hearts === 3, 'correct loot');
   assert($('feedback').textContent.indexOf('東與北') > 0, 'between');
-  assert($('cheer').textContent === '搵到寶啦！', 'cheer');
+  assert($('cheer').textContent === '找到寶藏了！', 'cheer');
   bump();
   busy = false; paused = false; ended = false; loot = 0; hearts = 3;
   queue = [makeCompass({trap:false, north:1, dial:3, objectDir:2, place:'露營角'})];
@@ -2194,7 +2194,7 @@ function runSelfTest(){
     showBridge();
     assert($('bridge').classList.contains('on'), 'teacher bridge');
     assert($('bridgeBoard').textContent === '', 'teacher bridge skips board');
-    assert($('bridgeWho').textContent.indexOf('唔會上榜') >= 0, 'teacher bridge copy');
+    assert($('bridgeWho').textContent.indexOf('不會上榜') >= 0, 'teacher bridge copy');
     ended = false;
     hearts = 2;
     loot = 4;
@@ -2229,7 +2229,7 @@ if(selftest){
     var kind = pv[1];
     if(kind === 'bridge'){
       show('bridge');
-    /* 本機先預覽完局畫面。公開網址唔會行呢段，避免學生靠網址寫分。 */
+    /* 本機先預覽完局畫面。公開網址不會執行這段，避免學生靠網址寫分。 */
     } else if(kind === 'end' && /^(localhost|127\.0\.0\.1)$/.test(location.hostname)){
       var sm = /[?&]score=(\d+)/.exec(location.search);
       var hm = /[?&]hearts=(\d+)/.exec(location.search);

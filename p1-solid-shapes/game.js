@@ -68,7 +68,7 @@
 
   function paintBest() {
     var best = readBest();
-    var line = best ? ('呢部機最高 ' + best.score + '／' + TOTAL + '　' + starsText(best.stars)) : '';
+    var line = best ? ('這部裝置最高 ' + best.score + '／' + TOTAL + '　' + starsText(best.stars)) : '';
     $('bestLine').textContent = line;
   }
 
@@ -128,14 +128,14 @@
     var q = state.round[state.index];
     state.locked = false;
     $('prog').textContent = '第 ' + (state.index + 1) + '／' + TOTAL + ' 題';
-    $('scorePill').textContent = '答啱 ' + state.correct;
+    $('scorePill').textContent = '答對 ' + state.correct;
     $('barFill').style.width = ((state.index / TOTAL) * 100) + '%';
     var frame = $('shape');
     frame.classList.remove('pop', 'wiggle');
     frame.innerHTML = window.SolidShapes.renderSvg(q, 'q' + state.index);
     var fb = $('feedback');
     fb.className = 'feedback';
-    fb.textContent = '撳下面嘅名。';
+    fb.textContent = '點選下面的名稱。';
     $('btnNext').hidden = true;
     var box = $('choices');
     box.textContent = '';
@@ -157,7 +157,7 @@
     state.locked = true;
     var ok = id === q.shape;
     if (ok) state.correct += 1;
-    $('scorePill').textContent = '答啱 ' + state.correct;
+    $('scorePill').textContent = '答對 ' + state.correct;
     document.querySelectorAll('#choices .choice').forEach(function (btn) {
       btn.disabled = true;
       var bid = btn.getAttribute('data-id');
@@ -167,7 +167,7 @@
     var fb = $('feedback');
     var name = window.SolidShapes.nameOf(q.shape);
     fb.className = 'feedback ' + (ok ? 'ok' : 'bad');
-    fb.textContent = ok ? ('啱晒！呢個係' + name + '。') : ('差少少。呢個係' + name + '。');
+    fb.textContent = ok ? ('完全正確！這是' + name + '。') : ('還差一點。這是' + name + '。');
     var frame = $('shape');
     frame.classList.remove('pop', 'wiggle');
     void frame.offsetWidth;
@@ -175,7 +175,7 @@
     if (ok) sfxOk(); else sfxNo();
     var next = $('btnNext');
     next.hidden = false;
-    next.textContent = state.index + 1 >= TOTAL ? '睇成績' : '下一題';
+    next.textContent = state.index + 1 >= TOTAL ? '查看成績' : '下一題';
     next.focus();
   }
 
@@ -221,8 +221,8 @@
     var note = $('modeNote');
     if (note) {
       note.textContent = teacher
-        ? '老師投影唔問班別學號，兩課都唔會上榜。'
-        : '學生要填班別同學號，完成第一課先入龍虎榜。';
+        ? '老師投影不用填寫班別學號，兩課都不會上榜。'
+        : '學生要填寫班別和學號，完成第一課才記入龍虎榜。';
     }
     var boardBtn = $('btnOpenBoard');
     if (boardBtn) boardBtn.hidden = teacher;
@@ -242,17 +242,17 @@
       starHtml += i < stars ? '<span class="star on">⭐</span>' : '<span class="star">☆</span>';
     }
     $('endStars').innerHTML = starHtml;
-    $('endTitle').textContent = stars >= 3 ? '好叻！' : stars === 2 ? '做得好！' : stars === 1 ? '繼續加油！' : '再試一次！';
-    $('endScore').textContent = '答啱 ' + state.correct + '／' + TOTAL;
+    $('endTitle').textContent = stars >= 3 ? '真棒！' : stars === 2 ? '做得好！' : stars === 1 ? '繼續加油！' : '再試一次！';
+    $('endScore').textContent = '答對 ' + state.correct + '／' + TOTAL;
     var teacher = isTeacher();
     var best = readBest();
     if (!teacher) {
       var improved = !best || state.correct > best.score || (state.correct === best.score && stars > best.stars);
       if (improved) writeBest(state.correct, stars);
       var shown = improved ? { score: state.correct, stars: stars } : best;
-      $('endBest').textContent = shown ? ('呢部機最高 ' + shown.score + '／' + TOTAL + '　' + starsText(shown.stars)) : '';
+      $('endBest').textContent = shown ? ('這部裝置最高 ' + shown.score + '／' + TOTAL + '　' + starsText(shown.stars)) : '';
     } else {
-      $('endBest').textContent = '老師投影模式，呢局唔會上榜。';
+      $('endBest').textContent = '老師投影模式，本局不會上榜。';
     }
     if (stars >= 2) sfxOk();
     var box = $('endBoard');
@@ -275,7 +275,7 @@
     var score = state.correct;
     function done(result, highlight) {
       if (runId !== state.runId) return;
-      board.renderInto(box, result, highlight, { title: '呢局龍虎榜' });
+      board.renderInto(box, result, highlight, { title: '本局龍虎榜' });
     }
     if (!identity) {
       board.load().then(function (result) { done(result, null); });
@@ -399,10 +399,10 @@
     var board = window.SolidLeaderboard;
     if (!state.teacherUnlocked || state.teacherBusy || !board) return;
     var who = row.classId + ' · ' + row.studentNo;
-    if (!window.confirm('確定刪除 ' + who + ' 的 ' + row.score + ' 分？刪除後唔可以還原。')) return;
+    if (!window.confirm('確定刪除 ' + who + ' 的 ' + row.score + ' 分？刪除後不可以還原。')) return;
     state.teacherBusy = true;
     var status = $('teacherStatus');
-    if (status) status.textContent = '刪除緊…';
+    if (status) status.textContent = '刪除中…';
     board.deleteScore(row, state.teacherPin).then(function (res) {
       state.teacherBusy = false;
       if (status) status.textContent = (res && res.message) || (res && res.ok ? '已刪除。' : '刪除失敗。');
@@ -502,7 +502,7 @@
         state.teacherBusy = false;
         btn.disabled = false;
         if (!res || !res.ok) {
-          err.textContent = (res && res.message) || '老師密碼唔正確。';
+          err.textContent = (res && res.message) || '老師密碼不正確。';
           pinEl.focus();
           return;
         }
@@ -510,7 +510,7 @@
         pinEl.value = '';
         state.teacherUnlocked = true;
         state.teacherFormOpen = false;
-        $('teacherStatus').textContent = '已解鎖。撳「刪除」清走一筆最高分。如果仲有其他紀錄，會顯示下一筆。';
+        $('teacherStatus').textContent = '已解鎖。按「刪除」清除一筆最高分。如果還有其他紀錄，會顯示下一筆。';
         syncTeacherBox();
         refreshBoard();
       }).catch(function () {
@@ -521,7 +521,7 @@
     });
     $('btnNext').addEventListener('click', goNext);
     $('btnHome').addEventListener('click', function () {
-      if (!window.confirm('返去主頁？呢局嘅進度會冇咗。')) return;
+      if (!window.confirm('返回主頁？本局的進度將會消失。')) return;
       show('home');
       paintBest();
     });

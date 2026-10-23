@@ -192,13 +192,13 @@ body.teacher .iconbtn{min-width:clamp(64px,8vmin,90px);height:clamp(64px,8vmin,9
 <section id="start" class="screen on" aria-label="開始">
   <div class="startInner">
     <h1 class="title">📏 估量長度<small>（厘米）</small></h1>
-    <p class="sub">用 <b class="bc10">10厘米</b> <b class="bc5">5厘米</b> <b class="bc1">1厘米</b> 紙條估一估，<br>之後再有 5 題「純估」——唔好用紙條，直接估！</p>
+    <p class="sub">用 <b class="bc10">10厘米</b> <b class="bc5">5厘米</b> <b class="bc1">1厘米</b> 紙條估計，<br>之後再有 5 題「純估計」——不要用紙條，直接估計！</p>
     <div class="modes">
       <button class="mode" data-mode="student" id="modeStudent"><div class="mi">🧒</div><div class="mt">學生模式</div><div class="md">每人一部 iPad：自己拖紙條，再選答案。</div></button>
       <button class="mode" data-mode="teacher" id="modeTeacher"><div class="mi">🧑‍🏫</div><div class="mt">老師模式</div><div class="md">投影上白板：全班一起估，老師按「顯示答案」。</div></button>
     </div>
     <div class="opts">
-      <div class="opt"><span class="ol">紙條題</span><button class="seg" data-count="8">8 題</button><button class="seg" data-count="10">10 題</button><span class="ol" style="opacity:.75">＋5 純估</span></div>
+      <div class="opt"><span class="ol">紙條題</span><button class="seg" data-count="8">8 題</button><button class="seg" data-count="10">10 題</button><span class="ol" style="opacity:.75">＋5 純估計</span></div>
       <div class="opt"><span class="ol">讀音提示</span><button class="seg" data-speech="1">🔊 開</button><button class="seg" data-speech="0">關</button></div>
       <div class="opt"><span class="ol">聲效</span><button class="seg" data-sound="1">🎵 開</button><button class="seg" data-sound="0">關</button></div>
     </div>
@@ -209,7 +209,7 @@ body.teacher .iconbtn{min-width:clamp(64px,8vmin,90px);height:clamp(64px,8vmin,9
     <img class="qr" src="qrcode.png" width="112" height="132" alt="估量長度遊戲網址二維碼">
     <div>
       <img class="dog" src="../assets/mascot.jpg" width="52" height="52" alt="">
-      <p>平板掃碼，打開呢一頁</p>
+      <p>用平板掃描二維碼，打開這一頁</p>
       <a href="https://sinosee.github.io/p1-cm-estimate/">sinosee.github.io/p1-cm-estimate</a>
     </div>
   </div>
@@ -226,7 +226,7 @@ body.teacher .iconbtn{min-width:clamp(64px,8vmin,90px);height:clamp(64px,8vmin,9
     <button id="btnSpeak" class="iconbtn" aria-label="讀出題目">🔊</button>
   </div>
   <div id="qline" aria-live="polite"></div>
-  <div id="pureBanner" role="status">👀 純估題：唔好用紙條，直接估多少厘米</div>
+  <div id="pureBanner" role="status">👀 純估計題：不要用紙條，直接估計多少厘米</div>
   <div class="flex1"></div>
   <div id="boardWrap"><div id="board"></div></div>
   <div class="flex1"></div>
@@ -518,7 +518,7 @@ function loadQuestion(){
   renderAnswers();
   relayout();
   if(S.speech){
-    if(pure)speak('純估題。唔好用紙條，直接估多少厘米。'+qText(q.obj));
+    if(pure)speak('純估計題。不要用紙條，直接估計多少厘米。'+qText(q.obj));
     else speak(qText(q.obj));
   }
 }
@@ -835,21 +835,21 @@ function showEnd(){
   var stars='';for(var i=0;i<n;i++)stars+=(i<st)?'<span>⭐</span>':'<span class="e">⭐</span>';
   $('endStars').innerHTML=stars;
   var msg;
-  if(t&&G.chosenCount===0){$('endScore').textContent='全班完成了 '+n+' 題（'+G.stripN+' 紙條 + '+G.pureN+' 純估）！';msg='大家估得真認真！';}
+  if(t&&G.chosenCount===0){$('endScore').textContent='全班完成了 '+n+' 題（'+G.stripN+' 紙條 + '+G.pureN+' 純估計）！';msg='大家估計得很認真！';}
   else{
-    $('endScore').textContent=(t?'全班':'你')+'得到 '+st+' 粒星（共 '+n+' 題：'+G.stripN+' 紙條 + '+G.pureN+' 純估）';
+    $('endScore').textContent=(t?'全班':'你')+'得到 '+st+' 顆星（共 '+n+' 題：'+G.stripN+' 紙條 + '+G.pureN+' 純估計）';
     var r=st/n;
-    msg=r===1?'太厲害了！全部答對！🏆':r>=0.7?'做得好！你是估量小專家！':r>=0.4?'不錯呀，繼續加油！💪':'多練習，你會越估越準！🌱';
+    msg=r===1?'太厲害了！全部答對！🏆':r>=0.7?'做得好！你是估量小專家！':r>=0.4?'不錯，繼續加油！💪':'多練習，你會越估越準！🌱';
   }
   $('endMsg').textContent=msg;
   $('endList').innerHTML=G.results.map(function(r){
     var cls=(r.chosen===null?'':(r.correct?' ok':' no'))+(r.type==='pure'?' pure':'');
-    var tag=r.type==='pure'?'純估 ':'';
+    var tag=r.type==='pure'?'純估計 ':'';
     return '<span class="chip'+cls+'">'+tag+r.name+' '+r.L+'厘米'+(r.chosen===null?'':(r.correct?' ✓':' ✗'))+'</span>';
   }).join('');
   show('end');
   confetti();SFX.finish();
-  if(S.speech)speak('完成了！'+(t&&G.chosenCount===0?'大家估得真認真！':(t?'全班':'你')+'得到'+st+'粒星。'));
+  if(S.speech)speak('完成了！'+(t&&G.chosenCount===0?'大家估計得很認真！':(t?'全班':'你')+'得到'+st+'顆星。'));
 }
 function confetti(){
   var c=$('confetti');c.innerHTML='';

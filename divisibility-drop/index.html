@@ -200,7 +200,7 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
 <div id="start" class="screen on">
   <div class="startInner">
     <h1 class="title"><span class="emoji">🎯</span>整除掉落挑戰<span class="emoji">✨</span></h1>
-    <p class="sub">數字從天上掉下來！點擊「能被整除」的數字，不要點錯喔！</p>
+    <p class="sub">數字從天上掉下來！點擊「能被整除」的數字，請不要點錯！</p>
 
     <div class="modes">
       <button type="button" class="mode sel" data-mode="student" id="modeStudent">
@@ -211,7 +211,7 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
       <button type="button" class="mode" data-mode="teacher" id="modeTeacher">
         <div class="mi">👩‍🏫</div>
         <div class="mt">老師模式</div>
-        <div class="md">投影全班：可暫停、顯示答案。唔使填班別學號，分數唔會上榜</div>
+        <div class="md">投影全班：可暫停、顯示答案。不用填寫班別學號，分數不會上榜</div>
       </button>
     </div>
 
@@ -235,13 +235,13 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
       <button type="button" class="bigbtn" id="btnStart">開始遊戲</button>
       <button type="button" class="bigbtn purple" id="btnOpenBoard">查看龍虎榜</button>
     </div>
-    <p class="note" id="startNote">適合小四至小六 · 開始前填班別學號 · iPad 用手指點選</p>
+    <p class="note" id="startNote">適合小四至小六 · 開始前填寫班別和學號 · iPad 用手指點選</p>
   </div>
     <div class="qrFoot">
     <img class="qr" src="qrcode.png" width="112" height="132" alt="整除掉落挑戰遊戲網址二維碼">
     <div>
       <img class="dog" src="../assets/mascot.jpg" width="52" height="52" alt="">
-      <p>平板掃碼，打開呢一頁</p>
+      <p>用平板掃描二維碼，打開這一頁</p>
       <a href="https://sinosee.github.io/divisibility-drop/">sinosee.github.io/divisibility-drop</a>
     </div>
   </div>
@@ -313,12 +313,12 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
 <div id="board" class="screen">
   <div class="boardInner">
     <h2 class="tipTitle">🐲 龍虎榜</h2>
-    <p class="sub">揀關卡睇最高分。未玩都可以睇。</p>
+    <p class="sub">選擇關卡查看最高分。未玩也可以查看。</p>
     <div class="segs" id="boardPick" role="tablist" aria-label="龍虎榜關卡"></div>
     <div class="teacherBox" id="teacherBox">
       <button type="button" class="tbtn" id="btnTeacherOpen">老師模式：刪除成績</button>
       <form id="teacherForm" class="teacherForm" hidden autocomplete="off">
-        <p class="lbHint">輸入老師密碼，先可以刪走龍虎榜其中一筆成績。學生唔好輸入。</p>
+        <p class="lbHint">輸入老師密碼，才可以刪除龍虎榜其中一筆成績。學生請勿輸入。</p>
         <label class="field" for="teacherPin">老師密碼
           <input id="teacherPin" name="teacher-pin" type="password" inputmode="numeric" maxlength="8" pattern="[0-9]*" placeholder="4 至 8 位數字" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-describedby="teacherErr">
         </label>
@@ -329,7 +329,7 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
         </div>
       </form>
       <div id="teacherOn" hidden>
-        <p class="lbMsg" id="teacherStatus">已解鎖。撳「刪除」清走一筆最高分。如果仲有其他紀錄，會顯示下一筆。</p>
+        <p class="lbMsg" id="teacherStatus">已解鎖。按「刪除」清除一筆最高分。如果還有其他紀錄，會顯示下一筆。</p>
         <button type="button" class="gateBack" id="btnTeacherLock">離開老師刪除</button>
       </div>
     </div>
@@ -380,7 +380,7 @@ var SECTIONS = {
   '3': {
     id:'3', name:'被 3 整除', emoji:'3',
     tip:'把各位數字相加，和是 3 的倍數 → 能被 3 整除<br>例如 27：2＋7＝9，9 是 3 的倍數',
-    banner:'點擊能被 <b>3</b> 整除的數字！（試試加各位）',
+    banner:'點擊能被 <b>3</b> 整除的數字！（試試把各位數字相加）',
     check:function(n){ return n % 3 === 0; },
     duration:60, spawnMs:2000, fallSec:[10, 14], maxAlive:3
   }
@@ -551,7 +551,7 @@ function spawnOne(){
   if(!state.playing || state.paused || !state.current) return;
   var sec = state.current;
   var div = +sec.id;
-  // ~42% correct; 被 5 整除略高，正確答案唔好太少
+  // ~42% correct; 被 5 整除略高，正確答案不要太少
   var yesRate = (sec.id === '5') ? 0.58 : 0.42;
   var wantYes = Math.random() < yesRate;
   var n = genNumber(div, wantYes);
@@ -813,7 +813,7 @@ function endGame(cleared){
     '點中正確：' + state.hits + '　點錯：' + state.wrongs + '　漏掉：' + state.misses +
     '<br>剩餘愛心：' + '❤️'.repeat(Math.max(0,state.lives)) + (state.lives?'' : '（用完了）');
   if(state.mode === 'teacher'){
-    el.endDetail.innerHTML += '<br>老師模式，呢局唔會上龍虎榜。';
+    el.endDetail.innerHTML += '<br>老師模式，本局不會登上龍虎榜。';
   }
   show('end');
   if(stars>=2) sfxStar();
@@ -847,7 +847,7 @@ function publishResult(stars, runId){
   var score = state.score;
   var done = function(result, highlight){
     if(runId !== state.runId) return;
-    DivLeaderboard.renderInto(box, result, highlight, { title: '呢關龍虎榜 · ' + levelName(levelId), levelId: levelId });
+    DivLeaderboard.renderInto(box, result, highlight, { title: '本關龍虎榜 · ' + levelName(levelId), levelId: levelId });
   };
   if(!identity){
     DivLeaderboard.load(levelId).then(function(result){ done(result, null); });
@@ -1001,10 +1001,10 @@ function refreshBoard(){
 function askDeleteScore(levelId, row){
   if(!state.teacherUnlocked || state.teacherBusy || !window.DivLeaderboard) return;
   var who = row.classId + ' · ' + row.studentNo;
-  if(!confirm('確定刪除 ' + who + ' 的 ' + row.score + ' 分？刪除後唔可以還原。')) return;
+  if(!confirm('確定刪除 ' + who + ' 的 ' + row.score + ' 分？刪除後不可以還原。')) return;
   state.teacherBusy = true;
   var status = document.getElementById('teacherStatus');
-  if(status) status.textContent = '刪除緊…';
+  if(status) status.textContent = '刪除中…';
   DivLeaderboard.deleteScore(levelId, row, state.teacherPin).then(function(res){
     state.teacherBusy = false;
     if(status) status.textContent = (res && res.message) || (res && res.ok ? '已刪除。' : '刪除失敗。');
@@ -1049,8 +1049,8 @@ document.querySelectorAll('.mode').forEach(function(btn){
     var note = document.getElementById('startNote');
     if(note){
       note.textContent = state.mode === 'teacher'
-        ? '適合小四至小六 · 老師模式唔使填班別學號，分數唔會上龍虎榜 · iPad 用手指點選'
-        : '適合小四至小六 · 開始前填班別學號 · iPad 用手指點選';
+        ? '適合小四至小六 · 老師模式不用填寫班別學號，分數不會登上龍虎榜 · iPad 用手指點選'
+        : '適合小四至小六 · 開始前填寫班別和學號 · iPad 用手指點選';
     }
   });
 });
@@ -1158,7 +1158,7 @@ document.getElementById('teacherForm').addEventListener('submit', function(ev){
     state.teacherBusy = false;
     btn.disabled = false;
     if(!res || !res.ok){
-      if(err) err.textContent = (res && res.message) || '老師密碼唔正確。';
+      if(err) err.textContent = (res && res.message) || '老師密碼不正確。';
       pinEl.focus();
       return;
     }
@@ -1167,7 +1167,7 @@ document.getElementById('teacherForm').addEventListener('submit', function(ev){
     state.teacherUnlocked = true;
     state.teacherFormOpen = false;
     var status = document.getElementById('teacherStatus');
-    if(status) status.textContent = '已解鎖。撳「刪除」清走一筆最高分。如果仲有其他紀錄，會顯示下一筆。';
+    if(status) status.textContent = '已解鎖。按「刪除」清除一筆最高分。如果還有其他紀錄，會顯示下一筆。';
     syncTeacherBox();
     refreshBoard();
   }).catch(function(){

@@ -2,7 +2,7 @@
    能疊穩（兩個相同圖形疊）: 角柱 ✓、圓柱 ✓。球 ✗、圓錐（尖對尖）✗、角錐 ✗。
    能滾動（斜板）: 球 ✓、圓柱 ✓、圓錐 ✓。角柱 ✗、角錐 ✗。
    又能疊穩又能滾動: 只有圓柱。
-   正方體／長方體都係角柱。
+   正方體／長方體都是角柱。
    Stars stay in localStorage (p1SolidShapes.lesson2.best.v1) and never write the lesson-1 board.
    Teacher projector mode (window.SolidPlay) also skips the class gate and the board.
 */
@@ -47,77 +47,77 @@
 
   var STACK_CHOICES = [
     { id: 'yes', label: '✓ 能疊穩', cls: 'yes' },
-    { id: 'no', label: '✗ 唔能疊穩', cls: 'no' }
+    { id: 'no', label: '✗ 不能疊穩', cls: 'no' }
   ];
   var ROLL_CHOICES = [
     { id: 'yes', label: '✓ 能滾動', cls: 'yes' },
-    { id: 'no', label: '✗ 唔能滾動', cls: 'no' }
+    { id: 'no', label: '✗ 不能滾動', cls: 'no' }
   ];
-  var WATCH_HINT = '睇完動畫，再撳 ✓ 或者 ✗。';
+  var WATCH_HINT = '看完動畫後，再按 ✓ 或 ✗。';
 
   var ITEMS = [
     {
       id: 'stack-prism', kind: 'watch', topic: 'stack', shape: 'prism', motion: 'stack-yes', pose: 'prism',
       tag: '角柱',
-      prompt: '兩件正方體疊起。正方體都係角柱。可唔可以疊穩？',
+      prompt: '兩件正方體疊在一起。正方體都是角柱。可不可以疊穩？',
       answer: 'yes', choices: STACK_CHOICES, hint: WATCH_HINT,
-      why: '兩件角柱能疊穩。正方體、長方體都係角柱。'
+      why: '兩件角柱能疊穩。正方體和長方體都是角柱。'
     },
     {
       id: 'stack-sphere', kind: 'watch', topic: 'stack', shape: 'sphere', motion: 'stack-sphere', pose: 'sphere',
       tag: '球',
-      prompt: '睇住兩件球。佢哋可唔可以疊穩？',
+      prompt: '請看這兩件球。它們可不可以疊穩？',
       answer: 'no', choices: STACK_CHOICES, hint: WATCH_HINT,
-      why: '兩件球唔能疊穩。'
+      why: '兩件球不能疊穩。'
     },
     {
       id: 'stack-cone', kind: 'watch', topic: 'stack', shape: 'cone', motion: 'stack-tips',
       lower: 'coneUp', upper: 'coneDown',
       tag: '圓錐尖對尖',
-      prompt: '睇住兩件圓錐尖對尖。佢哋可唔可以疊穩？',
+      prompt: '請看這兩件圓錐尖對尖。它們可不可以疊穩？',
       answer: 'no', choices: STACK_CHOICES, hint: WATCH_HINT,
-      why: '兩件圓錐尖對尖，唔能疊穩。'
+      why: '兩件圓錐尖對尖，不能疊穩。'
     },
     {
       id: 'stack-cylinder', kind: 'watch', topic: 'stack', shape: 'cylinder', motion: 'stack-yes', pose: 'cylinderUp',
       tag: '圓柱',
-      prompt: '睇住兩件圓柱疊起。佢哋可唔可以疊穩？',
+      prompt: '請看這兩件圓柱疊在一起。它們可不可以疊穩？',
       answer: 'yes', choices: STACK_CHOICES, hint: WATCH_HINT,
       why: '兩件圓柱能疊穩。'
     },
     {
       id: 'stack-pyramid', kind: 'watch', topic: 'stack', shape: 'pyramid', motion: 'stack-pyramid', pose: 'pyramid',
       tag: '角錐',
-      prompt: '睇住兩件角錐。佢哋可唔可以疊穩？',
+      prompt: '請看這兩件角錐。它們可不可以疊穩？',
       answer: 'no', choices: STACK_CHOICES, hint: WATCH_HINT,
-      why: '兩件角錐唔能疊穩。'
+      why: '兩件角錐不能疊穩。'
     },
     {
       id: 'roll-sphere', kind: 'watch', topic: 'roll', shape: 'sphere', motion: 'roll-yes', pose: 'sphere',
       tag: '球',
-      prompt: '個球喺斜板上面。佢可唔可以滾動？',
+      prompt: '球在斜板上。它可不可以滾動？',
       answer: 'yes', choices: ROLL_CHOICES, hint: WATCH_HINT,
-      why: '球喺斜板能滾動。'
+      why: '球在斜板上能滾動。'
     },
     {
       id: 'roll-prism', kind: 'watch', topic: 'roll', shape: 'prism', motion: 'roll-no', pose: 'prism',
       tag: '角柱',
-      prompt: '件角柱喺斜板上面。佢可唔可以滾動？',
+      prompt: '角柱在斜板上。它可不可以滾動？',
       answer: 'no', choices: ROLL_CHOICES, hint: WATCH_HINT,
-      why: '角柱喺斜板唔能滾動。'
+      why: '角柱在斜板上不能滾動。'
     },
     {
       id: 'roll-cone', kind: 'watch', topic: 'roll', shape: 'cone', motion: 'roll-yes', pose: 'coneSide',
       tag: '圓錐',
-      prompt: '個圓錐喺斜板上面。佢可唔可以滾動？',
+      prompt: '圓錐在斜板上。它可不可以滾動？',
       answer: 'yes', choices: ROLL_CHOICES, hint: WATCH_HINT,
-      why: '圓錐喺斜板能滾動。'
+      why: '圓錐在斜板上能滾動。'
     },
     {
       id: 'both-cylinder', kind: 'pick',
-      prompt: '邊對又能疊穩又能滾動？',
+      prompt: '哪一對又能疊穩又能滾動？',
       answer: 'cylinder',
-      hint: '睇住每對點樣疊、點樣落斜板，再撳你揀嘅一對。',
+      hint: '請看每對怎樣疊起、怎樣沿斜板移動，再點選你選擇的一對。',
       why: '只有圓柱又能疊穩又能滾動。',
       choices: [
         { id: 'prism', label: '兩件角柱', demo: 'stackOnly' },
@@ -129,9 +129,9 @@
     },
     {
       id: 'sort-roll', kind: 'sort',
-      prompt: '邊啲可以滾動？拖去啱嘅格。',
-      hint: '撳住拖過去，或者先撳圖形再撳格。',
-      why: '球、圓柱、圓錐能滾動。角柱同角錐唔能滾動。',
+      prompt: '哪些可以滾動？拖到正確的格子。',
+      hint: '按住拖過去，或先點選圖形再點選格子。',
+      why: '球、圓柱和圓錐能滾動。角柱和角錐不能滾動。',
       pieces: [
         { id: 'sphere', pose: 'sphere', bin: 'roll' },
         { id: 'cylinder', pose: 'cylinderUp', bin: 'roll' },
@@ -333,7 +333,7 @@ function mount(api) {
   function watchHtml(item, n) {
     var color = TAG_COLOR[item.shape] || '#ff8ec8';
     var tag = '<span class="shapeTag" style="border-color:' + color + '">' + item.tag + '</span>';
-    var replay = '<button type="button" class="replay">再睇一次</button>';
+    var replay = '<button type="button" class="replay">再看一次</button>';
     var ground = '<div class="ground"></div>';
     if (item.motion.indexOf('stack') === 0) {
       var lower = item.lower || item.pose;
@@ -419,14 +419,14 @@ function mount(api) {
 
   function zonesHtml() {
     return '<button type="button" class="zone rollZone" data-zone="roll"><span class="zoneLabel">能滾動</span><span class="zoneWell"></span></button>' +
-      '<button type="button" class="zone stayZone" data-zone="stay"><span class="zoneLabel">唔能滾動</span><span class="zoneWell"></span></button>';
+      '<button type="button" class="zone stayZone" data-zone="stay"><span class="zoneLabel">不能滾動</span><span class="zoneWell"></span></button>';
   }
 
   function showNext() {
     var next = $('btnNext2');
     next.hidden = false;
-    next.textContent = state.index + 1 >= TOTAL ? '睇成績' : '下一題';
-    $('scorePill2').textContent = '答啱 ' + state.correct;
+    next.textContent = state.index + 1 >= TOTAL ? '查看成績' : '下一題';
+    $('scorePill2').textContent = '答對 ' + state.correct;
     next.focus();
   }
 
@@ -446,7 +446,7 @@ function mount(api) {
     var ok = api.grade(item, id);
     if (ok) state.correct += 1;
     markWatch(item, id, ok);
-    setFeedback((ok ? '啱晒！' : '差少少。') + item.why, ok ? 'ok' : 'bad');
+    setFeedback((ok ? '完全正確！' : '還差一點。') + item.why, ok ? 'ok' : 'bad');
     if (ok) { sfxOk(); confetti(); } else sfxNo();
     showNext();
   }
@@ -462,7 +462,7 @@ function mount(api) {
       if (cid === item.answer) card.classList.add(ok ? 'good' : 'show');
       if (cid === id && !ok) card.classList.add('bad');
     });
-    setFeedback((ok ? '啱晒！' : '差少少。') + item.why, ok ? 'ok' : 'bad');
+    setFeedback((ok ? '完全正確！' : '還差一點。') + item.why, ok ? 'ok' : 'bad');
     if (ok) { sfxOk(); confetti(); } else sfxNo();
     showNext();
   }
@@ -507,7 +507,7 @@ function mount(api) {
       wobble(zone);
       wobble(token);
       sfxNo();
-      setFeedback('呢格唔啱，再試過。', 'bad');
+      setFeedback('這一格不對，請再試一次。', 'bad');
       return;
     }
     state.placed[id] = zoneId;
@@ -519,7 +519,7 @@ function mount(api) {
     var done = item.pieces.every(function (p) { return !!state.placed[p.id]; });
     if (!done) {
       selectNext();
-      if (state.mistakes === 0) setFeedback('啱！繼續放低其他圖形。', 'ok');
+      if (state.mistakes === 0) setFeedback('正確！請繼續放上其他圖形。', 'ok');
       return;
     }
     state.locked = true;
@@ -529,7 +529,7 @@ function mount(api) {
       z.disabled = true;
       z.classList.add('celebrate');
     });
-    setFeedback((clean ? '啱晒！' : '記低：') + item.why + (clean ? '' : '頭先有放錯，呢題未計分。'), clean ? 'ok' : 'bad');
+    setFeedback((clean ? '完全正確！' : '請記住：') + item.why + (clean ? '' : '剛才有放錯，本題未計分。'), clean ? 'ok' : 'bad');
     if (clean) { sfxWin(); confetti(); } else sfxNo();
     showNext();
   }
@@ -611,7 +611,7 @@ function mount(api) {
     state.placed = {};
     state.selected = null;
     $('prog2').textContent = '第 ' + (state.index + 1) + '／' + TOTAL + ' 題';
-    $('scorePill2').textContent = '答啱 ' + state.correct;
+    $('scorePill2').textContent = '答對 ' + state.correct;
     $('barFill2').style.width = ((state.index / TOTAL) * 100) + '%';
     $('prompt2').textContent = item.prompt;
     $('btnNext2').hidden = true;
@@ -654,8 +654,8 @@ function mount(api) {
       html += i < stars ? '<span class="star on">⭐</span>' : '<span class="star">☆</span>';
     }
     $('end2Stars').innerHTML = html;
-    $('end2Title').textContent = stars >= 3 ? '好叻！' : stars === 2 ? '做得好！' : stars === 1 ? '繼續加油！' : '再試一次！';
-    $('end2Score').textContent = '答啱 ' + state.correct + '／' + TOTAL;
+    $('end2Title').textContent = stars >= 3 ? '真棒！' : stars === 2 ? '做得好！' : stars === 1 ? '繼續加油！' : '再試一次！';
+    $('end2Score').textContent = '答對 ' + state.correct + '／' + TOTAL;
     var teacher = isTeacher();
     var best = readBest();
     if (!teacher) {
@@ -669,8 +669,8 @@ function mount(api) {
     var note = $('end2Note');
     if (note) {
       note.textContent = teacher
-        ? '老師投影模式，呢局唔會上榜。'
-        : '第二課星星留喺呢部機，唔會入第一課龍虎榜。';
+        ? '老師投影模式，本局不會上榜。'
+        : '第二課星星留在這部裝置，不會記入第一課龍虎榜。';
     }
     show('end2');
     paintBest();
@@ -691,7 +691,7 @@ function mount(api) {
   $('btnNext2').addEventListener('click', goNext);
   $('btnMenu2').addEventListener('click', function () { show('home'); paintBest(); });
   $('btnHome2').addEventListener('click', function () {
-    if (!window.confirm('返去主頁？呢局嘅進度會冇咗。')) return;
+    if (!window.confirm('返回主頁？本局的進度將會消失。')) return;
     show('home');
     paintBest();
   });
@@ -722,7 +722,7 @@ function mount(api) {
     if (zone && item.kind === 'sort') {
       if (ev.target.closest('.token')) return;
       if (!state.selected) {
-        setFeedback('先撳一個圖形。', '');
+        setFeedback('請先點選一個圖形。', '');
         return;
       }
       dropSort(item, state.selected, zone.getAttribute('data-zone'));

@@ -78,14 +78,14 @@ assert.strictEqual(lesson.grade(ids['sort-roll'], sortMap), false);
 assert(lessonSrc.indexOf('尖對尖') >= 0);
 assert(lessonSrc.indexOf('斜板') >= 0);
 assert(lessonSrc.indexOf('只有圓柱') >= 0);
-assert(lessonSrc.indexOf('兩件角錐唔能疊穩') >= 0);
+assert(lessonSrc.indexOf('兩件角錐不能疊穩') >= 0);
 assert(lessonSrc.indexOf('SolidLeaderboard') < 0, 'lesson 2 must not touch the leaderboard');
 assert(lessonSrc.indexOf('p1SolidShapes/scores') < 0);
 assert(lessonSrc.indexOf('gateClass') < 0, 'lesson 2 must not ask for class');
 assert(lessonSrc.indexOf('學號') < 0, 'lesson 2 must not ask for a student number');
 assert(lessonSrc.indexOf('p1SolidShapes.lesson2.best.v1') >= 0);
 assert(lessonSrc.indexOf('isTeacher') >= 0, 'lesson 2 follows projector mode');
-assert(lessonSrc.indexOf('老師投影模式，呢局唔會上榜。') >= 0);
+assert(lessonSrc.indexOf('老師投影模式，本局不會上榜。') >= 0);
 assert(lessonSrc.indexOf('角錐底朝下') < 0, 'old pyramid-can-stack wording');
 
 assert(gameSrc.indexOf('board.submit') >= 0, 'lesson 1 still submits');
@@ -96,7 +96,7 @@ assert(gameSrc.indexOf("openGate('home')") >= 0, 'student start still opens the 
 var publishSrc = gameSrc.slice(gameSrc.indexOf('function publishResult'), gameSrc.indexOf('function openGate'));
 assert(publishSrc.indexOf('isTeacher()') >= 0);
 assert(publishSrc.indexOf('return') < publishSrc.indexOf('board.submit'), 'projector mode returns before submit');
-assert(gameSrc.indexOf('老師投影模式，呢局唔會上榜。') >= 0);
+assert(gameSrc.indexOf('老師投影模式，本局不會上榜。') >= 0);
 assert(boardSrc.indexOf('p1SolidShapes/scores') >= 0);
 assert(boardSrc.indexOf('p1SolidShapes/deleteTicket') >= 0);
 
@@ -109,7 +109,7 @@ assert(html.indexOf('id="gateClass"') >= 0);
 assert(html.indexOf('id="gateNo"') >= 0);
 assert(html.indexOf('id="btnStart2"') >= 0);
 assert(html.indexOf('第二課') >= 0);
-assert(html.indexOf('疊起同滾動') >= 0);
+assert(html.indexOf('疊起和滾動') >= 0);
 assert(html.indexOf('class="qr"') >= 0);
 assert(html.indexOf('lesson2.js') >= 0);
 assert(html.indexOf('href="../#maths"') < 0, 'no hub return on this home');

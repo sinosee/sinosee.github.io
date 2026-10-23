@@ -41,17 +41,17 @@
   var LOCAL_TEACHER_PIN = '8800';
 
   var MSG = {
-    unconfigured: '龍虎榜未接上雲端，以下係本機暫存。',
-    offline: '暫時無法連線，以下係本機暫存。',
-    rules: '雲端規則未發佈，以下係本機暫存。老師請睇 LEADERBOARD.md。',
+    unconfigured: '龍虎榜尚未連接雲端，以下是本機暫存。',
+    offline: '暫時無法連線，以下是本機暫存。',
+    rules: '雲端規則尚未發佈，以下是本機暫存。老師請參閱 LEADERBOARD.md。',
     cloud: '雲端龍虎榜',
-    empty: '暫時未有成績。玩完呢關就會出現喺度。',
+    empty: '暫時未有成績。完成本關後就會出現在這裡。',
     loading: '龍虎榜載入中…'
   };
 
   var HINT = {
-    '1': '第一關填指南針：分數係放對的次數（最多 28）。完成四幅通常都係 28 分，放錯少星星先多。放錯 3 次或以下 3 星，8 次或以下 2 星，15 次或以下 1 星。分數一樣就並列同一名。',
-    '2': '第二關八方探險：分數係寶藏（10 分滿分）。星星等於完局時剩低嘅心。分數一樣就並列同一名。並列時星星多的排前。'
+    '1': '第一關填指南針：分數是放對的次數（最多 28）。完成四幅通常都是 28 分，放錯較少則星星較多。放錯 3 次或以下得 3 星，8 次或以下得 2 星，15 次或以下得 1 星。分數相同則並列同一名。',
+    '2': '第二關八方探險：分數是寶藏（10 分滿分）。星星等於完局時剩下的愛心。分數相同則並列同一名。並列時星星較多的排在前面。'
   };
 
   var memoryScores = null;
@@ -82,24 +82,24 @@
       if (c.code === 'cjk') fields.push('classId');
       if (n.code === 'cjk') fields.push('studentNo');
       var message = (c.code === 'cjk' && n.code === 'cjk')
-        ? '唔好打中文名。班別學號請用英文字母同數字，例如 4A、12。'
+        ? '請不要輸入中文姓名。班別和學號請用英文字母和數字，例如 4A、12。'
         : (c.code === 'cjk'
-          ? '班別唔可以打中文。請用英文字母同數字，例如 4A。'
-          : '學號唔可以打中文。請用數字，例如 12。');
+          ? '班別不可以輸入中文。請用英文字母和數字，例如 4A。'
+          : '學號不可以輸入中文。請用數字，例如 12。');
       return fail('cjk', message, fields);
     }
     if (c.code === 'fullwidth' || n.code === 'fullwidth') {
       if (c.code === 'fullwidth') fields.push('classId');
       if (n.code === 'fullwidth') fields.push('studentNo');
-      return fail('cjk', '請改用半形英文字母同數字，唔好用全形字或中文。', fields);
+      return fail('cjk', '請改用半形英文字母和數字，不要使用全形字或中文。', fields);
     }
     if (c.code === 'charset' || n.code === 'charset') {
       if (c.code === 'charset') fields.push('classId');
       if (n.code === 'charset') fields.push('studentNo');
-      return fail('charset', '只可以輸入英文字母、數字同連字號（-）。', fields);
+      return fail('charset', '只可以輸入英文字母、數字和連字號（-）。', fields);
     }
     if (c.code === 'empty' && n.code === 'empty') {
-      return fail('empty', '請填寫班別學號，先可以開始。', ['classId', 'studentNo']);
+      return fail('empty', '請填寫班別和學號，才可以開始。', ['classId', 'studentNo']);
     }
     if (c.code === 'empty') return fail('empty', '請填寫班別，例如 4A。', ['classId']);
     if (n.code === 'empty') return fail('empty', '請填寫學號，例如 12。', ['studentNo']);
@@ -386,7 +386,7 @@
     return ensureFirebase().then(function (gate) {
       if (!gate.ready) {
         if (pin === LOCAL_TEACHER_PIN) return { ok: true, source: 'local', pin: pin, message: '' };
-        return { ok: false, code: 'pin', source: 'local', message: '老師密碼唔正確。' };
+        return { ok: false, code: 'pin', source: 'local', message: '老師密碼不正確。' };
       }
       var ref = ticketRef(levelId);
       return ref.set({ pin: pin, scoreId: '_pincheck', levelId: levelId }).then(function () {
@@ -399,7 +399,7 @@
           ok: false,
           code: 'pin',
           source: 'cloud',
-          message: '解鎖失敗。密碼唔啱，或者 Firebase 未發佈新規則、未設定 teacherPin。請睇 LEADERBOARD.md。成績未改動。'
+          message: '解鎖失敗。密碼不正確，或 Firebase 尚未發佈新規則、尚未設定 teacherPin。請參閱 LEADERBOARD.md。成績未有改動。'
         };
       });
     });
@@ -409,19 +409,19 @@
     var pin = normalizePin(pinRaw);
     if (!pin) return Promise.resolve({ ok: false, message: '老師密碼要 4 至 8 位數字。' });
     if (!LEVEL_IDS[levelId] || !row || !row.classId) {
-      return Promise.resolve({ ok: false, message: '搵唔到呢筆成績。' });
+      return Promise.resolve({ ok: false, message: '找不到這一筆成績。' });
     }
     return ensureFirebase().then(function (gate) {
       if (!gate.ready || !isCloudScoreId(row.id)) {
         return verifyTeacherPin(levelId, pin).then(function (check) {
           if (!check.ok) {
             var denied = check.source === 'cloud'
-              ? '刪除失敗。密碼唔啱，或者未發佈新規則、未設定 teacherPin。呢筆成績仍然在榜上。請睇 LEADERBOARD.md。'
-              : (check.message || '老師密碼唔正確。');
+              ? '刪除失敗。密碼不正確，或尚未發佈新規則、尚未設定 teacherPin。這一筆成績仍然在榜上。請參閱 LEADERBOARD.md。'
+              : (check.message || '老師密碼不正確。');
             return { ok: false, source: check.source, message: denied };
           }
           removeLocal(levelId, row);
-          return { ok: true, source: 'local', message: '已刪除本機呢筆成績。' };
+          return { ok: true, source: 'local', message: '已刪除本機這一筆成績。' };
         });
       }
       var ref = ticketRef(levelId);
@@ -434,7 +434,7 @@
         return {
           ok: true,
           source: 'cloud',
-          message: '已刪除呢筆成績。如果榜上仲見到同一位同學，代表仲有其他紀錄，可以再刪一次。'
+          message: '已刪除這一筆成績。如果榜上還看到同一位同學，代表還有其他紀錄，可以再刪一次。'
         };
       }).catch(function (err) {
         if (root.console && root.console.warn) root.console.warn('[leaderboard] delete failed', err);
@@ -442,7 +442,7 @@
           return {
             ok: false,
             source: 'cloud',
-            message: '刪除失敗。密碼唔啱，或者未發佈新規則、未設定 teacherPin。呢筆成績仍然在榜上。請睇 LEADERBOARD.md。'
+            message: '刪除失敗。密碼不正確，或尚未發佈新規則、尚未設定 teacherPin。這一筆成績仍然在榜上。請參閱 LEADERBOARD.md。'
           };
         });
       });
@@ -586,7 +586,7 @@
         || (i + 1 < ranked.length && scoreOf(ranked[i + 1]) === scoreOf(e));
       var isMine = sameStudent(e, highlight);
       var badge = '';
-      if (isMine) badge = (highlight.ts && e.ts === highlight.ts) ? '今次' : '你';
+      if (isMine) badge = (highlight.ts && e.ts === highlight.ts) ? '這次' : '你';
       var row = {
         rank: place,
         tied: tied,
@@ -607,7 +607,7 @@
     }
     var note = '';
     if (highlight && mine && highlight.score != null && highlight.score !== mine.score) {
-      note = '今次 ' + highlight.score + ' 分。榜上顯示你最高的 ' + mine.score + ' 分。';
+      note = '這次 ' + highlight.score + ' 分。榜上顯示你最高的 ' + mine.score + ' 分。';
     }
     return { rows: rows, pinned: pinned, mine: mine, note: note, total: ranked.length };
   }
@@ -669,11 +669,11 @@
     container.appendChild(el(doc, 'p', 'lbHint', HINT[levelId] || HINT['2']));
     if (view.note) container.appendChild(el(doc, 'p', 'lbMsg', view.note));
     if (options.onDelete) {
-      container.appendChild(el(doc, 'p', 'lbHint', '老師刪除模式。每一行是最高分，刪除只清走呢一筆。'));
+      container.appendChild(el(doc, 'p', 'lbHint', '老師刪除模式。每一行是最高分，刪除只清除這一筆。'));
     }
 
     if (!view.rows.length) {
-      container.appendChild(el(doc, 'div', 'lbEmpty', '呢關暫時未有人上榜。'));
+      container.appendChild(el(doc, 'div', 'lbEmpty', '本關暫時未有人上榜。'));
       return;
     }
     var list = el(doc, 'ol', 'lbList');
