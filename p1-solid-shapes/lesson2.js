@@ -4,6 +4,7 @@
    又能疊穩又能滾動: 只有圓柱。
    正方體／長方體都係角柱。
    Stars stay in localStorage (p1SolidShapes.lesson2.best.v1) and never write the lesson-1 board.
+   Teacher projector mode (window.SolidPlay) also skips the class gate and the board.
 */
 (function (root, factory) {
   var api = factory();
@@ -195,6 +196,17 @@ function mount(api) {
   };
 
   function $(id) { return document.getElementById(id); }
+
+  function isTeacher() {
+    return !!(window.SolidPlay && window.SolidPlay.isTeacher && window.SolidPlay.isTeacher());
+  }
+
+  function paintModePill() {
+    var pill = $('modePill2');
+    if (!pill) return;
+    pill.hidden = !isTeacher();
+    pill.textContent = isTeacher() ? '老師投影' : '';
+  }
 
   function show(id) {
     document.querySelectorAll('.screen').forEach(function (node) {
@@ -631,6 +643,7 @@ function mount(api) {
     state.index = 0;
     state.correct = 0;
     show('play2');
+    paintModePill();
     renderQuestion();
   }
 
@@ -643,11 +656,22 @@ function mount(api) {
     $('end2Stars').innerHTML = html;
     $('end2Title').textContent = stars >= 3 ? '好叻！' : stars === 2 ? '做得好！' : stars === 1 ? '繼續加油！' : '再試一次！';
     $('end2Score').textContent = '答啱 ' + state.correct + '／' + TOTAL;
+    var teacher = isTeacher();
     var best = readBest();
-    var improved = !best || state.correct > best.score || (state.correct === best.score && stars > best.stars);
-    if (improved) writeBest(state.correct, stars);
-    var shown = improved ? { score: state.correct, stars: stars } : best;
-    $('end2Best').textContent = shown ? ('第二課最高 ' + shown.score + '／' + TOTAL + '　' + starsText(shown.stars)) : '';
+    if (!teacher) {
+      var improved = !best || state.correct > best.score || (state.correct === best.score && stars > best.stars);
+      if (improved) writeBest(state.correct, stars);
+      var shown = improved ? { score: state.correct, stars: stars } : best;
+      $('end2Best').textContent = shown ? ('第二課最高 ' + shown.score + '／' + TOTAL + '　' + starsText(shown.stars)) : '';
+    } else {
+      $('end2Best').textContent = '';
+    }
+    var note = $('end2Note');
+    if (note) {
+      note.textContent = teacher
+        ? '老師投影模式，呢局唔會上榜。'
+        : '第二課星星留喺呢部機，唔會入第一課龍虎榜。';
+    }
     show('end2');
     paintBest();
     if (stars >= 2) { sfxOk(); confetti(); }
