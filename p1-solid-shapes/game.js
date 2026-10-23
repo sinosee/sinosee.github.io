@@ -1,10 +1,13 @@
-/* 立體圖形對對碰 — local stars plus the class leaderboard. */
+/* 立體圖形對對碰 — local stars plus the class leaderboard.
+   Student mode keeps the class gate and /p1SolidShapes/scores.
+   Teacher projector mode never asks 班別/學號 and never reads or writes the board. */
 (function () {
   'use strict';
 
   var TOTAL = 10;
   var LS_BEST = 'p1SolidShapes.best.v1';
   var LS_SOUND = 'p1SolidShapes.sound.v1';
+  var LS_MODE = 'p1SolidShapes.playMode.v1';
   var state = {
     round: [],
     index: 0,
@@ -24,6 +27,13 @@
   var audioCtx = null;
 
   function $(id) { return document.getElementById(id); }
+
+  function isTeacher() { return state.mode === 'teacher'; }
+
+  window.SolidPlay = {
+    isTeacher: isTeacher,
+    mode: function () { return state.mode; }
+  };
 
   function show(id) {
     document.querySelectorAll('.screen').forEach(function (node) {
@@ -110,6 +120,7 @@
     state.locked = false;
     show('play');
     paintWho();
+    paintModePill();
     renderQuestion();
   }
 
@@ -169,17 +180,59 @@
   }
 
   function paintWho() {
-    var tag = $('modeTag');
-    if (tag) tag.textContent = state.mode === 'teacher' ? '老師' : '學生';
     var pill = $('whoPill');
     if (!pill) return;
-    if (state.mode === 'teacher' || !state.player) {
+    if (isTeacher() || !state.player) {
       pill.hidden = true;
       pill.textContent = '';
       return;
     }
     pill.hidden = false;
     pill.textContent = state.player.classId + ' · ' + state.player.studentNo;
+  }
+
+  function paintModePill() {
+    var pill = $('modePill');
+    if (!pill) return;
+    pill.hidden = !isTeacher();
+    pill.textContent = isTeacher() ? '老師投影' : '';
+  }
+
+  function loadMode() {
+    try {
+      state.mode = sessionStorage.getItem(LS_MODE) === 'teacher' ? 'teacher' : 'student';
+    } catch (e) {
+      state.mode = 'student';
+    }
+  }
+
+  function syncModeUi() {
+    var teacher = isTeacher();
+    var studentBtn = $('modeStudent');
+    var teacherBtn = $('modeTeacher');
+    if (studentBtn) {
+      studentBtn.classList.toggle('sel', !teacher);
+      studentBtn.setAttribute('aria-pressed', teacher ? 'false' : 'true');
+    }
+    if (teacherBtn) {
+      teacherBtn.classList.toggle('sel', teacher);
+      teacherBtn.setAttribute('aria-pressed', teacher ? 'true' : 'false');
+    }
+    var note = $('modeNote');
+    if (note) {
+      note.textContent = teacher
+        ? '老師投影唔問班別學號，兩課都唔會上榜。'
+        : '學生要填班別同學號，完成第一課先入龍虎榜。';
+    }
+    var boardBtn = $('btnOpenBoard');
+    if (boardBtn) boardBtn.hidden = teacher;
+    paintModePill();
+  }
+
+  function setMode(mode) {
+    state.mode = mode === 'teacher' ? 'teacher' : 'student';
+    try { sessionStorage.setItem(LS_MODE, state.mode); } catch (e) { /* private mode */ }
+    syncModeUi();
   }
 
   function finish() {
@@ -191,32 +244,31 @@
     $('endStars').innerHTML = starHtml;
     $('endTitle').textContent = stars >= 3 ? '好叻！' : stars === 2 ? '做得好！' : stars === 1 ? '繼續加油！' : '再試一次！';
     $('endScore').textContent = '答啱 ' + state.correct + '／' + TOTAL;
+    var teacher = isTeacher();
     var best = readBest();
-    var teacher = state.mode === 'teacher';
-    var improved = !teacher && (!best || state.correct > best.score || (state.correct === best.score && stars > best.stars));
-    if (improved) writeBest(state.correct, stars);
-    var shown = improved ? { score: state.correct, stars: stars } : best;
-    $('endBest').textContent = teacher
-      ? '老師投影模式，呢局唔會上榜。'
-      : (shown ? ('呢部機最高 ' + shown.score + '／' + TOTAL + '　' + starsText(shown.stars)) : '');
+    if (!teacher) {
+      var improved = !best || state.correct > best.score || (state.correct === best.score && stars > best.stars);
+      if (improved) writeBest(state.correct, stars);
+      var shown = improved ? { score: state.correct, stars: stars } : best;
+      $('endBest').textContent = shown ? ('呢部機最高 ' + shown.score + '／' + TOTAL + '　' + starsText(shown.stars)) : '';
+    } else {
+      $('endBest').textContent = '老師投影模式，呢局唔會上榜。';
+    }
     if (stars >= 2) sfxOk();
+    var box = $('endBoard');
+    if (teacher && box) box.textContent = '';
     show('end');
     paintBest();
-    if (teacher) {
-      var skipBox = $('endBoard');
-      if (skipBox) skipBox.textContent = '';
-      return;
-    }
-    publishResult(stars, state.runId);
+    if (!teacher) publishResult(stars, state.runId);
   }
 
   function publishResult(stars, runId) {
     var box = $('endBoard');
-    var board = window.SolidLeaderboard;
-    if (state.mode === 'teacher') {
+    if (isTeacher()) {
       if (box) box.textContent = '';
       return;
     }
+    var board = window.SolidLeaderboard;
     if (!box || !board) return;
     board.renderLoading(box);
     var identity = state.player;
@@ -314,6 +366,7 @@
   }
 
   function openBoard() {
+    if (isTeacher()) return;
     syncTeacherBox();
     show('board');
     refreshBoard();
@@ -360,23 +413,6 @@
     });
   }
 
-  function beginRound(returnTo) {
-    if (state.mode === 'teacher' || !window.SolidLeaderboard) {
-      if (state.mode === 'teacher') state.runId += 1;
-      startRound();
-      return;
-    }
-    openGate(returnTo || 'home');
-  }
-
-  function selectMode(next) {
-    state.mode = next === 'teacher' ? 'teacher' : 'student';
-    $('modeStudent').classList.toggle('sel', state.mode === 'student');
-    $('modeTeacher').classList.toggle('sel', state.mode === 'teacher');
-    $('modeStudent').setAttribute('aria-pressed', state.mode === 'student' ? 'true' : 'false');
-    $('modeTeacher').setAttribute('aria-pressed', state.mode === 'teacher' ? 'true' : 'false');
-  }
-
   function goNext() {
     if (!state.locked) return;
     if (state.index + 1 >= TOTAL) finish();
@@ -388,11 +424,14 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     loadSound();
+    loadMode();
     paintBest();
-    $('modeStudent').addEventListener('click', function () { selectMode('student'); });
-    $('modeTeacher').addEventListener('click', function () { selectMode('teacher'); });
+    syncModeUi();
+    $('modeStudent').addEventListener('click', function () { setMode('student'); });
+    $('modeTeacher').addEventListener('click', function () { setMode('teacher'); });
     $('btnStart').addEventListener('click', function () {
-      beginRound('home');
+      if (isTeacher() || !window.SolidLeaderboard) { startRound(); return; }
+      openGate('home');
     });
     $('btnOpenBoard').addEventListener('click', openBoard);
     $('gateClass').addEventListener('input', function () { applyGate(false); });
@@ -424,7 +463,8 @@
       paintBest();
     });
     $('btnAgain').addEventListener('click', function () {
-      beginRound('end');
+      if (isTeacher() || !window.SolidLeaderboard) { startRound(); return; }
+      openGate('end');
     });
     $('btnMenu').addEventListener('click', function () { show('home'); paintBest(); });
     $('btnBoardBack').addEventListener('click', function () {
