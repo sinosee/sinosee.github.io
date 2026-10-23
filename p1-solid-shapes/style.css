@@ -35,21 +35,6 @@ button:focus-visible, a:focus-visible { outline: 4px solid var(--sky); outline-o
   margin: 0 auto;
   padding: calc(14px + env(safe-area-inset-top)) 0 calc(28px + env(safe-area-inset-bottom));
 }
-.back {
-  display: inline-flex;
-  align-items: center;
-  min-height: 48px;
-  padding: 0 16px;
-  border-radius: 999px;
-  background: #fff;
-  border: 3px solid var(--pink);
-  box-shadow: 0 4px 0 var(--shadow);
-  color: var(--ink);
-  font-weight: 900;
-  font-size: 18px;
-  text-decoration: none;
-}
-.back:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--shadow); }
 .hero {
   display: flex;
   align-items: center;
