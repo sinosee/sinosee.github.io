@@ -11,6 +11,7 @@
     correct: 0,
     locked: false,
     sound: true,
+    mode: 'student',
     player: null,
     gateReturn: 'home',
     runId: 0,
@@ -168,9 +169,11 @@
   }
 
   function paintWho() {
+    var tag = $('modeTag');
+    if (tag) tag.textContent = state.mode === 'teacher' ? '老師' : '學生';
     var pill = $('whoPill');
     if (!pill) return;
-    if (!state.player) {
+    if (state.mode === 'teacher' || !state.player) {
       pill.hidden = true;
       pill.textContent = '';
       return;
@@ -189,19 +192,31 @@
     $('endTitle').textContent = stars >= 3 ? '好叻！' : stars === 2 ? '做得好！' : stars === 1 ? '繼續加油！' : '再試一次！';
     $('endScore').textContent = '答啱 ' + state.correct + '／' + TOTAL;
     var best = readBest();
-    var improved = !best || state.correct > best.score || (state.correct === best.score && stars > best.stars);
+    var teacher = state.mode === 'teacher';
+    var improved = !teacher && (!best || state.correct > best.score || (state.correct === best.score && stars > best.stars));
     if (improved) writeBest(state.correct, stars);
     var shown = improved ? { score: state.correct, stars: stars } : best;
-    $('endBest').textContent = shown ? ('呢部機最高 ' + shown.score + '／' + TOTAL + '　' + starsText(shown.stars)) : '';
+    $('endBest').textContent = teacher
+      ? '老師投影模式，呢局唔會上榜。'
+      : (shown ? ('呢部機最高 ' + shown.score + '／' + TOTAL + '　' + starsText(shown.stars)) : '');
     if (stars >= 2) sfxOk();
     show('end');
     paintBest();
+    if (teacher) {
+      var skipBox = $('endBoard');
+      if (skipBox) skipBox.textContent = '';
+      return;
+    }
     publishResult(stars, state.runId);
   }
 
   function publishResult(stars, runId) {
     var box = $('endBoard');
     var board = window.SolidLeaderboard;
+    if (state.mode === 'teacher') {
+      if (box) box.textContent = '';
+      return;
+    }
     if (!box || !board) return;
     board.renderLoading(box);
     var identity = state.player;
@@ -345,6 +360,23 @@
     });
   }
 
+  function beginRound(returnTo) {
+    if (state.mode === 'teacher' || !window.SolidLeaderboard) {
+      if (state.mode === 'teacher') state.runId += 1;
+      startRound();
+      return;
+    }
+    openGate(returnTo || 'home');
+  }
+
+  function selectMode(next) {
+    state.mode = next === 'teacher' ? 'teacher' : 'student';
+    $('modeStudent').classList.toggle('sel', state.mode === 'student');
+    $('modeTeacher').classList.toggle('sel', state.mode === 'teacher');
+    $('modeStudent').setAttribute('aria-pressed', state.mode === 'student' ? 'true' : 'false');
+    $('modeTeacher').setAttribute('aria-pressed', state.mode === 'teacher' ? 'true' : 'false');
+  }
+
   function goNext() {
     if (!state.locked) return;
     if (state.index + 1 >= TOTAL) finish();
@@ -357,9 +389,10 @@
   document.addEventListener('DOMContentLoaded', function () {
     loadSound();
     paintBest();
+    $('modeStudent').addEventListener('click', function () { selectMode('student'); });
+    $('modeTeacher').addEventListener('click', function () { selectMode('teacher'); });
     $('btnStart').addEventListener('click', function () {
-      if (!window.SolidLeaderboard) { startRound(); return; }
-      openGate('home');
+      beginRound('home');
     });
     $('btnOpenBoard').addEventListener('click', openBoard);
     $('gateClass').addEventListener('input', function () { applyGate(false); });
@@ -391,8 +424,7 @@
       paintBest();
     });
     $('btnAgain').addEventListener('click', function () {
-      if (!window.SolidLeaderboard) { startRound(); return; }
-      openGate('end');
+      beginRound('end');
     });
     $('btnMenu').addEventListener('click', function () { show('home'); paintBest(); });
     $('btnBoardBack').addEventListener('click', function () {

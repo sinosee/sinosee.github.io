@@ -310,7 +310,7 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
       <button type="button" class="mode" id="modeTeacher">
         <div class="mi">👩‍🏫</div>
         <div class="mt">老師模式</div>
-        <div class="md">投影全班<br>可暫停、顯示答案</div>
+        <div class="md">投影全班<br>可暫停、顯示答案<br>唔會上龍虎榜</div>
       </button>
     </div>
     <div class="levels">
@@ -1407,6 +1407,11 @@ function applyGate(forceEmpty){
   return result;
 }
 function publishLevelResult(levelId, score, stars, box, title, shouldSubmit){
+  /* Teacher projection never reads or writes either class board. */
+  if(mode === 'teacher'){
+    if(box) box.textContent = '';
+    return;
+  }
   var board = window.DirLeaderboard;
   var token = ++endToken;
   if(!box || !board) return;
@@ -2167,6 +2172,42 @@ function runSelfTest(){
     assert(boardView.rows[2].rank === 3, 'next rank skips');
     assert(boardView.mine && boardView.mine.score === 10, 'best score only');
     assert(boardView.note.indexOf('8') >= 0 && boardView.note.indexOf('10') >= 0, 'lower this round');
+    var submits = 0;
+    var loads = 0;
+    var origSubmit = window.DirLeaderboard.submit;
+    var origLoad = window.DirLeaderboard.load;
+    window.DirLeaderboard.submit = function(){
+      submits++;
+      return Promise.resolve({ok:false, entry:null});
+    };
+    window.DirLeaderboard.load = function(){
+      loads++;
+      return Promise.resolve({rows:[], source:'test'});
+    };
+    mode = 'teacher';
+    player = {classId:'4A', studentNo:'1', displayName:'4A1'};
+    launchStudent(function(){ startRose([0]); });
+    assert($('rose').classList.contains('on') && !$('gate').classList.contains('on'), 'teacher skips gate');
+    rose.rounds = [0, 1, 2, 3];
+    rose.correct = 28;
+    rose.mistakes = 0;
+    showBridge();
+    assert($('bridge').classList.contains('on'), 'teacher bridge');
+    assert($('bridgeBoard').textContent === '', 'teacher bridge skips board');
+    assert($('bridgeWho').textContent.indexOf('唔會上榜') >= 0, 'teacher bridge copy');
+    ended = false;
+    hearts = 2;
+    loot = 4;
+    endGame();
+    assert($('end').classList.contains('on'), 'teacher end');
+    assert($('endBoard').textContent === '', 'teacher end skips board');
+    assert(submits === 0 && loads === 0, 'teacher does not read or write the board');
+    window.DirLeaderboard.submit = origSubmit;
+    window.DirLeaderboard.load = origLoad;
+    mode = 'student';
+    player = null;
+    launchStudent(function(){ startRose([0]); });
+    assert($('gate').classList.contains('on'), 'student still sees gate');
   } else issues.push('leaderboard missing');
   return issues;
 }

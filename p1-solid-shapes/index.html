@@ -31,6 +31,16 @@
       <li style="--c:#c9b6ff">球</li>
     </ul>
     <p class="blurb">一共 10 題</p>
+    <div class="modes" role="group" aria-label="玩法">
+      <button type="button" class="mode sel" id="modeStudent" data-mode="student" aria-pressed="true">
+        <span class="mt">學生模式</span>
+        <span class="md">填班別學號，完局上龍虎榜</span>
+      </button>
+      <button type="button" class="mode" id="modeTeacher" data-mode="teacher" aria-pressed="false">
+        <span class="mt">老師模式</span>
+        <span class="md">投影全班：唔使填班別學號，分數唔會上榜</span>
+      </button>
+    </div>
     <div class="actions">
       <button type="button" class="bigbtn" id="btnStart">開始遊戲</button>
       <button type="button" class="bigbtn alt" id="btnOpenBoard">查看龍虎榜</button>
@@ -54,6 +64,7 @@
       <span class="pill" id="prog">第 1／10 題</span>
       <span class="pill score" id="scorePill">答啱 0</span>
       <span class="pill who" id="whoPill" hidden></span>
+      <span class="pill" id="modeTag">學生</span>
       <span class="spacer"></span>
       <label class="sound"><input type="checkbox" id="chkSound" checked> 音效</label>
     </div>
