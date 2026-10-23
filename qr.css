@@ -1,0 +1,36 @@
+/* One fixed QR size for every classroom home page. */
+:root {
+  --qr-size: 112px;
+}
+
+img.qr {
+  width: var(--qr-size);
+  height: auto;
+  max-width: var(--qr-size);
+  max-height: 148px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+/*
+  Home pages still scroll by touch or wheel.
+  Hide the tall scrollbar chrome that sat beside the QR.
+*/
+#start,
+.startInner,
+#scroller,
+#screen-home,
+html:has(#home.on),
+html:has(#app .foot) {
+  scrollbar-width: none;
+}
+#start::-webkit-scrollbar,
+.startInner::-webkit-scrollbar,
+#scroller::-webkit-scrollbar,
+#screen-home::-webkit-scrollbar,
+html:has(#home.on)::-webkit-scrollbar,
+html:has(#app .foot)::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
