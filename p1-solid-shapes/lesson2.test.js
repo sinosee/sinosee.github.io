@@ -115,10 +115,72 @@ assert(html.indexOf('lesson2.js') >= 0);
 assert(html.indexOf('href="../#maths"') < 0, 'no hub return on this home');
 assert(html.indexOf('id="play"') >= 0 && html.indexOf('id="endBoard"') >= 0);
 
+assert.strictEqual(lesson.rollStyle('sphere'), 'ball');
+assert.strictEqual(lesson.rollStyle('cylinderSide'), 'side');
+assert.strictEqual(lesson.rollStyle('cylinderUp'), 'side');
+assert.strictEqual(lesson.rollStyle('coneSide'), 'side');
+assert.strictEqual(lesson.rollStyle('coneUp'), 'side');
+assert.strictEqual(lesson.rollStyle('prism'), 'none');
+assert.strictEqual(lesson.rollStyle('pyramid'), 'none');
+
+var css = fs.readFileSync(path.join(dir, 'style.css'), 'utf8');
+assert(css.indexOf('.roll-yes .roller.rollBall svg') >= 0);
+assert(css.indexOf('.demo.goes .miniRoller.rollBall svg') >= 0);
+assert(!/\.roll-yes \.roller svg\s*\{[^}]*spinRoll/.test(css), 'side rollers must not tumble');
+assert(!/\.demo\.goes \.miniRoller svg\s*\{[^}]*spinRoll/.test(css), 'mini side rollers must not tumble');
+assert(lessonSrc.indexOf('rollSide') >= 0);
+assert(lessonSrc.indexOf('spec.roll') >= 0);
+var shapeCardCss = css.slice(css.indexOf('.shapeCard {'), css.indexOf('.shapeCard {') + 220);
+assert(shapeCardCss.indexOf('#ff8ec8') < 0, 'shape card is not a pink frame');
+assert(shapeCardCss.indexOf('transparent') >= 0);
+var tokenCss = css.slice(css.indexOf('.token {'), css.indexOf('.token {') + 360);
+assert(tokenCss.indexOf('#ffe0f0') < 0, 'tokens are not pink cards');
+assert(tokenCss.indexOf('transparent') >= 0);
+
+function bodyD(svg) {
+  var m = svg.match(/class="body" d="([^"]+)"/);
+  return m ? m[1] : '';
+}
+function bands(svg) {
+  var out = [];
+  var re = /class="rollBand" d="([^"]+)"/g;
+  var m;
+  while ((m = re.exec(svg))) out.push(m[1]);
+  return out.join('|');
+}
+
 Object.keys(lesson.POSES).forEach(function (key) {
   var svg = shapes.renderSvg(lesson.POSES[key], 't' + key);
   assert(svg.indexOf('<svg') >= 0, key + ' renders');
   assert(svg.length > 80, key + ' svg too small');
+  var rx = parseFloat((svg.match(/class="shadow"[^>]*rx="([0-9.]+)"/) || [])[1]);
+  var vb = svg.match(/viewBox="([^"]+)"/)[1].split(/\s+/).map(Number);
+  assert(rx > 0 && rx < 3, key + ' shadow rx ' + rx);
+  assert(rx < vb[2] * 0.6, key + ' shadow fills the frame rx=' + rx + ' vb=' + vb[2]);
+  assert(svg.indexOf('rx="18') < 0, key + ' old pink-frame shadow');
+});
+
+['cylinderSide', 'coneSide'].forEach(function (key) {
+  var pose = lesson.POSES[key];
+  var body0 = null;
+  var seen = {};
+  var visible = 0;
+  for (var i = 0; i < 8; i++) {
+    var spec = JSON.parse(JSON.stringify(pose));
+    spec.roll = i * Math.PI / 4;
+    var svg = shapes.renderSvg(spec, 'rb' + key + i);
+    var b = bodyD(svg);
+    assert(b.length > 20, key + ' body');
+    if (body0 == null) body0 = b;
+    assert.strictEqual(b, body0, key + ' silhouette must stay side-on while rolling');
+    var band = bands(svg);
+    if (band) {
+      visible += 1;
+      seen[band] = true;
+    }
+  }
+  assert(visible >= 4, key + ' stripe stays visible, saw ' + visible);
+  assert(Object.keys(seen).length >= 3, key + ' stripe moves around the axis');
 });
 
 var round = lesson.makeRound();
