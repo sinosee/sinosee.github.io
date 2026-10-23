@@ -8,20 +8,19 @@
 <meta name="format-detection" content="telephone=no">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffe4f4">
-<meta name="description" content="小一立體圖形對對碰：角錐、角柱、圓錐、圓柱、球。">
-<title>立體圖形對對碰</title>
+<meta name="description" content="小一立體圖形：第一課睇圖認名稱，第二課疊起同滾動。">
+<title>立體圖形</title>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../qr.css">
 </head>
 <body>
 <div id="home" class="screen on">
   <div class="wrap">
-    <a class="back" href="../#maths">返回</a>
     <header class="hero">
       <img class="mascot" src="../assets/mascot.jpg" width="512" height="512" alt="Q版白色小狗">
       <div>
-        <h1>立體圖形對對碰</h1>
-        <p class="sub">睇住個圖，撳返正確嘅名</p>
+        <h1>立體圖形</h1>
+        <p class="sub">揀一課開始</p>
       </div>
     </header>
     <ul class="vocab" aria-label="五種立體圖形">
@@ -31,12 +30,29 @@
       <li style="--c:#7ecbff">圓柱</li>
       <li style="--c:#c9b6ff">球</li>
     </ul>
-    <p class="blurb">一共 10 題</p>
-    <div class="actions">
-      <button type="button" class="bigbtn" id="btnStart">開始遊戲</button>
-      <button type="button" class="bigbtn alt" id="btnOpenBoard">查看龍虎榜</button>
+    <div class="lessonGrid">
+      <article class="lessonCard">
+        <p class="kicker">第一課</p>
+        <h2>睇圖撳正確名稱</h2>
+        <p class="lessonLead">角錐、角柱、圓錐、圓柱、球</p>
+        <p class="blurb">一共 10 題</p>
+        <div class="actions">
+          <button type="button" class="bigbtn" id="btnStart">開始第一課</button>
+          <button type="button" class="bigbtn alt" id="btnOpenBoard">查看龍虎榜</button>
+        </div>
+        <p class="best" id="bestLine"></p>
+      </article>
+      <article class="lessonCard l2">
+        <p class="kicker">第二課</p>
+        <h2>疊起同滾動</h2>
+        <p class="lessonLead">邊啲能疊穩？邊啲能滾動？</p>
+        <p class="blurb">一共 10 題 · 星星留喺呢部機</p>
+        <div class="actions">
+          <button type="button" class="bigbtn" id="btnStart2">開始第二課</button>
+        </div>
+        <p class="best" id="bestLine2"></p>
+      </article>
     </div>
-    <p class="best" id="bestLine"></p>
     <div class="foot">
       <img class="qr" src="qrcode.png" width="112" height="132" alt="立體圖形對對碰遊戲網址二維碼">
       <div>
@@ -133,9 +149,43 @@
   </div>
 </div>
 
+<div id="play2" class="screen">
+  <div class="wrap">
+    <div class="topbar">
+      <button type="button" class="iconbtn" id="btnHome2" aria-label="返回主頁">🏠</button>
+      <span class="pill" id="prog2">第 1／10 題</span>
+      <span class="pill score" id="scorePill2">答啱 0</span>
+      <span class="spacer"></span>
+      <label class="sound"><input type="checkbox" id="chkSound2" checked> 音效</label>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="barFill2"></span></div>
+    <p class="prompt" id="prompt2"></p>
+    <div id="stage2"></div>
+    <p class="feedback" id="feedback2" role="status" aria-live="polite"></p>
+    <div id="answers2"></div>
+    <button type="button" class="bigbtn next" id="btnNext2" hidden>下一題</button>
+  </div>
+</div>
+
+<div id="end2" class="screen">
+  <div class="wrap endWrap">
+    <div class="stars" id="end2Stars" aria-label="星星"></div>
+    <h2 id="end2Title">做得好！</h2>
+    <p class="endScore" id="end2Score">答啱 0／10</p>
+    <p class="best" id="end2Best"></p>
+    <p class="lbHint">第二課星星留喺呢部機，唔會入第一課龍虎榜。</p>
+    <div class="endBtns">
+      <button type="button" class="bigbtn" id="btnAgain2">再玩一次</button>
+      <button type="button" class="bigbtn alt" id="btnMenu2">返回主頁</button>
+    </div>
+  </div>
+</div>
+<div id="fx2" class="fx2" aria-hidden="true"></div>
+
 <script src="firebase-config.js"></script>
 <script src="leaderboard.js"></script>
 <script src="shapes.js"></script>
 <script src="game.js"></script>
+<script src="lesson2.js"></script>
 </body>
 </html>
