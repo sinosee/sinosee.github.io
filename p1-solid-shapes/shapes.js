@@ -50,22 +50,22 @@
       { id: 'pent', base: 'prism', sides: 5, radius: 0.98, height: 1.22, pitch: 0.68, modelYaw: 0.2 }
     ],
     cone: [
-      { id: 'tall-up', axis: 'y', radius: 0.86, height: 1.78, spin: 0, pitch: 0.46, vibe: 'plain' },
-      { id: 'wide-up', axis: 'y', radius: 1.16, height: 1.18, spin: 0, pitch: 0.52, vibe: 'waffle' },
-      { id: 'down', axis: 'y', radius: 0.96, height: 1.58, spin: Math.PI, pitch: 0.5, vibe: 'plain' },
-      { id: 'lie', axis: 'x', radius: 0.7, height: 1.9, spin: 0, pitch: 0.34, vibe: 'plain' }
+      { id: 'tall-up', axis: 'y', radius: 0.86, height: 1.78, spin: 0, pitch: 0.46 },
+      { id: 'wide-up', axis: 'y', radius: 1.16, height: 1.18, spin: 0, pitch: 0.52 },
+      { id: 'down', axis: 'y', radius: 0.96, height: 1.58, spin: Math.PI, pitch: 0.5 },
+      { id: 'lie', axis: 'x', radius: 0.7, height: 1.9, spin: 0, pitch: 0.34 }
     ],
     cylinder: [
-      { id: 'tall', axis: 'y', radius: 0.62, height: 1.78, pitch: 0.56, vibe: 'plain' },
-      { id: 'can', axis: 'y', radius: 0.74, height: 1.16, pitch: 0.64, vibe: 'can' },
-      { id: 'roll', axis: 'x', radius: 0.58, height: 1.95, pitch: 0.38, vibe: 'plain' },
-      { id: 'tin', axis: 'y', radius: 0.88, height: 0.72, pitch: 0.74, vibe: 'can' }
+      { id: 'tall', axis: 'y', radius: 0.62, height: 1.78, pitch: 0.56 },
+      { id: 'short', axis: 'y', radius: 0.74, height: 1.16, pitch: 0.64 },
+      { id: 'roll', axis: 'x', radius: 0.58, height: 1.95, pitch: 0.38 },
+      { id: 'wide', axis: 'y', radius: 0.88, height: 0.72, pitch: 0.74 }
     ],
     sphere: [
-      { id: 'plain', vibe: 'plain', scale: 1, yaw: 0.4 },
-      { id: 'ball', vibe: 'ball', scale: 1.02, yaw: 1.2 },
-      { id: 'small', vibe: 'plain', scale: 0.84, yaw: 2.4 },
-      { id: 'beach', vibe: 'beach', scale: 1, yaw: 0.9 }
+      { id: 'plain', scale: 1, yaw: 0.4 },
+      { id: 'large', scale: 1.08, yaw: 1.2 },
+      { id: 'small', scale: 0.84, yaw: 2.4 },
+      { id: 'side', scale: 1, yaw: 2.8 }
     ]
   };
 
@@ -110,7 +110,6 @@
       spin: variant.spin || 0,
       modelYaw: variant.modelYaw || 0,
       pitch: variant.pitch == null ? 0.58 : variant.pitch,
-      vibe: variant.vibe || 'plain',
       scale: variant.scale || 1,
       sides: variant.sides,
       radius: variant.radius,
@@ -172,7 +171,7 @@
       prev = sp.palette;
       used[sp.shape] = used[sp.shape] || {};
       used[sp.shape][sp.palette] = true;
-      sp.choices = shuffle(NAMES.map(function (n) { return n.id; }), rng);
+      sp.choices = NAMES.map(function (n) { return n.id; });
     });
     return specs;
   }
@@ -553,31 +552,6 @@
     return { outer: w2, inner: w1 };
   }
 
-  function frontArc(pts) {
-    if (!pts.length) return [];
-    var z = 0;
-    pts.forEach(function (p) { z += p.z; });
-    z /= pts.length;
-    var best = [];
-    var cur = [];
-    function consider() {
-      if (cur.length > best.length) best = cur.slice();
-    }
-    for (var i = 0; i < pts.length; i++) {
-      if (pts[i].z >= z - 0.001) cur.push(pts[i]);
-      else { consider(); cur = []; }
-    }
-    if (cur.length) {
-      var i0 = 0;
-      while (i0 < pts.length && pts[i0].z >= z - 0.001) {
-        cur.push(pts[i0]);
-        i0++;
-      }
-      consider();
-    }
-    return best.length >= 3 ? best : pts;
-  }
-
   function renderRound(spec, uid) {
     var pal = palette(spec.palette);
     var seg = 40;
@@ -614,35 +588,10 @@
       bodyPts = hull(baseRing.concat([apex]));
       parts.push('<path class="body" d="' + pathOf(bodyPts, true) + '" fill="url(#' + gid + ')" stroke="' + pal.edge + '" stroke-width="' + sw + '" stroke-linejoin="round"/>');
       all = all.concat(bodyPts);
-      if (spec.vibe === 'waffle') {
-        [0.3, 0.5, 0.7].forEach(function (t) {
-          var y = yBase + (yTop - yBase) * t;
-          var rr = r * (1 - t);
-          var arc = frontArc(projectList(ring(y, rr, seg), spec, 'band'));
-          if (arc.length > 2) {
-            parts.push('<path class="waffle" d="' + pathOf(arc, false) + '" fill="none" stroke="' + pal.edge + '" stroke-width="' + (sw * 0.45) + '" stroke-linecap="round" opacity="0.8"/>');
-          }
-        });
-      }
     } else {
       bodyPts = hull(baseRing.concat(topRing));
       parts.push('<path class="body" d="' + pathOf(bodyPts, true) + '" fill="url(#' + gid + ')" stroke="' + pal.edge + '" stroke-width="' + sw + '" stroke-linejoin="round"/>');
       all = all.concat(bodyPts);
-      if (spec.vibe === 'can') {
-        var y0 = -h2 + spec.height * 0.3;
-        var y1 = -h2 + spec.height * 0.7;
-        var band = hull(projectList(ring(y0, r * 0.995, seg), spec, 'b0').concat(projectList(ring(y1, r * 0.995, seg), spec, 'b1')));
-        parts.push('<path class="label" d="' + pathOf(band, true) + '" fill="#fffef8" stroke="' + pal.edge + '" stroke-width="' + (sw * 0.35) + '" opacity="0.95"/>');
-        var mid = projectList(ring((y0 + y1) / 2, r, 24), spec, 'mid');
-        var front = mid[0];
-        mid.forEach(function (p) { if (p.z > front.z) front = p; });
-        var lw = spec.height * 0.34;
-        var lh = r * 0.7;
-        var labelColor = spec.palette === 'gold' ? '#ff8ec8' : '#ffd15c';
-        parts.push('<rect class="sticker" x="' + (front.x - lw / 2).toFixed(2) + '" y="' + (front.y - lh / 2).toFixed(2) +
-          '" width="' + lw.toFixed(2) + '" height="' + lh.toFixed(2) + '" rx="' + (lh * 0.22).toFixed(2) +
-          '" fill="' + labelColor + '" stroke="' + pal.edge + '" stroke-width="' + (sw * 0.35) + '"/>');
-      }
     }
 
     function capZ(normal) {
@@ -678,10 +627,8 @@
     var R = 1 * (spec.scale || 1);
     var yaw = spec.yaw || 0;
     var gid = 'gs' + uid;
-    var clip = 'cs' + uid;
     var hx = 32 + Math.round(Math.cos(yaw) * 6);
     var hy = 28 + Math.round(Math.sin(yaw) * 4);
-    var rot = Math.round((yaw * 180 / Math.PI) % 360);
     var parts = [];
     parts.push('<defs>');
     parts.push('<radialGradient id="' + gid + '" cx="' + hx + '%" cy="' + hy + '%" r="72%">');
@@ -690,23 +637,8 @@
     parts.push('<stop offset="58%" stop-color="' + pal.mid + '"/>');
     parts.push('<stop offset="100%" stop-color="' + pal.dark + '"/>');
     parts.push('</radialGradient>');
-    parts.push('<clipPath id="' + clip + '"><circle cx="0" cy="0" r="' + R.toFixed(3) + '"/></clipPath>');
     parts.push('</defs>');
-    parts.push('<g clip-path="url(#' + clip + ')">');
-    parts.push('<circle cx="0" cy="0" r="' + R.toFixed(3) + '" fill="url(#' + gid + ')"/>');
-    if (spec.vibe === 'beach') {
-      parts.push('<g transform="rotate(' + rot + ')">');
-      parts.push('<path d="M -1.2 -0.22 C -0.4 -0.7, 0.4 -0.7, 1.2 -0.22 L 1.2 0.22 C 0.4 0.7, -0.4 0.7, -1.2 0.22 Z" fill="' + mix(pal.light, '#ffffff', 0.35) + '" opacity="0.95"/>');
-      parts.push('<path d="M -0.22 -1.2 C -0.7 -0.4, -0.7 0.4, -0.22 1.2 L 0.22 1.2 C 0.7 0.4, 0.7 -0.4, 0.22 -1.2 Z" fill="' + pal.dark + '" opacity="0.55"/>');
-      parts.push('</g>');
-    } else if (spec.vibe === 'ball') {
-      parts.push('<g transform="rotate(' + rot + ')" fill="none" stroke="' + pal.edge + '" stroke-width="0.045" stroke-linecap="round" opacity="0.85">');
-      parts.push('<path d="M -0.15 -0.98 C 0.55 -0.45, 0.55 0.45, -0.15 0.98"/>');
-      parts.push('<path d="M 0.15 -0.98 C -0.55 -0.45, -0.55 0.45, 0.15 0.98"/>');
-      parts.push('</g>');
-    }
-    parts.push('</g>');
-    parts.push('<circle cx="0" cy="0" r="' + R.toFixed(3) + '" fill="none" stroke="' + pal.edge + '" stroke-width="0.055"/>');
+    parts.push('<circle cx="0" cy="0" r="' + R.toFixed(3) + '" fill="url(#' + gid + ')" stroke="' + pal.edge + '" stroke-width="0.055"/>');
     parts.push('<ellipse cx="' + (-R * 0.32).toFixed(3) + '" cy="' + (-R * 0.34).toFixed(3) + '" rx="' + (R * 0.18).toFixed(3) + '" ry="' + (R * 0.1).toFixed(3) + '" fill="#ffffff" opacity="0.85" transform="rotate(-28)"/>');
     var pts = [
       { x: -R, y: -R }, { x: R, y: -R }, { x: R, y: R }, { x: -R, y: R }

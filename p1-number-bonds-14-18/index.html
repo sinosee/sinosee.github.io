@@ -129,6 +129,34 @@ h1.title .emoji{display:inline-block;margin:0 .15em}
   #visWrap{min-height:60px}
   .nb{min-width:48px;min-height:48px}
 }
+
+.qrFoot{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin-top:8px;
+  padding:14px;
+  border-radius:28px;
+  background:
+    linear-gradient(#fff,#fff) padding-box,
+    linear-gradient(100deg,#ff8ec8,#ffd15c,#7ddeb3,#7ecbff,#c9b6ff) border-box;
+  border:5px solid transparent;
+  box-shadow:0 6px 0 #f3c3dc;
+  text-align:left;
+  color:#5a2d78;
+}
+.qrFoot img.qr{width:112px;height:auto;border-radius:12px;background:#fff;flex:0 0 auto}
+.qrFoot .dog{width:52px;height:52px;border-radius:50%;object-fit:cover;border:3px solid #ff8ec8;box-shadow:0 3px 0 #ffc2de;background:#ffd6ea;flex:0 0 auto}
+.qrFoot p{margin:0 0 4px;font-weight:900;color:#5a2d78}
+.qrFoot a{color:#c43b86;font-weight:900;word-break:break-all}
+
+
+#start{overflow:hidden}
+#start .startInner{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;margin-top:0;margin-bottom:0;justify-content:safe center}
+#start>.bigbtn{flex:none;margin:6px auto 0}
+#start>.note{flex:none;margin:4px 12px 0;text-align:center}
+#start>.qrFoot{flex:none;width:min(1120px,calc(100% - 16px));margin:4px auto 10px}
 </style>
 </head>
 <body>
@@ -184,8 +212,16 @@ h1.title .emoji{display:inline-block;margin:0 .15em}
       <label class="toggle"><input type="checkbox" id="optSpeech"> 讀題（粵語）</label>
     </div>
 
-    <button type="button" class="bigbtn" id="btnStart">開始玩！</button>
-    <p class="note">唔使登入 · 唔會收集資料 · 適合 iPad</p>
+  </div>
+  <button type="button" class="bigbtn" id="btnStart">開始玩！</button>
+  <p class="note">唔使登入 · 唔會收集資料 · 適合 iPad</p>
+  <div class="qrFoot">
+    <img class="qr" src="qrcode.png" width="280" height="340" alt="數的分解（14至18）遊戲網址二維碼">
+    <div>
+      <img class="dog" src="../assets/mascot.jpg" width="52" height="52" alt="">
+      <p>平板掃碼，打開呢一頁</p>
+      <a href="https://sinosee.github.io/p1-number-bonds-14-18/">sinosee.github.io/p1-number-bonds-14-18</a>
+    </div>
   </div>
 </section>
 

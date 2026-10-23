@@ -207,6 +207,34 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
   .mapCard.shake,.cheer.on,.heroImg{animation:none}
   .cheer.on{opacity:1;transform:translateX(-50%)}
 }
+
+.qrFoot{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin-top:8px;
+  padding:14px;
+  border-radius:28px;
+  background:
+    linear-gradient(#fff,#fff) padding-box,
+    linear-gradient(100deg,#ff8ec8,#ffd15c,#7ddeb3,#7ecbff,#c9b6ff) border-box;
+  border:5px solid transparent;
+  box-shadow:0 6px 0 #f3c3dc;
+  text-align:left;
+  color:#5a2d78;
+}
+.qrFoot img.qr{width:112px;height:auto;border-radius:12px;background:#fff;flex:0 0 auto}
+.qrFoot .dog{width:52px;height:52px;border-radius:50%;object-fit:cover;border:3px solid #ff8ec8;box-shadow:0 3px 0 #ffc2de;background:#ffd6ea;flex:0 0 auto}
+.qrFoot p{margin:0 0 4px;font-weight:900;color:#5a2d78}
+.qrFoot a{color:#c43b86;font-weight:900;word-break:break-all}
+
+
+#start{overflow:hidden}
+#start .startInner{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;margin-top:0;margin-bottom:0;justify-content:safe center}
+#start>.bigbtn{flex:none;margin:6px auto 0}
+#start>.note{flex:none;margin:4px 16px 0;text-align:center}
+#start>.qrFoot{flex:none;width:min(1120px,calc(100% - 16px));margin:4px auto 10px}
 </style>
 </head>
 <body>
@@ -245,11 +273,15 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
     </div>
     <p class="tip">紅針永遠指住<strong>北方</strong>。北不一定在上面。先填指南針，再去尋寶。</p>
     <label class="toggle"><input type="checkbox" id="togSound" checked> 音效</label>
-    <button type="button" class="bigbtn" id="btnStart">由第一關開始</button>
-    <p class="note">小四 · 八個方向：北、東北、東、東南、南、西南、西、西北<br><a href="../">返教學小遊戲</a></p>
-    <div class="startFoot">
-      <img src="qrcode.png" width="86" height="86" alt="八方探險遊戲網址二維碼">
-      <span>平板掃碼，一起探險<br><a href="https://sinosee.github.io/p4-eight-directions/">sinosee.github.io/<br>p4-eight-directions</a></span>
+  </div>
+  <button type="button" class="bigbtn" id="btnStart">由第一關開始</button>
+  <p class="note">小四 · 八個方向：北、東北、東、東南、南、西南、西、西北<br><a href="../">返教學小遊戲</a></p>
+  <div class="qrFoot">
+    <img class="qr" src="qrcode.png" width="280" height="340" alt="八方探險遊戲網址二維碼">
+    <div>
+      <img class="dog" src="../assets/mascot.jpg" width="52" height="52" alt="">
+      <p>平板掃碼，打開呢一頁</p>
+      <a href="https://sinosee.github.io/p4-eight-directions/">sinosee.github.io/p4-eight-directions</a>
     </div>
   </div>
 </div>

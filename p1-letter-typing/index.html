@@ -485,6 +485,31 @@ a.backsite:hover{text-decoration:underline}
   .glyph{font-size:clamp(72px,16vmin,140px)}
   .key{height:44px;border-radius:12px}
 }
+
+.qrFoot{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin-top:8px;
+  padding:14px;
+  border-radius:28px;
+  background:
+    linear-gradient(#fff,#fff) padding-box,
+    linear-gradient(100deg,#ff8ec8,#ffd15c,#7ddeb3,#7ecbff,#c9b6ff) border-box;
+  border:5px solid transparent;
+  box-shadow:0 6px 0 #f3c3dc;
+  text-align:left;
+  color:#5a2d78;
+}
+.qrFoot img.qr{width:112px;height:auto;border-radius:12px;background:#fff;flex:0 0 auto}
+.qrFoot .dog{width:52px;height:52px;border-radius:50%;object-fit:cover;border:3px solid #ff8ec8;box-shadow:0 3px 0 #ffc2de;background:#ffd6ea;flex:0 0 auto}
+.qrFoot p{margin:0 0 4px;font-weight:900;color:#5a2d78}
+.qrFoot a{color:#c43b86;font-weight:900;word-break:break-all}
+
+#home .qrFoot{flex:none;width:min(1100px,calc(100% - 16px));margin:0 auto 8px}
+.qrNote{margin:6px 0 0;font-size:13px;font-weight:800;color:#7a568f}
+
 </style>
 </head>
 <body>
@@ -508,7 +533,15 @@ a.backsite:hover{text-decoration:underline}
     <div class="jumps" id="jumps" role="navigation" aria-label="跳去某一頁關卡"></div>
   </div>
   <div id="scroller" tabindex="-1"></div>
-  <p class="footNote"><a class="backsite" href="../">返遊戲站</a> · 唔使登入 · 重新整理會清走星星 · 帳號同密碼唔會儲存</p>
+  <div class="qrFoot">
+    <img class="qr" src="qrcode.png" width="280" height="340" alt="英文字母打字遊戲網址二維碼">
+    <div>
+      <img class="dog" src="../assets/mascot.jpg" width="52" height="52" alt="">
+      <p>平板掃碼，打開呢一頁</p>
+      <a href="https://sinosee.github.io/p1-letter-typing/">sinosee.github.io/p1-letter-typing</a>
+      <p class="qrNote"><a class="backsite" href="../">返遊戲站</a> · 唔使登入 · 重新整理會清走星星 · 帳號同密碼唔會儲存</p>
+    </div>
+  </div>
 </section>
 
 <section id="play" class="screen" aria-label="打字">
