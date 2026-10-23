@@ -1,14 +1,14 @@
-/* 八方探險 leaderboard.
-   One board for the whole game. The score is level 2 (八方探險) treasures, 0–10.
-   Stars are hearts left when that run ends, 0–3. Level 1 (填指南針) is a warm-up
-   and is not stored. A run is written only when level 2 ends, and only in student mode.
+/* 八方探險 leaderboard. One board per level.
+   Level 1 填指南針: score = successful placements 0–28, stars from wrong drops.
+   Level 2 八方探險: score = treasures 0–10, stars = hearts left 0–3.
+   A run is written when that level ends, and only in student mode.
    Cloud path:
-     /p4EightDirections/scores/{pushId}
-   Fields: classId, studentNo, score (0–10), stars (0–3), ts, displayName (= classId + studentNo)
+     /p4EightDirections/levels/{1|2}/scores/{pushId}
+   Fields: classId, studentNo, score, stars, ts, displayName (= classId + studentNo)
    Students may only create a score node. A teacher deletes one node by writing
-   /p4EightDirections/deleteTicket with the PIN that matches /p4EightDirections/teacherPin
-   (set in the Firebase console; clients cannot read it), then removing that score.
-   Full rules: LEADERBOARD.md — republish them or delete fails.
+   /p4EightDirections/levels/{levelId}/deleteTicket with the PIN that matches
+   /p4EightDirections/teacherPin (set in the Firebase console; clients cannot read it),
+   then removing that score. Full rules: LEADERBOARD.md — republish them or delete fails.
    If Firebase is still placeholders or the network fails, scores stay in localStorage.
    Offline deletes use LOCAL_TEACHER_PIN and never touch the cloud.
 */
@@ -19,8 +19,15 @@
 })(typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : null), function (root) {
   'use strict';
 
+  var LEVELS = [
+    { id: '1', short: '第一關 填指南針', name: '第一關 填指南針' },
+    { id: '2', short: '第二關 八方探險', name: '第二關 八方探險' }
+  ];
+  var LEVEL_IDS = { '1': 1, '2': 1 };
+  var SCORE_CAP = { '1': 28, '2': 10 };
   var TOP_N = 10;
-  var LS_SCORES = 'p4EightDirections.scores.v1';
+  var LS_SCORES = 'p4EightDirections.scores.v2';
+  var LS_SCORES_V1 = 'p4EightDirections.scores.v1';
   var LS_IDENTITY = 'p4EightDirections.identity.v1';
   var FB_APP = 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js';
   var FB_DB = 'https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js';
@@ -38,8 +45,13 @@
     offline: '暫時無法連線，以下係本機暫存。',
     rules: '雲端規則未發佈，以下係本機暫存。老師請睇 LEADERBOARD.md。',
     cloud: '雲端龍虎榜',
-    empty: '暫時未有成績。玩完一局就會出現喺度。',
+    empty: '暫時未有成績。玩完呢關就會出現喺度。',
     loading: '龍虎榜載入中…'
+  };
+
+  var HINT = {
+    '1': '第一關填指南針：分數係放對的次數（最多 28）。完成四幅通常都係 28 分，放錯少星星先多。放錯 3 次或以下 3 星，8 次或以下 2 星，15 次或以下 1 星。分數一樣就並列同一名。',
+    '2': '第二關八方探險：分數係寶藏（10 分滿分）。星星等於完局時剩低嘅心。分數一樣就並列同一名。並列時星星多的排前。'
   };
 
   var memoryScores = null;
@@ -125,18 +137,35 @@
     return false;
   }
 
+  function emptyBoards() {
+    return { '1': [], '2': [] };
+  }
+
   function readScores() {
     var data = storageGet(LS_SCORES, memoryScores);
-    if (!Array.isArray(data)) return [];
-    return data.map(normalizeStored).filter(Boolean);
+    if (data && typeof data === 'object' && !Array.isArray(data)) return data;
+    var migrated = emptyBoards();
+    var old = storageGet(LS_SCORES_V1, null);
+    if (Array.isArray(old) && old.length) {
+      migrated['2'] = old.map(function (row) { return normalizeStored('2', row); }).filter(Boolean);
+      writeScores(migrated);
+    }
+    return migrated;
   }
 
-  function writeScores(list) {
-    memoryScores = list;
-    storageSet(LS_SCORES, list, function (v) { memoryScores = v; });
+  function writeScores(data) {
+    memoryScores = data;
+    storageSet(LS_SCORES, data, function (v) { memoryScores = v; });
   }
 
-  function normalizeStored(raw) {
+  function readLocal(levelId) {
+    var all = readScores();
+    var list = all[levelId];
+    if (!Array.isArray(list)) return [];
+    return list.map(function (row) { return normalizeStored(levelId, row); }).filter(Boolean);
+  }
+
+  function normalizeStored(levelId, raw) {
     if (!raw || typeof raw !== 'object') return null;
     var idn = validateIdentity(raw.classId, raw.studentNo);
     if (!idn.ok) return null;
@@ -144,7 +173,7 @@
       classId: idn.classId,
       studentNo: idn.studentNo,
       displayName: idn.displayName,
-      score: clampScore(raw.score),
+      score: clampScore(raw.score, levelId),
       stars: clampStars(raw.stars),
       ts: clampTs(raw.ts)
     };
@@ -156,8 +185,9 @@
     return 'local-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
   }
 
-  function saveLocal(entry) {
-    var list = readScores();
+  function saveLocal(levelId, entry) {
+    var all = readScores();
+    var list = Array.isArray(all[levelId]) ? all[levelId].slice() : [];
     list.push({
       id: entry.id && SCORE_ID_RE.test(String(entry.id)) ? String(entry.id) : newLocalId(),
       classId: entry.classId,
@@ -169,7 +199,8 @@
     });
     list.sort(function (a, b) { return (a.ts || 0) - (b.ts || 0); });
     if (list.length > 80) list = list.slice(list.length - 80);
-    writeScores(list);
+    all[levelId] = list;
+    writeScores(all);
   }
 
   function rememberIdentity(id) {
@@ -187,10 +218,11 @@
     return { classId: idn.classId, studentNo: idn.studentNo, displayName: idn.displayName };
   }
 
-  function clampScore(n) {
+  function clampScore(n, levelId) {
     n = Math.round(Number(n));
+    var cap = SCORE_CAP[levelId] || 10;
     if (!isFinite(n) || n < 0) return 0;
-    if (n > 10) return 10;
+    if (n > cap) return cap;
     return n;
   }
 
@@ -205,6 +237,16 @@
     n = Math.round(Number(n));
     if (!isFinite(n) || n < 0) return 0;
     return n;
+  }
+
+  /* Level 1 stars from wrong drops. 3 / 2 / 1 / 0. */
+  function starsForRose(mistakes) {
+    var n = Math.round(Number(mistakes));
+    if (!isFinite(n) || n < 0) n = 0;
+    if (n <= 3) return 3;
+    if (n <= 8) return 2;
+    if (n <= 15) return 1;
+    return 0;
   }
 
   function isConfigured(cfg) {
@@ -265,15 +307,15 @@
     return fbPromise;
   }
 
-  function scoresRef() {
-    return root.firebase.database().ref('p4EightDirections/scores');
+  function scoresRef(levelId) {
+    return root.firebase.database().ref('p4EightDirections/levels/' + levelId + '/scores');
   }
 
-  function parseSnap(snap) {
+  function parseSnap(levelId, snap) {
     var entries = [];
     if (!snap || !snap.forEach) return entries;
     snap.forEach(function (child) {
-      var row = normalizeStored(child.val());
+      var row = normalizeStored(levelId, child.val());
       if (row) {
         row.id = child.key;
         entries.push(row);
@@ -282,15 +324,19 @@
     return entries;
   }
 
-  function readCloud() {
-    var ref = scoresRef();
-    return ref.orderByChild('score').limitToLast(100).once('value').then(parseSnap, function () {
-      return ref.limitToLast(100).once('value').then(parseSnap);
+  function readCloud(levelId) {
+    var ref = scoresRef(levelId);
+    return ref.orderByChild('score').limitToLast(100).once('value').then(function (snap) {
+      return parseSnap(levelId, snap);
+    }, function () {
+      return ref.limitToLast(100).once('value').then(function (snap) {
+        return parseSnap(levelId, snap);
+      });
     });
   }
 
-  function writeCloud(entry) {
-    return scoresRef().push({
+  function writeCloud(levelId, entry) {
+    return scoresRef(levelId).push({
       classId: entry.classId,
       studentNo: entry.studentNo,
       score: entry.score,
@@ -300,8 +346,8 @@
     });
   }
 
-  function ticketRef() {
-    return root.firebase.database().ref('p4EightDirections/deleteTicket');
+  function ticketRef(levelId) {
+    return root.firebase.database().ref('p4EightDirections/levels/' + levelId + '/deleteTicket');
   }
 
   function normalizePin(raw) {
@@ -316,28 +362,34 @@
     return typeof id === 'string' && SCORE_ID_RE.test(id) && id.indexOf('local-') !== 0 && id.charAt(0) !== '_';
   }
 
-  function removeLocal(row) {
-    var list = readScores().filter(function (item) {
+  function removeLocal(levelId, row) {
+    var all = readScores();
+    var list = Array.isArray(all[levelId]) ? all[levelId] : [];
+    all[levelId] = list.filter(function (item) {
+      if (!item || typeof item !== 'object') return true;
       if (row.id && item.id && String(item.id) === String(row.id)) return false;
-      return !(item.classId === row.classId && item.studentNo === row.studentNo
-        && item.score === clampScore(row.score) && item.stars === clampStars(row.stars)
-        && item.ts === clampTs(row.ts));
+      var n = normalizeStored(levelId, item);
+      if (!n || !row) return true;
+      return !(n.classId === row.classId && n.studentNo === row.studentNo
+        && n.score === clampScore(row.score, levelId) && n.stars === clampStars(row.stars)
+        && n.ts === clampTs(row.ts));
     });
-    writeScores(list);
+    writeScores(all);
   }
 
-  function verifyTeacherPin(pinRaw) {
+  function verifyTeacherPin(levelId, pinRaw) {
     var pin = normalizePin(pinRaw);
     if (!pin) {
       return Promise.resolve({ ok: false, code: 'format', message: '老師密碼要 4 至 8 位數字。' });
     }
+    if (!LEVEL_IDS[levelId]) levelId = '1';
     return ensureFirebase().then(function (gate) {
       if (!gate.ready) {
         if (pin === LOCAL_TEACHER_PIN) return { ok: true, source: 'local', pin: pin, message: '' };
         return { ok: false, code: 'pin', source: 'local', message: '老師密碼唔正確。' };
       }
-      var ref = ticketRef();
-      return ref.set({ pin: pin, scoreId: '_pincheck' }).then(function () {
+      var ref = ticketRef(levelId);
+      return ref.set({ pin: pin, scoreId: '_pincheck', levelId: levelId }).then(function () {
         return ref.remove().catch(function () { /* ticket is unreadable; leftover expires on the next unlock */ });
       }).then(function () {
         return { ok: true, source: 'cloud', pin: pin, message: '' };
@@ -353,30 +405,30 @@
     });
   }
 
-  function deleteScore(row, pinRaw) {
+  function deleteScore(levelId, row, pinRaw) {
     var pin = normalizePin(pinRaw);
     if (!pin) return Promise.resolve({ ok: false, message: '老師密碼要 4 至 8 位數字。' });
-    if (!row || !row.classId) {
+    if (!LEVEL_IDS[levelId] || !row || !row.classId) {
       return Promise.resolve({ ok: false, message: '搵唔到呢筆成績。' });
     }
     return ensureFirebase().then(function (gate) {
       if (!gate.ready || !isCloudScoreId(row.id)) {
-        return verifyTeacherPin(pin).then(function (check) {
+        return verifyTeacherPin(levelId, pin).then(function (check) {
           if (!check.ok) {
             var denied = check.source === 'cloud'
               ? '刪除失敗。密碼唔啱，或者未發佈新規則、未設定 teacherPin。呢筆成績仍然在榜上。請睇 LEADERBOARD.md。'
               : (check.message || '老師密碼唔正確。');
             return { ok: false, source: check.source, message: denied };
           }
-          removeLocal(row);
+          removeLocal(levelId, row);
           return { ok: true, source: 'local', message: '已刪除本機呢筆成績。' };
         });
       }
-      var ref = ticketRef();
-      return ref.set({ pin: pin, scoreId: row.id }).then(function () {
-        return scoresRef().child(row.id).remove();
+      var ref = ticketRef(levelId);
+      return ref.set({ pin: pin, scoreId: row.id, levelId: levelId }).then(function () {
+        return scoresRef(levelId).child(row.id).remove();
       }).then(function () {
-        removeLocal(row);
+        removeLocal(levelId, row);
         return ref.remove().catch(function () {});
       }).then(function () {
         return {
@@ -399,13 +451,15 @@
 
   function makeEntry(input) {
     input = input || {};
+    if (!LEVEL_IDS[input.levelId]) return null;
     var idn = validateIdentity(input.classId, input.studentNo);
     if (!idn.ok) return null;
     return {
+      levelId: input.levelId,
       classId: idn.classId,
       studentNo: idn.studentNo,
       displayName: idn.displayName,
-      score: clampScore(input.score),
+      score: clampScore(input.score, input.levelId),
       stars: clampStars(input.stars),
       ts: Date.now()
     };
@@ -417,28 +471,29 @@
     return 'offline';
   }
 
-  function localResult(reason, entry) {
+  function localResult(reason, levelId, entry) {
     return {
       ok: true,
       source: 'local',
       reason: reason,
+      levelId: levelId,
       entry: entry || null,
       message: reason === 'rules' ? MSG.rules : (reason === 'offline' ? MSG.offline : MSG.unconfigured),
-      entries: entry ? undefined : readScores()
+      entries: entry ? undefined : readLocal(levelId)
     };
   }
 
   function submit(input) {
     var entry = makeEntry(input);
     if (!entry) return Promise.resolve({ ok: false, source: 'local', reason: 'invalid', entry: null, message: '' });
-    saveLocal(entry);
+    saveLocal(entry.levelId, entry);
     return ensureFirebase().then(function (gate) {
-      if (!gate.ready) return localResult(gate.reason || 'unconfigured', entry);
-      return writeCloud(entry).then(function () {
-        return { ok: true, source: 'cloud', reason: null, entry: entry, message: MSG.cloud };
+      if (!gate.ready) return localResult(gate.reason || 'unconfigured', entry.levelId, entry);
+      return writeCloud(entry.levelId, entry).then(function () {
+        return { ok: true, source: 'cloud', reason: null, entry: entry, message: MSG.cloud, levelId: entry.levelId };
       }).catch(function (err) {
         if (root.console && root.console.warn) root.console.warn('[leaderboard] write failed', err);
-        return localResult(cloudReason(err), entry);
+        return localResult(cloudReason(err), entry.levelId, entry);
       });
     });
   }
@@ -447,34 +502,36 @@
     return !!a && !!b && a.classId === b.classId && a.studentNo === b.studentNo;
   }
 
-  function mergeHighlight(entries, highlight) {
+  function mergeHighlight(entries, levelId, highlight) {
     if (!highlight || !highlight.classId) return entries;
-    var localMine = readScores().filter(function (e) {
+    var localMine = readLocal(levelId).filter(function (e) {
       return e.classId === highlight.classId && e.studentNo === highlight.studentNo;
     });
     return entries.concat(localMine);
   }
 
-  function load() {
+  function load(levelId) {
+    if (!LEVEL_IDS[levelId]) levelId = '1';
     return ensureFirebase().then(function (gate) {
       if (!gate.ready) {
         var reason = gate.reason || 'unconfigured';
-        var local = localResult(reason);
-        local.entries = readScores();
+        var local = localResult(reason, levelId);
+        local.entries = readLocal(levelId);
         return local;
       }
-      return readCloud().then(function (entries) {
+      return readCloud(levelId).then(function (entries) {
         return {
           ok: true,
           source: 'cloud',
           reason: null,
           message: MSG.cloud,
-          entries: entries
+          entries: entries,
+          levelId: levelId
         };
       }).catch(function (err) {
         if (root.console && root.console.warn) root.console.warn('[leaderboard] read failed', err);
-        var failed = localResult(cloudReason(err));
-        failed.entries = readScores();
+        var failed = localResult(cloudReason(err), levelId);
+        failed.entries = readLocal(levelId);
         return failed;
       });
     });
@@ -597,8 +654,9 @@
     if (!container) return;
     var doc = container.ownerDocument;
     options = options || {};
+    var levelId = (loadResult && loadResult.levelId) || options.levelId || '1';
     var entries = (loadResult && loadResult.entries) || [];
-    if (highlight) entries = mergeHighlight(entries, highlight);
+    if (highlight) entries = mergeHighlight(entries, levelId, highlight);
     var view = present(entries, highlight, TOP_N);
     container.textContent = '';
 
@@ -608,14 +666,14 @@
     var message = (loadResult && loadResult.message) || '';
     if (!view.rows.length && !message) message = MSG.empty;
     if (message) container.appendChild(el(doc, 'p', 'lbMsg', message));
-    container.appendChild(el(doc, 'p', 'lbHint', '每位同學顯示最高分（第二關尋寶，10 分滿分）。分數一樣就並列同一名。並列時星星多的排前。星星等於完局時剩低嘅心。'));
+    container.appendChild(el(doc, 'p', 'lbHint', HINT[levelId] || HINT['2']));
     if (view.note) container.appendChild(el(doc, 'p', 'lbMsg', view.note));
     if (options.onDelete) {
       container.appendChild(el(doc, 'p', 'lbHint', '老師刪除模式。每一行是最高分，刪除只清走呢一筆。'));
     }
 
     if (!view.rows.length) {
-      container.appendChild(el(doc, 'div', 'lbEmpty', '暫時未有人上榜。'));
+      container.appendChild(el(doc, 'div', 'lbEmpty', '呢關暫時未有人上榜。'));
       return;
     }
     var list = el(doc, 'ol', 'lbList');
@@ -629,13 +687,20 @@
     }
   }
 
+  function levelById(id) {
+    for (var i = 0; i < LEVELS.length; i++) if (LEVELS[i].id === id) return LEVELS[i];
+    return LEVELS[0];
+  }
+
   return {
+    LEVELS: LEVELS,
     TOP_N: TOP_N,
     MSG: MSG,
     validateIdentity: validateIdentity,
     rememberIdentity: rememberIdentity,
     recallIdentity: recallIdentity,
     isConfigured: isConfigured,
+    starsForRose: starsForRose,
     submit: submit,
     load: load,
     verifyTeacherPin: verifyTeacherPin,
@@ -644,6 +709,8 @@
     bestByStudent: bestByStudent,
     renderInto: renderInto,
     renderLoading: renderLoading,
+    levelById: levelById,
+    readLocal: readLocal,
     readScores: readScores
   };
 });
