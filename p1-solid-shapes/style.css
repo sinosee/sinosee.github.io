@@ -88,6 +88,52 @@ h1 {
   font-size: clamp(20px, 3vw, 28px);
   font-weight: 900;
 }
+.modes {
+  display: flex;
+  gap: 12px;
+  margin: 4px 0 10px;
+}
+.mode {
+  flex: 1;
+  min-height: 112px;
+  background: #fff;
+  border-radius: 24px;
+  padding: 12px 10px;
+  border: 5px solid transparent;
+  box-shadow: 0 6px 0 var(--shadow);
+  text-align: center;
+}
+.mode.sel {
+  border-color: var(--deep);
+  background: #fff7fb;
+  box-shadow: 0 6px 0 var(--deep);
+}
+#modeTeacher.sel {
+  border-color: #e0a020;
+  background: #fffbea;
+  box-shadow: 0 6px 0 #e0a020;
+}
+.mode:active { transform: translateY(3px); }
+.mode .mi { font-size: clamp(32px, 5vw, 48px); line-height: 1; }
+.mode .mt {
+  font-size: clamp(22px, 3.2vw, 34px);
+  font-weight: 900;
+  margin: 4px 0;
+}
+.mode .md {
+  font-size: clamp(16px, 2.2vw, 22px);
+  font-weight: 800;
+  color: var(--muted);
+  line-height: 1.35;
+}
+.modeNote {
+  margin: 0 0 14px;
+  text-align: center;
+  font-weight: 900;
+  font-size: clamp(18px, 2.4vw, 24px);
+  color: var(--deep);
+}
+.pill[hidden], .bigbtn[hidden] { display: none; }
 .actions, .endBtns {
   display: flex;
   flex-wrap: wrap;

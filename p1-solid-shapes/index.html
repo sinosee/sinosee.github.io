@@ -30,6 +30,19 @@
       <li style="--c:#7ecbff">圓柱</li>
       <li style="--c:#c9b6ff">球</li>
     </ul>
+    <div class="modes" role="group" aria-label="模式">
+      <button type="button" class="mode sel" id="modeStudent" data-mode="student" aria-pressed="true">
+        <div class="mi" aria-hidden="true">🧒</div>
+        <div class="mt">學生模式</div>
+        <div class="md">填寫班別和學號<br>成績記入龍虎榜</div>
+      </button>
+      <button type="button" class="mode" id="modeTeacher" data-mode="teacher" aria-pressed="false">
+        <div class="mi" aria-hidden="true">📺</div>
+        <div class="mt">老師投影</div>
+        <div class="md">不用填寫班別學號<br>本局不會上榜</div>
+      </button>
+    </div>
+    <p class="modeNote" id="modeNote">學生要填寫班別和學號，完成第一課才記入龍虎榜。</p>
     <div class="lessonGrid">
       <article class="lessonCard">
         <p class="kicker">第一課</p>
@@ -71,6 +84,7 @@
       <span class="pill" id="prog">第 1／10 題</span>
       <span class="pill score" id="scorePill">答對 0</span>
       <span class="pill who" id="whoPill" hidden></span>
+      <span class="pill who" id="modePill" hidden>老師投影</span>
       <span class="spacer"></span>
       <label class="sound"><input type="checkbox" id="chkSound" checked> 音效</label>
     </div>
@@ -155,6 +169,7 @@
       <button type="button" class="iconbtn" id="btnHome2" aria-label="返回主頁">🏠</button>
       <span class="pill" id="prog2">第 1／10 題</span>
       <span class="pill score" id="scorePill2">答對 0</span>
+      <span class="pill who" id="modePill2" hidden>老師投影</span>
       <span class="spacer"></span>
       <label class="sound"><input type="checkbox" id="chkSound2" checked> 音效</label>
     </div>
@@ -173,7 +188,7 @@
     <h2 id="end2Title">做得好！</h2>
     <p class="endScore" id="end2Score">答對 0／10</p>
     <p class="best" id="end2Best"></p>
-    <p class="lbHint">第二課星星留在這部裝置，不會記入第一課龍虎榜。</p>
+    <p class="lbHint" id="end2Note">第二課星星留在這部裝置，不會記入第一課龍虎榜。</p>
     <div class="endBtns">
       <button type="button" class="bigbtn" id="btnAgain2">再玩一次</button>
       <button type="button" class="bigbtn alt" id="btnMenu2">返回主頁</button>
