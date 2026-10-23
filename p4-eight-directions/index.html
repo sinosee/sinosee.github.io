@@ -133,9 +133,11 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
 .paused.on{display:flex}
 .paused .pt{font-size:clamp(32px,6vmin,56px);font-weight:900;color:#fff;text-shadow:0 3px 8px rgba(0,0,0,.3)}
 
-#end{align-items:center;justify-content:center;overflow:auto;
+#end{align-items:center;justify-content:flex-start;overflow:auto;-webkit-overflow-scrolling:touch;
   background:linear-gradient(160deg,#d7f4ff 0%,#fff6d4 50%,#ffe3ef 100%)}
-.endInner{text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2vmin,18px);padding:20px}
+.endInner{text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2vmin,18px);padding:20px;width:min(760px,100%);margin:auto}
+.endWho{font-size:clamp(16px,2.5vmin,24px);font-weight:900;color:#0b7568}
+.endWho:empty{display:none}
 .endDog{width:clamp(96px,16vmin,140px);height:clamp(96px,16vmin,140px);border-radius:50%;object-fit:cover;background:#fff;border:4px solid #fff;box-shadow:0 8px 0 #f3b7d0}
 .endStars{font-size:clamp(42px,8vmin,84px);letter-spacing:8px;color:#f5b301;line-height:1}
 .endTitle{margin:0;font-size:clamp(32px,6vmin,60px);font-weight:900}
@@ -232,9 +234,56 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
 
 #start{overflow:hidden}
 #start .startInner{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;margin-top:0;margin-bottom:0;justify-content:safe center}
-#start>.bigbtn{flex:none;margin:6px auto 0}
+#start>.startActions{flex:none;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;width:min(720px,94vw);margin:6px auto 0}
+#start>.startActions .bigbtn{flex:1 1 220px;min-width:min(220px,86vw)}
 #start>.note{flex:none;margin:4px 16px 0;text-align:center}
 #start>.qrFoot{flex:none;width:min(1120px,calc(100% - 16px));margin:4px auto 10px}
+
+#gate,#board{overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;align-items:center;justify-content:flex-start;
+  background:
+    radial-gradient(circle at 8% 0,#fff 0,transparent 28%),
+    radial-gradient(circle at 100% 0,#ffe7a8 0,transparent 26%),
+    linear-gradient(180deg,#c9f4ff 0%,#e5fbe7 42%,#fff6d4 100%)}
+.gateWrap,.boardWrap{width:min(760px,94vw);margin:auto;padding:18px 0 28px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.gateCard,.teacherBox{
+  width:min(720px,100%);padding:22px 18px;border-radius:28px;
+  background:linear-gradient(#fff,#fff) padding-box,linear-gradient(100deg,#ff8ec8,#ffd15c,#7ddeb3,#7ecbff,#c9b6ff) border-box;
+  border:5px solid transparent;box-shadow:0 6px 0 #f3c3dc;text-align:center}
+.gateCard h2,.boardWrap>h2{margin:0;font-size:clamp(32px,5vmin,48px);font-weight:900}
+.gateCard .sub,.boardWrap>.sub{margin:8px 0 0;font-weight:800;color:var(--muted)}
+.gateForm,.teacherForm{width:100%;display:flex;flex-direction:column;align-items:center;gap:12px}
+.teacherForm[hidden],#teacherOn[hidden]{display:none !important}
+.gateFields{width:100%;display:flex;flex-direction:column;gap:12px}
+.field{display:flex;flex-direction:column;align-items:flex-start;gap:6px;width:100%;font-weight:900;font-size:clamp(18px,2.6vmin,24px);text-align:left}
+.field input{width:100%;min-height:64px;border-radius:18px;border:4px solid #7ecbff;font:inherit;font-size:clamp(24px,4vmin,36px);font-weight:900;padding:8px 16px;color:var(--ink);background:#f7fbff;-webkit-user-select:text;user-select:text}
+.field input:focus{outline:none;border-color:#ff8ec8;background:#fff}
+.field input.bad{border-color:#e23b4a;background:#fff5f8}
+.gateErr{margin:0;font-size:clamp(16px,2.4vmin,22px);font-weight:900;color:#d62828;line-height:1.4}
+.gateErr:empty{display:none}
+.gateBack{min-height:48px;padding:8px 16px;border-radius:999px;background:#fff;border:3px solid #c9b6ff;font-weight:900;font-size:18px;box-shadow:0 3px 0 var(--shadow)}
+.bigbtn.is-locked{opacity:.55}
+.teacherBox{display:flex;flex-direction:column;align-items:center;gap:10px}
+.teacherBox .field{width:min(420px,100%)}
+.teacherRow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:center}
+.lbPanel{width:min(760px,100%);margin:8px auto 0;display:flex;flex-direction:column;gap:8px;text-align:left}
+.lbTitle{margin:4px 0 0;font-size:clamp(22px,3.4vmin,32px);font-weight:900;text-align:center}
+.lbMsg{margin:0;font-weight:800;font-size:clamp(16px,2.4vmin,22px);text-align:center;line-height:1.45}
+.lbHint{margin:0;font-size:clamp(14px,2vmin,18px);color:var(--muted);text-align:center;font-weight:700;line-height:1.4}
+.lbList{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;width:100%}
+.lbRow{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:8px 10px;background:#fff;border-radius:18px;padding:10px 14px;border:3px solid #d7f3ea;box-shadow:0 4px 0 var(--shadow);font-weight:900;font-size:clamp(16px,2.6vmin,24px)}
+.lbRow.mine{background:#fff6d8;border-color:#f5b301;box-shadow:0 4px 0 #ffe29a}
+.lbRank{min-width:1.6em;text-align:center}
+.lbName{text-align:left;min-width:0}
+.lbTag{display:inline-block;margin-left:6px;background:#ff8a3d;color:#fff;border-radius:999px;padding:1px 8px;font-size:.72em;vertical-align:middle}
+.lbStars{letter-spacing:1px;white-space:nowrap}
+.lbScore{min-width:2.2em;text-align:right;font-variant-numeric:tabular-nums;color:#9a6700}
+.lbRow.hasDel{grid-template-columns:auto minmax(0,1fr) auto auto auto}
+.lbDel{min-height:44px;min-width:64px;padding:0 12px;border-radius:12px;background:#fff0f6;color:#d62828;font-weight:900;border:3px solid #ff8ec8}
+.lbEmpty{background:#fff;border-radius:18px;padding:16px;text-align:center;font-weight:800;color:var(--muted);border:3px solid #c9b6ff}
+@media (min-width:700px){
+  .gateFields{flex-direction:row}
+  .field{flex:1}
+}
 </style>
 </head>
 <body>
@@ -274,8 +323,11 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
     <p class="tip">紅針永遠指住<strong>北方</strong>。北不一定在上面。先填指南針，再去尋寶。</p>
     <label class="toggle"><input type="checkbox" id="togSound" checked> 音效</label>
   </div>
-  <button type="button" class="bigbtn" id="btnStart">由第一關開始</button>
-  <p class="note">小四 · 八個方向：北、東北、東、東南、南、西南、西、西北<br><a href="../">返教學小遊戲</a></p>
+  <div class="startActions">
+    <button type="button" class="bigbtn" id="btnStart">由第一關開始</button>
+    <button type="button" class="bigbtn blue" id="btnOpenBoard">查看龍虎榜</button>
+  </div>
+  <p class="note">小四 · 八個方向：北、東北、東、東南、南、西南、西、西北<br>第二關完結先上龍虎榜，每位同學顯示最高分。<br><a href="../">返教學小遊戲</a></p>
   <div class="qrFoot">
     <img class="qr" src="qrcode.png" width="280" height="340" alt="八方探險遊戲網址二維碼">
     <div>
@@ -391,13 +443,69 @@ h1{margin:0;font-size:clamp(36px,6.4vmin,68px);font-weight:900;letter-spacing:2p
     <h2 class="endTitle" id="endTitle">探險完成！</h2>
     <div class="endScore" id="endScore">搵到 0 份寶藏</div>
     <div class="endDetail" id="endDetail"></div>
+    <div class="endWho" id="endWho"></div>
     <div class="endBtns">
       <button type="button" class="bigbtn green" id="btnAgain">再去探險</button>
       <button type="button" class="bigbtn blue" id="btnMenu">主選單</button>
     </div>
+    <div class="lbPanel" id="endBoard" aria-live="polite"></div>
   </div>
 </div>
 
+<div id="gate" class="screen">
+  <div class="gateWrap">
+    <div class="gateCard">
+      <h2>班別學號</h2>
+      <p class="sub">用英文字母同數字，唔好打中文名。</p>
+      <form id="gateForm" class="gateForm" autocomplete="off">
+        <div class="gateFields">
+          <label class="field" for="gateClass">班別
+            <input id="gateClass" name="classId" type="text" inputmode="text" maxlength="24" placeholder="例如 4A" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off" enterkeyhint="next" aria-describedby="gateErr">
+          </label>
+          <label class="field" for="gateNo">學號
+            <input id="gateNo" name="studentNo" type="text" inputmode="text" maxlength="24" placeholder="例如 12" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="off" enterkeyhint="go" aria-describedby="gateErr">
+          </label>
+        </div>
+        <p class="gateErr" id="gateErr" role="alert" aria-live="assertive"></p>
+        <button type="submit" class="bigbtn" id="btnGateGo">開始</button>
+        <button type="button" class="gateBack" id="btnGateBack">返回</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="board" class="screen">
+  <div class="boardWrap">
+    <h2>龍虎榜</h2>
+    <p class="sub">第二關尋寶最高分。未玩都可以睇。</p>
+    <div class="teacherBox" id="teacherBox">
+      <button type="button" class="gateBack" id="btnTeacherOpen">老師模式：刪除成績</button>
+      <form id="teacherForm" class="teacherForm" hidden autocomplete="off">
+        <p class="lbHint">輸入老師密碼，先可以刪走其中一筆成績。學生唔好輸入。</p>
+        <label class="field" for="teacherPin">老師密碼
+          <input id="teacherPin" name="teacher-pin" type="password" inputmode="numeric" maxlength="8" pattern="[0-9]*" placeholder="4 至 8 位數字" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-describedby="teacherErr">
+        </label>
+        <p class="gateErr" id="teacherErr" role="alert" aria-live="assertive"></p>
+        <div class="teacherRow">
+          <button type="submit" class="bigbtn blue" id="btnTeacherUnlock">解鎖刪除</button>
+          <button type="button" class="gateBack" id="btnTeacherCancel">取消</button>
+        </div>
+      </form>
+      <div id="teacherOn" hidden>
+        <p class="lbMsg" id="teacherStatus">已解鎖。撳「刪除」清走一筆最高分。</p>
+        <button type="button" class="gateBack" id="btnTeacherLock">離開老師刪除</button>
+      </div>
+    </div>
+    <div id="boardMount" class="lbPanel" aria-live="polite"></div>
+    <div class="endBtns">
+      <button type="button" class="bigbtn blue" id="btnBoardReload">重新載入</button>
+      <button type="button" class="bigbtn" id="btnBoardBack">返回主頁</button>
+    </div>
+  </div>
+</div>
+
+<script src="firebase-config.js"></script>
+<script src="leaderboard.js"></script>
 <script>
 (function(){
 'use strict';
@@ -448,6 +556,9 @@ var rose = {rounds:[], index:0, north:0, placed:{}, order:[], revealed:false, fi
 var queue = [], cur = null;
 var paused = false, busy = false, ended = false, taughtMid = false;
 var session = 0, timer = null, pending = null;
+var player = null, pendingStart = null, gateReturn = 'start';
+var endToken = 0, boardToken = 0;
+var teacherUnlocked = false, teacherFormOpen = false, teacherPin = '', teacherBusy = false;
 var audioCtx = null;
 var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -482,7 +593,7 @@ window.addEventListener('resize', setVH);
 if(window.visualViewport) window.visualViewport.addEventListener('resize', setVH);
 
 function show(id){
-  ['start','rose','bridge','play','end'].forEach(function(s){ $(s).classList.toggle('on', s === id); });
+  ['start','rose','bridge','play','end','gate','board'].forEach(function(s){ $(s).classList.toggle('on', s === id); });
 }
 function beep(freq, dur, type, vol){
   if(!soundOn) return;
@@ -1197,9 +1308,17 @@ function endGame(){
   $('endDetail').textContent = hearts > 0
     ? '剩下 ' + hearts + ' 顆心，得到 ' + hearts + ' 顆星。'
     : '心用完了。紅針仍然指向北方，再試一次！';
+  /* 龍虎榜只計第二關尋寶（loot 0–10，星星＝剩低嘅心）。老師投影唔寫分。 */
+  if($('endWho')){
+    if(mode === 'student' && player) $('endWho').textContent = player.classId + ' · ' + player.studentNo + '　今次 ' + loot + ' 分上榜';
+    else if(mode === 'teacher') $('endWho').textContent = '老師投影模式，呢局唔會上榜。';
+    else $('endWho').textContent = '';
+  }
+  publishResult();
 }
 function startRun(){
   bump();
+  endToken++;
   ended = false;
   paused = false;
   $('paused').classList.remove('on');
@@ -1214,6 +1333,7 @@ function startRun(){
 }
 function goHome(){
   bump();
+  endToken++;
   ended = false;
   paused = false;
   busy = false;
@@ -1222,7 +1342,153 @@ function goHome(){
   rose.drag = null;
   $('paused').classList.remove('on');
   $('rosePaused').classList.remove('on');
+  if($('endBoard')) $('endBoard').textContent = '';
   show('start');
+}
+
+function launchStudent(startFn){
+  if(mode === 'teacher' || !window.DirLeaderboard){
+    startFn();
+    return;
+  }
+  pendingStart = startFn;
+  openGate('start');
+}
+function openGate(returnTo){
+  gateReturn = returnTo || 'start';
+  var cls = $('gateClass');
+  var no = $('gateNo');
+  var board = window.DirLeaderboard;
+  if(board){
+    var saved = player || board.recallIdentity();
+    if(saved){
+      if(!cls.value) cls.value = saved.classId || '';
+      if(!no.value) no.value = saved.studentNo || '';
+    }
+    applyGate(false);
+  }
+  show('gate');
+  setTimeout(function(){
+    if(cls.value){
+      no.focus();
+      if(no.value && no.select) no.select();
+    } else cls.focus();
+  }, 60);
+}
+function applyGate(forceEmpty){
+  var board = window.DirLeaderboard;
+  if(!board) return {ok:true};
+  var cls = $('gateClass');
+  var no = $('gateNo');
+  var err = $('gateErr');
+  var btn = $('btnGateGo');
+  var result = board.validateIdentity(cls.value, no.value);
+  var loud = !result.ok && (result.code !== 'empty' || forceEmpty);
+  err.textContent = loud ? result.message : '';
+  cls.classList.toggle('bad', !!(loud && result.fields.indexOf('classId') >= 0));
+  no.classList.toggle('bad', !!(loud && result.fields.indexOf('studentNo') >= 0));
+  cls.setAttribute('aria-invalid', (loud && result.fields.indexOf('classId') >= 0) ? 'true' : 'false');
+  no.setAttribute('aria-invalid', (loud && result.fields.indexOf('studentNo') >= 0) ? 'true' : 'false');
+  btn.classList.toggle('is-locked', !result.ok);
+  return result;
+}
+function publishResult(){
+  var box = $('endBoard');
+  var board = window.DirLeaderboard;
+  var token = ++endToken;
+  if(!box || !board) return;
+  board.renderLoading(box);
+  var identity = (mode === 'student') ? player : null;
+  var score = loot;
+  var stars = hearts;
+  function done(result, highlight){
+    if(token !== endToken) return;
+    if(!$('end').classList.contains('on')) return;
+    board.renderInto(box, result, highlight, {title:'呢局龍虎榜'});
+  }
+  if(!identity){
+    board.load().then(function(result){ done(result, null); });
+    return;
+  }
+  board.submit({
+    classId:identity.classId,
+    studentNo:identity.studentNo,
+    score:score,
+    stars:stars
+  }).then(function(sub){
+    var highlight = {
+      classId:identity.classId,
+      studentNo:identity.studentNo,
+      ts:sub.entry ? sub.entry.ts : 0,
+      score:sub.entry ? sub.entry.score : score
+    };
+    return board.load().then(function(result){ done(result, highlight); });
+  }).catch(function(){
+    board.load().then(function(result){
+      done(result, {classId:identity.classId, studentNo:identity.studentNo, score:score});
+    });
+  });
+}
+function syncTeacherBox(){
+  var openBtn = $('btnTeacherOpen');
+  var form = $('teacherForm');
+  var on = $('teacherOn');
+  if(!openBtn || !form || !on) return;
+  openBtn.hidden = teacherUnlocked || teacherFormOpen;
+  form.hidden = teacherUnlocked || !teacherFormOpen;
+  on.hidden = !teacherUnlocked;
+}
+function lockTeacherDelete(){
+  teacherUnlocked = false;
+  teacherFormOpen = false;
+  teacherPin = '';
+  teacherBusy = false;
+  var pin = $('teacherPin');
+  var err = $('teacherErr');
+  if(pin) pin.value = '';
+  if(err) err.textContent = '';
+  syncTeacherBox();
+}
+function openBoard(){
+  syncTeacherBox();
+  show('board');
+  refreshBoard();
+}
+function refreshBoard(){
+  var mount = $('boardMount');
+  var board = window.DirLeaderboard;
+  if(!board){
+    mount.textContent = '龍虎榜未接上雲端';
+    return;
+  }
+  var token = ++boardToken;
+  board.renderLoading(mount);
+  board.load().then(function(result){
+    if(token !== boardToken) return;
+    if(!$('board').classList.contains('on')) return;
+    var highlight = player ? {classId:player.classId, studentNo:player.studentNo} : null;
+    board.renderInto(mount, result, highlight, {
+      title:'龍虎榜',
+      onDelete:teacherUnlocked ? askDeleteScore : null
+    });
+  });
+}
+function askDeleteScore(row){
+  var board = window.DirLeaderboard;
+  if(!teacherUnlocked || teacherBusy || !board) return;
+  var who = row.classId + ' · ' + row.studentNo;
+  if(!window.confirm('確定刪除 ' + who + ' 的 ' + row.score + ' 分？刪除後唔可以還原。')) return;
+  teacherBusy = true;
+  var status = $('teacherStatus');
+  if(status) status.textContent = '刪除緊…';
+  board.deleteScore(row, teacherPin).then(function(res){
+    teacherBusy = false;
+    if(status) status.textContent = (res && res.message) || (res && res.ok ? '已刪除。' : '刪除失敗。');
+    if(res && res.ok) refreshBoard();
+  }).catch(function(){
+    teacherBusy = false;
+    if(status) status.textContent = '刪除失敗。請稍後再試。';
+  });
 }
 
 /* 第一關：整盤指南針旋轉，只預先標「北」。
@@ -1337,6 +1603,7 @@ function beginRoseRound(){
 }
 function startRose(rounds){
   bump();
+  endToken++;
   ended = false;
   paused = false;
   busy = false;
@@ -1520,9 +1787,10 @@ $('modeTeacher').addEventListener('click', function(){
   $('modeTeacher').classList.add('sel');
   $('modeStudent').classList.remove('sel');
 });
-$('btnStart').addEventListener('click', function(){ startRose(); });
-$('btnPick1').addEventListener('click', function(){ startRose(); });
-$('btnPick2').addEventListener('click', startRun);
+$('btnStart').addEventListener('click', function(){ launchStudent(function(){ startRose(); }); });
+$('btnPick1').addEventListener('click', function(){ launchStudent(function(){ startRose(); }); });
+$('btnPick2').addEventListener('click', function(){ launchStudent(startRun); });
+$('btnOpenBoard').addEventListener('click', openBoard);
 $('btnToLevel2').addEventListener('click', startRun);
 $('btnBridgeHome').addEventListener('click', goHome);
 $('btnRoseHome').addEventListener('click', goHome);
@@ -1536,8 +1804,87 @@ $('btnRoseNext').addEventListener('click', function(){
 window.addEventListener('pointermove', onRoseMove, {passive:false});
 window.addEventListener('pointerup', onRoseUp);
 window.addEventListener('pointercancel', onRoseUp);
-$('btnAgain').addEventListener('click', startRun);
+$('btnAgain').addEventListener('click', function(){
+  if(mode === 'teacher' || !window.DirLeaderboard){ startRun(); return; }
+  pendingStart = startRun;
+  openGate('end');
+});
 $('btnMenu').addEventListener('click', goHome);
+$('gateClass').addEventListener('input', function(){ applyGate(false); });
+$('gateNo').addEventListener('input', function(){ applyGate(false); });
+$('gateClass').addEventListener('keydown', function(ev){
+  if(ev.key === 'Enter'){
+    ev.preventDefault();
+    $('gateNo').focus();
+  }
+});
+$('gateForm').addEventListener('submit', function(ev){
+  ev.preventDefault();
+  var result = applyGate(true);
+  if(!result.ok){
+    $(result.field === 'studentNo' ? 'gateNo' : 'gateClass').focus();
+    return;
+  }
+  player = {classId:result.classId, studentNo:result.studentNo, displayName:result.displayName};
+  window.DirLeaderboard.rememberIdentity(player);
+  var startFn = pendingStart || function(){ startRose(); };
+  pendingStart = null;
+  startFn();
+});
+$('btnGateBack').addEventListener('click', function(){
+  show(gateReturn || 'start');
+});
+$('btnBoardBack').addEventListener('click', function(){
+  lockTeacherDelete();
+  show('start');
+});
+$('btnBoardReload').addEventListener('click', refreshBoard);
+$('btnTeacherOpen').addEventListener('click', function(){
+  teacherFormOpen = true;
+  $('teacherErr').textContent = '';
+  syncTeacherBox();
+  $('teacherPin').focus();
+});
+$('btnTeacherCancel').addEventListener('click', function(){
+  teacherFormOpen = false;
+  $('teacherPin').value = '';
+  $('teacherErr').textContent = '';
+  syncTeacherBox();
+});
+$('btnTeacherLock').addEventListener('click', function(){
+  lockTeacherDelete();
+  refreshBoard();
+});
+$('teacherForm').addEventListener('submit', function(ev){
+  ev.preventDefault();
+  if(teacherBusy || !window.DirLeaderboard) return;
+  var pinEl = $('teacherPin');
+  var err = $('teacherErr');
+  var btn = $('btnTeacherUnlock');
+  teacherBusy = true;
+  btn.disabled = true;
+  err.textContent = '';
+  window.DirLeaderboard.verifyTeacherPin(pinEl.value).then(function(res){
+    teacherBusy = false;
+    btn.disabled = false;
+    if(!res || !res.ok){
+      err.textContent = (res && res.message) || '老師密碼唔正確。';
+      pinEl.focus();
+      return;
+    }
+    teacherPin = res.pin || '';
+    pinEl.value = '';
+    teacherUnlocked = true;
+    teacherFormOpen = false;
+    $('teacherStatus').textContent = '已解鎖。撳「刪除」清走一筆最高分。如果仲有其他紀錄，會顯示下一筆。';
+    syncTeacherBox();
+    refreshBoard();
+  }).catch(function(){
+    teacherBusy = false;
+    btn.disabled = false;
+    err.textContent = '暫時無法核對老師密碼。請稍後再試。';
+  });
+});
 $('btnHome').addEventListener('click', goHome);
 $('btnPause').addEventListener('click', pauseActivity);
 $('btnResume').addEventListener('click', resumeActivity);
@@ -1728,6 +2075,24 @@ function runSelfTest(){
   assert($('play').classList.contains('on') && queue.length === 10 && $('levelTag').textContent === '第二關', 'level 2 adventure');
   goHome();
   assert($('start').classList.contains('on'), 'home');
+  assert($('gate') && $('board') && $('btnOpenBoard') && $('endBoard'), 'leaderboard screens');
+  if(window.DirLeaderboard){
+    var rej = window.DirLeaderboard.validateIdentity('陳大文', '12');
+    assert(!rej.ok && rej.code === 'cjk', 'reject chinese');
+    var idn = window.DirLeaderboard.validateIdentity('4a', '07');
+    assert(idn.ok && idn.displayName === '4A07', 'class upper');
+    var boardView = window.DirLeaderboard.present([
+      {classId:'4A', studentNo:'1', score:8, stars:1, ts:1},
+      {classId:'4A', studentNo:'1', score:10, stars:1, ts:2},
+      {classId:'4B', studentNo:'2', score:10, stars:3, ts:1},
+      {classId:'4C', studentNo:'3', score:7, stars:3, ts:1}
+    ], {classId:'4A', studentNo:'1', score:8, ts:9}, 10);
+    assert(boardView.rows.length === 3, 'one row per student');
+    assert(boardView.rows[0].rank === 1 && boardView.rows[1].rank === 1, 'tie rank');
+    assert(boardView.rows[2].rank === 3, 'next rank skips');
+    assert(boardView.mine && boardView.mine.score === 10, 'best score only');
+    assert(boardView.note.indexOf('8') >= 0 && boardView.note.indexOf('10') >= 0, 'lower this round');
+  } else issues.push('leaderboard missing');
   return issues;
 }
 
@@ -1748,6 +2113,21 @@ if(selftest){
     var kind = pv[1];
     if(kind === 'bridge'){
       show('bridge');
+    /* 本機先預覽完局畫面。公開網址唔會行呢段，避免學生靠網址寫分。 */
+    } else if(kind === 'end' && /^(localhost|127\.0\.0\.1)$/.test(location.hostname)){
+      var sm = /[?&]score=(\d+)/.exec(location.search);
+      var hm = /[?&]hearts=(\d+)/.exec(location.search);
+      loot = sm ? Math.max(0, Math.min(10, +sm[1])) : 8;
+      hearts = hm ? Math.max(0, Math.min(3, +hm[1])) : 2;
+      var cm = /[?&]class=([A-Za-z0-9-]+)/.exec(location.search);
+      var nm2 = /[?&]no=([A-Za-z0-9-]+)/.exec(location.search);
+      if(cm && nm2 && window.DirLeaderboard){
+        var idnEnd = window.DirLeaderboard.validateIdentity(cm[1], nm2[1]);
+        if(idnEnd.ok) player = {classId:idnEnd.classId, studentNo:idnEnd.studentNo, displayName:idnEnd.displayName};
+      }
+      mode = 'student';
+      ended = false;
+      endGame();
     } else if(kind === 'rose'){
       var nm = /[?&]north=(\d)/.exec(location.search);
       var n0 = nm ? ((+nm[1]) % 8) : 6;
