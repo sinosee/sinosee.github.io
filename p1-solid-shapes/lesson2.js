@@ -147,6 +147,16 @@
 
   function makeRound() { return clone(ITEMS); }
 
+  /* Balls tumble like a ball. Cylinders and cones roll around their own
+     axis so the side stays on the ground. Prisms and pyramids do not roll. */
+  function rollStyle(poseKey) {
+    var spec = POSES[poseKey];
+    var shape = spec ? spec.shape : poseKey;
+    if (shape === 'sphere') return 'ball';
+    if (shape === 'cylinder' || shape === 'cone') return 'side';
+    return 'none';
+  }
+
   function grade(item, response) {
     if (!item) return false;
     if (item.kind === 'watch' || item.kind === 'pick') return response === item.answer;
@@ -166,6 +176,7 @@
     POSES: POSES,
     makeRound: makeRound,
     grade: grade,
+    rollStyle: rollStyle,
     NAMES: NAMES
   };
 });
@@ -314,8 +325,19 @@ function mount(api) {
     return window.SolidShapes.renderSvg(spec, uid);
   }
 
+  function rollClass(poseKey) {
+    var style = api.rollStyle(poseKey);
+    if (style === 'ball') return 'rollBall';
+    if (style === 'side') return 'rollSide';
+    return '';
+  }
+
+  function solidHtml(poseKey, uid) {
+    return '<span class="solidSlot" data-pose="' + poseKey + '" data-uid="' + uid + '">' + svg(poseKey, uid) + '</span>';
+  }
+
   function piece(poseKey, uid, cls) {
-    return '<div class="piece ' + cls + '"><div class="solidSlot">' + svg(poseKey, uid) + '</div></div>';
+    return '<div class="piece ' + cls + '">' + solidHtml(poseKey, uid) + '</div>';
   }
 
   function watchHtml(item, n) {
@@ -346,7 +368,7 @@ function mount(api) {
       '<span class="rampLabel">斜板</span>' +
       '<span class="finishFlag" aria-hidden="true">🏁</span>' +
       tag +
-      '<div class="roller"><div class="solidSlot">' + svg(item.pose, 'r' + n) + '</div></div>' +
+      '<div class="roller ' + rollClass(item.pose) + '">' + solidHtml(item.pose, 'r' + n) + '</div>' +
       replay + '</div>';
   }
 
@@ -369,11 +391,11 @@ function mount(api) {
     var go = m.go ? 'goes' : 'stays';
     return '<span class="demo ' + demo + ' ' + go + '">' +
       '<span class="miniCol"><span class="miniCap">疊</span>' +
-        '<span class="miniPiece lower"><span class="solidSlot">' + svg(m.lower, uid + 'l') + '</span></span>' +
-        '<span class="miniPiece upper"><span class="solidSlot">' + svg(m.upper, uid + 'u') + '</span></span>' +
+        '<span class="miniPiece lower">' + solidHtml(m.lower, uid + 'l') + '</span>' +
+        '<span class="miniPiece upper">' + solidHtml(m.upper, uid + 'u') + '</span>' +
       '</span>' +
       '<span class="miniCol rampCol"><span class="miniCap">斜板</span><span class="miniRamp"></span>' +
-        '<span class="miniRoller"><span class="solidSlot">' + svg(m.roller, uid + 'r') + '</span></span>' +
+        '<span class="miniRoller ' + rollClass(m.roller) + '">' + solidHtml(m.roller, uid + 'r') + '</span>' +
       '</span></span>';
   }
 
@@ -398,8 +420,9 @@ function mount(api) {
 
   function sortHtml(item) {
     var bits = shuffle(item.pieces).map(function (p, i) {
-      return '<div class="token idle" data-id="' + p.id + '" role="button" tabindex="0" aria-pressed="false">' +
-        '<div class="solidSlot">' + svg(p.pose, 't' + i + p.id) + '</div>' +
+      var ball = api.rollStyle(p.pose) === 'ball' ? ' rollBall' : '';
+      return '<div class="token idle' + ball + '" data-id="' + p.id + '" role="button" tabindex="0" aria-pressed="false">' +
+        solidHtml(p.pose, 't' + i + p.id) +
         '<span class="tokenName">' + NAMES[p.id] + '</span></div>';
     }).join('');
     return '<div class="tray">' + bits + '</div>';
@@ -584,11 +607,59 @@ function mount(api) {
     });
   }
 
+  function prefersStill() {
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  /* Spin the lateral stripe around the solid's own axis. The SVG outline
+     stays side-on; it does not flip end over end. */
+  function spinSlot(slot) {
+    var poseKey = slot.getAttribute('data-pose');
+    var uid = slot.getAttribute('data-uid') || 'roll';
+    var base = api.POSES[poseKey];
+    if (!base || api.rollStyle(poseKey) !== 'side') return;
+    var token = {};
+    slot._rollToken = token;
+    if (prefersStill()) return;
+    var mini = !!slot.closest('.miniRoller');
+    var period = mini ? 2200 : 1750;
+    var trips = mini ? Infinity : 2;
+    var spinsPerTrip = 2;
+    var spec = JSON.parse(JSON.stringify(base));
+    var t0 = performance.now();
+    function draw(angle) {
+      if (slot._rollToken !== token || !slot.isConnected) return false;
+      spec.roll = angle;
+      slot.innerHTML = window.SolidShapes.renderSvg(spec, uid);
+      return true;
+    }
+    function frame(now) {
+      var done = (now - t0) / period;
+      if (done >= trips) {
+        draw(spinsPerTrip * Math.PI * 2);
+        return;
+      }
+      if (!draw(done * spinsPerTrip * Math.PI * 2)) return;
+      window.requestAnimationFrame(frame);
+    }
+    draw(0);
+    window.requestAnimationFrame(frame);
+  }
+
+  function bindSideRolls(root) {
+    if (!root) return;
+    root.querySelectorAll('.rollSide > .solidSlot, .rollSide .solidSlot').forEach(function (slot) {
+      if (slot.closest('.rollSide')) spinSlot(slot);
+    });
+  }
+
   function replay(root) {
     var nodes = root.querySelectorAll('.piece, .roller, .roller svg, .landStar, .dust');
     nodes.forEach(function (n) { n.style.animation = 'none'; });
     void root.offsetWidth;
     nodes.forEach(function (n) { n.style.animation = ''; });
+    root.querySelectorAll('.rollSide .solidSlot').forEach(function (slot) { slot._rollToken = null; });
+    bindSideRolls(root);
   }
 
   function renderQuestion() {
@@ -620,6 +691,7 @@ function mount(api) {
       stage.querySelectorAll('.token').forEach(bindToken);
       selectNext();
     }
+    bindSideRolls($('play2'));
     setFeedback(item.hint, '');
   }
 

@@ -521,20 +521,30 @@
     };
   }
 
-  function shadowEl(b) {
-    var rx = Math.max(18, b.width * 0.34);
-    var ry = Math.max(8, rx * 0.28);
-    var cy = b.bottom + ry * 0.15;
-    return '<ellipse class="shadow" cx="' + b.cx.toFixed(2) + '" cy="' + cy.toFixed(2) +
-      '" rx="' + rx.toFixed(2) + '" ry="' + ry.toFixed(2) + '" fill="#f3c3dc" opacity="0.55"/>';
+  /* Ground contact only. Radii stay in the same unit space as the solid
+     (about 1–2), so the oval cannot fill the viewBox as a pink card. */
+  function shadowGeom(b) {
+    var span = Math.max(b.width, b.height, 0.2);
+    var rx = span * 0.34;
+    var ry = rx * 0.22;
+    return { cx: b.cx, cy: b.bottom + ry * 0.2, rx: rx, ry: ry };
+  }
+
+  function shadowEl(sh) {
+    return '<ellipse class="shadow" cx="' + sh.cx.toFixed(2) + '" cy="' + sh.cy.toFixed(2) +
+      '" rx="' + sh.rx.toFixed(2) + '" ry="' + sh.ry.toFixed(2) + '" fill="#d9cfe4" opacity="0.42"/>';
   }
 
   function wrapSvg(parts, points, uid) {
-    var b = boundsOf(points, 0.1);
-    var sw = Math.max(b.width, b.height) * 0.034;
-    var vb = [b.minX, b.minY, b.maxX - b.minX, b.maxY - b.minY].map(function (n) { return n.toFixed(2); }).join(' ');
+    var b = boundsOf(points, 0.12);
+    var sh = shadowGeom(b);
+    var minX = Math.min(b.minX, sh.cx - sh.rx);
+    var maxX = Math.max(b.maxX, sh.cx + sh.rx);
+    var minY = b.minY;
+    var maxY = Math.max(b.maxY, sh.cy + sh.ry);
+    var vb = [minX, minY, maxX - minX, maxY - minY].map(function (n) { return n.toFixed(2); }).join(' ');
     return '<svg class="solid" data-uid="' + uid + '" viewBox="' + vb + '" role="img" aria-label="立體圖形">' +
-      shadowEl(b) + parts.join('') + '</svg>';
+      shadowEl(sh) + parts.join('') + '</svg>';
   }
 
   function lightShade(normal) {
@@ -695,6 +705,81 @@
     return [beta + alpha, beta - alpha];
   }
 
+  function radiusAt(spec, y) {
+    var h2 = spec.height / 2;
+    if (spec.shape !== 'cone') return spec.radius;
+    var t = (h2 - y) / (spec.height || 1);
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    return spec.radius * t;
+  }
+
+  /* A point just outside the surface is closer to the camera when this
+     generator faces us. +z is toward the camera. */
+  function surfaceFaces(spec, theta, y) {
+    var rad = Math.max(radiusAt(spec, y), 0.04);
+    var c = Math.cos(theta), s = Math.sin(theta);
+    var on = viewOf({ x: c * rad, y: y, z: s * rad }, spec);
+    var out = viewOf({ x: c * (rad + 0.4), y: y, z: s * (rad + 0.4) }, spec);
+    return out.z > on.z;
+  }
+
+  function rollPoint(spec, theta, y) {
+    var rad = radiusAt(spec, y) * 0.93;
+    return screenOf({ x: Math.cos(theta) * rad, y: y, z: Math.sin(theta) * rad }, spec);
+  }
+
+  /* Stripe around the cylinder/cone axis. The outline stays still;
+     only this band moves, so the solid rolls on its side. */
+  function rollBandPaths(spec, theta, width, y0, y1) {
+    var steps = 16;
+    var yMid = y0 + (y1 - y0) * 0.45;
+    var runs = [];
+    var run = null;
+    for (var i = 0; i <= steps; i++) {
+      var th = theta - width / 2 + width * (i / steps);
+      if (surfaceFaces(spec, th, yMid)) {
+        if (!run) run = [];
+        run.push(th);
+      } else if (run) {
+        runs.push(run);
+        run = null;
+      }
+    }
+    if (run) runs.push(run);
+    var paths = [];
+    runs.forEach(function (samples) {
+      if (samples.length < 2) return;
+      var a = samples[0];
+      var b = samples[samples.length - 1];
+      var n = 6;
+      var bot = [];
+      var top = [];
+      for (var k = 0; k <= n; k++) {
+        var th = a + (b - a) * (k / n);
+        bot.push(rollPoint(spec, th, y0));
+        top.push(rollPoint(spec, th, y1));
+      }
+      var d = 'M ' + xy(bot[0]);
+      for (var bi = 1; bi < bot.length; bi++) d += ' L ' + xy(bot[bi]);
+      for (var ti = top.length - 1; ti >= 0; ti--) d += ' L ' + xy(top[ti]);
+      paths.push(d + ' Z');
+    });
+    return paths;
+  }
+
+  function appendRollBands(parts, spec, pal) {
+    if (spec.roll == null || !isFinite(+spec.roll)) return;
+    if (spec.shape !== 'cone' && spec.shape !== 'cylinder') return;
+    var h2 = spec.height / 2;
+    var width = spec.shape === 'cone' ? 0.52 : 0.6;
+    [0, Math.PI].forEach(function (shift) {
+      rollBandPaths(spec, +spec.roll + shift, width, -h2, h2).forEach(function (d) {
+        parts.push('<path class="rollBand" d="' + d + '" fill="' + pal.edge + '" fill-opacity="0.72" stroke="none"/>');
+      });
+    });
+  }
+
   function renderRound(spec, uid) {
     var pal = palette(spec.palette);
     var h2 = spec.height / 2;
@@ -744,6 +829,8 @@
       all.push(a0, a1, b0, b1);
       all = all.concat(ellipseSamples(base), ellipseSamples(top));
     }
+
+    appendRollBands(parts, spec, pal);
 
     function capFacing(dir) {
       return viewOf(dir, spec).z;

@@ -212,13 +212,10 @@ h1 {
   font-weight: 900;
 }
 .shapeCard {
-  background:
-    linear-gradient(#fff, #fff) padding-box,
-    linear-gradient(100deg, #ff8ec8, #ffd15c, #7ddeb3, #7ecbff, #c9b6ff) border-box;
-  border: 5px solid transparent;
-  border-radius: 30px;
-  box-shadow: 0 6px 0 var(--shadow);
-  padding: 8px 12px 4px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
 }
 .shapeFrame {
   width: min(560px, 100%);
@@ -598,7 +595,7 @@ input { -webkit-user-select: text; user-select: text; }
 }
 .piece.lower { bottom: 12%; z-index: 1; }
 .piece.upper { bottom: 40%; z-index: 2; }
-.solidSlot { width: 100%; height: 100%; }
+.solidSlot { display: block; width: 100%; height: 100%; }
 .solidSlot svg, .token svg, .miniPiece svg, .miniRoller svg { width: 100%; height: 100%; display: block; }
 .landStar {
   position: absolute;
@@ -690,7 +687,10 @@ input { -webkit-user-select: text; user-select: text; }
   top: 50%;
   animation: downRamp 1.75s cubic-bezier(.42,.05,.62,.45) 2 both;
 }
-.roll-yes .roller svg { animation: spinRoll 1.75s linear 2 both; transform-origin: 50% 58%; }
+/* Balls spin in the picture plane. Cylinders and cones stay on their side
+   and only spin around their own axis (drawn in JS). Tilt matches the ramp. */
+.roll-yes .roller.rollBall svg { animation: spinRoll 1.75s linear 2 both; transform-origin: 50% 58%; }
+.roll-yes .roller.rollSide { transform: rotate(16deg); transform-origin: 50% 70%; }
 .roll-no .roller {
   left: 22%;
   top: 16%;
@@ -759,7 +759,8 @@ input { -webkit-user-select: text; user-select: text; }
 .demo.cone .upper,
 .demo.neither .upper { animation: miniOff 2.2s ease-in-out infinite; }
 .demo.goes .miniRoller { animation: miniTravel 2.2s ease-in-out infinite; }
-.demo.goes .miniRoller svg { animation: spinRoll 2.2s linear infinite; transform-origin: 50% 58%; }
+.demo.goes .miniRoller.rollBall svg { animation: spinRoll 2.2s linear infinite; transform-origin: 50% 58%; }
+.demo.goes .miniRoller.rollSide { transform: rotate(16deg); transform-origin: 50% 70%; }
 .demo.stays .miniRoller { animation: stickWobble 1.15s ease-in-out infinite; }
 
 .tray {
@@ -771,10 +772,10 @@ input { -webkit-user-select: text; user-select: text; }
 }
 .token {
   width: clamp(108px, 18vw, 150px);
-  background: #fff;
-  border: 4px solid #ffe0f0;
+  background: transparent;
+  border: 4px solid transparent;
   border-radius: 20px;
-  box-shadow: 0 5px 0 var(--shadow);
+  box-shadow: none;
   padding: 4px 4px 8px;
   touch-action: none;
   cursor: grab;
@@ -793,10 +794,11 @@ input { -webkit-user-select: text; user-select: text; }
 .tray .token:nth-child(4) { animation-delay: .36s; }
 .tray .token:nth-child(5) { animation-delay: .48s; }
 .token.selected {
-  border-color: var(--pink);
+  border-color: var(--sky);
+  background: rgba(255, 255, 255, 0.72);
   animation: none;
   transform: translateY(-4px);
-  box-shadow: 0 8px 0 #ffb3d6;
+  box-shadow: 0 6px 0 #c9e8ff;
 }
 .token.ghosting { opacity: 0.35; }
 .dragGhost {
@@ -829,7 +831,7 @@ input { -webkit-user-select: text; user-select: text; }
 .zoneWell .tokenName { font-size: 16px; }
 .zone.has { background: #f7fbff; }
 .zone.celebrate { background: #e7fff5; border-color: #1a9a52; box-shadow: 0 6px 0 #7ddeb3; }
-.token.justRoll svg { animation: spinRoll 0.7s linear; transform-origin: 50% 58%; }
+.token.justRoll.rollBall svg { animation: spinRoll 0.7s linear; transform-origin: 50% 58%; }
 .wobble { animation: zoneWobble 0.45s ease; }
 
 .fx2 { position: fixed; inset: 0; pointer-events: none; z-index: 80; overflow: hidden; }
