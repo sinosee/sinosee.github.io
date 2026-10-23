@@ -161,8 +161,9 @@ h1 {
   box-shadow: 0 6px 0 var(--shadow);
 }
 .foot img.qr {
-  width: 112px;
+  width: var(--qr-size, 112px);
   height: auto;
+  max-height: 148px;
   border-radius: 12px;
   background: #fff;
   flex: 0 0 auto;

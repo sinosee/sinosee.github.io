@@ -12,6 +12,7 @@
 <title>英文字母打字</title>
 <link rel="preload" href="andika-latin-700.woff2" as="font" type="font/woff2" crossorigin>
 <!-- Letterforms: Andika by SIL, Latin bold subset. License: OFL.txt -->
+<link rel="stylesheet" href="../qr.css">
 <style>
 @font-face{
   font-family:"Andika";
@@ -502,7 +503,7 @@ a.backsite:hover{text-decoration:underline}
   text-align:left;
   color:#5a2d78;
 }
-.qrFoot img.qr{width:112px;height:auto;border-radius:12px;background:#fff;flex:0 0 auto}
+.qrFoot img.qr{width:var(--qr-size,112px);height:auto;max-height:148px;border-radius:12px;background:#fff;flex:0 0 auto}
 .qrFoot .dog{width:52px;height:52px;border-radius:50%;object-fit:cover;border:3px solid #ff8ec8;box-shadow:0 3px 0 #ffc2de;background:#ffd6ea;flex:0 0 auto}
 .qrFoot p{margin:0 0 4px;font-weight:900;color:#5a2d78}
 .qrFoot a{color:#c43b86;font-weight:900;word-break:break-all}
@@ -534,7 +535,7 @@ a.backsite:hover{text-decoration:underline}
   </div>
   <div id="scroller" tabindex="-1"></div>
   <div class="qrFoot">
-    <img class="qr" src="qrcode.png" width="280" height="340" alt="英文字母打字遊戲網址二維碼">
+    <img class="qr" src="qrcode.png" width="112" height="132" alt="英文字母打字遊戲網址二維碼">
     <div>
       <img class="dog" src="../assets/mascot.jpg" width="52" height="52" alt="">
       <p>平板掃碼，打開呢一頁</p>

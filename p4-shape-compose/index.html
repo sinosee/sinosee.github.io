@@ -8,6 +8,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffe4f4">
 <title>圖形分割和拼砌</title>
+<link rel="stylesheet" href="../qr.css">
 <style>
 :root{
   --ink:#5a2d78;
@@ -103,7 +104,7 @@ h1{margin:0;font-size:clamp(32px,5vw,46px);letter-spacing:.04em;line-height:1.2;
   border:5px solid transparent;
   box-shadow:0 6px 0 var(--shadow);
 }
-.foot img.qr{width:112px;height:auto;border-radius:12px;background:#fff}
+.foot img.qr{width:var(--qr-size,112px);height:auto;max-height:148px;border-radius:12px;background:#fff}
 .foot .dog{
   width:52px;height:52px;border-radius:50%;object-fit:cover;
   border:3px solid var(--pink);box-shadow:0 3px 0 #ffc2de;background:#ffd6ea;

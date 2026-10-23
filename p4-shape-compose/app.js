@@ -428,7 +428,7 @@
       + '</div>'
       + '<p class="note">點住圓點拖出線段，就可以切開圖形。拼砌時拖動圖形，貼住方格，需要就可以旋轉。</p>'
       + '<div class="foot">'
-      + '<img class="qr" src="qrcode.png" width="280" height="340" alt="圖形分割和拼砌二維碼">'
+      + '<img class="qr" src="qrcode.png" width="112" height="132" alt="圖形分割和拼砌二維碼">'
       + '<div><img class="dog" src="assets/mascot.jpg" width="52" height="52" alt="">'
       + '<p>平板掃碼，打開呢一頁</p>'
       + '<a href="https://sinosee.github.io/p4-shape-compose/">sinosee.github.io/p4-shape-compose</a></div>'
