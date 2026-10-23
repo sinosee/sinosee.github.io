@@ -73,7 +73,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 .bigbtn.green{background:var(--green);box-shadow:0 7px 0 #1d7e3d}
 .bigbtn.blue{background:var(--blue);box-shadow:0 7px 0 #1e56b5}
 .bigbtn.purple{background:var(--purple);box-shadow:0 7px 0 #5430b0}
-.bigbtn:disabled{opacity:.45;transform:none}
+.bigbtn:disabled,.bigbtn.is-locked{opacity:.45}
 .note{font-size:clamp(13px,2vmin,18px);color:#7a8a9a;text-align:center}
 .rankBadge{width:100%;background:#fff;border-radius:22px;padding:clamp(12px,1.8vmin,20px) clamp(14px,2.2vmin,26px);box-shadow:0 6px 0 #b8d4e8;text-align:center}
 .rankKicker{font-size:clamp(14px,2.2vmin,22px);font-weight:800;color:#5a5a6e}
@@ -89,6 +89,33 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 .bestK{font-size:clamp(13px,2.1vmin,22px);font-weight:800;color:#5a5a6e}
 .bestV{font-size:clamp(20px,3.4vmin,36px);font-weight:900;margin-top:2px;letter-spacing:2px;line-height:1.25;min-height:1.25em}
 .bestV.empty{color:#9aa3b2;letter-spacing:0;font-size:clamp(16px,2.6vmin,28px)}
+.whoLine{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:0 0 4px;font-size:clamp(16px,2.5vmin,26px);font-weight:900;color:#1e56b5}
+.linkish{min-height:44px;padding:0 14px;border-radius:999px;background:#eef6ff;color:#1e56b5;font-weight:900;font-size:clamp(14px,2.2vmin,20px);box-shadow:0 3px 0 #b8d4e8}
+.continueLine{margin:8px 0 0;font-size:clamp(18px,3vmin,32px);font-weight:900;color:#c9620b;line-height:1.35}
+.levelTrail{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
+.lvChip{min-height:44px;padding:0 10px;border-radius:14px;background:#eef6ff;box-shadow:0 3px 0 #b8d4e8;font-weight:900;font-size:clamp(13px,2vmin,18px);color:#1e56b5}
+.lvChip.now{background:#fff1b8;box-shadow:0 3px 0 #e0c060;color:#8a5a00}
+.lvChip.locked,.lvChip:disabled{background:#f2f4f8;color:#9aa3b2;box-shadow:none}
+.trailCap{margin:8px 0 0;font-size:clamp(12px,1.9vmin,16px);font-weight:800;color:#7a8a9a;line-height:1.4}
+#btnStart{letter-spacing:1px;font-size:clamp(22px,4vmin,42px);line-height:1.15}
+input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulation}
+#whoPill{background:#e0f7f4;color:#0f766e}
+#gate{align-items:center;justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;
+  background:linear-gradient(165deg,#e8f4ff 0%,#d4ecff 40%,#ffe8f0 100%)}
+.gateCard{width:min(640px,92vw);margin:auto;background:#fff;border-radius:28px;padding:clamp(22px,3.4vmin,36px);
+  box-shadow:0 12px 40px rgba(40,60,90,.18);text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(12px,2vmin,18px)}
+.gateForm{width:100%;display:flex;flex-direction:column;align-items:center;gap:12px}
+.gateFields{width:100%;display:flex;flex-direction:column;gap:12px}
+.field{display:flex;flex-direction:column;align-items:flex-start;gap:6px;font-weight:900;font-size:clamp(16px,2.6vmin,24px);text-align:left;width:100%}
+.field input{width:100%;min-height:64px;border-radius:16px;border:4px solid #b8d4e8;font:inherit;font-size:clamp(22px,4vmin,36px);font-weight:900;
+  padding:8px 16px;color:var(--ink);background:#f7fbff}
+.field input::placeholder{color:#9aa8b6;font-weight:700}
+.field input:focus{outline:none;border-color:#3b82f6;background:#fff}
+.field input.bad{border-color:#e53935;background:#fff5f5}
+.gateErr{margin:0;min-height:0;font-size:clamp(16px,2.6vmin,24px);font-weight:900;color:#c62828;line-height:1.4;width:100%}
+.gateErr:empty{display:none}
+.gateBack{min-height:44px;padding:4px 12px;font-size:clamp(16px,2.4vmin,22px);font-weight:800;color:#5a6a7a}
+.gateHint{margin:0;font-size:clamp(15px,2.4vmin,22px);font-weight:800;color:#5a5a6e;line-height:1.45}
 
 #tip{align-items:center;justify-content:center;background:rgba(40,60,90,.45);z-index:20}
 .tipCard{width:min(640px,92vw);background:#fff;border-radius:28px;padding:clamp(20px,3vmin,36px);box-shadow:0 12px 40px rgba(0,0,0,.25);text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2vmin,18px)}
@@ -312,9 +339,11 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
     <p class="sub">三位數 ÷ 兩位數。跟課本順序填：商 → 乘 → 減。有餘數就最後填。</p>
 
     <div class="rankBadge">
-      <div class="rankKicker">而家頭銜</div>
+      <p class="whoLine" id="whoLine"><span id="whoText">未填班別學號</span><button type="button" class="linkish" id="btnSwitch" hidden>換學生</button></p>
+      <div class="rankKicker" id="rankKicker">而家頭銜</div>
       <div class="rankName" id="rankName">🌱 試商新手</div>
       <div class="rankStars" id="rankStars">累積 ⭐ 0</div>
+      <p class="continueLine" id="continueLine">撳開始，填班別同學號。進度會記喺呢部平板。</p>
       <div class="progressWrap">
         <div class="progressLabel">
           <span id="progressNext">下一級：商位學徒</span>
@@ -324,6 +353,8 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
           <div class="barFill" id="barFill"></div>
         </div>
       </div>
+      <div class="levelTrail" id="levelTrail" role="group" aria-label="關卡"></div>
+      <p class="trailCap">撳已解鎖嘅級可以再練，進度唔會消失</p>
     </div>
 
     <div class="bestRow">
@@ -341,12 +372,12 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
       <button type="button" class="mode sel" data-mode="student" id="modeStudent">
         <div class="mi">🧒</div>
         <div class="mt">學生模式</div>
-        <div class="md">自己填窿窿練習</div>
+        <div class="md">自己填窿窿練習。星星會記住</div>
       </button>
       <button type="button" class="mode" data-mode="teacher" id="modeTeacher">
         <div class="mi">👩‍🏫</div>
         <div class="mt">老師模式</div>
-        <div class="md">投影全班：可暫停、顯示答案</div>
+        <div class="md">投影全班：可暫停、顯示答案。唔會計入學生進度</div>
       </button>
     </div>
 
@@ -364,7 +395,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
       </div>
       <button type="button" class="bigbtn" id="btnStart">開始！</button>
     </div>
-    <p class="note">小四 · 三位數 ÷ 兩位數 · 本機攞星 · 唔會彈出手機鍵盤</p>
+    <p class="note">小四 · 三位數 ÷ 兩位數 · 班別學號記住星星同頭銜 · 做題唔會彈出手機鍵盤</p>
   </div>
     <div class="qrFoot">
     <img class="qr" src="qrcode.png" width="280" height="340" alt="除法直式填空遊戲網址二維碼">
@@ -373,6 +404,26 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
       <p>平板掃碼，打開呢一頁</p>
       <a href="https://sinosee.github.io/p4-division-spot-error/">sinosee.github.io/p4-division-spot-error</a>
     </div>
+  </div>
+</div>
+
+<div id="gate" class="screen">
+  <div class="gateCard">
+    <h2 class="tipTitle">班別學號</h2>
+    <p class="gateHint">用英文字母同數字，唔好打中文名。同一位學生下次打開，會由上次嘅級繼續。</p>
+    <form id="gateForm" class="gateForm" autocomplete="off">
+      <div class="gateFields">
+        <label class="field" for="gateClass">班別
+          <input id="gateClass" name="classId" type="text" inputmode="text" maxlength="24" placeholder="例如 4A" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off" enterkeyhint="next" aria-describedby="gateErr">
+        </label>
+        <label class="field" for="gateNo">學號
+          <input id="gateNo" name="studentNo" type="text" inputmode="text" maxlength="24" placeholder="例如 12" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="off" enterkeyhint="go" aria-describedby="gateErr">
+        </label>
+      </div>
+      <p class="gateErr" id="gateErr" role="alert" aria-live="assertive"></p>
+      <button type="submit" class="bigbtn green" id="btnGateGo">開始</button>
+      <button type="button" class="gateBack" id="btnGateBack">返回</button>
+    </form>
   </div>
 </div>
 
@@ -387,6 +438,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
       ③ 全部填完 → 撳「檢查」
     </div>
     <p class="tipHow">題目係三位數 ÷ 兩位數，有啲有餘數。跟課本：先寫商，再寫積，再寫減出嚟嘅數（落下的數字已經喺減嗰一行）。有餘數嘅題，最後填餘數。大畫面個九宮格喺直式右邊，電話就喺下面。閃住嘅格就係下一步。</p>
+    <p class="tipHow" id="tipFrom"></p>
     <button type="button" class="bigbtn green" id="btnTipGo">明白，開始！</button>
   </div>
 </div>
@@ -399,6 +451,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
     <span class="pill" id="scorePill">⭐ 0</span>
     <span class="pill" id="qPill">第 1／10 題</span>
     <span class="spacer"></span>
+    <span class="pill" id="whoPill" hidden>4A · 12</span>
     <span class="pill" id="modeTag">學生</span>
   </div>
   <div id="playWrap">
@@ -454,6 +507,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
     <div class="endDetail" id="endDetail">
       <div id="endTotalLine"></div>
       <div id="endBestLine"></div>
+      <div id="endSaveLine"></div>
     </div>
     <div class="endBtns">
       <button type="button" class="bigbtn green" id="btnAgain">再玩一局</button>
@@ -487,6 +541,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
   </div>
 </div>
 
+<script src="progress.js"></script>
 <script>
 (function(){
 'use strict';
@@ -508,16 +563,10 @@ var paused = false;
 var answered = false;
 var runClosed = false;
 
-/* Offline only. bestStars is per 普通/較難; totalStars is shared and sets the rank. */
-var STORAGE_KEY = 'p4-division-spot-error-progress-v1';
-var RANKS = [
-  {min: 0, name: '試商新手', icon: '🌱'},
-  {min: 6, name: '商位學徒', icon: '🎓'},
-  {min: 15, name: '直式小師傅', icon: '✏️'},
-  {min: 30, name: '除法達人', icon: '🌟'},
-  {min: 50, name: '除法王者', icon: '👑'}
-];
-var progressCache = null;
+var store = DivisionProgress.createStore();
+var player = null;
+var chosenLevel = null;
+var gatePurpose = 'start';
 var cur = null; // current problem
 var runPlan = []; // true = 有餘數, one flag per question in this run of 10
 var blanks = []; // {id, answer, el, value}
@@ -526,7 +575,7 @@ var audioCtx = null;
 
 function $(id){ return document.getElementById(id); }
 function show(id){
-  ['start','tip','play','end','levelup'].forEach(function(s){ $(s).classList.toggle('on', s===id); });
+  ['start','tip','play','end','levelup','gate'].forEach(function(s){ $(s).classList.toggle('on', s===id); });
   if(id === 'start') renderStartProgress();
 }
 function rand(a,b){ return a + Math.floor(Math.random()* (b-a+1)); }
@@ -1257,65 +1306,26 @@ function loadQuestion(){
   }
 }
 
-function toInt(v, min, max){
-  var n = Math.floor(Number(v));
-  if(!isFinite(n)) n = min;
-  if(n < min) n = min;
-  if(n > max) n = max;
-  return n;
+function activeProgress(){
+  if(mode === 'teacher') return store.loadTeacher();
+  if(!player) return DivisionProgress.emptyProgress();
+  return store.loadStudent(player.classId, player.studentNo);
 }
-function emptyProgress(){
-  return {totalStars: 0, bestNormal: 0, bestHard: 0};
-}
-function copyProgress(p){
-  return {totalStars: p.totalStars, bestNormal: p.bestNormal, bestHard: p.bestHard};
-}
-function readStoredProgress(){
-  var raw = localStorage.getItem(STORAGE_KEY);
-  if(!raw) return null;
-  var data = JSON.parse(raw);
-  if(!data || typeof data !== 'object') return emptyProgress();
-  var best = data.bestStars && typeof data.bestStars === 'object' ? data.bestStars : {};
-  return {
-    totalStars: toInt(data.totalStars, 0, 100000),
-    bestNormal: toInt(best.normal, 0, 3),
-    bestHard: toInt(best.hard, 0, 3)
-  };
-}
-function loadProgress(){
-  if(progressCache) return copyProgress(progressCache);
-  try{
-    var stored = readStoredProgress();
-    if(stored) progressCache = stored;
-  }catch(e){}
-  if(progressCache) return copyProgress(progressCache);
-  return emptyProgress();
-}
-function saveProgress(p){
-  progressCache = {
-    totalStars: toInt(p.totalStars, 0, 100000),
-    bestNormal: toInt(p.bestNormal, 0, 3),
-    bestHard: toInt(p.bestHard, 0, 3)
-  };
-  try{
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      totalStars: progressCache.totalStars,
-      bestStars: {normal: progressCache.bestNormal, hard: progressCache.bestHard}
-    }));
-  }catch(e){}
-}
-function rankAt(total){
-  var idx = 0;
-  for(var i = 0; i < RANKS.length; i++){
-    if(total >= RANKS[i].min) idx = i;
-  }
-  return idx;
+function persistProgress(next){
+  if(mode === 'teacher') return store.saveTeacher(next);
+  if(!player) return DivisionProgress.normalizeProgress(next);
+  return store.saveStudent(player, next) || DivisionProgress.normalizeProgress(next);
 }
 function heartsToStars(h){
   if(h >= 3) return 3;
   if(h === 2) return 2;
   if(h === 1) return 1;
   return 0;
+}
+function rankTitle(idx){
+  var ranks = DivisionProgress.RANKS;
+  var rank = ranks[idx] || ranks[0];
+  return '第 ' + (idx + 1) + ' 級 ' + rank.name;
 }
 function starMarks(n){
   var s = '';
@@ -1329,26 +1339,51 @@ function setBestEl(el, n){
   el.textContent = bestLabel(n);
   el.classList.toggle('empty', n <= 0);
 }
+function renderTrail(view){
+  var box = $('levelTrail');
+  box.textContent = '';
+  DivisionProgress.RANKS.forEach(function(rank, i){
+    var level = i + 1;
+    var unlocked = level <= view.highestLevel;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'lvChip' + (level === view.highestLevel ? ' now' : '') + (unlocked ? '' : ' locked');
+    btn.disabled = !unlocked;
+    if(level === view.highestLevel) btn.setAttribute('aria-current', 'true');
+    btn.textContent = (unlocked ? rank.icon : '🔒') + ' 第' + level + '級';
+    btn.setAttribute('aria-label', unlocked
+      ? ('由第 ' + level + ' 級開始練習，' + rank.name + '。唔會清除已解鎖進度')
+      : ('第 ' + level + ' 級 ' + rank.name + '，未解鎖'));
+    if(unlocked){
+      btn.addEventListener('click', function(){
+        chosenLevel = level;
+        beginPlay();
+      });
+    }
+    box.appendChild(btn);
+  });
+}
 function renderStartProgress(){
-  var p = loadProgress();
-  var idx = rankAt(p.totalStars);
-  var rank = RANKS[idx];
-  var next = RANKS[idx + 1];
+  var p = activeProgress();
+  var view = DivisionProgress.levelView(p);
+  var rank = view.rank;
+  var next = view.barNext;
+  $('rankKicker').textContent = '第 ' + view.starLevel + ' 級 · 而家頭銜';
   $('rankName').textContent = rank.icon + ' ' + rank.name;
   $('rankStars').textContent = '累積 ⭐ ' + p.totalStars;
   var bar = $('rankBar');
   if(next){
-    $('progressNext').textContent = '下一級：' + next.name;
+    $('progressNext').textContent = '下一級：第 ' + (view.starLevel + 1) + ' 級 ' + next.name;
     $('progressCount').textContent = p.totalStars + '／' + next.min;
-    var span = next.min - rank.min;
-    var pct = span > 0 ? ((p.totalStars - rank.min) / span) * 100 : 100;
+    var span = next.min - view.barRank.min;
+    var pct = span > 0 ? ((p.totalStars - view.barRank.min) / span) * 100 : 100;
     if(pct < 0) pct = 0;
     if(pct > 100) pct = 100;
     $('barFill').style.width = pct + '%';
-    bar.setAttribute('aria-valuemin', String(rank.min));
+    bar.setAttribute('aria-valuemin', String(view.barRank.min));
     bar.setAttribute('aria-valuemax', String(next.min));
     bar.setAttribute('aria-valuenow', String(p.totalStars));
-    bar.setAttribute('aria-valuetext', p.totalStars + '／' + next.min + '，下一級 ' + next.name);
+    bar.setAttribute('aria-valuetext', p.totalStars + '／' + next.min + '，下一級 第 ' + (view.starLevel + 1) + ' 級 ' + next.name);
   } else {
     $('progressNext').textContent = '已達最高頭銜';
     $('progressCount').textContent = p.totalStars + ' 星';
@@ -1360,6 +1395,27 @@ function renderStartProgress(){
   }
   setBestEl($('bestNormal'), p.bestNormal);
   setBestEl($('bestHard'), p.bestHard);
+  if(mode === 'teacher'){
+    $('whoText').textContent = '老師模式 · 唔會計入學生進度';
+    $('btnSwitch').hidden = true;
+    $('continueLine').textContent = view.hasProgress
+      ? ('示範進度 ' + view.summary + '。學生紀錄唔會變。')
+      : '老師示範的星星分開儲存，唔會計入學生進度。';
+    $('btnStart').textContent = view.hasProgress ? '繼續示範' : '開始示範';
+  } else if(player){
+    $('whoText').textContent = player.classId + ' · ' + player.studentNo;
+    $('btnSwitch').hidden = false;
+    $('continueLine').textContent = view.hasProgress ? view.continueDetail : '由第 1 級開始。完成一局就會記住。';
+    $('btnStart').textContent = view.continueLabel;
+  } else {
+    $('whoText').textContent = '未填班別學號';
+    $('btnSwitch').hidden = true;
+    $('continueLine').textContent = store.hasUnclaimedLegacy()
+      ? '呢部平板有舊星星。第一位填班別學號嘅學生會接手。'
+      : '撳開始，填班別同學號。進度會記喺呢部平板。';
+    $('btnStart').textContent = '開始！';
+  }
+  renderTrail(view);
 }
 function fillEndDetail(beforeTotal, after){
   var line = $('endTotalLine');
@@ -1381,33 +1437,37 @@ function endGame(){
   if(runClosed) return;
   runClosed = true;
   var earned = heartsToStars(hearts);
-  var before = loadProgress();
-  var after = {
-    totalStars: before.totalStars + earned,
-    bestNormal: hard ? before.bestNormal : Math.max(before.bestNormal, earned),
-    bestHard: hard ? Math.max(before.bestHard, earned) : before.bestHard
-  };
-  saveProgress(after);
-  var oldIdx = rankAt(before.totalStars);
-  var newIdx = rankAt(after.totalStars);
+  var before = activeProgress();
+  var after = persistProgress(DivisionProgress.applyRun(before, earned, hard));
+  var oldIdx = DivisionProgress.rankIndex(before.totalStars);
+  var newIdx = DivisionProgress.rankIndex(after.totalStars);
   var rankedUp = newIdx > oldIdx;
   var correct = Math.floor(score / (hard ? 15 : 10));
+  var afterView = DivisionProgress.levelView(after);
+  var ranks = DivisionProgress.RANKS;
 
   $('endStars').textContent = earned > 0 ? starMarks(earned) : '💫';
   $('endTitle').textContent = earned >= 3 ? '做得好！' : (earned > 0 ? '完成！' : '再試過啦！');
   $('endScore').textContent = '得分 ' + score + ' · 答啱 ' + correct + '／' + TOTAL_Q;
   $('endGain').textContent = '今局 +' + earned + ' 星';
   fillEndDetail(before.totalStars, after);
+  if(mode === 'teacher'){
+    $('endSaveLine').textContent = '已儲存喺老師示範，學生進度冇變。';
+  } else if(player){
+    $('endSaveLine').textContent = player.classId + ' · ' + player.studentNo + ' 的進度已儲存。' + afterView.summary + '。';
+  } else {
+    $('endSaveLine').textContent = '';
+  }
   var banner = $('levelupBanner');
   if(rankedUp){
     banner.classList.add('on');
     banner.removeAttribute('aria-hidden');
-    $('levelupPath').textContent = RANKS[oldIdx].name + ' → ' + RANKS[newIdx].name;
-    $('luFrom').textContent = RANKS[oldIdx].name;
-    $('luTo').textContent = RANKS[newIdx].icon + ' ' + RANKS[newIdx].name;
-    var next = RANKS[newIdx + 1];
-    $('luMsg').textContent = '累積星達到 ' + RANKS[newIdx].min + '！' + (next
-      ? '繼續挑戰，下一級係「' + next.name + '」（' + next.min + ' 星）。'
+    $('levelupPath').textContent = rankTitle(oldIdx) + ' → ' + rankTitle(newIdx);
+    $('luFrom').textContent = rankTitle(oldIdx);
+    $('luTo').textContent = ranks[newIdx].icon + ' ' + rankTitle(newIdx);
+    var next = ranks[newIdx + 1];
+    $('luMsg').textContent = '累積星達到 ' + ranks[newIdx].min + '！' + (next
+      ? '繼續挑戰，下一級係第 ' + (newIdx + 2) + ' 級「' + next.name + '」（' + next.min + ' 星）。'
       : '你已經係最高頭銜，繼續保持！');
     $('luStars').textContent = '累積 ⭐ ' + after.totalStars;
     show('levelup');
@@ -1430,22 +1490,125 @@ function startGame(){
   updateHearts();
   $('scorePill').textContent = '⭐ 0';
   $('modeTag').textContent = mode === 'teacher' ? '老師' : '學生';
+  var who = $('whoPill');
+  if(mode === 'teacher'){
+    who.hidden = false;
+    who.textContent = '老師示範';
+  } else if(player){
+    who.hidden = false;
+    who.textContent = player.classId + ' · ' + player.studentNo;
+  } else {
+    who.hidden = true;
+  }
+  var view = DivisionProgress.levelView(activeProgress());
+  var from = chosenLevel && chosenLevel <= view.highestLevel ? chosenLevel : null;
+  if(from && from < view.highestLevel){
+    $('tipFrom').textContent = '由第 ' + from + ' 級再練一次。已解鎖至第 ' + view.highestLevel + ' 級，唔會倒退。';
+  } else if(view.hasProgress && view.nextLevel){
+    $('tipFrom').textContent = '已解鎖至第 ' + view.highestLevel + ' 級。呢局衝第 ' + view.nextLevel + ' 級。';
+  } else if(!view.hasProgress){
+    $('tipFrom').textContent = '由第 1 級開始。完成呢局就會記住。';
+  } else {
+    $('tipFrom').textContent = '已解鎖至第 ' + view.highestLevel + ' 級。你已經係最高頭銜。';
+  }
   show('tip');
+}
+function beginPlay(){
+  if(mode === 'teacher'){
+    startGame();
+    return;
+  }
+  openGate('start');
+}
+function beginContinue(){
+  chosenLevel = null;
+  beginPlay();
+}
+function openGate(purpose){
+  gatePurpose = purpose || 'start';
+  var cls = $('gateClass');
+  var no = $('gateNo');
+  var saved = player || store.readIdentity();
+  if(saved){
+    cls.value = saved.classId || '';
+    no.value = saved.studentNo || '';
+  }
+  applyGate(false);
+  $('btnGateGo').textContent = gatePurpose === 'switch' ? '記住呢位學生' : '開始';
+  show('gate');
+  setTimeout(function(){
+    if(cls.value){
+      no.focus();
+      if(no.select) no.select();
+    } else {
+      cls.focus();
+    }
+  }, 60);
+}
+function applyGate(forceEmpty){
+  var cls = $('gateClass');
+  var no = $('gateNo');
+  var err = $('gateErr');
+  var btn = $('btnGateGo');
+  var result = DivisionProgress.validateIdentity(cls.value, no.value);
+  var loud = !result.ok && (result.code !== 'empty' || forceEmpty);
+  err.textContent = loud ? result.message : '';
+  cls.classList.toggle('bad', !!(loud && result.fields.indexOf('classId') >= 0));
+  no.classList.toggle('bad', !!(loud && result.fields.indexOf('studentNo') >= 0));
+  cls.setAttribute('aria-invalid', (loud && result.fields.indexOf('classId') >= 0) ? 'true' : 'false');
+  no.setAttribute('aria-invalid', (loud && result.fields.indexOf('studentNo') >= 0) ? 'true' : 'false');
+  btn.classList.toggle('is-locked', !result.ok);
+  return result;
 }
 
 // Mode buttons
 $('modeStudent').addEventListener('click', function(){
   mode = 'student';
+  chosenLevel = null;
   $('modeStudent').classList.add('sel');
   $('modeTeacher').classList.remove('sel');
+  renderStartProgress();
 });
 $('modeTeacher').addEventListener('click', function(){
   mode = 'teacher';
+  chosenLevel = null;
   $('modeTeacher').classList.add('sel');
   $('modeStudent').classList.remove('sel');
+  renderStartProgress();
 });
 
-$('btnStart').addEventListener('click', startGame);
+$('btnStart').addEventListener('click', beginContinue);
+$('btnSwitch').addEventListener('click', function(){ openGate('switch'); });
+$('gateClass').addEventListener('input', function(){ applyGate(false); });
+$('gateNo').addEventListener('input', function(){ applyGate(false); });
+$('gateClass').addEventListener('keydown', function(ev){
+  if(ev.key === 'Enter'){
+    ev.preventDefault();
+    $('gateNo').focus();
+  }
+});
+$('gateForm').addEventListener('submit', function(ev){
+  ev.preventDefault();
+  var result = applyGate(true);
+  if(!result.ok){
+    var focusId = result.field === 'studentNo' ? 'gateNo' : 'gateClass';
+    $(focusId).focus();
+    return;
+  }
+  player = {classId: result.classId, studentNo: result.studentNo, displayName: result.displayName};
+  store.writeIdentity(player);
+  store.loadStudent(player.classId, player.studentNo);
+  if(gatePurpose === 'switch'){
+    chosenLevel = null;
+    show('start');
+    return;
+  }
+  startGame();
+});
+$('btnGateBack').addEventListener('click', function(){
+  chosenLevel = null;
+  show('start');
+});
 $('btnTipGo').addEventListener('click', function(){
   show('play');
   buildKeypad();
@@ -1477,16 +1640,23 @@ $('btnResume').addEventListener('click', function(){
   paused = false;
   $('pausedOverlay').classList.remove('on');
 });
-$('btnAgain').addEventListener('click', startGame);
+$('btnAgain').addEventListener('click', function(){
+  chosenLevel = null;
+  if(mode === 'teacher' || player) startGame();
+  else openGate('start');
+});
 $('btnMenu').addEventListener('click', function(){ show('start'); });
 $('btnLevelup').addEventListener('click', function(){ show('end'); });
+var savedPlayer = store.readIdentity();
+if(savedPlayer) player = savedPlayer;
 renderStartProgress();
 
-// Prevent system keyboard / focus issues
+// Keep the play screen off the system keyboard. The 班別學號 gate needs it.
 document.addEventListener('focusin', function(e){
-  if(e.target && e.target.tagName === 'INPUT' && e.target.type !== 'checkbox'){
-    e.target.blur();
-  }
+  var t = e.target;
+  if(!t || t.tagName !== 'INPUT' || t.type === 'checkbox') return;
+  if(t.closest && t.closest('#gate')) return;
+  t.blur();
 });
 })();
 </script>
