@@ -8,7 +8,7 @@
 <meta name="format-detection" content="telephone=no">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffe4f4">
-<meta name="description" content="小一英文字母打字：52 關，由小楷字母、大楷、詞語，玩到短文，再練自己嘅 Google Classroom 帳號同密碼。每關最多三粒星。">
+<meta name="description" content="小一英文字母打字：52 關，由小楷字母、大楷、詞語，到短文，再練習自己的 Google Classroom 帳號和密碼。每關最多三顆星。">
 <title>英文字母打字</title>
 <link rel="preload" href="andika-latin-700.woff2" as="font" type="font/woff2" crossorigin>
 <!-- Letterforms: Andika by SIL, Latin bold subset. License: OFL.txt -->
@@ -523,7 +523,7 @@ a.backsite:hover{text-decoration:underline}
       <img class="mascot" src="../assets/mascot.jpg" alt="Q版白色小狗" width="64" height="64">
       <div>
         <h1>🌟 英文字母打字 🌟</h1>
-        <p class="brandSub">52 關 · 字母玩到帳號</p>
+        <p class="brandSub">52 關 · 由字母到帳號</p>
       </div>
     </div>
     <div class="statRow">
@@ -531,24 +531,24 @@ a.backsite:hover{text-decoration:underline}
       <label class="soundToggle"><input type="checkbox" id="optSound" checked> 音效</label>
     </div>
     <p class="banner" id="banner" hidden></p>
-    <div class="jumps" id="jumps" role="navigation" aria-label="跳去某一頁關卡"></div>
+    <div class="jumps" id="jumps" role="navigation" aria-label="跳到某一頁關卡"></div>
   </div>
   <div id="scroller" tabindex="-1"></div>
   <div class="qrFoot">
     <img class="qr" src="qrcode.png" width="112" height="132" alt="英文字母打字遊戲網址二維碼">
     <div>
       <img class="dog" src="../assets/mascot.jpg" width="52" height="52" alt="">
-      <p>平板掃碼，打開呢一頁</p>
+      <p>用平板掃描二維碼，打開這一頁</p>
       <a href="https://sinosee.github.io/p1-letter-typing/">sinosee.github.io/p1-letter-typing</a>
-      <p class="qrNote"><a class="backsite" href="../">返遊戲站</a> · 唔使登入 · 重新整理會清走星星 · 帳號同密碼唔會儲存</p>
+      <p class="qrNote"><a class="backsite" href="../">返回遊戲站</a> · 不用登入 · 重新整理會清除星星 · 帳號和密碼不會儲存</p>
     </div>
   </div>
 </section>
 
 <section id="play" class="screen" aria-label="打字">
   <div class="topbar">
-    <button type="button" class="iconbtn" id="btnHome" aria-label="返主頁">🏠</button>
-    <button type="button" class="iconbtn" id="btnSound" aria-pressed="true" aria-label="音效開住，撳一下閂">🔊</button>
+    <button type="button" class="iconbtn" id="btnHome" aria-label="返回主頁">🏠</button>
+    <button type="button" class="iconbtn" id="btnSound" aria-pressed="true" aria-label="音效已開啟，按一下關閉">🔊</button>
     <span class="pill lv" id="lvPill">第 1 關</span>
     <span class="pill phase" id="phasePill">🐣 小楷</span>
     <span class="pill prog" id="progPill">1 / 9</span>
@@ -560,27 +560,27 @@ a.backsite:hover{text-decoration:underline}
   <div class="stage">
     <div class="hints" id="hints"></div>
     <div class="letterCard" id="viewLetter">
-      <p class="ask">打呢個字母</p>
+      <p class="ask">打這個字母</p>
       <div class="glyph letters" id="glyph" lang="en">a</div>
     </div>
     <div class="wordCard" id="viewWord" hidden>
-      <p class="ask" id="wordAsk">打呢個詞</p>
+      <p class="ask" id="wordAsk">打這個詞</p>
       <div class="wordShow letters" id="wordShow" lang="en"></div>
       <div class="slots" id="slots"></div>
     </div>
     <div class="textCard" id="viewText" hidden>
-      <p class="ask" id="textAsk">打呢段</p>
+      <p class="ask" id="textAsk">打這一段</p>
       <p class="passage letters" id="passage" lang="en"></p>
     </div>
     <div class="practiceCard" id="viewPractice" hidden>
       <p class="practiceTitle" id="practiceTitle">Google Classroom 帳號</p>
-      <p class="practiceTip" id="practiceTip">請睇學生手冊第21頁</p>
+      <p class="practiceTip" id="practiceTip">請看學生手冊第 21 頁</p>
       <p class="practiceShape" id="practiceShape"></p>
-      <p class="practiceDigit" id="practiceDigit">數字要先撳藍色 123。</p>
+      <p class="practiceDigit" id="practiceDigit">數字要先按藍色 123。</p>
       <p class="practiceAttempt" id="practiceAttempt">第 1／5 次</p>
       <div class="practiceField" id="practiceField" translate="no">
         <span class="practiceText letters" id="practiceText" lang="en"></span>
-        <span class="practicePlaceholder" id="practicePlaceholder">打你嘅帳號</span>
+        <span class="practicePlaceholder" id="practicePlaceholder">打你的帳號</span>
         <span class="caret" aria-hidden="true"></span>
       </div>
       <button type="button" class="bigbtn practiceSubmit" id="btnSubmit">提交</button>
@@ -589,7 +589,7 @@ a.backsite:hover{text-decoration:underline}
     <p class="status" id="status"></p>
   </div>
   <div class="kbDock">
-    <p class="kbLegend">黃色 ⇧ 係大楷（向上）· 長鍵係空格 · 123 有數字同符號 · 快撳兩下 ⇧ 可以鎖住大楷</p>
+    <p class="kbLegend">黃色 ⇧ 是大楷（向上）· 長鍵是空格 · 123 有數字和符號 · 快速按兩下 ⇧ 可以鎖定大楷</p>
     <div class="kb" id="kb" role="group" aria-label="鍵盤"></div>
   </div>
 </section>
@@ -598,12 +598,12 @@ a.backsite:hover{text-decoration:underline}
   <div class="resultCard">
     <div class="resultMark" id="resultMark" aria-hidden="true">🎉</div>
     <div class="resultStars" id="resultStars" aria-hidden="true"></div>
-    <h2 class="resultTitle" id="resultTitle">完成啦！</h2>
+    <h2 class="resultTitle" id="resultTitle">完成了！</h2>
     <p class="resultWhy" id="resultWhy"></p>
     <p class="resultNums" id="resultNums"></p>
     <div class="resultActions">
       <button type="button" class="bigbtn" id="btnResultNext">下一關</button>
-      <button type="button" class="bigbtn alt" id="btnResultHome">返主頁睇星星</button>
+      <button type="button" class="bigbtn alt" id="btnResultHome">返回主頁查看星星</button>
     </div>
   </div>
 </div>
@@ -620,48 +620,48 @@ window.addEventListener("error", function(ev){
 
 /* ============================================================
    52 關課程（每頁 10 關，最後一頁 2 關，6 頁可以滾動）
-   由舊 100 關抽薄：每種技巧都仲會見到，同一種少練幾關。
+   由舊 100 關精簡而來：每種技巧仍會出現，同一種少練幾關。
    --------------------------------------------------------
    第 1–10 關   小楷入門（全鍵提示）：abc…yz、易混字母、a–z
    第 11 關     大楷入門：同小楷一樣亮所需字母鍵，未開大楷時一齊亮 ⇧
-   第 12–16 關  大楷字母：要先撳 Shift（⇧），唔亮鍵
-   第 17–20 關  大細楷混合字母，唔亮鍵
-   第 21–28 關  詞語：三字母，然後四字母，唔亮鍵
-   第 29 關     開頭大楷嘅詞：全鍵提示（大楷連 ⇧）
-   第 30 關     開頭大楷嘅詞，唔亮鍵
+   第 12–16 關  大楷字母：要先按 Shift（⇧），不亮鍵
+   第 17–20 關  大小楷混合字母，不亮鍵
+   第 21–28 關  詞語：三字母，然後四字母，不亮鍵
+   第 29 關     開頭大楷的詞：全鍵提示（大楷連 ⇧）
+   第 30 關     開頭大楷的詞，不亮鍵
    第 31 關     詞組，第一次空格：只亮空格鍵
-   第 32–33 關  詞組，唔亮鍵
+   第 32–33 關  詞組，不亮鍵
    第 34 關     詞組（有大楷）：全鍵提示，同小楷入門一樣
-   第 35 關     詞組，唔亮鍵
+   第 35 關     詞組，不亮鍵
    第 36 關     短句入門：只亮標點（先 123，再句號）
-   第 37–40 關  短句，唔亮鍵
-   第 41–50 關  短句同短文：完全唔亮鍵（包括第 48–49 關嘅數字）
-   第 51 關     Google Classroom 帳號：學生打自己本手冊嘅帳號，唔亮鍵
-   第 52 關     Google Classroom 密碼：學生打自己本手冊嘅密碼，唔亮鍵
+   第 37–40 關  短句，不亮鍵
+   第 41–50 關  短句和短文：完全不亮鍵（包括第 48–49 關的數字）
+   第 51 關     Google Classroom 帳號：學生打自己手冊上的帳號，不亮鍵
+   第 52 關     Google Classroom 密碼：學生打自己手冊上的密碼，不亮鍵
 
    亮鍵規則：
-   第 1–10 關小楷入門全鍵提示。第 11、29、34 關同樣亮而家要撳嘅鍵
+   第 1–10 關小楷入門全鍵提示。第 11、29、34 關同樣亮現在要按的鍵
    （大楷未開時連黃色 ⇧）。第 31 關只亮空格。第 36 關只亮標點：
-   字母鍵盤亮 123，去到數字鍵盤先亮句號。第 41 關起永遠唔亮鍵
+   字母鍵盤亮 123，到了數字鍵盤才亮句號。第 41 關起永遠不亮鍵
    （包括第 51–52 關練習）。
-   其餘關唔亮字母鍵；空格、標點、數字若第一次出現喺第 41 關之前，
-   仍然只亮嗰粒新鍵（鍵喺 123 層就先提示 123）。
+   其餘關不亮字母鍵；空格、標點、數字若第一次出現在第 41 關之前，
+   仍然只亮那一個新鍵（鍵在 123 層就先提示 123）。
 
-   第 51–52 關係自由練習，唔對答案，亦冇標準答案字串。
-   撳「提交」5 次（空白唔計）就有三粒星。
-   打咗嘅帳號同密碼只係暫時顯示，提交、離開或者完成就清走。
-   唔寫入 localStorage、sessionStorage、cookie、IndexedDB、
-   console，亦唔會傳去任何伺服器。
+   第 51–52 關是自由練習，不核對答案，亦沒有標準答案字串。
+   按「提交」5 次（空白不計）就有三顆星。
+   已打的帳號和密碼只是暫時顯示，提交、離開或完成就清除。
+   不寫入 localStorage、sessionStorage、cookie、IndexedDB、
+   console，亦不會傳送到任何伺服器。
 
-   星星（做完先計；中途離開唔改寫；同一頁內留最好嗰次）
+   星星（做完才計算；中途離開不改寫；同一頁內保留最好的一次）
    第 1–50 關：
    ★★★  0 次打錯
    ★★   打錯 1–2 次
    ★    做完，但打錯 3 次或以上
-   第 51–52 關：做齊 5 次提交就係 ★★★。
-   唔計速度，冇倒數，冇時限。
-   星星唔寫入 localStorage，重新整理就由 0 開始。
-   音效先至存 localStorage（p1letters_levels_v1，只存 sound）。
+   第 51–52 關：完成 5 次提交就是 ★★★。
+   不計速度，沒有倒數，沒有時限。
+   星星不寫入 localStorage，重新整理就由 0 開始。
+   音效才會存入 localStorage（p1letters_levels_v1，只存 sound）。
    ============================================================ */
 
 var STORE_KEY = "p1letters_levels_v1";
@@ -673,12 +673,12 @@ var JUMP_COLORS = ["#ffb3d4","#ffd15c","#9cf0c8","#9fd8ff","#d7c6ff","#ffc49a","
 var CARD_COLORS = ["#ff7eb3","#ffb347","#f0c93a","#3dbe7a","#4dabf7","#8e7dff","#ff7ad9","#ff9a62","#2ec4b6","#ff8fab"];
 var PAGE_WASH = ["#ffe3f1","#fff4cc","#ddf8ea","#e3f3ff","#f3e8ff","#ffe8d6","#e5fff6","#ffe4ee","#eaf0ff","#fff6d8"];
 var PAGE_META = [
-  {title:"🐣 第 1–10 關 · 小楷入門", blurb:"abc 練到 yz，再練易混字母同成個字母表"},
-  {title:"🦁 第 11–20 關 · 大楷同大細楷", blurb:"先撳黃色 ⇧ 打大楷，再大細楷夾埋"},
+  {title:"🐣 第 1–10 關 · 小楷入門", blurb:"由 abc 練到 yz，再練易混字母和整個字母表"},
+  {title:"🦁 第 11–20 關 · 大楷和大小楷", blurb:"先按黃色 ⇧ 打大楷，再練習大小楷混合"},
   {title:"🐱 第 21–30 關 · 詞語", blurb:"三字母、四字母，然後開頭大楷"},
-  {title:"💬 第 31–40 關 · 詞組同短句", blurb:"第 31 關開始空格；第 36 關開始短句同句號"},
-  {title:"📖 第 41–50 關 · 短句同短文", blurb:"短句練完打兩句。第 48–49 關有數字"},
-  {title:"🏫 第 51–52 關 · Google Classroom", blurb:"睇學生手冊第21頁，練習自己嘅帳號同密碼"}
+  {title:"💬 第 31–40 關 · 詞組和短句", blurb:"第 31 關開始有空格；第 36 關開始有短句和句號"},
+  {title:"📖 第 41–50 關 · 短句和短文", blurb:"短句練完再打兩句。第 48–49 關有數字"},
+  {title:"🏫 第 51–52 關 · Google Classroom", blurb:"看學生手冊第 21 頁，練習自己的帳號和密碼"}
 ];
 
 var SPECS = [
@@ -739,8 +739,8 @@ var SPECS = [
   {kind:"text", text:"I have 2 pens. The pens are red.", preview:"I have 2 pens…"},
   {kind:"text", text:"I am happy today. I can read and play.", preview:"I am happy today…"},
 
-  {kind:"practice", mode:"account", attempts:PRACTICE_TIMES, title:"Google Classroom 帳號", preview:"自己嘅帳號", tip:"請睇學生手冊第21頁", shape:"帳號係 sb，再加四個數字。", placeholder:"打你嘅帳號"},
-  {kind:"practice", mode:"password", attempts:PRACTICE_TIMES, title:"Google Classroom 密碼", preview:"自己嘅密碼", tip:"請睇學生手冊第21頁", shape:"密碼係四個英文字母，再加四個數字。", placeholder:"打你嘅密碼"}
+  {kind:"practice", mode:"account", attempts:PRACTICE_TIMES, title:"Google Classroom 帳號", preview:"自己的帳號", tip:"請看學生手冊第 21 頁", shape:"帳號是 sb，再加四個數字。", placeholder:"打你的帳號"},
+  {kind:"practice", mode:"password", attempts:PRACTICE_TIMES, title:"Google Classroom 密碼", preview:"自己的密碼", tip:"請看學生手冊第 21 頁", shape:"密碼是四個英文字母，再加四個數字。", placeholder:"打你的密碼"}
 ];
 
 function specSource(spec){
@@ -750,9 +750,9 @@ function specSource(spec){
   return spec.letters || "";
 }
 
-/* 每個非字母字元第一次出現嘅關卡。
-   全鍵提示（第 1–10、11、29、34 關）同第 41–50 關（完全唔亮鍵）以外，
-   只喺呢一關提示該鍵。第 31 關空格、第 36 關標點另有指定規則。 */
+/* 每個非字母字元第一次出現的關卡。
+   全鍵提示（第 1–10、11、29、34 關）和第 41–50 關（完全不亮鍵）以外，
+   只在這一關提示該鍵。第 31 關空格、第 36 關標點另有指定規則。 */
 var FIRST_SPECIAL = {};
 SPECS.forEach(function(spec, index){
   var blob = specSource(spec);
@@ -796,7 +796,7 @@ var layoutName = "letters";
 var timers = [];
 var audioCtx = null;
 var praiseI = 0;
-var PRAISE = ["啱！","好叻！","掂！"];
+var PRAISE = ["正確！","真棒！","很好！"];
 
 var $ = function(id){return document.getElementById(id);};
 
@@ -827,13 +827,13 @@ function phaseOf(id){
   return {key:"para", label:"短文", emoji:"📖"};
 }
 
-/* 全鍵提示：而家要打嘅字係邊粒就亮邊粒（大楷未開時連 ⇧）。
-   第 1–10 關小楷入門，同第 11、29、34 關大楷。 */
+/* 全鍵提示：現在要打的字是哪一個鍵就亮哪一個鍵（大楷未開時連 ⇧）。
+   第 1–10 關小楷入門，以及第 11、29、34 關大楷。 */
 function hasFullHints(id){
   return (id >= 1 && id <= 10) || id === 11 || id === 29 || id === 34;
 }
 
-/* 第 41 關起覆蓋一切亮鍵。第 41–50 關同之前一樣；第 51–52 關練習亦唔亮鍵。 */
+/* 第 41 關起覆蓋一切亮鍵。第 41–50 關和之前一樣；第 51–52 關練習亦不亮鍵。 */
 function hintsOff(id){
   return id >= 41;
 }
@@ -914,9 +914,9 @@ function calcStars(mistakes){
 }
 
 function explainStars(stars, mistakes){
-  if(stars === 3) return "一次都冇打錯，三粒星。";
-  if(mistakes <= 2) return "打錯 " + mistakes + " 次，所以兩粒星。";
-  return "打錯 " + mistakes + " 次，做完都有一粒星。";
+  if(stars === 3) return "一次都沒有打錯，三顆星。";
+  if(mistakes <= 2) return "打錯 " + mistakes + " 次，所以是兩顆星。";
+  return "打錯 " + mistakes + " 次，完成後仍有一顆星。";
 }
 
 var LEVELS = SPECS.map(function(spec, index){
@@ -1062,7 +1062,7 @@ function selfCheck(){
   if(calcStars(0) !== 3 || calcStars(1) !== 2 || calcStars(2) !== 2 || calcStars(3) !== 1) issues.push("星星");
   if(highlightKind(1, "a") !== "full" || highlightKind(10, "z") !== "full") issues.push("1–10提示");
   if(highlightKind(11, "A") !== "full") issues.push("第11關提示");
-  if(highlightKind(12, "F") !== "none" || highlightKind(20, "b") !== "none") issues.push("12–20唔提示");
+  if(highlightKind(12, "F") !== "none" || highlightKind(20, "b") !== "none") issues.push("12–20不提示");
   if(highlightKind(29, "C") !== "full" || highlightKind(29, "a") !== "full") issues.push("第29關提示");
   if(highlightKind(30, "S") !== "none" || highlightKind(30, "u") !== "none") issues.push("第30關提示");
   if(highlightKind(31, " ") !== "special" || highlightKind(31, "a") !== "none") issues.push("第31關提示");
@@ -1070,8 +1070,8 @@ function selfCheck(){
   if(highlightKind(34, "I") !== "full" || highlightKind(34, " ") !== "full" || highlightKind(34, "a") !== "full") issues.push("第34關提示");
   if(highlightKind(35, "I") !== "none" || highlightKind(35, " ") !== "none") issues.push("第35關提示");
   if(highlightKind(36, ".") !== "special" || highlightKind(36, "I") !== "none" || highlightKind(36, " ") !== "none" || highlightKind(36, "a") !== "none") issues.push("第36關提示");
-  if(highlightKind(37, ".") !== "none" || highlightKind(37, " ") !== "none" || highlightKind(40, "a") !== "none") issues.push("37–40唔提示");
-  if(highlightKind(41, "I") !== "none" || highlightKind(45, "a") !== "none" || highlightKind(45, ".") !== "none" || highlightKind(45, " ") !== "none") issues.push("41–45唔提示");
+  if(highlightKind(37, ".") !== "none" || highlightKind(37, " ") !== "none" || highlightKind(40, "a") !== "none") issues.push("37–40不提示");
+  if(highlightKind(41, "I") !== "none" || highlightKind(45, "a") !== "none" || highlightKind(45, ".") !== "none" || highlightKind(45, " ") !== "none") issues.push("41–45不提示");
   if(highlightKind(46, ".") !== "none" || highlightKind(46, " ") !== "none") issues.push("第46關");
   if(highlightKind(48, "1") !== "none" || highlightKind(48, " ") !== "none" || highlightKind(48, ".") !== "none") issues.push("第48關");
   if(highlightKind(49, "2") !== "none" || highlightKind(49, "1") !== "none") issues.push("第49關");
@@ -1108,8 +1108,8 @@ function selfCheck(){
   if(!l52 || l52.spec.kind !== "practice" || l52.spec.mode !== "password" || l52.page !== 6) issues.push("第52關");
   if(!l51 || !l52 || l51.spec.attempts !== 5 || l52.spec.attempts !== 5) issues.push("練習次數");
   if(!l51 || l51.spec.tip.indexOf("學生手冊第21頁") < 0 || !l52 || l52.spec.tip.indexOf("學生手冊第21頁") < 0) issues.push("手冊提示");
-  if(!l51 || specSource(l51.spec) !== "" || specBlob(l51.spec) !== "" || l51.spec.text || l51.spec.words || l51.spec.letters) issues.push("第51關唔應有答案");
-  if(!l52 || specSource(l52.spec) !== "" || specBlob(l52.spec) !== "" || l52.spec.text || l52.spec.words || l52.spec.letters) issues.push("第52關唔應有答案");
+  if(!l51 || specSource(l51.spec) !== "" || specBlob(l51.spec) !== "" || l51.spec.text || l51.spec.words || l51.spec.letters) issues.push("第51關不應有答案");
+  if(!l52 || specSource(l52.spec) !== "" || specBlob(l52.spec) !== "" || l52.spec.text || l52.spec.words || l52.spec.letters) issues.push("第52關不應有答案");
   if(highlightKind(51, "s") !== "none" || highlightKind(51, "1") !== "none" || highlightKind(52, "a") !== "none" || highlightKind(52, "9") !== "none") issues.push("練習關提示");
   var k51 = hotKeysFor(51, "s", "letters", 0);
   var k52 = hotKeysFor(52, "1", "numbers", 0);
@@ -1168,7 +1168,7 @@ function renderHome(focusId){
   if(banner){
     ban.hidden = false;
     var best = bestOf(banner.id);
-    ban.textContent = "第 " + banner.id + " 關完成 · 今次 " + banner.stars + " 粒星 · 主頁最佳 " + best + " 粒星";
+    ban.textContent = "第 " + banner.id + " 關完成 · 這次 " + banner.stars + " 顆星 · 主頁最佳 " + best + " 顆星";
   }else{
     ban.hidden = true;
   }
@@ -1187,7 +1187,7 @@ function renderHome(focusId){
       var stars = bestOf(lv.id);
       var just = focusId === lv.id ? " just" : "";
       html += '<button type="button" class="lvl' + just + '" data-level="' + lv.id + '" style="--c:' + CARD_COLORS[i] + '"';
-      html += ' aria-label="第 ' + lv.id + " 關，" + lv.phase.label + "，" + lv.preview + "，最佳 " + stars + " 粒星，" + lv.countLabel + '">';
+      html += ' aria-label="第 ' + lv.id + " 關，" + lv.phase.label + "，" + lv.preview + "，最佳 " + stars + " 顆星，" + lv.countLabel + '">';
       html += '<span class="lnum">第 ' + lv.id + " 關</span>";
       html += '<span class="phase">' + lv.phase.emoji + " " + lv.phase.label + "</span>";
       html += '<span class="preview letters">' + lv.preview + "</span>";
@@ -1268,7 +1268,7 @@ function syncSound(){
   var btn = $("btnSound");
   btn.textContent = store.sound ? "🔊" : "🔇";
   btn.setAttribute("aria-pressed", store.sound ? "true" : "false");
-  btn.setAttribute("aria-label", store.sound ? "音效開住，撳一下閂" : "音效閂咗，撳一下開");
+  btn.setAttribute("aria-label", store.sound ? "音效已開啟，按一下關閉" : "音效已關閉，按一下開啟");
   $("optSound").checked = store.sound;
 }
 
@@ -1326,24 +1326,24 @@ function setCoach(){
 
 function coachLine(ch){
   if(!ch) return "";
-  if(ch === " ") return "而家要撳下面長長嘅空格鍵";
+  if(ch === " ") return "現在要按下方的長空格鍵";
   if(isUpper(ch)){
-    if(shiftMode === 0) return "而家要大楷 " + ch + "：先撳黃色 ⇧（向上），再撳字母";
-    if(shiftMode === 2) return "大楷鎖住咗，撳字母 " + ch;
-    return "⇧ 開咗，而家撳大楷 " + ch;
+    if(shiftMode === 0) return "現在要大楷 " + ch + "：先按黃色 ⇧（向上），再按字母";
+    if(shiftMode === 2) return "大楷已鎖定，請按字母 " + ch;
+    return "⇧ 已開啟，現在按大楷 " + ch;
   }
   if(/^[a-z]$/.test(ch)){
-    if(shiftMode === 2) return "要小楷 " + ch + "：撳 ⇧ 解除大楷鎖";
-    if(shiftMode === 1) return "要小楷 " + ch + "：再撳一下 ⇧，取消大楷";
-    return "而家撳小楷 " + ch;
+    if(shiftMode === 2) return "要小楷 " + ch + "：按 ⇧ 解除大楷鎖定";
+    if(shiftMode === 1) return "要小楷 " + ch + "：再按一下 ⇧，取消大楷";
+    return "現在按小楷 " + ch;
   }
   var here = layoutHas(layoutName, ch) && layoutName !== "letters";
   if(/^[0-9]$/.test(ch)){
-    return here ? "而家撳數字 " + ch : "而家要數字 " + ch + "：先撳藍色 123";
+    return here ? "現在按數字 " + ch : "現在要數字 " + ch + "：先按藍色 123";
   }
-  if(layoutName === "letters") return "而家要符號 " + ch + "：先撳藍色 123";
-  if(!layoutHas(layoutName, ch)) return "呢個符號喺另一版：撳 #+= 或者 123";
-  return "而家撳符號 " + ch;
+  if(layoutName === "letters") return "現在要符號 " + ch + "：先按藍色 123";
+  if(!layoutHas(layoutName, ch)) return "這個符號在另一個版面：請按 #+= 或 123";
+  return "現在按符號 " + ch;
 }
 
 function levelHasNewSymbol(level){
@@ -1363,13 +1363,13 @@ function levelHintLines(level){
   var teachSpace = !blocked && FIRST_SPECIAL[" "] === id;
   var teachSymbol = !blocked && levelHasNewSymbol(level);
   if(level.needsUpper){
-    lines.push("要打大楷：先撳黃色 ⇧（向上），再撳字母。撳一下，下一個字母先係大楷；快啲撳兩下 ⇧，就可以鎖住大楷。");
+    lines.push("要打大楷：先按黃色 ⇧（向上），再按字母。按一下，下一個字母才是大楷；快速按兩下 ⇧，就可以鎖定大楷。");
   }
   if(teachSpace){
-    lines.push("要打空格：字同字之間，撳鍵盤下面長長嘅空格鍵。");
+    lines.push("要打空格：字和字之間，按鍵盤下方的長空格鍵。");
   }
   if(teachSymbol){
-    lines.push("句號、問號同數字：先撳 123。想睇多啲符號，再撳 #+=。");
+    lines.push("句號、問號和數字：先按 123。想看更多符號，再按 #+=。");
   }
   return lines;
 }
@@ -1395,7 +1395,7 @@ function renderPractice(){
   $("practiceTitle").textContent = spec.title;
   $("practiceTip").textContent = spec.tip;
   $("practiceShape").textContent = spec.shape;
-  $("practiceDigit").textContent = "數字要先撳藍色 123。";
+  $("practiceDigit").textContent = "數字要先按藍色 123。";
   $("practiceAttempt").textContent = "第 " + (run.attempts + 1) + "／" + spec.attempts + " 次";
   $("practiceText").textContent = run.buffer;
   $("practicePlaceholder").hidden = run.buffer.length > 0;
@@ -1417,7 +1417,7 @@ function renderPrompt(){
     void glyph.offsetWidth;
     glyph.classList.add("pop");
   }else if(kind === "words"){
-    $("wordAsk").textContent = "打呢個詞 · 第 " + (run.promptIndex + 1) + " / " + run.prompts.length + " 個";
+    $("wordAsk").textContent = "打這個詞 · 第 " + (run.promptIndex + 1) + " / " + run.prompts.length + " 個";
     $("wordShow").textContent = prompt;
     var slots = $("slots");
     slots.innerHTML = "";
@@ -1436,7 +1436,7 @@ function renderPrompt(){
       slots.appendChild(slot);
     }
   }else{
-    $("textAsk").textContent = run.level.phase.key === "para" ? "打呢段短文" : "打呢句";
+    $("textAsk").textContent = run.level.phase.key === "para" ? "打這一段短文" : "打這一句";
     var passage = $("passage");
     passage.innerHTML = "";
     for(var c = 0; c < prompt.length; c++){
@@ -1463,7 +1463,7 @@ function renderScores(){
     $("progPill").textContent = "第 " + (run.attempts + 1) + "／" + run.level.spec.attempts + " 次";
     $("missPill").hidden = true;
     $("liveStarPill").textContent = "做齊 ★★★";
-    $("liveStarPill").setAttribute("aria-label", "做齊 " + run.level.spec.attempts + " 次就有 3 粒星");
+    $("liveStarPill").setAttribute("aria-label", "完成 " + run.level.spec.attempts + " 次就有 3 顆星");
     $("barFill").style.width = ((run.attempts / run.level.spec.attempts) * 100) + "%";
     return;
   }
@@ -1477,7 +1477,7 @@ function renderScores(){
   }
   $("missPill").textContent = "打錯 " + run.mistakes;
   $("liveStarPill").textContent = "預計 " + "★★★".slice(0, stars) + "☆☆☆".slice(stars);
-  $("liveStarPill").setAttribute("aria-label", "如果而家完成，預計 " + stars + " 粒星");
+  $("liveStarPill").setAttribute("aria-label", "如果現在完成，預計 " + stars + " 顆星");
   var pct = totalChars() ? (doneChars() / totalChars()) * 100 : 0;
   $("barFill").style.width = pct + "%";
 }
@@ -1527,11 +1527,11 @@ function keyOutput(token){
 }
 
 function ariaFor(token){
-  if(token === "shift") return "大楷。撳一下準備下一個大楷，快撳兩下鎖住大楷";
-  if(token === "del") return "刪除上一個已經打啱嘅字";
+  if(token === "shift") return "大楷。按一下準備下一個大楷，快速按兩下可鎖定大楷";
+  if(token === "del") return "刪除上一個已經打對的字";
   if(token === "num") return "數字同符號";
   if(token === "sym") return "更多符號";
-  if(token === "abc") return "返字母鍵盤";
+  if(token === "abc") return "返回字母鍵盤";
   if(token === "space") return "空格";
   var label = keyLabel(token);
   if(isUpper(label)) return "大楷 " + label;
@@ -1623,12 +1623,12 @@ function tokenForChar(ch){
 }
 
 function missMessage(got, want){
-  if(want === " ") return "要撳空格鍵呀";
-  if(/^[a-z]$/.test(want) && got === want.toUpperCase()) return "要小楷呀";
-  if(isUpper(want) && got.toLowerCase() === want.toLowerCase()) return "要大楷呀，先撳 ⇧";
-  if(/^[0-9]$/.test(want)) return "先撳 123，再撳數字 " + want;
-  if(!/^[a-zA-Z ]$/.test(want)) return "先撳 123，再搵 " + want;
-  return "再試下";
+  if(want === " ") return "要按空格鍵";
+  if(/^[a-z]$/.test(want) && got === want.toUpperCase()) return "要小楷";
+  if(isUpper(want) && got.toLowerCase() === want.toLowerCase()) return "要大楷，請先按 ⇧";
+  if(/^[0-9]$/.test(want)) return "請先按 123，再按數字 " + want;
+  if(!/^[a-zA-Z ]$/.test(want)) return "請先按 123，再找出 " + want;
+  return "再試一次";
 }
 
 function speakPrompt(){
@@ -1639,8 +1639,8 @@ function speakPrompt(){
   var ch = currentChar();
   var say = ch === " " ? "空格" : ch;
   if(run.kind === "letters") $("live").textContent = "第 " + run.level.id + " 關，打 " + say;
-  else if(run.kind === "words") $("live").textContent = "打個詞 " + currentPrompt() + "，而家 " + say;
-  else $("live").textContent = "打短文，而家 " + say;
+  else if(run.kind === "words") $("live").textContent = "打這個詞 " + currentPrompt() + "，現在是 " + say;
+  else $("live").textContent = "打短文，現在是 " + say;
 }
 
 function advancePrompt(){
@@ -1711,13 +1711,13 @@ function clearPracticeField(){
 function appendPractice(ch){
   if(screenName !== "play" || !run || locked || run.over || run.kind !== "practice") return;
   if(!practiceAllowed(ch)){
-    setStatus("呢關只打字母同數字", "no");
+    setStatus("本關只打字母和數字", "no");
     sfxNo();
     flashCard("bad");
     return;
   }
   if(run.buffer.length >= PRACTICE_MAX){
-    setStatus("夠長喇，可以撳提交", "no");
+    setStatus("長度已夠，可以按「提交」", "no");
     sfxNo();
     return;
   }
@@ -1731,7 +1731,7 @@ function appendPractice(ch){
 function submitPractice(){
   if(screenName !== "play" || !run || locked || run.over || run.kind !== "practice") return;
   if(!run.buffer){
-    setStatus("請打啲字先，再撳提交", "no");
+    setStatus("請先打一些字，再按「提交」", "no");
     sfxNo();
     flashCard("bad");
     return;
@@ -1742,7 +1742,7 @@ function submitPractice(){
     finishLevel();
     return;
   }
-  setStatus("提交咗，再打一次", "ok");
+  setStatus("已提交，請再打一次", "ok");
   sfxOk();
   renderAll();
   speakPrompt();
@@ -1813,22 +1813,22 @@ function finishLevel(){
   $("resultStars").innerHTML = starsHtml(stars);
   $("resultTitle").textContent = "第 " + run.level.id + " 關完成！";
   $("resultWhy").textContent = practice
-    ? "做齊 " + run.level.spec.attempts + " 次，三粒星。"
+    ? "完成 " + run.level.spec.attempts + " 次，三顆星。"
     : explainStars(stars, run.mistakes);
-  var extra = stars > prev ? "新高分！主頁會見到 " + stars + " 粒星。"
-    : prev > stars ? "今次 " + stars + " 粒星，主頁保持最佳 " + prev + " 粒星。"
-    : "主頁最佳仍然係 " + best + " 粒星。";
+  var extra = stars > prev ? "新高分！主頁會顯示 " + stars + " 顆星。"
+    : prev > stars ? "這次 " + stars + " 顆星，主頁保持最佳 " + prev + " 顆星。"
+    : "主頁最佳仍然是 " + best + " 顆星。";
   $("resultNums").textContent = practice
-    ? "練習咗 " + run.level.spec.attempts + " 次。呢關唔會記低你打嘅字。" + extra
+    ? "已練習 " + run.level.spec.attempts + " 次。本關不會記錄你打的字。" + extra
     : "打錯 " + run.mistakes + " 次。" + extra;
   $("result").classList.add("on");
-  $("live").textContent = "第 " + run.level.id + " 關完成，拿到 " + stars + " 粒星。" + extra;
+  $("live").textContent = "第 " + run.level.id + " 關完成，得到 " + stars + " 顆星。" + extra;
   sfxWin();
   var nextBtn = $("btnResultNext");
   var hasNext = run.level.id < LEVELS.length;
   nextBtn.hidden = !hasNext;
   nextBtn.disabled = !hasNext;
-  $("btnResultHome").textContent = "返主頁睇星星";
+  $("btnResultHome").textContent = "返回主頁查看星星";
   (hasNext ? nextBtn : $("btnResultHome")).focus();
 }
 
@@ -1949,7 +1949,7 @@ $("btnHome").addEventListener("click", function(){goHome(0);});
 $("btnResultHome").addEventListener("click", function(){
   goHome(run ? run.level.id : 0);
 });
-/* 只掛一次。若掛兩次，撳「下一關」會連跳兩關，第 51 關仲會直接返主頁。 */
+/* 只掛一次。若掛兩次，按「下一關」會連跳兩關，第 51 關還會直接返回主頁。 */
 $("btnResultNext").addEventListener("click", function(){
   if(!run) return;
   var id = run.level.id;

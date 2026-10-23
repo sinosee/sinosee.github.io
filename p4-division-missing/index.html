@@ -141,7 +141,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 <div id="start" class="screen on">
   <div class="startInner">
     <h1 class="title"><span class="emoji">🧩</span>除法缺漏謎題<span class="emoji">✨</span></h1>
-    <p class="sub">算式少咗一個數！搵出 □ 入面應該係幾多。</p>
+    <p class="sub">算式少了一個數！找出 □ 裡面應該是多少。</p>
 
     <div class="modes">
       <button type="button" class="mode sel" data-mode="student" id="modeStudent">
@@ -159,25 +159,25 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
     <div class="sec">
       <div class="seclabel">三種缺漏類型</div>
       <div class="examples">
-        <div class="exCard"><div class="exLab">搵被除數</div><div class="exEq">□ ÷ 6 = 8</div></div>
-        <div class="exCard"><div class="exLab">搵除數</div><div class="exEq">48 ÷ □ = 6</div></div>
-        <div class="exCard"><div class="exLab">搵商</div><div class="exEq">56 ÷ 7 = □</div></div>
+        <div class="exCard"><div class="exLab">找出被除數</div><div class="exEq">□ ÷ 6 = 8</div></div>
+        <div class="exCard"><div class="exLab">找出除數</div><div class="exEq">48 ÷ □ = 6</div></div>
+        <div class="exCard"><div class="exLab">找出商</div><div class="exEq">56 ÷ 7 = □</div></div>
       </div>
     </div>
 
     <div class="toggles">
       <label class="toggle"><input type="checkbox" id="chkSound" checked> 音效</label>
-      <label class="toggle"><input type="checkbox" id="chkHard"> 較難（較大數／混合快啲）</label>
+      <label class="toggle"><input type="checkbox" id="chkHard"> 較難（較大的數／混合節奏較快）</label>
     </div>
 
     <button type="button" class="bigbtn" id="btnStart">開始遊戲</button>
-    <p class="note">適合小四 · 整除無餘數 · 唔使登入 · iPad 用手指點選</p>
+    <p class="note">適合小四 · 整除無餘數 · 不用登入 · iPad 用手指點選</p>
   </div>
     <div class="qrFoot">
     <img class="qr" src="qrcode.png" width="112" height="132" alt="除法缺漏謎題遊戲網址二維碼">
     <div>
       <img class="dog" src="../assets/mascot.jpg" width="52" height="52" alt="">
-      <p>平板掃碼，打開呢一頁</p>
+      <p>用平板掃描二維碼，打開這一頁</p>
       <a href="https://sinosee.github.io/p4-division-missing/">sinosee.github.io/p4-division-missing</a>
     </div>
   </div>
@@ -186,14 +186,14 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
 <div id="tip" class="screen">
   <div class="tipCard">
     <div class="tipEmoji">□</div>
-    <h2 class="tipTitle">點樣玩？</h2>
+    <h2 class="tipTitle">怎樣玩？</h2>
     <div class="tipRule">
-      • □ ÷ 6 = 8 → 用 6 × 8 搵被除數<br>
-      • 48 ÷ □ = 6 → 諗「幾多乘 6 = 48」<br>
-      • 56 ÷ 7 = □ → 直接計商
+      • □ ÷ 6 = 8 → 用 6 × 8 找出被除數<br>
+      • 48 ÷ □ = 6 → 想一想「多少乘 6 = 48」<br>
+      • 56 ÷ 7 = □ → 直接計算商
     </div>
-    <p class="tipBody">每題填一個數字，答啱加分；答錯扣一顆心 ❤️</p>
-    <p class="tipHow">一局約 12 題 · 你有 3 顆心 · 較難模式數字會大啲</p>
+    <p class="tipBody">每題填一個數字，答對加分；答錯扣一顆心 ❤️</p>
+    <p class="tipHow">一局約 12 題 · 你有 3 顆心 · 較難模式的數字會大一些</p>
     <button type="button" class="bigbtn green" id="btnTipGo">知道了，開始！</button>
   </div>
 </div>
@@ -210,7 +210,7 @@ h1.title .emoji{display:inline-block;margin:0 .12em}
   </div>
   <div id="playWrap">
     <div class="playMain">
-      <div class="typeBadge" id="typeBadge">搵商</div>
+      <div class="typeBadge" id="typeBadge">找出商</div>
       <div class="eqBox"><div class="eqText" id="eqText">56 ÷ 7 = <span class="blank">□</span></div></div>
       <div class="feedback" id="feedback"></div>
       <div class="answerRow">
@@ -269,7 +269,7 @@ window.addEventListener('resize', setVH);
 if(window.visualViewport) window.visualViewport.addEventListener('resize', setVH);
 
 var TOTAL_Q = 12;
-var TYPE_LABEL = { dividend:'搵被除數', divisor:'搵除數', quotient:'搵商' };
+var TYPE_LABEL = { dividend:'找出被除數', divisor:'找出除數', quotient:'找出商' };
 
 var state = {
   mode:'student',
@@ -516,7 +516,7 @@ function submitAnswer(){
     sfxBad();
     var span2 = document.getElementById('blankSpan');
     if(span2){ span2.className = 'blank wrong'; }
-    setFeedback('再諗諗！正確是 ' + q.answer, 'bad');
+    setFeedback('再想一想！正確是 ' + q.answer, 'bad');
     state.revealed = true;
     if(span2){ span2.className = 'blank correct'; span2.textContent = String(q.answer); }
     if(state.lives <= 0){

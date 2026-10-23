@@ -109,6 +109,6 @@ assert(html.indexOf('id="gateClass"') >= 0, 'class gate');
 assert(html.indexOf('id="gateNo"') >= 0, 'student number gate');
 assert(html.indexOf('換學生') >= 0, 'switch student');
 assert(html.indexOf('localStorage.setItem') < 0, 'page does not write storage itself');
-assert(html.indexOf('唔會計入學生進度') >= 0, 'teacher mode is labelled separate');
+assert(html.indexOf('不會記入學生進度') >= 0, 'teacher mode is labelled separate');
 
 console.log('progress.test.js ok');

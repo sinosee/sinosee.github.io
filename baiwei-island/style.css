@@ -1,4 +1,4 @@
-/* 唔依賴 Google Fonts，避免 iOS 私隱模式擋載入 */
+/* 不依賴 Google Fonts，避免 iOS 私隱模式阻擋載入 */
 :root {
   --sky: #8ec8e8;
   --sky2: #b8dce8;

@@ -176,7 +176,7 @@ h1.title .emoji{display:inline-block;margin:0 .15em}
       <button type="button" class="mode" id="modeTeacher" data-mode="teacher">
         <div class="mi">📺</div>
         <div class="mt">老師模式</div>
-        <div class="md">投影全班玩<br>㩒顯示答案</div>
+        <div class="md">投影全班玩<br>按「顯示答案」</div>
       </button>
     </div>
 
@@ -214,12 +214,12 @@ h1.title .emoji{display:inline-block;margin:0 .15em}
 
   </div>
   <button type="button" class="bigbtn" id="btnStart">開始玩！</button>
-  <p class="note">唔使登入 · 唔會收集資料 · 適合 iPad</p>
+  <p class="note">不用登入 · 不會收集資料 · 適合 iPad</p>
   <div class="qrFoot">
     <img class="qr" src="qrcode.png" width="112" height="132" alt="數的分解與合成遊戲網址二維碼">
     <div>
       <img class="dog" src="../assets/mascot.jpg" width="52" height="52" alt="">
-      <p>平板掃碼，打開呢一頁</p>
+      <p>用平板掃描二維碼，打開這一頁</p>
       <a href="https://sinosee.github.io/p1-number-bonds/">sinosee.github.io/p1-number-bonds</a>
     </div>
   </div>
@@ -426,8 +426,8 @@ function makeFriend(total){
   while(opts.length<4){ if(!opts.includes(k)) opts.push(k); k++; if(k>13) break; }
   shuffle(opts);
   const speak = leftMissing
-    ? `幾多加 ${known} 等於 ${total}？`
-    : `${known} 加幾多等於 ${total}？`;
+    ? `多少加 ${known} 等於 ${total}？`
+    : `${known} 加多少等於 ${total}？`;
   const prompt = leftMissing
     ? `<span class="eq">？ + ${known} = ${total}</span>`
     : `<span class="eq">${known} + ？ = ${total}</span>`;
@@ -780,7 +780,7 @@ function showQuestion(){
       $("#actionRow").innerHTML = `<button type="button" class="bigbtn purple" id="btnReveal">顯示答案</button>`;
       $("#btnReveal").onclick = ()=> teacherReveal();
     } else {
-      $("#hintLine").textContent = "先揀第一部分，再揀第二部分";
+      $("#hintLine").textContent = "先選第一部分，再選第二部分";
       const np = document.createElement("div");
       np.className = "numpad";
       np.id = "numpad";
@@ -798,7 +798,7 @@ function showQuestion(){
         S.pickA=null; S.pickB=null; S.pickStep=0;
         $$("#numpad .nb").forEach(x=>{x.classList.remove("sel","correct","wrong"); x.disabled=false;});
         renderSplitVisual(q.total,null,null);
-        $("#hintLine").textContent = "先揀第一部分，再揀第二部分";
+        $("#hintLine").textContent = "先選第一部分，再選第二部分";
         sfxTap();
       });
       np.appendChild(clr);
@@ -811,7 +811,7 @@ function showQuestion(){
       $("#actionRow").innerHTML = `<button type="button" class="bigbtn purple" id="btnReveal">顯示答案</button>`;
       $("#btnReveal").onclick = ()=> teacherReveal();
     } else {
-      $("#hintLine").textContent = "揀正確嘅總數";
+      $("#hintLine").textContent = "選出正確的總數";
       const row = document.createElement("div");
       row.className = "ansRow";
       q.options.forEach(opt=>{
@@ -829,7 +829,7 @@ function showQuestion(){
       $("#actionRow").innerHTML = `<button type="button" class="bigbtn purple" id="btnReveal">顯示答案</button>`;
       $("#btnReveal").onclick = ()=> teacherReveal();
     } else {
-      $("#hintLine").textContent = "揀缺少嘅數目";
+      $("#hintLine").textContent = "選出缺少的數目";
       const row = document.createElement("div");
       row.className = "ansRow";
       q.options.forEach(opt=>{
@@ -855,7 +855,7 @@ function onSplitPick(n, btn){
     $$("#numpad .nb").forEach(x=>x.classList.remove("sel"));
     btn.classList.add("sel");
     renderSplitVisual(q.total, S.pickA, null);
-    $("#hintLine").textContent = `第一部分係 ${n}，再揀第二部分`;
+    $("#hintLine").textContent = `第一部分是 ${n}，再選第二部分`;
   } else {
     S.pickB = n;
     btn.classList.add("sel");
@@ -881,7 +881,7 @@ function onChoice(val, btn, correct){
   const q = S.questions[S.qIndex];
   if(q.type==="join") renderJoinReveal(q);
   if(q.type==="friend") renderFriendReveal(q);
-  finishAnswer(ok, ok ? "答對喇！" : `正確答案係 ${correct}`);
+  finishAnswer(ok, ok ? "答對了！" : `正確答案是 ${correct}`);
 }
 
 function finishAnswer(ok, msg){
@@ -894,7 +894,7 @@ function finishAnswer(ok, msg){
     $("#qline").innerHTML = `<span class="ok">✓ ${msg}</span>`;
   } else {
     sfxNo();
-    flash("再試過！", false);
+    flash("再試一次！", false);
     $("#qline").innerHTML = `<span class="no">✗ ${msg}</span>`;
     // for split wrong, mark buttons
     if(S.questions[S.qIndex].type==="split"){
@@ -905,7 +905,7 @@ function finishAnswer(ok, msg){
     }
   }
   $("#hintLine").textContent = "";
-  $("#actionRow").innerHTML = `<button type="button" class="bigbtn green" id="btnNext">${S.qIndex+1>=S.questions.length?"睇成績":"下一題"}</button>`;
+  $("#actionRow").innerHTML = `<button type="button" class="bigbtn green" id="btnNext">${S.qIndex+1>=S.questions.length?"查看成績":"下一題"}</button>`;
   $("#btnNext").onclick = ()=> nextQ();
 }
 
@@ -939,7 +939,7 @@ function teacherReveal(){
   // teacher can mark correct team mentally — award star when revealing (counts as shown)
   S.stars++;
   $("#starbox").textContent = `⭐ ${S.stars}`;
-  $("#actionRow").innerHTML = `<button type="button" class="bigbtn green" id="btnNext">${S.qIndex+1>=S.questions.length?"睇成績":"下一題"}</button>`;
+  $("#actionRow").innerHTML = `<button type="button" class="bigbtn green" id="btnNext">${S.qIndex+1>=S.questions.length?"查看成績":"下一題"}</button>`;
   $("#btnNext").onclick = ()=> nextQ();
 }
 
@@ -958,10 +958,10 @@ function showEnd(){
   const stars = S.stars;
   const ratio = stars/total;
   let title, starStr;
-  if(ratio>=1){ title="完美！好叻呀！"; starStr="⭐⭐⭐"; }
+  if(ratio>=1){ title="完美！真棒！"; starStr="⭐⭐⭐"; }
   else if(ratio>=0.7){ title="做得好！"; starStr="⭐⭐✨"; }
   else if(ratio>=0.4){ title="繼續加油！"; starStr="⭐✨✨"; }
-  else { title="再試多次啦！"; starStr="💪"; }
+  else { title="再試一次吧！"; starStr="💪"; }
   $("#endStars").textContent = starStr;
   $("#endTitle").textContent = title;
   $("#endScore").textContent = S.mode==="teacher"

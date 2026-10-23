@@ -1,4 +1,4 @@
-/* 百味小島 — 原創柔和插畫風 SVG（唔用 emoji） */
+/* 百味小島 — 原創柔和插畫風 SVG（不用 emoji） */
 window.BAIWEI_ART = (() => {
   const soft = (hex, a = 1) => {
     const n = hex.replace("#", "");

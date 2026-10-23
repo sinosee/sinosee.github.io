@@ -341,10 +341,10 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
 
     <div class="rankBadge">
       <p class="whoLine" id="whoLine"><span id="whoText">未填班別學號</span><button type="button" class="linkish" id="btnSwitch" hidden>換學生</button></p>
-      <div class="rankKicker" id="rankKicker">而家頭銜</div>
+      <div class="rankKicker" id="rankKicker">目前頭銜</div>
       <div class="rankName" id="rankName">🌱 試商新手</div>
       <div class="rankStars" id="rankStars">累積 ⭐ 0</div>
-      <p class="continueLine" id="continueLine">撳開始，填班別同學號。進度會記喺呢部平板。</p>
+      <p class="continueLine" id="continueLine">按「開始」，填寫班別和學號。進度會記錄在這部平板。</p>
       <div class="progressWrap">
         <div class="progressLabel">
           <span id="progressNext">下一級：商位學徒</span>
@@ -355,7 +355,7 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
         </div>
       </div>
       <div class="levelTrail" id="levelTrail" role="group" aria-label="關卡"></div>
-      <p class="trailCap">撳已解鎖嘅級可以再練，進度唔會消失</p>
+      <p class="trailCap">點選已解鎖的級別可以再練，進度不會消失</p>
     </div>
 
     <div class="bestRow">
@@ -373,19 +373,19 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
       <button type="button" class="mode sel" data-mode="student" id="modeStudent">
         <div class="mi">🧒</div>
         <div class="mt">學生模式</div>
-        <div class="md">自己填窿窿練習。星星會記住</div>
+        <div class="md">自己填寫空格練習。星星會保存下來</div>
       </button>
       <button type="button" class="mode" data-mode="teacher" id="modeTeacher">
         <div class="mi">👩‍🏫</div>
         <div class="mt">老師模式</div>
-        <div class="md">投影全班：可暫停、顯示答案。唔會計入學生進度</div>
+        <div class="md">投影全班：可暫停、顯示答案。不會記入學生進度</div>
       </button>
     </div>
 
     <div class="infoCard">
-      <strong>點樣玩：</strong><br>
-      ① 先撳窿窿，先出九宮格　② 打數字　③ 全部填完撳「檢查」<br>
-      每局 10 題 · 3 顆心 · 三位數 ÷ 兩位數 · 有啲題目有餘數<br>
+      <strong>怎樣玩：</strong><br>
+      ① 先點選空格，才會顯示九宮格　② 輸入數字　③ 全部填完後按「檢查」<br>
+      每局 10 題 · 3 顆心 · 三位數 ÷ 兩位數 · 有些題目有餘數<br>
       玩完先計星：剩 3 心 ⭐⭐⭐、2 心 ⭐⭐、1 心 ⭐、0 心 💫（0 星）
     </div>
 
@@ -396,13 +396,13 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
       </div>
       <button type="button" class="bigbtn" id="btnStart">開始！</button>
     </div>
-    <p class="note">小四 · 三位數 ÷ 兩位數 · 班別學號記住星星同頭銜 · 做題唔會彈出手機鍵盤</p>
+    <p class="note">小四 · 三位數 ÷ 兩位數 · 班別和學號會記住星星和頭銜 · 做題時不會彈出手機鍵盤</p>
   </div>
     <div class="qrFoot">
     <img class="qr" src="qrcode.png" width="112" height="132" alt="除法直式填空遊戲網址二維碼">
     <div>
       <img class="dog" src="../assets/mascot.jpg" width="52" height="52" alt="">
-      <p>平板掃碼，打開呢一頁</p>
+      <p>用平板掃描二維碼，打開這一頁</p>
       <a href="https://sinosee.github.io/p4-division-spot-error/">sinosee.github.io/p4-division-spot-error</a>
     </div>
   </div>
@@ -411,7 +411,7 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
 <div id="gate" class="screen">
   <div class="gateCard">
     <h2 class="tipTitle">班別學號</h2>
-    <p class="gateHint">用英文字母同數字，唔好打中文名。同一位學生下次打開，會由上次嘅級繼續。</p>
+    <p class="gateHint">請用英文字母和數字，不要輸入中文姓名。同一位學生下次打開，會由上次的級別繼續。</p>
     <form id="gateForm" class="gateForm" autocomplete="off">
       <div class="gateFields">
         <label class="field" for="gateClass">班別
@@ -431,14 +431,14 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
 <div id="tip" class="screen">
   <div class="tipCard">
     <div class="tipEmoji">✏️</div>
-    <h2 class="tipTitle">點樣填？</h2>
-    <p class="tipBody">畫面有一條<strong>除法直式</strong>，有啲位係藍色窿窿。</p>
+    <h2 class="tipTitle">怎樣填寫？</h2>
+    <p class="tipBody">畫面上有一條<strong>除法直式</strong>，有些位置是藍色空格。</p>
     <div class="tipRule">
-      ① 先撳藍色窿窿（會變黃），先出九宮格<br>
+      ① 先點選藍色空格（會變黃），才會顯示九宮格<br>
       ② 用<strong>九宮格</strong>打數字<br>
-      ③ 全部填完 → 撳「檢查」
+      ③ 全部填完 → 按「檢查」
     </div>
-    <p class="tipHow">題目係三位數 ÷ 兩位數，有啲有餘數。跟課本：先寫商，再寫積，再寫減出嚟嘅數（落下的數字已經喺減嗰一行）。有餘數嘅題，最後填餘數。大畫面個九宮格喺直式右邊，電話就喺下面。閃住嘅格就係下一步。</p>
+    <p class="tipHow">題目是三位數 ÷ 兩位數，有些有餘數。跟課本：先寫商，再寫積，再寫相減得到的數（落下的數字已經在減法那一行）。有餘數的題目，最後填餘數。大畫面的九宮格在直式右邊，手機則在下方。閃爍的格子就是下一步。</p>
     <p class="tipHow" id="tipFrom"></p>
     <button type="button" class="bigbtn green" id="btnTipGo">明白，開始！</button>
   </div>
@@ -463,14 +463,14 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
       <div class="board">
         <div class="ld" id="ld"></div>
       </div>
-      <div class="feedback hint" id="feedback">先撳閃住嘅格，跟課本：商 → 乘 → 減</div>
+      <div class="feedback hint" id="feedback">請先點選閃爍的格子，跟課本：商 → 乘 → 減</div>
     </div>
     <div class="keypadWrap" id="keypadWrap" aria-hidden="true">
       <div class="keypadPanel" role="dialog" aria-label="九宮格">
         <div class="keypadHead">
           <div>
             <div class="keypadTitle">九宮格</div>
-            <p class="keypadHint">先撳閃住嘅格，再用九宮格打數字</p>
+            <p class="keypadHint">請先點選閃爍的格子，再用九宮格輸入數字</p>
           </div>
           <button type="button" class="keypadClose" id="btnCloseKeypad">收起</button>
         </div>
@@ -500,7 +500,7 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
     <div class="endStars" id="endStars">⭐⭐⭐</div>
     <h2 class="endTitle" id="endTitle">完成！</h2>
     <div class="endScore" id="endScore">得分 0</div>
-    <div class="endGain" id="endGain">今局 +0 星</div>
+    <div class="endGain" id="endGain">本局 +0 星</div>
     <div class="levelupBanner" id="levelupBanner" aria-hidden="true">
       <div class="lbT">🎉 升等！</div>
       <div class="lbPath" id="levelupPath"></div>
@@ -512,7 +512,7 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
     </div>
     <div class="endBtns">
       <button type="button" class="bigbtn green" id="btnAgain">再玩一局</button>
-      <button type="button" class="bigbtn blue" id="btnMenu">返主頁</button>
+      <button type="button" class="bigbtn blue" id="btnMenu">返回主頁</button>
     </div>
   </div>
 </div>
@@ -530,7 +530,7 @@ input,textarea{-webkit-user-select:text;user-select:text;touch-action:manipulati
   </div>
   <div class="luInner">
     <div class="luCrown">👑</div>
-    <h2 class="luTitle" id="luTitle">升等啦！</h2>
+    <h2 class="luTitle" id="luTitle">升級了！</h2>
     <div class="luCard">
       <div class="luFrom" id="luFrom">試商新手</div>
       <div class="luArrow">⬇️</div>
@@ -647,7 +647,7 @@ function buildLongDiv(dividend, divisor){
     var newRem = current - prod;
     qDigits.push({digit: qd, atCol: i});
 
-    // 商補 0，但 0 乘除數唔寫，餘數 0 亦唔寫。
+    // 商補 0，但 0 乘除數不寫，餘數 0 亦不寫。
     if(prod === 0) continue;
 
     var prodDigits = String(prod).split('').map(function(ch){ return parseInt(ch, 10); });
@@ -677,9 +677,9 @@ function buildLongDiv(dividend, divisor){
   return {nStr: nStr, d: d, cols: cols, qDigits: qDigits, steps: steps, quotient: Math.floor(dividend / divisor), remainder: remainder};
 }
 
-/* 三位數 ÷ 兩位數。商的每一位都唔係 0，所以每一步都有「乘、減」可以填。
-   商是兩位數先至會出現減行（餘數連住落下的下一位）。大約四分三係呢種。
-   withRemainder：1 ≤ 餘數 < 除數。否則餘數是 0，直式唔寫 0。 */
+/* 三位數 ÷ 兩位數。商的每一位都不是 0，所以每一步都有「乘、減」可以填。
+   商是兩位數才會出現減行（餘數連着落下的下一位）。大約四分之三是這種。
+   withRemainder：1 ≤ 餘數 < 除數。否則餘數是 0，直式不寫 0。 */
 function pickThreeByTwo(withRemainder){
   var guard = 0;
   while(guard++ < 250){
@@ -735,9 +735,9 @@ function pickProblem(hardMode, withRemainder){
 }
 
 /* EPH《小學數學新思維》第二版 P4 上 A 單元三 第7課 除法（二）、單元筆記 p.78：
-   每一位商的循環係 商 → 乘 → 減，再做下一位。
-   落下的數字寫在減嗰一行，唔另開一格。冇試商格、冇驗算格。
-   商前面唔夠除的 0 唔寫。 */
+   每一位商的循環是 商 → 乘 → 減，再做下一位。
+   落下的數字寫在減法那一行，不另開一格。沒有試商格、沒有驗算格。
+   商前面不夠除的 0 不寫。 */
 function textbookOrderMap(ld){
   var map = {};
   var n = 0;
@@ -807,7 +807,7 @@ function makeBlankPlan(ld, hardMode){
   var lo = hardMode ? 4 : 3;
   var hi = hardMode ? 7 : 5;
   var nBlanks = pool ? rand(Math.min(lo, pool), Math.min(hi, pool)) : 0;
-  // 餘數整段一齊填，商的位都留，再至少一格乘或減。較難就喺呢個底之上再加格。
+  // 餘數整段一起填，商的位都留，再至少一格乘或減。較難就在這個基礎上再加格。
   var remKeep = finals.slice();
   var qKeep = quotients.slice();
   var wantOther = others.length ? 1 : 0;
@@ -973,7 +973,7 @@ function renderProblem(prob){
     }
     row++;
 
-    // 餘數不是 0 先寫在積的下一行。整除就唔寫 0。有餘數可以係最後一個窿窿。
+    // 餘數不是 0 才寫在積的下一行。整除就不寫 0。有餘數可以是最後一個空格。
     if(sIdx === ld.steps.length - 1 && st.rem > 0){
       var remStr = String(st.rem);
       var remStart = st.atCol - remStr.length + 1;
@@ -999,7 +999,7 @@ function stepLabel(kind, place){
   if(kind === 'q') return '寫商的' + (place || '') + '位';
   if(kind === 'prod') return '寫積（商 × 除數）';
   if(kind === 'final') return '寫餘數' + (place ? '的' + place + '位' : '');
-  return '寫減出嚟嘅數';
+  return '寫相減得到的數';
 }
 function cyclePhrase(){
   var hasFinal = blanks.some(function(b){ return b.kind === 'final'; });
@@ -1013,7 +1013,7 @@ function answerEquation(p){
 var DOCK_MQ = '(min-width: 800px) and (min-height: 520px)';
 function keypadDocked(){ return window.matchMedia(DOCK_MQ).matches; }
 function stepAria(kind, place){
-  return stepLabel(kind, place) + '，撳咗先出九宮格';
+  return stepLabel(kind, place) + '，點選後才顯示九宮格';
 }
 function earliestEmpty(){
   for(var i = 0; i < blanks.length; i++){
@@ -1029,10 +1029,10 @@ function refreshGuide(){
   if(answered) return;
   var focus = selId ? findBlank(selId) : next;
   if(!focus){
-    $('prompt').textContent = '全部填好，撳「檢查」';
+    $('prompt').textContent = '全部填好後，按「檢查」';
     return;
   }
-  var lead = selId ? '而家填：' : '下一步：';
+  var lead = selId ? '現在填寫：' : '下一步：';
   $('prompt').textContent = lead + stepLabel(focus.kind, focus.place) + '。' + cyclePhrase() + '。';
 }
 
@@ -1080,9 +1080,9 @@ function showKeypad(){
   wrap.setAttribute('aria-hidden', 'false');
   placeKeypad();
   var fb = $('feedback');
-  if(fb.textContent.indexOf('閃住') !== -1 || fb.textContent.indexOf('先撳') !== -1){
+  if(fb.textContent.indexOf('閃爍') !== -1 || fb.textContent.indexOf('請先點選') !== -1){
     fb.className = 'feedback hint';
-    fb.textContent = keypadDocked() ? '打數字，填完撳「檢查」' : '打數字，填完撳「檢查」。撳「收起」可收起九宮格';
+    fb.textContent = keypadDocked() ? '輸入數字，填完後按「檢查」' : '輸入數字，填完後按「檢查」。按「收起」可收起九宮格';
   }
   requestAnimationFrame(function(){
     placeKeypad();
@@ -1199,7 +1199,7 @@ function checkAnswer(){
   var empty = blanks.some(function(b){ return b.value === ''; });
   if(empty){
     $('feedback').className = 'feedback hint';
-    $('feedback').textContent = '仲有窿窿未填呀！';
+    $('feedback').textContent = '還有空格尚未填寫！';
     beep(200, 0.1, 'square', 0.05);
     return;
   }
@@ -1219,7 +1219,7 @@ function checkAnswer(){
     score += 10 + (hard ? 5 : 0);
     $('scorePill').textContent = '⭐ ' + score;
     $('feedback').className = 'feedback ok';
-    $('feedback').textContent = '全部啱！👏 ' + answerEquation(cur);
+    $('feedback').textContent = '全部正確！👏 ' + answerEquation(cur);
     $('prompt').textContent = answerEquation(cur);
     refreshGuide();
     beep(523, 0.1); setTimeout(function(){ beep(659, 0.1); }, 100); setTimeout(function(){ beep(784, 0.15); }, 200);
@@ -1231,7 +1231,7 @@ function checkAnswer(){
     hearts--;
     updateHearts();
     $('feedback').className = 'feedback bad';
-    $('feedback').textContent = '有啲錯咗（紅色），改完再撳檢查';
+    $('feedback').textContent = '有些格子填錯了（紅色），改正後再按「檢查」';
     beep(180, 0.2, 'sawtooth', 0.07);
     // allow retry — clear bad mark styling after a moment but keep values
     setTimeout(function(){
@@ -1298,7 +1298,7 @@ function loadQuestion(){
     tries++;
   }
   renderProblem(cur);
-  $('feedback').textContent = '先撳閃住嘅格，' + cyclePhrase();
+  $('feedback').textContent = '請先點選閃爍的格子，' + cyclePhrase();
   if(keypadDocked()) $('keypadWrap').setAttribute('aria-hidden', 'false');
   if(mode === 'teacher'){
     $('teachBar').classList.add('on');
@@ -1353,7 +1353,7 @@ function renderTrail(view){
     if(level === view.highestLevel) btn.setAttribute('aria-current', 'true');
     btn.textContent = (unlocked ? rank.icon : '🔒') + ' 第' + level + '級';
     btn.setAttribute('aria-label', unlocked
-      ? ('由第 ' + level + ' 級開始練習，' + rank.name + '。唔會清除已解鎖進度')
+      ? ('由第 ' + level + ' 級開始練習，' + rank.name + '。不會清除已解鎖的進度')
       : ('第 ' + level + ' 級 ' + rank.name + '，未解鎖'));
     if(unlocked){
       btn.addEventListener('click', function(){
@@ -1369,7 +1369,7 @@ function renderStartProgress(){
   var view = DivisionProgress.levelView(p);
   var rank = view.rank;
   var next = view.barNext;
-  $('rankKicker').textContent = '第 ' + view.starLevel + ' 級 · 而家頭銜';
+  $('rankKicker').textContent = '第 ' + view.starLevel + ' 級 · 目前頭銜';
   $('rankName').textContent = rank.icon + ' ' + rank.name;
   $('rankStars').textContent = '累積 ⭐ ' + p.totalStars;
   var bar = $('rankBar');
@@ -1397,11 +1397,11 @@ function renderStartProgress(){
   setBestEl($('bestNormal'), p.bestNormal);
   setBestEl($('bestHard'), p.bestHard);
   if(mode === 'teacher'){
-    $('whoText').textContent = '老師模式 · 唔會計入學生進度';
+    $('whoText').textContent = '老師模式 · 不會記入學生進度';
     $('btnSwitch').hidden = true;
     $('continueLine').textContent = view.hasProgress
-      ? ('示範進度 ' + view.summary + '。學生紀錄唔會變。')
-      : '老師示範的星星分開儲存，唔會計入學生進度。';
+      ? ('示範進度 ' + view.summary + '。學生紀錄不會改變。')
+      : '老師示範的星星分開儲存，不會記入學生進度。';
     $('btnStart').textContent = view.hasProgress ? '繼續示範' : '開始示範';
   } else if(player){
     $('whoText').textContent = player.classId + ' · ' + player.studentNo;
@@ -1412,8 +1412,8 @@ function renderStartProgress(){
     $('whoText').textContent = '未填班別學號';
     $('btnSwitch').hidden = true;
     $('continueLine').textContent = store.hasUnclaimedLegacy()
-      ? '呢部平板有舊星星。第一位填班別學號嘅學生會接手。'
-      : '撳開始，填班別同學號。進度會記喺呢部平板。';
+      ? '這部平板有舊有的星星。第一位填寫班別學號的學生會承接。'
+      : '按「開始」，填寫班別和學號。進度會記錄在這部平板。';
     $('btnStart').textContent = '開始！';
   }
   renderTrail(view);
@@ -1448,12 +1448,12 @@ function endGame(){
   var ranks = DivisionProgress.RANKS;
 
   $('endStars').textContent = earned > 0 ? starMarks(earned) : '💫';
-  $('endTitle').textContent = earned >= 3 ? '做得好！' : (earned > 0 ? '完成！' : '再試過啦！');
-  $('endScore').textContent = '得分 ' + score + ' · 答啱 ' + correct + '／' + TOTAL_Q;
-  $('endGain').textContent = '今局 +' + earned + ' 星';
+  $('endTitle').textContent = earned >= 3 ? '做得好！' : (earned > 0 ? '完成！' : '再試一次吧！');
+  $('endScore').textContent = '得分 ' + score + ' · 答對 ' + correct + '／' + TOTAL_Q;
+  $('endGain').textContent = '本局 +' + earned + ' 星';
   fillEndDetail(before.totalStars, after);
   if(mode === 'teacher'){
-    $('endSaveLine').textContent = '已儲存喺老師示範，學生進度冇變。';
+    $('endSaveLine').textContent = '已儲存在老師示範，學生進度沒有改變。';
   } else if(player){
     $('endSaveLine').textContent = player.classId + ' · ' + player.studentNo + ' 的進度已儲存。' + afterView.summary + '。';
   } else {
@@ -1468,8 +1468,8 @@ function endGame(){
     $('luTo').textContent = ranks[newIdx].icon + ' ' + rankTitle(newIdx);
     var next = ranks[newIdx + 1];
     $('luMsg').textContent = '累積星達到 ' + ranks[newIdx].min + '！' + (next
-      ? '繼續挑戰，下一級係第 ' + (newIdx + 2) + ' 級「' + next.name + '」（' + next.min + ' 星）。'
-      : '你已經係最高頭銜，繼續保持！');
+      ? '繼續挑戰，下一級是第 ' + (newIdx + 2) + ' 級「' + next.name + '」（' + next.min + ' 星）。'
+      : '你已經是最高頭銜，繼續保持！');
     $('luStars').textContent = '累積 ⭐ ' + after.totalStars;
     show('levelup');
     fanfare();
@@ -1504,13 +1504,13 @@ function startGame(){
   var view = DivisionProgress.levelView(activeProgress());
   var from = chosenLevel && chosenLevel <= view.highestLevel ? chosenLevel : null;
   if(from && from < view.highestLevel){
-    $('tipFrom').textContent = '由第 ' + from + ' 級再練一次。已解鎖至第 ' + view.highestLevel + ' 級，唔會倒退。';
+    $('tipFrom').textContent = '由第 ' + from + ' 級再練一次。已解鎖至第 ' + view.highestLevel + ' 級，不會倒退。';
   } else if(view.hasProgress && view.nextLevel){
-    $('tipFrom').textContent = '已解鎖至第 ' + view.highestLevel + ' 級。呢局衝第 ' + view.nextLevel + ' 級。';
+    $('tipFrom').textContent = '已解鎖至第 ' + view.highestLevel + ' 級。本局挑戰第 ' + view.nextLevel + ' 級。';
   } else if(!view.hasProgress){
-    $('tipFrom').textContent = '由第 1 級開始。完成呢局就會記住。';
+    $('tipFrom').textContent = '由第 1 級開始。完成本局就會記住。';
   } else {
-    $('tipFrom').textContent = '已解鎖至第 ' + view.highestLevel + ' 級。你已經係最高頭銜。';
+    $('tipFrom').textContent = '已解鎖至第 ' + view.highestLevel + ' 級。你已經是最高頭銜。';
   }
   show('tip');
 }
@@ -1535,7 +1535,7 @@ function openGate(purpose){
     no.value = saved.studentNo || '';
   }
   applyGate(false);
-  $('btnGateGo').textContent = gatePurpose === 'switch' ? '記住呢位學生' : '開始';
+  $('btnGateGo').textContent = gatePurpose === 'switch' ? '記住這位學生' : '開始';
   show('gate');
   setTimeout(function(){
     if(cls.value){
