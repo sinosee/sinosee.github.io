@@ -33,6 +33,7 @@
     <p class="blurb">一共 10 題</p>
     <div class="actions">
       <button type="button" class="bigbtn" id="btnStart">開始遊戲</button>
+      <button type="button" class="bigbtn alt" id="btnOpenBoard">查看龍虎榜</button>
     </div>
     <p class="best" id="bestLine"></p>
     <div class="foot">
@@ -52,6 +53,7 @@
       <button type="button" class="iconbtn" id="btnHome" aria-label="返回主頁">🏠</button>
       <span class="pill" id="prog">第 1／10 題</span>
       <span class="pill score" id="scorePill">答啱 0</span>
+      <span class="pill who" id="whoPill" hidden></span>
       <span class="spacer"></span>
       <label class="sound"><input type="checkbox" id="chkSound" checked> 音效</label>
     </div>
@@ -74,9 +76,64 @@
       <button type="button" class="bigbtn" id="btnAgain">再玩一次</button>
       <button type="button" class="bigbtn alt" id="btnMenu">返回主頁</button>
     </div>
+    <div class="lbPanel" id="endBoard" aria-live="polite"></div>
   </div>
 </div>
 
+<div id="gate" class="screen">
+  <div class="wrap">
+    <div class="gateCard">
+      <h2>班別學號</h2>
+      <p class="sub">用英文字母同數字，唔好打中文名。</p>
+      <form id="gateForm" class="gateForm" autocomplete="off">
+        <div class="gateFields">
+          <label class="field" for="gateClass">班別
+            <input id="gateClass" name="classId" type="text" inputmode="text" maxlength="24" placeholder="例如 1A" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off" enterkeyhint="next" aria-describedby="gateErr">
+          </label>
+          <label class="field" for="gateNo">學號
+            <input id="gateNo" name="studentNo" type="text" inputmode="text" maxlength="24" placeholder="例如 12" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="off" enterkeyhint="go" aria-describedby="gateErr">
+          </label>
+        </div>
+        <p class="gateErr" id="gateErr" role="alert" aria-live="assertive"></p>
+        <button type="submit" class="bigbtn" id="btnGateGo">開始</button>
+        <button type="button" class="gateBack" id="btnGateBack">返回</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="board" class="screen">
+  <div class="wrap boardWrap">
+    <h2>龍虎榜</h2>
+    <p class="sub">每位同學的最高分。未玩都可以睇。</p>
+    <div class="teacherBox" id="teacherBox">
+      <button type="button" class="gateBack" id="btnTeacherOpen">老師模式：刪除成績</button>
+      <form id="teacherForm" class="teacherForm" hidden autocomplete="off">
+        <p class="lbHint">輸入老師密碼，先可以刪走其中一筆成績。學生唔好輸入。</p>
+        <label class="field" for="teacherPin">老師密碼
+          <input id="teacherPin" name="teacher-pin" type="password" inputmode="numeric" maxlength="8" pattern="[0-9]*" placeholder="4 至 8 位數字" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-describedby="teacherErr">
+        </label>
+        <p class="gateErr" id="teacherErr" role="alert" aria-live="assertive"></p>
+        <div class="teacherRow">
+          <button type="submit" class="bigbtn next" id="btnTeacherUnlock">解鎖刪除</button>
+          <button type="button" class="gateBack" id="btnTeacherCancel">取消</button>
+        </div>
+      </form>
+      <div id="teacherOn" hidden>
+        <p class="lbMsg" id="teacherStatus">已解鎖。撳「刪除」清走一筆最高分。</p>
+        <button type="button" class="gateBack" id="btnTeacherLock">離開老師刪除</button>
+      </div>
+    </div>
+    <div id="boardMount" class="lbPanel" aria-live="polite"></div>
+    <div class="endBtns">
+      <button type="button" class="bigbtn alt" id="btnBoardReload">重新載入</button>
+      <button type="button" class="bigbtn" id="btnBoardBack">返回主頁</button>
+    </div>
+  </div>
+</div>
+
+<script src="firebase-config.js"></script>
+<script src="leaderboard.js"></script>
 <script src="shapes.js"></script>
 <script src="game.js"></script>
 </body>

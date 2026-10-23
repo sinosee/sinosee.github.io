@@ -301,7 +301,142 @@ h1 {
   border-color: #e0a020;
   box-shadow: 0 0 0 4px #ffd15c, 0 6px 0 #ffe29a;
 }
-.endWrap { text-align: center; padding-top: 8vh; }
+.endWrap { text-align: center; padding-top: 18px; }
+.pill.who { background: #f4ecff; border-color: var(--lilac); }
+.pill.who[hidden] { display: none; }
+
+.gateCard, .teacherBox {
+  width: min(720px, 100%);
+  margin: 18px auto;
+  padding: 22px 18px;
+  border-radius: 30px;
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(100deg, #ff8ec8, #ffd15c, #7ddeb3, #7ecbff, #c9b6ff) border-box;
+  border: 5px solid transparent;
+  box-shadow: 0 6px 0 var(--shadow);
+  text-align: center;
+}
+.gateCard h2, .boardWrap > h2 {
+  margin: 0;
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 900;
+}
+.gateForm, .teacherForm {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.teacherForm[hidden], #teacherOn[hidden] { display: none !important; }
+.gateFields { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+.field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
+  font-weight: 900;
+  font-size: clamp(18px, 2.6vw, 24px);
+  text-align: left;
+}
+.field input {
+  width: 100%;
+  min-height: 64px;
+  border-radius: 18px;
+  border: 4px solid var(--sky);
+  font: inherit;
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 900;
+  padding: 8px 16px;
+  color: var(--ink);
+  background: #f7fbff;
+}
+.field input:focus { outline: none; border-color: var(--pink); background: #fff; }
+.field input.bad { border-color: var(--deep); background: #fff5f8; }
+.gateErr {
+  margin: 0;
+  min-height: 0;
+  font-size: clamp(16px, 2.4vw, 22px);
+  font-weight: 900;
+  color: var(--deep);
+  line-height: 1.4;
+}
+.gateErr:empty { display: none; }
+.gateBack {
+  min-height: 48px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: #fff;
+  border: 3px solid var(--lilac);
+  color: var(--ink);
+  font-weight: 900;
+  font-size: 18px;
+}
+.bigbtn.is-locked { opacity: 0.55; }
+.boardWrap { text-align: center; }
+.teacherBox { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.teacherBox .field { width: min(420px, 100%); }
+.teacherRow { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; align-items: center; }
+.lbPanel { width: min(760px, 100%); margin: 16px auto 0; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+.lbTitle { margin: 4px 0 0; font-size: clamp(22px, 3.4vw, 32px); font-weight: 900; text-align: center; color: var(--ink); }
+.lbMsg { margin: 0; font-weight: 800; font-size: clamp(16px, 2.4vw, 22px); color: var(--ink); text-align: center; line-height: 1.45; }
+.lbHint { margin: 0; font-size: clamp(14px, 2vw, 18px); color: var(--muted); text-align: center; font-weight: 700; line-height: 1.4; }
+.lbList { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.lbRow {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px 10px;
+  background: #fff;
+  border-radius: 18px;
+  padding: 10px 14px;
+  border: 3px solid #ffe0f0;
+  box-shadow: 0 4px 0 var(--shadow);
+  font-weight: 900;
+  font-size: clamp(16px, 2.6vw, 24px);
+}
+.lbRow.mine { background: #fff8d6; border-color: var(--gold); box-shadow: 0 4px 0 #ffe29a; }
+.lbRank { min-width: 1.6em; text-align: center; }
+.lbName { text-align: left; min-width: 0; }
+.lbTag {
+  display: inline-block;
+  margin-left: 6px;
+  background: var(--pink);
+  color: #fff;
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 0.72em;
+  vertical-align: middle;
+}
+.lbStars { letter-spacing: 1px; white-space: nowrap; }
+.lbScore { min-width: 2.2em; text-align: right; font-variant-numeric: tabular-nums; color: var(--deep); }
+.lbRow.hasDel { grid-template-columns: auto minmax(0, 1fr) auto auto auto; }
+.lbDel {
+  min-height: 44px;
+  min-width: 64px;
+  padding: 0 12px;
+  border-radius: 12px;
+  background: #fff0f6;
+  color: var(--deep);
+  font-weight: 900;
+  border: 3px solid var(--pink);
+}
+.lbEmpty {
+  background: #fff;
+  border-radius: 18px;
+  padding: 16px;
+  text-align: center;
+  font-weight: 800;
+  color: var(--muted);
+  border: 3px solid var(--lilac);
+}
+input { -webkit-user-select: text; user-select: text; }
+@media (min-width: 700px) {
+  .gateFields { flex-direction: row; }
+  .field { flex: 1; }
+}
 .stars {
   font-size: clamp(52px, 10vw, 88px);
   letter-spacing: 0.08em;

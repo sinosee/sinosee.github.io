@@ -1,4 +1,4 @@
-/* 立體圖形對對碰 — local score only. No cloud, no class list. */
+/* 立體圖形對對碰 — local stars plus the class leaderboard. */
 (function () {
   'use strict';
 
@@ -10,7 +10,15 @@
     index: 0,
     correct: 0,
     locked: false,
-    sound: true
+    sound: true,
+    player: null,
+    gateReturn: 'home',
+    runId: 0,
+    teacherUnlocked: false,
+    teacherFormOpen: false,
+    teacherPin: '',
+    teacherBusy: false,
+    boardToken: 0
   };
   var audioCtx = null;
 
@@ -100,6 +108,7 @@
     state.correct = 0;
     state.locked = false;
     show('play');
+    paintWho();
     renderQuestion();
   }
 
@@ -158,6 +167,18 @@
     next.focus();
   }
 
+  function paintWho() {
+    var pill = $('whoPill');
+    if (!pill) return;
+    if (!state.player) {
+      pill.hidden = true;
+      pill.textContent = '';
+      return;
+    }
+    pill.hidden = false;
+    pill.textContent = state.player.classId + ' · ' + state.player.studentNo;
+  }
+
   function finish() {
     var stars = window.SolidShapes.starsFor(state.correct, TOTAL);
     var starHtml = '';
@@ -175,6 +196,153 @@
     if (stars >= 2) sfxOk();
     show('end');
     paintBest();
+    publishResult(stars, state.runId);
+  }
+
+  function publishResult(stars, runId) {
+    var box = $('endBoard');
+    var board = window.SolidLeaderboard;
+    if (!box || !board) return;
+    board.renderLoading(box);
+    var identity = state.player;
+    var score = state.correct;
+    function done(result, highlight) {
+      if (runId !== state.runId) return;
+      board.renderInto(box, result, highlight, { title: '呢局龍虎榜' });
+    }
+    if (!identity) {
+      board.load().then(function (result) { done(result, null); });
+      return;
+    }
+    board.submit({
+      classId: identity.classId,
+      studentNo: identity.studentNo,
+      score: score,
+      stars: stars
+    }).then(function (sub) {
+      var highlight = {
+        classId: identity.classId,
+        studentNo: identity.studentNo,
+        ts: sub.entry ? sub.entry.ts : 0,
+        score: sub.entry ? sub.entry.score : score
+      };
+      return board.load().then(function (result) { done(result, highlight); });
+    }).catch(function () {
+      board.load().then(function (result) {
+        done(result, { classId: identity.classId, studentNo: identity.studentNo, score: score });
+      });
+    });
+  }
+
+  function openGate(returnTo) {
+    state.gateReturn = returnTo || 'home';
+    var cls = $('gateClass');
+    var no = $('gateNo');
+    var board = window.SolidLeaderboard;
+    if (board) {
+      var saved = state.player || board.recallIdentity();
+      if (saved) {
+        if (!cls.value) cls.value = saved.classId || '';
+        if (!no.value) no.value = saved.studentNo || '';
+      }
+      applyGate(false);
+    }
+    show('gate');
+    setTimeout(function () {
+      if (cls.value) {
+        no.focus();
+        if (no.value && no.select) no.select();
+      } else {
+        cls.focus();
+      }
+    }, 60);
+  }
+
+  function applyGate(forceEmpty) {
+    var board = window.SolidLeaderboard;
+    if (!board) return { ok: true };
+    var cls = $('gateClass');
+    var no = $('gateNo');
+    var err = $('gateErr');
+    var btn = $('btnGateGo');
+    var result = board.validateIdentity(cls.value, no.value);
+    var loud = !result.ok && (result.code !== 'empty' || forceEmpty);
+    err.textContent = loud ? result.message : '';
+    cls.classList.toggle('bad', !!(loud && result.fields.indexOf('classId') >= 0));
+    no.classList.toggle('bad', !!(loud && result.fields.indexOf('studentNo') >= 0));
+    cls.setAttribute('aria-invalid', (loud && result.fields.indexOf('classId') >= 0) ? 'true' : 'false');
+    no.setAttribute('aria-invalid', (loud && result.fields.indexOf('studentNo') >= 0) ? 'true' : 'false');
+    btn.classList.toggle('is-locked', !result.ok);
+    return result;
+  }
+
+  function syncTeacherBox() {
+    var openBtn = $('btnTeacherOpen');
+    var form = $('teacherForm');
+    var on = $('teacherOn');
+    if (!openBtn || !form || !on) return;
+    openBtn.hidden = state.teacherUnlocked || state.teacherFormOpen;
+    form.hidden = state.teacherUnlocked || !state.teacherFormOpen;
+    on.hidden = !state.teacherUnlocked;
+  }
+
+  function lockTeacherDelete() {
+    state.teacherUnlocked = false;
+    state.teacherFormOpen = false;
+    state.teacherPin = '';
+    state.teacherBusy = false;
+    var pin = $('teacherPin');
+    var err = $('teacherErr');
+    if (pin) pin.value = '';
+    if (err) err.textContent = '';
+    syncTeacherBox();
+  }
+
+  function openBoard() {
+    syncTeacherBox();
+    show('board');
+    refreshBoard();
+  }
+
+  function refreshBoard() {
+    var mount = $('boardMount');
+    var board = window.SolidLeaderboard;
+    if (!board) {
+      mount.textContent = '龍虎榜未接上雲端';
+      return;
+    }
+    var token = ++state.boardToken;
+    board.renderLoading(mount);
+    board.load().then(function (result) {
+      if (token !== state.boardToken) return;
+      if (!$('board').classList.contains('on')) return;
+      var highlight = state.player ? {
+        classId: state.player.classId,
+        studentNo: state.player.studentNo
+      } : null;
+      board.renderInto(mount, result, highlight, {
+        title: '龍虎榜',
+        onDelete: state.teacherUnlocked ? askDeleteScore : null
+      });
+    });
+  }
+
+  function askDeleteScore(row) {
+    var board = window.SolidLeaderboard;
+    if (!state.teacherUnlocked || state.teacherBusy || !board) return;
+    var who = row.classId + ' · ' + row.studentNo;
+    if (!window.confirm('確定刪除 ' + who + ' 的 ' + row.score + ' 分？刪除後唔可以還原。')) return;
+    state.teacherBusy = true;
+    var status = $('teacherStatus');
+    if (status) status.textContent = '刪除緊…';
+    board.deleteScore(row, state.teacherPin).then(function (res) {
+      state.teacherBusy = false;
+      if (status) status.textContent = (res && res.message) || (res && res.ok ? '已刪除。' : '刪除失敗。');
+      if (res && res.ok) refreshBoard();
+    }).catch(function () {
+      state.teacherBusy = false;
+      if (status) status.textContent = '刪除失敗。請稍後再試。';
+    });
   }
 
   function goNext() {
@@ -189,9 +357,96 @@
   document.addEventListener('DOMContentLoaded', function () {
     loadSound();
     paintBest();
-    $('btnStart').addEventListener('click', startRound);
-    $('btnAgain').addEventListener('click', startRound);
+    $('btnStart').addEventListener('click', function () {
+      if (!window.SolidLeaderboard) { startRound(); return; }
+      openGate('home');
+    });
+    $('btnOpenBoard').addEventListener('click', openBoard);
+    $('gateClass').addEventListener('input', function () { applyGate(false); });
+    $('gateNo').addEventListener('input', function () { applyGate(false); });
+    $('gateClass').addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter') {
+        ev.preventDefault();
+        $('gateNo').focus();
+      }
+    });
+    $('gateForm').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var result = applyGate(true);
+      if (!result.ok) {
+        $(result.field === 'studentNo' ? 'gateNo' : 'gateClass').focus();
+        return;
+      }
+      state.player = {
+        classId: result.classId,
+        studentNo: result.studentNo,
+        displayName: result.displayName
+      };
+      window.SolidLeaderboard.rememberIdentity(state.player);
+      state.runId += 1;
+      startRound();
+    });
+    $('btnGateBack').addEventListener('click', function () {
+      show(state.gateReturn || 'home');
+      paintBest();
+    });
+    $('btnAgain').addEventListener('click', function () {
+      if (!window.SolidLeaderboard) { startRound(); return; }
+      openGate('end');
+    });
     $('btnMenu').addEventListener('click', function () { show('home'); paintBest(); });
+    $('btnBoardBack').addEventListener('click', function () {
+      lockTeacherDelete();
+      show('home');
+      paintBest();
+    });
+    $('btnBoardReload').addEventListener('click', refreshBoard);
+    $('btnTeacherOpen').addEventListener('click', function () {
+      state.teacherFormOpen = true;
+      $('teacherErr').textContent = '';
+      syncTeacherBox();
+      $('teacherPin').focus();
+    });
+    $('btnTeacherCancel').addEventListener('click', function () {
+      state.teacherFormOpen = false;
+      $('teacherPin').value = '';
+      $('teacherErr').textContent = '';
+      syncTeacherBox();
+    });
+    $('btnTeacherLock').addEventListener('click', function () {
+      lockTeacherDelete();
+      refreshBoard();
+    });
+    $('teacherForm').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      if (state.teacherBusy || !window.SolidLeaderboard) return;
+      var pinEl = $('teacherPin');
+      var err = $('teacherErr');
+      var btn = $('btnTeacherUnlock');
+      state.teacherBusy = true;
+      btn.disabled = true;
+      err.textContent = '';
+      window.SolidLeaderboard.verifyTeacherPin(pinEl.value).then(function (res) {
+        state.teacherBusy = false;
+        btn.disabled = false;
+        if (!res || !res.ok) {
+          err.textContent = (res && res.message) || '老師密碼唔正確。';
+          pinEl.focus();
+          return;
+        }
+        state.teacherPin = res.pin || '';
+        pinEl.value = '';
+        state.teacherUnlocked = true;
+        state.teacherFormOpen = false;
+        $('teacherStatus').textContent = '已解鎖。撳「刪除」清走一筆最高分。如果仲有其他紀錄，會顯示下一筆。';
+        syncTeacherBox();
+        refreshBoard();
+      }).catch(function () {
+        state.teacherBusy = false;
+        btn.disabled = false;
+        err.textContent = '暫時無法核對老師密碼。請稍後再試。';
+      });
+    });
     $('btnNext').addEventListener('click', goNext);
     $('btnHome').addEventListener('click', function () {
       if (!window.confirm('返去主頁？呢局嘅進度會冇咗。')) return;
