@@ -96,7 +96,107 @@
     return list.splice(i, 1)[0];
   }
 
+  function specFromVariant(variant, yaw) {
+    return {
+      shape: variant.base === 'pyramid' ? 'pyramid' : 'prism',
+      variant: variant.id,
+      axis: variant.axis || 'y',
+      spin: variant.spin || 0,
+      modelYaw: variant.modelYaw || 0,
+      pitch: variant.pitch == null ? 0.58 : variant.pitch,
+      scale: variant.scale || 1,
+      sides: variant.sides,
+      radius: variant.radius,
+      height: variant.height,
+      w: variant.w,
+      h: variant.h,
+      d: variant.d,
+      base: variant.base,
+      yaw: yaw
+    };
+  }
+
+  /* A pyramid only counts when two faces meet in a clear ridge.
+     A single front face is just a flat triangle, which P1 students
+     cannot tell apart from a prism end. */
+  function pyramidLooksSolid(spec) {
+    var faces = meshFor(spec);
+    var vis = [];
+    faces.forEach(function (face, idx) {
+      var viewPts = face.map(function (p) { return viewOf(p, spec); });
+      var nrm = cross(sub(viewPts[1], viewPts[0]), sub(viewPts[2], viewPts[0]));
+      var spts = viewPts.map(function (v) { return { x: v.x, y: -v.y }; });
+      var area = 0;
+      for (var i = 0; i < spts.length; i++) {
+        var p = spts[i], q = spts[(i + 1) % spts.length];
+        area += p.x * q.y - q.x * p.y;
+      }
+      area = Math.abs(area) * 0.5;
+      if (nrm.z > 0.18 && area > 0.05) {
+        vis.push({ area: area, pts: spts, lateral: idx !== faces.length - 1 });
+      }
+    });
+    if (vis.length < 2) return false;
+    var sum = 0;
+    var lateral = 0;
+    vis.forEach(function (f) {
+      sum += f.area;
+      if (f.lateral) lateral += 1;
+    });
+    if (lateral < 1 || sum <= 0) return false;
+    vis.sort(function (a, b) { return b.area - a.area; });
+    if (vis[0].area > sum * 0.82) return false;
+    if (vis[1].area < sum * 0.14) return false;
+    function vkey(p) { return p.x.toFixed(3) + ',' + p.y.toFixed(3); }
+    var seen = {};
+    var maxShare = 0;
+    vis.forEach(function (f) {
+      for (var i = 0; i < f.pts.length; i++) {
+        var a = vkey(f.pts[i]);
+        var b = vkey(f.pts[(i + 1) % f.pts.length]);
+        var id = a < b ? a + '|' + b : b + '|' + a;
+        var dx = f.pts[i].x - f.pts[(i + 1) % f.pts.length].x;
+        var dy = f.pts[i].y - f.pts[(i + 1) % f.pts.length].y;
+        var len = Math.sqrt(dx * dx + dy * dy);
+        if (seen[id]) {
+          if (len > maxShare) maxShare = len;
+        } else {
+          seen[id] = true;
+        }
+      }
+    });
+    var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    vis.forEach(function (f) {
+      f.pts.forEach(function (p) {
+        if (p.x < minX) minX = p.x;
+        if (p.y < minY) minY = p.y;
+        if (p.x > maxX) maxX = p.x;
+        if (p.y > maxY) maxY = p.y;
+      });
+    });
+    var span = Math.max(maxX - minX, maxY - minY) || 1;
+    return maxShare > span * 0.24;
+  }
+
+  function pickPyramidYaw(variant, rng) {
+    var good = [];
+    var steps = 48;
+    for (var i = 0; i < steps; i++) {
+      var yaw = (i / steps) * Math.PI * 2;
+      if (pyramidLooksSolid(specFromVariant(variant, yaw))) good.push(yaw);
+    }
+    if (!good.length) return null;
+    var yaw = good[Math.floor(rng() * good.length)];
+    var jittered = yaw + (rng() * 0.06 - 0.03);
+    if (pyramidLooksSolid(specFromVariant(variant, jittered))) return jittered;
+    return yaw;
+  }
+
   function pickYaw(spec, rng) {
+    if (spec.base === 'pyramid') {
+      var solid = pickPyramidYaw(spec, rng);
+      if (solid != null) return solid;
+    }
     var bank = (spec.axis === 'x') ? YAW_LIE : YAW_STAND;
     return bank[Math.floor(rng() * bank.length)] + (rng() * 0.08 - 0.04);
   }
@@ -183,7 +283,10 @@
       VARIANTS[n.id].forEach(function (variant, i) {
         var spec = buildSpec(n.id, variant, mulberry32(1000 + pi * 17 + i));
         spec.palette = PALETTES[(pi + i) % PALETTES.length].id;
-        if (spec.axis === 'x') spec.yaw = YAW_LIE[i % YAW_LIE.length];
+        if (spec.base === 'pyramid') {
+          var safeYaw = pickPyramidYaw(variant, mulberry32(2000 + pi * 13 + i));
+          if (safeYaw != null) spec.yaw = safeYaw;
+        } else if (spec.axis === 'x') spec.yaw = YAW_LIE[i % YAW_LIE.length];
         else if (n.id !== 'sphere') spec.yaw = YAW_STAND[(i * 3) % YAW_STAND.length];
         spec.choices = NAMES.map(function (item) { return item.id; });
         out.push(spec);
@@ -310,15 +413,6 @@
     });
   }
 
-  function ring(y, radius, seg) {
-    var pts = [];
-    for (var i = 0; i < seg; i++) {
-      var a = i / seg * Math.PI * 2;
-      pts.push({ x: Math.cos(a) * radius, y: y, z: Math.sin(a) * radius });
-    }
-    return pts;
-  }
-
   function boxMesh(w, h, d) {
     var x = w / 2, y = h / 2, z = d / 2;
     var p = {
@@ -391,29 +485,6 @@
     return boxMesh(1, 1, 1);
   }
 
-  function hull(points) {
-    var pts = points.slice().sort(function (a, b) {
-      return a.x === b.x ? a.y - b.y : a.x - b.x;
-    });
-    if (pts.length < 3) return pts;
-    function cross2(o, a, b) {
-      return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
-    }
-    var lower = [];
-    for (var i = 0; i < pts.length; i++) {
-      while (lower.length >= 2 && cross2(lower[lower.length - 2], lower[lower.length - 1], pts[i]) <= 0) lower.pop();
-      lower.push(pts[i]);
-    }
-    var upper = [];
-    for (var j = pts.length - 1; j >= 0; j--) {
-      while (upper.length >= 2 && cross2(upper[upper.length - 2], upper[upper.length - 1], pts[j]) <= 0) upper.pop();
-      upper.push(pts[j]);
-    }
-    upper.pop();
-    lower.pop();
-    return lower.concat(upper);
-  }
-
   function pathOf(points, close) {
     if (!points.length) return '';
     var d = 'M ' + points[0].x.toFixed(2) + ' ' + points[0].y.toFixed(2);
@@ -422,15 +493,6 @@
     }
     if (close) d += ' Z';
     return d;
-  }
-
-  function projectList(pts, spec, tag) {
-    return pts.map(function (p, i) {
-      var s = screenOf(p, spec);
-      s.i = i;
-      s.tag = tag;
-      return s;
-    });
   }
 
   function boundsOf(points, pad) {
@@ -512,113 +574,202 @@
     return { parts: parts, points: allPts, sw: sw };
   }
 
-  function walkRing(ringPts, from, to, dir) {
-    var out = [];
-    var n = ringPts.length;
-    var i = from;
-    var guard = 0;
-    while (guard++ <= n) {
-      out.push(ringPts[i]);
-      if (i === to) break;
-      i = (i + dir + n) % n;
-    }
-    return out;
+  /* Orthographic circle: center on the Y axis, radius in XZ.
+     Returned ellipse uses smooth SVG geometry, never a polyline. */
+  function circleEllipse(y, radius, spec) {
+    var c = screenOf({ x: 0, y: y, z: 0 }, spec);
+    var ax = screenOf({ x: radius, y: 0, z: 0 }, spec);
+    var bx = screenOf({ x: 0, y: 0, z: radius }, spec);
+    var A = { x: ax.x, y: ax.y };
+    var B = { x: bx.x, y: bx.y };
+    var aa = A.x * A.x + B.x * B.x;
+    var bb = A.y * A.y + B.y * B.y;
+    var cc = A.x * A.y + B.x * B.y;
+    var disc = Math.sqrt(Math.max(0, (aa - bb) * (aa - bb) + 4 * cc * cc));
+    var major = Math.max(0, (aa + bb + disc) / 2);
+    var minor = Math.max(0, (aa + bb - disc) / 2);
+    return {
+      cx: c.x,
+      cy: c.y,
+      rx: Math.sqrt(major),
+      ry: Math.sqrt(minor),
+      rot: 0.5 * Math.atan2(2 * cc, aa - bb),
+      A: A,
+      B: B
+    };
   }
 
-  function outerInner(ringPts, hullPts) {
-    var on = {};
-    hullPts.forEach(function (p) {
-      if (p.tag === ringPts[0].tag) on[p.i] = true;
-    });
-    var tangents = [];
-    hullPts.forEach(function (p, idx) {
-      if (p.tag !== ringPts[0].tag) return;
-      var prev = hullPts[(idx - 1 + hullPts.length) % hullPts.length];
-      var next = hullPts[(idx + 1) % hullPts.length];
-      if (prev.tag !== ringPts[0].tag || next.tag !== ringPts[0].tag) tangents.push(p.i);
-    });
-    if (tangents.length < 2) {
-      return { outer: ringPts.slice(), inner: [] };
+  function ellipsePoint(ell, t) {
+    var c = Math.cos(ell.rot), s = Math.sin(ell.rot);
+    var x = Math.cos(t) * ell.rx;
+    var y = Math.sin(t) * ell.ry;
+    return { x: ell.cx + x * c - y * s, y: ell.cy + x * s + y * c };
+  }
+
+  function ellipseTheta(ell, p) {
+    var c = Math.cos(ell.rot), s = Math.sin(ell.rot);
+    var dx = p.x - ell.cx, dy = p.y - ell.cy;
+    var x = dx * c + dy * s;
+    var y = -dx * s + dy * c;
+    return Math.atan2(y / Math.max(ell.ry, 1e-4), x / Math.max(ell.rx, 1e-4));
+  }
+
+  function ellipseSamples(ell) {
+    var pts = [];
+    for (var i = 0; i < 8; i++) pts.push(ellipsePoint(ell, i / 8 * Math.PI * 2));
+    return pts;
+  }
+
+  function supportPoint(ell, n) {
+    var an = ell.A.x * n.x + ell.A.y * n.y;
+    var bn = ell.B.x * n.x + ell.B.y * n.y;
+    var L = Math.sqrt(an * an + bn * bn) || 1;
+    return {
+      x: ell.cx + (an * ell.A.x + bn * ell.B.x) / L,
+      y: ell.cy + (an * ell.A.y + bn * ell.B.y) / L
+    };
+  }
+
+  function perp2(d) {
+    var len = Math.sqrt(d.x * d.x + d.y * d.y) || 1;
+    return { x: -d.y / len, y: d.x / len };
+  }
+
+  function outerDelta(ell, tA, tB, awayFrom) {
+    var d1 = tB - tA;
+    while (d1 > Math.PI) d1 -= Math.PI * 2;
+    while (d1 < -Math.PI) d1 += Math.PI * 2;
+    var d2 = d1 > 0 ? d1 - Math.PI * 2 : d1 + Math.PI * 2;
+    function score(delta) {
+      var mid = ellipsePoint(ell, tA + delta / 2);
+      var dx = mid.x - awayFrom.x, dy = mid.y - awayFrom.y;
+      return dx * dx + dy * dy;
     }
-    var a = tangents[0], b = tangents[1];
-    var w1 = walkRing(ringPts, a, b, 1);
-    var w2 = walkRing(ringPts, a, b, -1);
-    function score(w) {
-      var s = 0;
-      w.forEach(function (p) { if (on[p.i]) s++; });
-      return s;
+    return score(d1) >= score(d2) ? d1 : d2;
+  }
+
+  function xy(p) { return p.x.toFixed(4) + ' ' + p.y.toFixed(4); }
+
+  function appendArc(cmds, ell, t0, delta) {
+    var steps = Math.max(1, Math.ceil(Math.abs(delta) / (Math.PI / 2)));
+    var step = delta / steps;
+    var t = t0;
+    for (var i = 0; i < steps; i++) {
+      var d = step;
+      var k = (4 / 3) * Math.tan(d / 4);
+      var p0 = ellipsePoint(ell, t);
+      var p3 = ellipsePoint(ell, t + d);
+      function deriv(th) {
+        var c = Math.cos(ell.rot), s = Math.sin(ell.rot);
+        var dx = -ell.rx * Math.sin(th);
+        var dy = ell.ry * Math.cos(th);
+        return { x: dx * c - dy * s, y: dx * s + dy * c };
+      }
+      var d0 = deriv(t), d1 = deriv(t + d);
+      cmds.push('C ' + xy({ x: p0.x + k * d0.x, y: p0.y + k * d0.y }) +
+        ' ' + xy({ x: p3.x - k * d1.x, y: p3.y - k * d1.y }) +
+        ' ' + xy(p3));
+      t += d;
     }
-    if (score(w1) >= score(w2)) return { outer: w1, inner: w2 };
-    return { outer: w2, inner: w1 };
+  }
+
+  function ellipseTag(ell, fill, stroke, sw) {
+    var deg = (ell.rot * 180 / Math.PI).toFixed(3);
+    var rx = Math.max(ell.rx, 0.012);
+    var ry = Math.max(ell.ry, 0.012);
+    return '<ellipse cx="' + ell.cx.toFixed(4) + '" cy="' + ell.cy.toFixed(4) +
+      '" rx="' + rx.toFixed(4) + '" ry="' + ry.toFixed(4) +
+      '" fill="' + fill + '" stroke="' + stroke + '" stroke-width="' + sw +
+      '" transform="rotate(' + deg + ' ' + ell.cx.toFixed(4) + ' ' + ell.cy.toFixed(4) + ')"/>';
+  }
+
+  function coneTangents(apex, ell) {
+    var c = Math.cos(ell.rot), s = Math.sin(ell.rot);
+    var dx = apex.x - ell.cx, dy = apex.y - ell.cy;
+    var x = (dx * c + dy * s) / Math.max(ell.rx, 1e-4);
+    var y = (-dx * s + dy * c) / Math.max(ell.ry, 1e-4);
+    var d2 = x * x + y * y;
+    if (d2 <= 1.002) return null;
+    var beta = Math.atan2(y, x);
+    var alpha = Math.acos(Math.min(1, 1 / Math.sqrt(d2)));
+    return [beta + alpha, beta - alpha];
   }
 
   function renderRound(spec, uid) {
     var pal = palette(spec.palette);
-    var seg = 40;
     var h2 = spec.height / 2;
     var r = spec.radius;
     var isCone = spec.shape === 'cone';
     var parts = [];
     var all = [];
-    var yBase = -h2;
-    var yTop = h2;
-    var baseRing = projectList(ring(isCone ? yBase : -h2, r, seg), spec, 'base');
-    var topRing = isCone ? null : projectList(ring(h2, r, seg), spec, 'top');
-    var apex = null;
-    if (isCone) {
-      var a = screenOf({ x: 0, y: yTop, z: 0 }, spec);
-      a.tag = 'apex';
-      a.i = -1;
-      apex = a;
-    }
-
+    var sw = 0.05;
+    var base = circleEllipse(-h2, r, spec);
+    var apex = isCone ? screenOf({ x: 0, y: h2, z: 0 }, spec) : null;
+    var top = isCone ? null : circleEllipse(h2, r, spec);
     var gid = 'g' + uid;
     parts.push(
-      '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="1" y2="0.2">' +
+      '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="1" y2="0.15">' +
       '<stop offset="0" stop-color="' + pal.dark + '"/>' +
-      '<stop offset="0.38" stop-color="' + pal.light + '"/>' +
+      '<stop offset="0.42" stop-color="' + pal.light + '"/>' +
       '<stop offset="0.72" stop-color="' + pal.mid + '"/>' +
       '<stop offset="1" stop-color="' + mix(pal.mid, pal.dark, 0.45) + '"/>' +
       '</linearGradient></defs>'
     );
 
-    var bodyPts;
-    var sw = 0.05;
     if (isCone) {
-      bodyPts = hull(baseRing.concat([apex]));
-      parts.push('<path class="body" d="' + pathOf(bodyPts, true) + '" fill="url(#' + gid + ')" stroke="' + pal.edge + '" stroke-width="' + sw + '" stroke-linejoin="round"/>');
-      all = all.concat(bodyPts);
-    } else {
-      bodyPts = hull(baseRing.concat(topRing));
-      parts.push('<path class="body" d="' + pathOf(bodyPts, true) + '" fill="url(#' + gid + ')" stroke="' + pal.edge + '" stroke-width="' + sw + '" stroke-linejoin="round"/>');
-      all = all.concat(bodyPts);
-    }
-
-    function capZ(normal) {
-      return viewOf(normal, spec).z;
-    }
-    var caps = [];
-    if (isCone) {
-      caps.push({ pts: baseRing, facing: capZ({ x: 0, y: -1, z: 0 }), which: 'base' });
-    } else {
-      caps.push({ pts: topRing, facing: capZ({ x: 0, y: 1, z: 0 }), which: 'top' });
-      caps.push({ pts: baseRing, facing: capZ({ x: 0, y: -1, z: 0 }), which: 'base' });
-    }
-    caps.sort(function (a, b) { return a.facing - b.facing; });
-    caps.forEach(function (cap) {
-      if (cap.facing > 0.16) {
-        var fill = cap.which === 'top' || (isCone && cap.facing > 0) ? pal.light : mix(pal.mid, pal.dark, 0.25);
-        if (isCone) fill = mix(pal.light, '#ffffff', 0.35);
-        parts.push('<path class="cap" d="' + pathOf(cap.pts, true) + '" fill="' + fill + '" stroke="' + pal.edge + '" stroke-width="' + (sw * 0.85) + '" stroke-linejoin="round"/>');
-        all = all.concat(cap.pts);
-      } else if (isCone) {
-        var split = outerInner(baseRing, bodyPts);
-        if (split.inner.length > 2) {
-          parts.push('<path class="rim" d="' + pathOf(split.inner, false) + '" fill="none" stroke="' + pal.edge + '" stroke-width="' + (sw * 0.7) + '" stroke-linecap="round"/>');
-        }
+      var ts = coneTangents(apex, base);
+      if (ts) {
+        var p0 = ellipsePoint(base, ts[0]);
+        var outer = outerDelta(base, ts[0], ts[1], apex);
+        var cmds = ['M ' + xy(apex), 'L ' + xy(p0)];
+        appendArc(cmds, base, ts[0], outer);
+        cmds.push('Z');
+        parts.push('<path class="body" d="' + cmds.join(' ') + '" fill="url(#' + gid + ')" stroke="' + pal.edge + '" stroke-width="' + sw + '" stroke-linejoin="round" stroke-linecap="round"/>');
+        all.push(apex, p0, ellipsePoint(base, ts[1]));
       }
-    });
+      all = all.concat(ellipseSamples(base));
+    } else {
+      var axis = { x: top.cx - base.cx, y: top.cy - base.cy };
+      var n = perp2(axis);
+      var a0 = supportPoint(base, n);
+      var a1 = supportPoint(top, n);
+      var b0 = supportPoint(base, { x: -n.x, y: -n.y });
+      var b1 = supportPoint(top, { x: -n.x, y: -n.y });
+      var cmdsC = ['M ' + xy(a0), 'L ' + xy(a1)];
+      appendArc(cmdsC, top, ellipseTheta(top, a1), outerDelta(top, ellipseTheta(top, a1), ellipseTheta(top, b1), { x: base.cx, y: base.cy }));
+      cmdsC.push('L ' + xy(b0));
+      appendArc(cmdsC, base, ellipseTheta(base, b0), outerDelta(base, ellipseTheta(base, b0), ellipseTheta(base, a0), { x: top.cx, y: top.cy }));
+      cmdsC.push('Z');
+      parts.push('<path class="body" d="' + cmdsC.join(' ') + '" fill="url(#' + gid + ')" stroke="' + pal.edge + '" stroke-width="' + sw + '" stroke-linejoin="round" stroke-linecap="round"/>');
+      all.push(a0, a1, b0, b1);
+      all = all.concat(ellipseSamples(base), ellipseSamples(top));
+    }
 
+    function capFacing(dir) {
+      return viewOf(dir, spec).z;
+    }
+    if (isCone) {
+      var face = capFacing({ x: 0, y: -1, z: 0 });
+      if (face > 0.14) {
+        parts.push(ellipseTag(base, mix(pal.light, '#ffffff', 0.35), pal.edge, sw * 0.85));
+      } else if (apex && coneTangents(apex, base)) {
+        var tang = coneTangents(apex, base);
+        var inner = outerDelta(base, tang[0], tang[1], apex);
+        inner = inner > 0 ? inner - Math.PI * 2 : inner + Math.PI * 2;
+        var rim = ['M ' + xy(ellipsePoint(base, tang[0]))];
+        appendArc(rim, base, tang[0], inner);
+        parts.push('<path class="rim" d="' + rim.join(' ') + '" fill="none" stroke="' + pal.edge + '" stroke-width="' + (sw * 0.7) + '" stroke-linecap="round"/>');
+      }
+    } else {
+      var caps = [
+        { ell: top, facing: capFacing({ x: 0, y: 1, z: 0 }), fill: pal.light },
+        { ell: base, facing: capFacing({ x: 0, y: -1, z: 0 }), fill: mix(pal.mid, pal.dark, 0.25) }
+      ];
+      caps.sort(function (a, b) { return a.facing - b.facing; });
+      caps.forEach(function (cap) {
+        if (cap.facing > 0.12) parts.push(ellipseTag(cap.ell, cap.fill, pal.edge, sw * 0.85));
+      });
+    }
     return { parts: parts, points: all };
   }
 
