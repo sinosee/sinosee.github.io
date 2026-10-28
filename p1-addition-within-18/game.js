@@ -1,4 +1,4 @@
-/* 18以內加數 — two-minute run, on-screen keypad, retry until correct.
+/* 18以內加數 — 90-second run, on-screen keypad, retry until correct.
    Teacher projector mode never asks for a class or student number and never
    reads or writes the leaderboard. */
 (function () {

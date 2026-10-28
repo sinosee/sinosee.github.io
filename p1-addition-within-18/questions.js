@@ -1,7 +1,7 @@
 /* 18以內加數 — pure round rules.
    Addends are integers >= 1 and the sum is at most 18.
    A wrong answer stays on the same pair. A correct answer scores 10.
-   The round lasts ROUND_MS (2 minutes) and then stops. */
+   The round lasts ROUND_MS (90 seconds) and then stops. */
 (function (root, factory) {
   var api = factory();
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
@@ -11,7 +11,7 @@
 
   var POINTS = 10;
   var MAX_SCORE = 2000;
-  var ROUND_MS = 120000;
+  var ROUND_MS = 90000;
   var PAIRS = buildPairs();
 
   function buildPairs() {
