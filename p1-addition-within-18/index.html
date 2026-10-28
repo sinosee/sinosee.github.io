@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="18以內加數">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffe4f0">
+<meta name="description" content="小一 18 以內加數。兩分鐘挑戰，答對一題得 10 分。">
+<title>18以內加數</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../qr.css">
+</head>
+<body>
+<div class="sky" aria-hidden="true">
+  <span class="cloud c1"></span>
+  <span class="cloud c2"></span>
+  <span class="cloud c3"></span>
+  <span class="floater f1">⭐</span>
+  <span class="floater f2">🍎</span>
+  <span class="floater f3">🌟</span>
+  <span class="floater f4">🍊</span>
+  <span class="floater f5">🐰</span>
+  <span class="floater f6">🌸</span>
+</div>
+
+<div id="home" class="screen on">
+  <div class="wrap">
+    <header class="hero">
+      <img class="heroMascot" src="../assets/mascot.jpg" width="512" height="512" alt="Q版白色小狗">
+      <div>
+        <p class="eyebrow">小一數學</p>
+        <h1>18以內加數</h1>
+        <p class="sub">兩分鐘挑戰</p>
+      </div>
+    </header>
+    <div class="stickers" aria-hidden="true">
+      <span>🐰</span><span>🍎</span><span>➕</span><span>🍊</span><span>🐥</span><span>⭐</span><span>🐸</span>
+    </div>
+    <ul class="chips" aria-label="玩法">
+      <li>2 分鐘</li>
+      <li>答對 +10</li>
+      <li>答錯再試</li>
+    </ul>
+    <p class="rules">加數由 1 開始，兩個數的和不大於 18。答對一題得 10 分。答錯要再算同一題。</p>
+    <div class="modes" role="group" aria-label="模式">
+      <button type="button" class="mode sel" id="modeStudent" data-mode="student" aria-pressed="true">
+        <div class="mi" aria-hidden="true">🧒</div>
+        <div class="mt">學生模式</div>
+        <div class="md">填寫班別和學號<br>成績記入龍虎榜</div>
+      </button>
+      <button type="button" class="mode" id="modeTeacher" data-mode="teacher" aria-pressed="false">
+        <div class="mi" aria-hidden="true">📺</div>
+        <div class="mt">老師投影</div>
+        <div class="md">不用填寫班別學號<br>本局不會上榜</div>
+      </button>
+    </div>
+    <p class="modeNote" id="modeNote">學生要填寫班別和學號，時間結束後記入龍虎榜。</p>
+    <div class="actions">
+      <button type="button" class="bigbtn" id="btnStart">開始挑戰</button>
+      <button type="button" class="bigbtn alt" id="btnOpenBoard">查看龍虎榜</button>
+    </div>
+    <p class="best" id="bestLine"></p>
+    <label class="sound homeSound"><input type="checkbox" id="chkSoundHome" checked> 音效</label>
+    <p class="note">不用登入 · 適合平板和投影</p>
+    <div class="qrFoot">
+      <img class="qr" src="qrcode.png" width="112" height="132" alt="18以內加數遊戲網址二維碼">
+      <div>
+        <img class="dog" src="../assets/mascot.jpg" width="52" height="52" alt="">
+        <p>18以內加數</p>
+        <p class="qrHint">用平板掃描二維碼，打開這一頁</p>
+        <a href="https://sinosee.github.io/p1-addition-within-18/">sinosee.github.io/p1-addition-within-18</a>
+      </div>
+    </div>
+    <p class="homeBack"><a href="../#maths">返回遊戲列表</a></p>
+  </div>
+</div>
+
+<div id="gate" class="screen">
+  <div class="wrap">
+    <div class="gateCard">
+      <h2>班別學號</h2>
+      <p class="sub">請用英文字母和數字，不要輸入中文姓名。</p>
+      <form id="gateForm" class="gateForm" autocomplete="off">
+        <div class="gateFields">
+          <label class="field" for="gateClass">班別
+            <input id="gateClass" name="classId" type="text" inputmode="text" maxlength="24" placeholder="例如 1A" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off" enterkeyhint="next" aria-describedby="gateErr">
+          </label>
+          <label class="field" for="gateNo">學號
+            <input id="gateNo" name="studentNo" type="text" inputmode="text" maxlength="24" placeholder="例如 12" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="off" enterkeyhint="go" aria-describedby="gateErr">
+          </label>
+        </div>
+        <p class="gateErr" id="gateErr" role="alert" aria-live="assertive"></p>
+        <button type="submit" class="bigbtn" id="btnGateGo">開始</button>
+        <button type="button" class="gateBack" id="btnGateBack">返回</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="play" class="screen">
+  <div class="hud">
+    <button type="button" class="iconbtn" id="btnHome" aria-label="返回主頁">🏠</button>
+    <div class="stat time" id="timeStat">
+      <span class="statLabel">剩餘時間</span>
+      <strong id="timeValue">2:00</strong>
+    </div>
+    <div class="stat score">
+      <span class="statLabel">分數</span>
+      <strong id="scoreValue">0</strong>
+    </div>
+    <span class="pill" id="correctPill">答對 0 題</span>
+    <span class="pill who" id="whoPill" hidden></span>
+    <span class="pill who" id="modePill" hidden>老師投影</span>
+    <label class="sound"><input type="checkbox" id="chkSound" checked> 音效</label>
+  </div>
+  <p id="timeLive" class="srOnly" aria-live="assertive"></p>
+  <div class="stage">
+    <div class="playRow">
+      <div class="buddy" id="buddy">
+        <img class="mascotImg" src="../assets/mascot.jpg" width="112" height="112" alt="">
+        <p id="speech" class="speech">算出來吧！</p>
+      </div>
+      <div class="trays" aria-hidden="true">
+        <div class="tray apple">
+          <div class="trayItems" id="trayA"></div>
+          <p class="trayLabel">蘋果 <span id="countA">1</span> 個</p>
+        </div>
+        <div class="plusBall">+</div>
+        <div class="tray orange">
+          <div class="trayItems" id="trayB"></div>
+          <p class="trayLabel">橙 <span id="countB">1</span> 個</p>
+        </div>
+      </div>
+    </div>
+    <div class="eq" id="eq">
+      <span id="termA">1</span>
+      <span class="op" aria-hidden="true">+</span>
+      <span id="termB">1</span>
+      <span class="op" aria-hidden="true">=</span>
+      <span id="answerBox" class="answerBox empty">?</span>
+    </div>
+    <p id="srQ" class="srOnly" aria-live="polite"></p>
+    <p id="feedback" class="feedback ask" role="status" aria-live="polite">請輸入答案，然後按「確定」。</p>
+  </div>
+  <div class="keypadWrap">
+    <div class="keypad" id="keypad" role="group" aria-label="數字鍵盤">
+      <button type="button" class="key" data-key="1">1</button>
+      <button type="button" class="key" data-key="2">2</button>
+      <button type="button" class="key" data-key="3">3</button>
+      <button type="button" class="key" data-key="4">4</button>
+      <button type="button" class="key" data-key="5">5</button>
+      <button type="button" class="key" data-key="6">6</button>
+      <button type="button" class="key" data-key="7">7</button>
+      <button type="button" class="key" data-key="8">8</button>
+      <button type="button" class="key" data-key="9">9</button>
+      <button type="button" class="key word" data-key="clear">清除</button>
+      <button type="button" class="key" data-key="0">0</button>
+      <button type="button" class="key word" data-key="back" aria-label="刪除一個數字">刪除</button>
+      <button type="button" class="key wide go" data-key="ok">確定</button>
+    </div>
+  </div>
+</div>
+
+<div id="end" class="screen">
+  <div class="wrap endInner">
+    <img class="endMascot" src="../assets/mascot.jpg" width="512" height="512" alt="">
+    <p class="kicker" id="endKicker">時間到了！</p>
+    <div class="stars" id="endStars" aria-label="星星"></div>
+    <h2 id="endTitle">做得好！</h2>
+    <p class="endScore" id="endScore">分數 0</p>
+    <p class="endSub" id="endSub">答對 0 題</p>
+    <p class="endNote" id="endNote"></p>
+    <p class="best" id="endBest"></p>
+    <div class="actions">
+      <button type="button" class="bigbtn" id="btnAgain">再玩一次</button>
+      <button type="button" class="bigbtn alt" id="btnEndBoard">查看龍虎榜</button>
+      <button type="button" class="bigbtn alt" id="btnMenu">返回主頁</button>
+    </div>
+    <div class="lbPanel" id="endBoard" aria-live="polite"></div>
+  </div>
+</div>
+
+<div id="board" class="screen">
+  <div class="wrap boardWrap">
+    <h2>龍虎榜</h2>
+    <p class="sub">每位同學的最高分。未玩也可以查看。</p>
+    <div class="teacherBox" id="teacherBox">
+      <button type="button" class="gateBack" id="btnTeacherOpen">老師模式：刪除成績</button>
+      <form id="teacherForm" class="teacherForm" hidden autocomplete="off">
+        <p class="lbHint">輸入老師密碼，才可以刪除其中一筆成績。學生請勿輸入。</p>
+        <label class="field" for="teacherPin">老師密碼
+          <input id="teacherPin" name="teacher-pin" type="password" inputmode="numeric" maxlength="8" pattern="[0-9]*" placeholder="4 至 8 位數字" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-describedby="teacherErr">
+        </label>
+        <p class="gateErr" id="teacherErr" role="alert" aria-live="assertive"></p>
+        <div class="teacherRow">
+          <button type="submit" class="bigbtn next" id="btnTeacherUnlock">解鎖刪除</button>
+          <button type="button" class="gateBack" id="btnTeacherCancel">取消</button>
+        </div>
+      </form>
+      <div id="teacherOn" hidden>
+        <p class="lbMsg" id="teacherStatus">已解鎖。按「刪除」清除一筆最高分。</p>
+        <button type="button" class="gateBack" id="btnTeacherLock">離開老師刪除</button>
+      </div>
+    </div>
+    <div id="boardMount" class="lbPanel" aria-live="polite"></div>
+    <div class="actions">
+      <button type="button" class="bigbtn alt" id="btnBoardReload">重新載入</button>
+      <button type="button" class="bigbtn" id="btnBoardBack">返回</button>
+    </div>
+  </div>
+</div>
+
+<div id="fx" aria-hidden="true"></div>
+<div id="plusPop" class="plusPop" aria-hidden="true">+10</div>
+
+<script src="firebase-config.js"></script>
+<script src="questions.js"></script>
+<script src="leaderboard.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
