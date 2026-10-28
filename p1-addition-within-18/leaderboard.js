@@ -606,7 +606,7 @@
     var message = (loadResult && loadResult.message) || '';
     if (!view.rows.length && !message) message = MSG.empty;
     if (message) container.appendChild(el(doc, 'p', 'lbMsg', message));
-    container.appendChild(el(doc, 'p', 'lbHint', '每位同學顯示最高分。每答對一題得 10 分。分數相同則並列同一名。並列時星星較多的排在前面。'));
+    container.appendChild(el(doc, 'p', 'lbHint', '每位同學顯示最高分。答對一題得 10 分。分數相同就並列，星星較多的排前。'));
     if (view.note) container.appendChild(el(doc, 'p', 'lbMsg', view.note));
     if (options.onDelete) {
       container.appendChild(el(doc, 'p', 'lbHint', '老師刪除模式。每一行是最高分，刪除只清除這一筆。'));

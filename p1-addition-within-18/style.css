@@ -10,7 +10,7 @@
   --sky: #7ecbff;
   --lilac: #c9b6ff;
   --shadow: #f3c3dc;
-  --fruit: clamp(16px, 3.2vmin, 30px);
+  --fruit: clamp(22px, 4.2vmin, 34px);
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -651,7 +651,7 @@ h2 { font-size: clamp(32px, 5vw, 48px); }
 .plusPop {
   position: fixed;
   left: 50%;
-  top: 36%;
+  top: 18%;
   z-index: 9;
   font-size: clamp(40px, 8vmin, 80px);
   font-weight: 900;
@@ -665,6 +665,22 @@ h2 { font-size: clamp(32px, 5vw, 48px); }
 @media (min-width: 700px) {
   .gateFields { flex-direction: row; }
   .field { flex: 1; }
+}
+.gateCard .sub { display: block; margin: 8px 0 16px; }
+@media (max-height: 860px) {
+  .wrap { padding-top: 8px; padding-bottom: 12px; }
+  .heroMascot { width: 92px; height: 92px; }
+  h1 { font-size: 42px; }
+  .stickers { margin: 4px 0; font-size: 32px; }
+  .chips { margin: 6px 0; }
+  .chips li { padding: 4px 12px; }
+  .rules { margin: 4px auto 8px; }
+  .mode { padding: 8px; }
+  .mode .mi { font-size: 28px; }
+  .actions { margin: 8px 0; }
+  .bigbtn { min-height: 52px; }
+  .qrFoot { margin-top: 6px; padding: 8px 10px; }
+  .homeSound, .note { margin-top: 2px; margin-bottom: 2px; }
 }
 @media (max-width: 640px) {
   .hero { flex-direction: column; text-align: center; }
