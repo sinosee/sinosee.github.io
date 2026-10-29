@@ -3,7 +3,7 @@ var assert = require('assert');
 var api = require('./questions.js');
 
 assert.strictEqual(api.POINTS, 10);
-assert.strictEqual(api.ROUND_MS, 90000);
+assert.strictEqual(api.ROUND_MS, 60000);
 assert.strictEqual(api.MAX_SCORE, 2000);
 assert.strictEqual(api.shouldSubmit('student'), true);
 assert.strictEqual(api.shouldSubmit('teacher'), false);
@@ -49,10 +49,9 @@ for (i = 0; i < 400; i++) {
   prev = api.pairKey(drawn);
 }
 
-assert.strictEqual(api.formatClock(90000), '1:30');
-assert.strictEqual(api.formatClock(89001), '1:30');
-assert.strictEqual(api.formatClock(89000), '1:29');
 assert.strictEqual(api.formatClock(60000), '1:00');
+assert.strictEqual(api.formatClock(59001), '1:00');
+assert.strictEqual(api.formatClock(59000), '0:59');
 assert.strictEqual(api.formatClock(1000), '0:01');
 assert.strictEqual(api.formatClock(1), '0:01');
 assert.strictEqual(api.formatClock(0), '0:00');
