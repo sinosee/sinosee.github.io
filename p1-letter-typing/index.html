@@ -334,12 +334,6 @@ a.backsite:hover{text-decoration:underline}
   margin:0;text-align:center;
   font-size:clamp(26px,4.2vw,44px);font-weight:900;line-height:1.2;
 }
-.practiceTip{
-  margin:0;width:100%;
-  padding:8px 14px;border-radius:16px;
-  background:#fff7cc;border:3px solid #ffd15c;
-  font-size:clamp(22px,3.4vw,36px);font-weight:900;line-height:1.35;text-align:center;
-}
 .practiceShape,.practiceDigit{
   margin:0;text-align:center;font-weight:900;line-height:1.35;
 }
@@ -574,7 +568,6 @@ a.backsite:hover{text-decoration:underline}
     </div>
     <div class="practiceCard" id="viewPractice" hidden>
       <p class="practiceTitle" id="practiceTitle">Google Classroom 帳號</p>
-      <p class="practiceTip" id="practiceTip">請看學生手冊第 21 頁</p>
       <p class="practiceShape" id="practiceShape"></p>
       <p class="practiceDigit" id="practiceDigit">數字要先按藍色 123。</p>
       <p class="practiceAttempt" id="practiceAttempt">第 1／5 次</p>
@@ -739,8 +732,8 @@ var SPECS = [
   {kind:"text", text:"I have 2 pens. The pens are red.", preview:"I have 2 pens…"},
   {kind:"text", text:"I am happy today. I can read and play.", preview:"I am happy today…"},
 
-  {kind:"practice", mode:"account", attempts:PRACTICE_TIMES, title:"Google Classroom 帳號", preview:"自己的帳號", tip:"請看學生手冊第 21 頁", shape:"帳號是 sb，再加四個數字。", placeholder:"打你的帳號"},
-  {kind:"practice", mode:"password", attempts:PRACTICE_TIMES, title:"Google Classroom 密碼", preview:"自己的密碼", tip:"請看學生手冊第 21 頁", shape:"密碼是四個英文字母，再加四個數字。", placeholder:"打你的密碼"}
+  {kind:"practice", mode:"account", attempts:PRACTICE_TIMES, title:"Google Classroom 帳號", preview:"自己的帳號", shape:"帳號是 sb，再加四個數字。", placeholder:"打你的帳號"},
+  {kind:"practice", mode:"password", attempts:PRACTICE_TIMES, title:"Google Classroom 密碼", preview:"自己的密碼", shape:"密碼是四個英文字母，再加四個數字。", placeholder:"打你的密碼"}
 ];
 
 function specSource(spec){
@@ -1107,7 +1100,6 @@ function selfCheck(){
   if(!l51 || l51.spec.kind !== "practice" || l51.spec.mode !== "account" || l51.page !== 6) issues.push("第51關");
   if(!l52 || l52.spec.kind !== "practice" || l52.spec.mode !== "password" || l52.page !== 6) issues.push("第52關");
   if(!l51 || !l52 || l51.spec.attempts !== 5 || l52.spec.attempts !== 5) issues.push("練習次數");
-  if(!l51 || l51.spec.tip.indexOf("學生手冊第21頁") < 0 || !l52 || l52.spec.tip.indexOf("學生手冊第21頁") < 0) issues.push("手冊提示");
   if(!l51 || specSource(l51.spec) !== "" || specBlob(l51.spec) !== "" || l51.spec.text || l51.spec.words || l51.spec.letters) issues.push("第51關不應有答案");
   if(!l52 || specSource(l52.spec) !== "" || specBlob(l52.spec) !== "" || l52.spec.text || l52.spec.words || l52.spec.letters) issues.push("第52關不應有答案");
   if(highlightKind(51, "s") !== "none" || highlightKind(51, "1") !== "none" || highlightKind(52, "a") !== "none" || highlightKind(52, "9") !== "none") issues.push("練習關提示");
@@ -1393,7 +1385,6 @@ function renderPractice(){
   $("viewPractice").hidden = false;
   var spec = run.level.spec;
   $("practiceTitle").textContent = spec.title;
-  $("practiceTip").textContent = spec.tip;
   $("practiceShape").textContent = spec.shape;
   $("practiceDigit").textContent = "數字要先按藍色 123。";
   $("practiceAttempt").textContent = "第 " + (run.attempts + 1) + "／" + spec.attempts + " 次";
@@ -1633,7 +1624,7 @@ function missMessage(got, want){
 
 function speakPrompt(){
   if(run.kind === "practice"){
-    $("live").textContent = "第 " + run.level.id + " 關，" + run.level.spec.title + "。" + run.level.spec.tip + "。第 " + (run.attempts + 1) + " 次，共 " + run.level.spec.attempts + " 次。";
+    $("live").textContent = "第 " + run.level.id + " 關，" + run.level.spec.title + "。第 " + (run.attempts + 1) + " 次，共 " + run.level.spec.attempts + " 次。";
     return;
   }
   var ch = currentChar();
