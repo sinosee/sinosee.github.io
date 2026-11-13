@@ -10,7 +10,6 @@
 </head>
 <body>
   <div id="app" class="app">
-    <!-- Home -->
     <section id="screen-home" class="screen is-active" aria-label="主頁">
       <header class="hero">
         <div class="mascot" aria-hidden="true">
@@ -25,14 +24,14 @@
           </svg>
         </div>
         <h1 class="title">廣東話小幫手</h1>
-        <p class="tagline">聽課文，練習廣東話對答</p>
+        <p class="tagline">拍攝課文，練習廣東話對答</p>
       </header>
 
       <div class="home-grid">
         <button type="button" class="home-card" data-go="listen" id="btn-go-listen">
-          <span class="home-card-icon" aria-hidden="true">📖</span>
-          <span class="home-card-label">聽課文</span>
-          <span class="home-card-hint">聆聽廣東話課文朗讀</span>
+          <span class="home-card-icon" aria-hidden="true">📷</span>
+          <span class="home-card-label">拍攝讀字</span>
+          <span class="home-card-hint">拍攝課文，用廣東話朗讀</span>
         </button>
         <button type="button" class="home-card home-card-talk" data-go="talk" id="btn-go-talk">
           <span class="home-card-icon" aria-hidden="true">💬</span>
@@ -42,83 +41,34 @@
       </div>
 
       <p class="voice-banner" id="home-voice-note" hidden></p>
-
-      <button type="button" class="teacher-entry" id="btn-teacher-entry">老師設定課文</button>
     </section>
 
-    <!-- Teacher PIN -->
-    <section id="screen-pin" class="screen" aria-label="老師密碼">
-      <header class="screen-bar">
-        <button type="button" class="back-btn" data-go="home">返回</button>
-        <h2>老師設定課文</h2>
-        <span class="bar-spacer"></span>
-      </header>
-      <div class="panel pin-panel">
-        <p class="lead">請輸入四位數字密碼，以免學生誤入設定。</p>
-        <div class="pin-dots" id="pin-dots" aria-hidden="true">
-          <span></span><span></span><span></span><span></span>
-        </div>
-        <p class="pin-error" id="pin-error" role="alert" hidden>密碼不正確，請再試。</p>
-        <div class="pin-pad" id="pin-pad">
-          <button type="button" data-digit="1">1</button>
-          <button type="button" data-digit="2">2</button>
-          <button type="button" data-digit="3">3</button>
-          <button type="button" data-digit="4">4</button>
-          <button type="button" data-digit="5">5</button>
-          <button type="button" data-digit="6">6</button>
-          <button type="button" data-digit="7">7</button>
-          <button type="button" data-digit="8">8</button>
-          <button type="button" data-digit="9">9</button>
-          <button type="button" data-digit="clear" class="pin-wide">清除</button>
-          <button type="button" data-digit="0">0</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Teacher editor -->
-    <section id="screen-teacher" class="screen" aria-label="設定課文">
-      <header class="screen-bar">
-        <button type="button" class="back-btn" data-go="home">返回</button>
-        <h2>老師設定課文</h2>
-        <span class="bar-spacer"></span>
-      </header>
-      <div class="panel teacher-panel">
-        <p class="lead">請把已授權電子書中的課文標題（可選）及全文貼上。儲存後，學生在任何裝置打開本頁都可以聆聽。請只貼上你有權使用的課文。</p>
-        <p class="pin-reminder">進入本頁的預設密碼是 <strong>8800</strong>。請妥善保管裝置，避免學生自行更改課文。</p>
-
-        <label class="field-label" for="lesson-title">課文標題（可選）</label>
-        <input id="lesson-title" class="field-input" type="text" maxlength="80" autocomplete="off" placeholder="可留空">
-
-        <label class="field-label" for="lesson-body">課文全文</label>
-        <textarea id="lesson-body" class="field-area" rows="12" placeholder="請在此貼上課文全文"></textarea>
-
-        <p class="status-msg" id="teacher-status" role="status"></p>
-
-        <div class="teacher-actions">
-          <button type="button" class="btn btn-primary" id="btn-save-lesson">儲存課文</button>
-          <button type="button" class="btn btn-secondary" id="btn-test-voice">試聽聲音</button>
-          <button type="button" class="btn btn-danger" id="btn-clear-lesson">清除課文</button>
-        </div>
-        <p class="voice-banner" id="teacher-voice-note" hidden></p>
-      </div>
-    </section>
-
-    <!-- Listen -->
-    <section id="screen-listen" class="screen" aria-label="聽課文">
+    <section id="screen-listen" class="screen" aria-label="拍攝讀字">
       <header class="screen-bar">
         <button type="button" class="back-btn" data-go="home" id="btn-listen-back">返回</button>
-        <h2>聽課文</h2>
+        <h2>拍攝讀字</h2>
         <span class="bar-spacer"></span>
       </header>
 
-      <div id="listen-empty" class="panel empty-panel" hidden>
-        <p class="lead">尚未設定課文。請先請老師設定課文，才可以聆聽朗讀。</p>
-        <button type="button" class="btn btn-primary" id="btn-empty-to-teacher">請老師設定課文</button>
+      <input id="camera-input" class="visually-hidden" type="file" accept="image/*" capture="environment">
+      <input id="album-input" class="visually-hidden" type="file" accept="image/*">
+
+      <div id="listen-empty" class="panel empty-panel">
+        <p class="lead">請拍攝課文，辨認文字後會用廣東話朗讀。照片只在這部裝置處理，不會上載。</p>
+        <div class="teacher-actions capture-actions">
+          <button type="button" class="btn btn-primary btn-lg" id="btn-camera">拍攝課文</button>
+          <button type="button" class="btn btn-secondary btn-lg" id="btn-album">從相簿選擇</button>
+        </div>
+      </div>
+
+      <div id="listen-progress" class="panel empty-panel" hidden>
+        <p class="lead" id="ocr-progress-text">正在辨認文字，請稍候。第一次使用需要下載辨識資料，請保持網絡連接。</p>
+        <div class="ocr-bar" aria-hidden="true"><span id="ocr-bar-fill"></span></div>
       </div>
 
       <div id="listen-ready" class="listen-layout" hidden>
-        <h3 class="lesson-title" id="listen-title"></h3>
-        <div class="lesson-board" id="lesson-board" tabindex="0" aria-label="課文"></div>
+        <img id="photo-preview" class="photo-preview" alt="已拍攝的課文照片">
+        <div class="lesson-board" id="lesson-board" tabindex="0" aria-label="辨認到的文字"></div>
         <p class="voice-banner" id="listen-voice-note" hidden></p>
         <div class="transport">
           <button type="button" class="btn btn-primary btn-lg" id="btn-play">播放</button>
@@ -126,10 +76,14 @@
           <button type="button" class="btn btn-secondary btn-lg" id="btn-replay">重播</button>
         </div>
         <p class="listen-state" id="listen-state" role="status"></p>
+        <div class="teacher-actions capture-actions">
+          <button type="button" class="btn btn-secondary" id="btn-retake">再拍攝</button>
+          <button type="button" class="btn btn-secondary" id="btn-add-page">加入另一頁</button>
+          <button type="button" class="btn btn-danger" id="btn-clear-text">清除文字</button>
+        </div>
       </div>
     </section>
 
-    <!-- Talk -->
     <section id="screen-talk" class="screen" aria-label="對答">
       <header class="screen-bar">
         <button type="button" class="back-btn" data-go="home" id="btn-talk-back">返回</button>
@@ -164,8 +118,6 @@
       <div class="topics" id="topics"></div>
     </section>
   </div>
-  <script src="firebase-config.js"></script>
-  <script src="lesson-cloud.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
