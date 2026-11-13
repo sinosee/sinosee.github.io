@@ -1,25 +1,31 @@
-/* 廣東話小幫手 — trial app. Lesson text is saved to the classroom database so students can listen on any device. Textbook text must never be committed to the repo. */
+/* 廣東話小幫手 — trial app. Students photograph a page; text is recognized on this device and read aloud in Cantonese. Do not commit textbook text. */
 (function () {
   "use strict";
 
-  const STORAGE_KEY = "p3CantoneseTrial.lesson";
-  const TEACHER_PIN = "8800";
-  const TEST_PHRASE = "你好，我係廣東話小幫手。";
+  const STORAGE_KEY = "p3CantoneseTrial.ocrText";
+  const MIN_CJK = 8;
+  const TESS_VER = "5.1.1";
+  const TESS_CDN = "https://cdn.jsdelivr.net/npm/tesseract.js@" + TESS_VER;
+  const LANG_PATH = "https://tessdata.projectnaptha.com/4.0.0";
 
   const $ = (id) => document.getElementById(id);
   const screens = {
     home: $("screen-home"),
-    pin: $("screen-pin"),
-    teacher: $("screen-teacher"),
     listen: $("screen-listen"),
     talk: $("screen-talk"),
   };
 
-  let pinBuffer = "";
   let voicesReady = [];
   let yueVoice = null;
   let cmnVoice = null;
   let voiceWarning = "";
+
+  let capturedText = "";
+  let previewUrl = "";
+  let addPageMode = false;
+  let ocrBusy = false;
+  let ocrWorker = null;
+  let ocrWorkerPromise = null;
 
   let lessonSentences = [];
   let lessonIndex = 0;
@@ -37,62 +43,27 @@
     Object.keys(screens).forEach((key) => {
       screens[key].classList.toggle("is-active", key === name);
     });
-    if (name === "pin") resetPin();
-    if (name === "teacher") fillTeacherForm();
     if (name === "listen") renderListen();
     if (name === "talk") prepareTalk();
+    paintVoiceNotes();
     window.scrollTo(0, 0);
   }
 
-  function readLocalLesson() {
+  function readStoredText() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return { title: "", body: "" };
-      const data = JSON.parse(raw);
-      return {
-        title: String(data.title || ""),
-        body: String(data.body || ""),
-        savedAt: Number(data.savedAt || data.updatedAt || 0),
-      };
+      return raw ? String(raw) : "";
     } catch (err) {
-      return { title: "", body: "" };
+      return "";
     }
   }
 
-  function loadLesson() {
-    if (window.LessonCloud && window.LessonCloud.hasLoaded()) {
-      const cloud = window.LessonCloud.getLesson();
-      if (cloud && String(cloud.body || "").trim()) return cloud;
-    }
-    return readLocalLesson();
-  }
-
-  function persistLocal(title, body) {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        title: title,
-        body: body,
-        savedAt: Date.now(),
-      })
-    );
-  }
-
-  function saveLessonLocal(title, body) {
-    persistLocal(title, body);
-  }
-
-  function clearLessonLocal() {
-    localStorage.removeItem(STORAGE_KEY);
-  }
-
-  function cloudStatusMessage(code, kind) {
-    if (kind === "save") {
-      if (code === "rules") return "本機已暫存，但未能儲到雲端。請先更新課堂資料庫規則，並設定本試版的老師密碼，學生才能在其他裝置聆聽。";
-      return "本機已暫存，但暫時未能儲到雲端。請檢查網絡後再儲存一次，否則學生在其他裝置暫時聽不到。";
-    }
-    if (code === "rules") return "本機已清除，但未能更新雲端。請先更新課堂資料庫規則，並設定本試版的老師密碼。";
-    return "本機已清除，但暫時未能更新雲端。其他裝置可能仍看得到舊課文，請檢查網絡後再試。";
+  function persistText(text) {
+    capturedText = String(text || "");
+    try {
+      if (capturedText) localStorage.setItem(STORAGE_KEY, capturedText);
+      else localStorage.removeItem(STORAGE_KEY);
+    } catch (err) { /* ignore quota */ }
   }
 
   /* ---------- voices & speech ---------- */
@@ -339,33 +310,225 @@
     setListenState("已暫停，再按「播放」可從本句繼續。");
   }
 
-  function renderListen() {
-    const lesson = loadLesson();
-    const empty = $("listen-empty");
-    const ready = $("listen-ready");
-    const hasBody = lesson.body.trim().length > 0;
-    empty.hidden = hasBody;
-    ready.hidden = !hasBody;
-    if (!hasBody) {
-      const lead = empty.querySelector(".lead");
-      if (lead) {
-        lead.textContent = (window.LessonCloud && !window.LessonCloud.hasLoaded())
-          ? "正在載入課文，請稍候。"
-          : "尚未設定課文。請先請老師設定課文，才可以聆聽朗讀。";
+
+  /* ---------- camera / OCR ---------- */
+
+  function countCjk(text) {
+    return (String(text || "").match(/[\u4e00-\u9fff]/g) || []).length;
+  }
+
+  function cleanOcrText(raw) {
+    let t = String(raw || "").replace(/\r\n/g, "\n");
+    t = t.replace(/[^\u4e00-\u9fff\u3400-\u4dbf0-9。，、．！？!?：:；;「」『』（）()《》—\-·…\n\sA-Za-z]/g, "");
+    t = t.replace(/[ \t]+/g, "");
+    t = t.replace(/\n{3,}/g, "\n\n").trim();
+    return t;
+  }
+
+  function setOcrProgress(msg, frac) {
+    const lead = $("ocr-progress-text");
+    if (lead && msg) lead.textContent = msg;
+    const fill = $("ocr-bar-fill");
+    if (fill) fill.style.width = Math.max(8, Math.min(100, Math.round((frac || 0) * 100))) + "%";
+  }
+
+  function showListenMode(mode) {
+    $("listen-empty").hidden = mode !== "empty";
+    $("listen-progress").hidden = mode !== "progress";
+    $("listen-ready").hidden = mode !== "ready";
+  }
+
+  function setPreview(url) {
+    if (previewUrl && previewUrl.indexOf("blob:") === 0) {
+      try { URL.revokeObjectURL(previewUrl); } catch (err) { /* ignore */ }
+    }
+    previewUrl = url || "";
+    const img = $("photo-preview");
+    if (!img) return;
+    if (previewUrl) {
+      img.src = previewUrl;
+      img.hidden = false;
+    } else {
+      img.removeAttribute("src");
+      img.hidden = true;
+    }
+  }
+
+  function loadTesseract() {
+    if (window.Tesseract) return Promise.resolve();
+    return new Promise(function (resolve, reject) {
+      const existing = document.querySelector('script[data-tess="1"]');
+      if (existing) {
+        existing.addEventListener("load", function () { resolve(); });
+        existing.addEventListener("error", function () { reject(new Error("script")); });
+        return;
       }
+      const el = document.createElement("script");
+      el.src = TESS_CDN + "/dist/tesseract.min.js";
+      el.async = true;
+      el.setAttribute("data-tess", "1");
+      el.onload = function () { resolve(); };
+      el.onerror = function () { reject(new Error("script")); };
+      document.head.appendChild(el);
+    });
+  }
+
+  function getOcrWorker() {
+    if (ocrWorker) return Promise.resolve(ocrWorker);
+    if (ocrWorkerPromise) return ocrWorkerPromise;
+    ocrWorkerPromise = loadTesseract().then(function () {
+      if (!window.Tesseract) throw new Error("script");
+      return window.Tesseract.createWorker("chi_tra", 1, {
+        workerPath: TESS_CDN + "/dist/worker.min.js",
+        langPath: LANG_PATH,
+        logger: function (m) {
+          if (!m) return;
+          if (m.status === "loading tesseract core") setOcrProgress("正在準備辨識工具，請稍候。", 0.15);
+          else if (m.status === "loading language traineddata") setOcrProgress("正在下載中文辨識資料，請保持網絡連接。", 0.35);
+          else if (m.status === "initializing api" || m.status === "initializing tesseract") setOcrProgress("正在準備辨認文字，請稍候。", 0.55);
+          else if (m.status === "recognizing text") setOcrProgress("正在辨認文字，請稍候。", 0.6 + 0.4 * (Number(m.progress) || 0));
+        }
+      });
+    }).then(function (worker) {
+      ocrWorker = worker;
+      return worker;
+    }).catch(function (err) {
+      ocrWorkerPromise = null;
+      throw err;
+    });
+    return ocrWorkerPromise;
+  }
+
+  function loadOrientedBitmap(file) {
+    if (typeof createImageBitmap === "function") {
+      return createImageBitmap(file, { imageOrientation: "from-image" }).catch(function () {
+        return createImageBitmap(file);
+      });
+    }
+    return new Promise(function (resolve, reject) {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = function () {
+        URL.revokeObjectURL(url);
+        resolve(img);
+      };
+      img.onerror = function () {
+        URL.revokeObjectURL(url);
+        reject(new Error("image"));
+      };
+      img.src = url;
+    });
+  }
+
+  function prepareCanvas(source) {
+    const srcW = source.width || source.naturalWidth || source.videoWidth;
+    const srcH = source.height || source.naturalHeight || source.videoHeight;
+    const max = 1800;
+    const scale = Math.min(1, max / Math.max(srcW, srcH));
+    const w = Math.max(1, Math.round(srcW * scale));
+    const h = Math.max(1, Math.round(srcH * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    ctx.drawImage(source, 0, 0, w, h);
+    try {
+      const data = ctx.getImageData(0, 0, w, h);
+      const d = data.data;
+      for (let i = 0; i < d.length; i += 4) {
+        const g = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+        let v = (g - 128) * 1.25 + 128;
+        if (v < 0) v = 0;
+        if (v > 255) v = 255;
+        d[i] = d[i + 1] = d[i + 2] = v;
+      }
+      ctx.putImageData(data, 0, 0);
+    } catch (err) { /* some browsers may block read; use original draw */ }
+    return canvas;
+  }
+
+  function recognizeFile(file, append) {
+    if (ocrBusy) return;
+    if (!file) return;
+    if (file.size > 15 * 1024 * 1024) {
+      window.alert("照片檔案太大，請改用較清晰但較小的照片。");
       return;
     }
+    ocrBusy = true;
+    stopLessonPlayback();
+    showListenMode("progress");
+    setOcrProgress("正在準備照片，請稍候。", 0.08);
 
-    const titleEl = $("listen-title");
-    titleEl.textContent = lesson.title.trim() || "課文";
-    titleEl.hidden = !lesson.title.trim();
+    loadOrientedBitmap(file)
+      .then(function (bmp) {
+        const canvas = prepareCanvas(bmp);
+        if (bmp.close) try { bmp.close(); } catch (err) { /* ignore */ }
+        const preview = canvas.toDataURL("image/jpeg", 0.72);
+        if (!append) setPreview(preview);
+        else if (!previewUrl) setPreview(preview);
+        setOcrProgress("正在辨認文字，請稍候。第一次使用需要下載辨識資料，請保持網絡連接。", 0.2);
+        return getOcrWorker().then(function (worker) {
+          return worker.recognize(canvas);
+        });
+      })
+      .then(function (result) {
+        const next = cleanOcrText(result && result.data && result.data.text);
+        if (countCjk(next) < MIN_CJK) {
+          throw new Error("empty");
+        }
+        const body = append && capturedText
+          ? capturedText.replace(/\s+$/, "") + "\n\n" + next
+          : next;
+        persistText(body);
+        addPageMode = false;
+        ocrBusy = false;
+        renderListen();
+      })
+      .catch(function (err) {
+        ocrBusy = false;
+        const code = String((err && err.message) || err || "");
+        if (capturedText && countCjk(capturedText) >= MIN_CJK) {
+          renderListen();
+          setListenState(code === "empty"
+            ? "未能辨認這頁的文字。請拍攝更清晰的照片後再試，現有文字仍可播放。"
+            : "辨認失敗，請檢查網絡後再試。現有文字仍可播放。");
+          return;
+        }
+        showListenMode("empty");
+        const lead = $("listen-empty").querySelector(".lead");
+        if (lead) {
+          lead.textContent = code === "empty"
+            ? "未能辨認文字。請把課文拍得清楚一些，光線充足，再試一次。"
+            : "未能辨認文字。請檢查網絡連接後再拍攝一次。照片只在這部裝置處理，不會上載。";
+        }
+      });
+  }
+
+  function renderListen() {
+    if (ocrBusy) {
+      showListenMode("progress");
+      return;
+    }
+    if (!capturedText || countCjk(capturedText) < 1) {
+      showListenMode("empty");
+      const lead = $("listen-empty").querySelector(".lead");
+      if (lead) lead.textContent = "請拍攝課文，辨認文字後會用廣東話朗讀。照片只在這部裝置處理，不會上載。";
+      $("photo-preview").hidden = true;
+      return;
+    }
+    showListenMode("ready");
+    const img = $("photo-preview");
+    if (previewUrl) {
+      img.src = previewUrl;
+      img.hidden = false;
+    } else {
+      img.hidden = true;
+    }
 
     const board = $("lesson-board");
     board.textContent = "";
-    lessonSentences = splitSentences(lesson.body);
-    if (!lessonSentences.length) {
-      lessonSentences = [lesson.body.trim()];
-    }
+    lessonSentences = splitSentences(capturedText);
+    if (!lessonSentences.length) lessonSentences = [capturedText.trim()];
     lessonSentences.forEach((s, i) => {
       const span = document.createElement("span");
       span.className = "sentence";
@@ -383,62 +546,11 @@
     setListenState("按「播放」開始聆聽。");
   }
 
-  /* ---------- teacher ---------- */
-
-  function resetPin() {
-    pinBuffer = "";
-    paintPin();
-    $("pin-error").hidden = true;
-  }
-
-  function paintPin() {
-    const dots = $("pin-dots").querySelectorAll("span");
-    dots.forEach((dot, i) => {
-      dot.classList.toggle("is-on", i < pinBuffer.length);
-    });
-  }
-
-  function handlePinDigit(digit) {
-    $("pin-error").hidden = true;
-    if (digit === "clear") {
-      pinBuffer = "";
-      paintPin();
-      return;
-    }
-    if (pinBuffer.length >= 4) return;
-    pinBuffer += digit;
-    paintPin();
-    if (pinBuffer.length === 4) {
-      if (pinBuffer === TEACHER_PIN) {
-        showScreen("teacher");
-      } else {
-        $("pin-error").hidden = false;
-        pinBuffer = "";
-        paintPin();
-      }
-    }
-  }
-
-  function fillTeacherForm() {
-    const lesson = loadLesson();
-    $("lesson-title").value = lesson.title;
-    $("lesson-body").value = lesson.body;
-    if (lesson.body.trim()) {
-      $("teacher-status").textContent = "已有儲存的課文，學生在任何裝置打開這個網址都可以聆聽。可按需要修改後再儲存。";
-    } else if (window.LessonCloud && !window.LessonCloud.hasLoaded()) {
-      $("teacher-status").textContent = "正在載入已儲存的課文…";
-    } else {
-      $("teacher-status").textContent = "尚未儲存課文。儲存後，學生在任何裝置都可以聆聽。";
-    }
-  }
-
-  function onCloudLesson() {
-    const cloud = window.LessonCloud ? window.LessonCloud.getLesson() : { title: "", body: "" };
-    if (String(cloud.body || "").trim()) {
-      persistLocal(cloud.title, cloud.body);
-    }
-    if (screens.teacher.classList.contains("is-active")) fillTeacherForm();
-    if (screens.listen.classList.contains("is-active")) renderListen();
+  function openPicker(which) {
+    const input = $(which === "album" ? "album-input" : "camera-input");
+    if (!input) return;
+    input.value = "";
+    input.click();
   }
 
   /* ---------- dialogue ---------- */
@@ -838,6 +950,7 @@
     }
   }
 
+
   /* ---------- events ---------- */
 
   function bindNav() {
@@ -848,84 +961,8 @@
     });
   }
 
-  function bindPin() {
-    $("pin-pad").addEventListener("click", function (e) {
-      const btn = e.target.closest("[data-digit]");
-      if (!btn) return;
-      handlePinDigit(btn.getAttribute("data-digit"));
-    });
-  }
-
-  function bindTeacher() {
-    $("btn-save-lesson").addEventListener("click", function () {
-      const title = $("lesson-title").value.trim();
-      const body = $("lesson-body").value.trim();
-      if (!body) {
-        $("teacher-status").textContent = "請先貼上課文全文，再儲存。";
-        return;
-      }
-      if (body.length > 20000) {
-        $("teacher-status").textContent = "課文過長，請縮短後再儲存。";
-        return;
-      }
-      saveLessonLocal(title, body);
-      $("teacher-status").textContent = "正在儲存，請稍候。";
-      const btn = $("btn-save-lesson");
-      btn.disabled = true;
-      const cloud = window.LessonCloud;
-      if (!cloud) {
-        $("teacher-status").textContent = "本機已暫存，但未能連接雲端，學生在其他裝置暫時聽不到。";
-        btn.disabled = false;
-        return;
-      }
-      cloud.save(title, body, TEACHER_PIN).then(function () {
-        $("teacher-status").textContent = "已儲存。學生在任何裝置打開這個網址，都可以進入「聽課文」。";
-        btn.disabled = false;
-      }).catch(function (err) {
-        $("teacher-status").textContent = cloudStatusMessage(err && err.code, "save");
-        btn.disabled = false;
-      });
-    });
-
-    $("btn-clear-lesson").addEventListener("click", function () {
-      const ok = window.confirm("確定清除已儲存的課文？所有裝置上的學生將無法再聆聽這篇課文。");
-      if (!ok) return;
-      clearLessonLocal();
-      $("lesson-title").value = "";
-      $("lesson-body").value = "";
-      $("teacher-status").textContent = "正在清除，請稍候。";
-      const btn = $("btn-clear-lesson");
-      btn.disabled = true;
-      const cloud = window.LessonCloud;
-      if (!cloud) {
-        $("teacher-status").textContent = "本機已清除，但未能更新雲端。";
-        btn.disabled = false;
-        return;
-      }
-      cloud.clear(TEACHER_PIN).then(function () {
-        $("teacher-status").textContent = "已清除。尚未儲存課文。";
-        btn.disabled = false;
-      }).catch(function (err) {
-        $("teacher-status").textContent = cloudStatusMessage(err && err.code, "clear");
-        btn.disabled = false;
-      });
-    });
-
-    $("btn-test-voice").addEventListener("click", function () {
-      if (!window.speechSynthesis) {
-        $("teacher-status").textContent = "這部裝置未能朗讀。";
-        return;
-      }
-      queueUtterances([{ text: TEST_PHRASE, kind: "yue" }]);
-      $("teacher-status").textContent = yueVoice
-        ? "正在試聽廣東話語音（" + (yueVoice.name || "zh-HK") + "）。"
-        : "正在嘗試以香港中文朗讀。若沒有聲音，請改用 iPad 再試。";
-    });
-  }
-
   function bindListen() {
     $("btn-play").addEventListener("click", function () {
-      // iOS needs a fresh user gesture; resume repeats the current sentence.
       const from = lessonPaused ? lessonIndex : 0;
       playLessonFrom(from);
     });
@@ -934,8 +971,41 @@
       lessonPaused = false;
       playLessonFrom(0);
     });
-    $("btn-empty-to-teacher").addEventListener("click", function () {
-      showScreen("pin");
+    function onPicked(ev, append) {
+      const file = ev.target.files && ev.target.files[0];
+      ev.target.value = "";
+      if (file) recognizeFile(file, append);
+    }
+    $("camera-input").addEventListener("change", function (ev) {
+      onPicked(ev, addPageMode);
+    });
+    $("album-input").addEventListener("change", function (ev) {
+      onPicked(ev, addPageMode);
+    });
+    $("btn-camera").addEventListener("click", function () {
+      addPageMode = false;
+      openPicker("camera");
+    });
+    $("btn-album").addEventListener("click", function () {
+      addPageMode = false;
+      openPicker("album");
+    });
+    $("btn-retake").addEventListener("click", function () {
+      addPageMode = false;
+      openPicker("camera");
+    });
+    $("btn-add-page").addEventListener("click", function () {
+      addPageMode = true;
+      openPicker("camera");
+    });
+    $("btn-clear-text").addEventListener("click", function () {
+      const ok = window.confirm("確定清除已辨認的文字？");
+      if (!ok) return;
+      stopLessonPlayback();
+      persistText("");
+      setPreview("");
+      addPageMode = false;
+      renderListen();
     });
   }
 
@@ -977,18 +1047,9 @@
     }
   });
 
+  capturedText = readStoredText();
   waitForVoices();
   bindNav();
-  bindPin();
-  bindTeacher();
   bindListen();
   bindTalk();
-  $("btn-teacher-entry").addEventListener("click", function () {
-    showScreen("pin");
-  });
-  if (window.LessonCloud) {
-    window.LessonCloud.seedFromLocal(readLocalLesson());
-    window.LessonCloud.onLesson(onCloudLesson);
-    window.LessonCloud.start();
-  }
 })();

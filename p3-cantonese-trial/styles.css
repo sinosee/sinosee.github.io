@@ -57,6 +57,9 @@ button {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: none;
 }
 
 .visually-hidden {
@@ -512,4 +515,38 @@ button {
 @media (prefers-reduced-motion: reduce) {
   .pulse { animation: none; }
   .home-card:active { transform: none; }
+}
+
+.capture-actions {
+  position: static;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.photo-preview {
+  display: block;
+  width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  background: #fff;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+}
+
+.ocr-bar {
+  width: min(100%, 360px);
+  height: 16px;
+  margin: 18px auto 0;
+  border-radius: 999px;
+  background: var(--teal-soft);
+  overflow: hidden;
+}
+
+.ocr-bar span {
+  display: block;
+  height: 100%;
+  width: 8%;
+  border-radius: inherit;
+  background: var(--teal);
+  transition: width 0.2s ease;
 }
