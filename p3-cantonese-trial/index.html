@@ -68,7 +68,13 @@
 
       <div id="listen-ready" class="listen-layout" hidden>
         <img id="photo-preview" class="photo-preview" alt="已拍攝的課文照片">
-        <div class="lesson-board" id="lesson-board" tabindex="0" aria-label="辨認到的文字"></div>
+        <p class="edit-hint" id="ocr-edit-hint">如有錯字，可直接改正後再播放。</p>
+        <label class="visually-hidden" for="lesson-editor">辨認到的文字</label>
+        <textarea id="lesson-editor" class="lesson-editor" rows="8" spellcheck="false"></textarea>
+        <div class="edit-actions">
+          <button type="button" class="btn btn-secondary" id="btn-save-edit">儲存改正</button>
+        </div>
+        <div class="lesson-board" id="lesson-board" tabindex="0" aria-label="正在朗讀的文字" hidden></div>
         <p class="voice-banner" id="listen-voice-note" hidden></p>
         <div class="transport">
           <button type="button" class="btn btn-primary btn-lg" id="btn-play">播放</button>

@@ -286,6 +286,7 @@
             $("lesson-board").querySelectorAll(".sentence").forEach((el) => {
               el.classList.remove("is-current");
             });
+            showLessonPlaybackView(false);
           }
         },
         onerror: function () {
@@ -293,6 +294,7 @@
           lessonPlaying = false;
           $("btn-play").disabled = false;
           setListenState("播放中斷，請再按「播放」。");
+          showLessonPlaybackView(false);
         },
       };
     });
@@ -322,7 +324,8 @@
     t = t.replace(/[^\u4e00-\u9fff\u3400-\u4dbf0-9。，、．！？!?：:；;「」『』（）()《》—\-·…\n\sA-Za-z]/g, "");
     t = t.replace(/[-—–_=]{2,}/g, "");
     t = t.replace(/[A-Za-z]{1,3}/g, "");
-    t = t.replace(/[ \t]+/g, "");
+    t = t.replace(/[^\S\n]+/g, "");
+    t = t.replace(/([\u4e00-\u9fff\u3400-\u4dbf])[^\S\n]+(?=[\u4e00-\u9fff\u3400-\u4dbf])/g, "$1");
     t = t.replace(/[。，、．！？!?：:；;「」『』（）()《》—\-·…]{3,}/g, "，");
     t = t.replace(/\n{3,}/g, "\n\n").trim();
     return t;
@@ -469,10 +472,11 @@
     return ocrWorkerPromise;
   }
 
-  function recognizeCanvas(worker, canvas, psm) {
+
+  function recognizeCanvas(worker, canvas, psm, dpi) {
     return worker.setParameters({
       tessedit_pageseg_mode: String(psm),
-      user_defined_dpi: "180"
+      user_defined_dpi: String(dpi || 220)
     }).then(function () {
       return worker.recognize(canvas);
     });
@@ -499,45 +503,112 @@
     });
   }
 
-  function prepareCanvas(source) {
-    const srcW = source.width || source.naturalWidth || source.videoWidth;
-    const srcH = source.height || source.naturalHeight || source.videoHeight;
-    const max = 2000;
+  function sourceSize(source) {
+    return {
+      w: source.width || source.naturalWidth || source.videoWidth || 0,
+      h: source.height || source.naturalHeight || source.videoHeight || 0
+    };
+  }
+
+  function fitLongSide(srcW, srcH, maxLong) {
     const longSide = Math.max(srcW, srcH);
-    const scale = longSide > max ? max / longSide : 1;
-    const w = Math.max(1, Math.round(srcW * scale));
-    const h = Math.max(1, Math.round(srcH * scale));
+    const scale = longSide > maxLong ? maxLong / longSide : 1;
+    return {
+      scale: scale,
+      w: Math.max(1, Math.round(srcW * scale)),
+      h: Math.max(1, Math.round(srcH * scale))
+    };
+  }
+
+  function makeCanvas(w, h) {
     const canvas = document.createElement("canvas");
-    canvas.width = w;
-    canvas.height = h;
-    const ctx = canvas.getContext("2d", { willReadFrequently: true });
-    ctx.drawImage(source, 0, 0, w, h);
+    canvas.width = Math.max(1, w);
+    canvas.height = Math.max(1, h);
+    return canvas;
+  }
+
+  function getCtx(canvas) {
+    return canvas.getContext("2d", { willReadFrequently: true });
+  }
+
+  function drawScaled(source, w, h, sx, sy, sw, sh) {
+    const canvas = makeCanvas(w, h);
+    const ctx = getCtx(canvas);
+    ctx.imageSmoothingEnabled = true;
+    if (ctx.imageSmoothingQuality) ctx.imageSmoothingQuality = "high";
+    if (sx == null) ctx.drawImage(source, 0, 0, w, h);
+    else ctx.drawImage(source, sx, sy, sw, sh, 0, 0, w, h);
+    return canvas;
+  }
+
+  function grayscaleContrast(canvas, contrast) {
     try {
-      const data = ctx.getImageData(0, 0, w, h);
+      const ctx = getCtx(canvas);
+      const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const d = data.data;
+      const c = contrast == null ? 1.2 : contrast;
       for (let i = 0; i < d.length; i += 4) {
         const g = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
-        let v = (g - 128) * 1.2 + 128;
+        let v = (g - 128) * c + 128;
         if (v < 0) v = 0;
         if (v > 255) v = 255;
         d[i] = d[i + 1] = d[i + 2] = v;
       }
       ctx.putImageData(data, 0, 0);
-    } catch (err) { /* some browsers may block read; use original draw */ }
+    } catch (err) { /* some browsers may block read */ }
     return canvas;
   }
 
-  function cropTextRegion(canvas) {
+  function unsharp(canvas, amount, radius) {
+    try {
+      const w = canvas.width;
+      const h = canvas.height;
+      const ctx = getCtx(canvas);
+      const img = ctx.getImageData(0, 0, w, h);
+      const src = img.data;
+      const r = radius == null ? 1 : radius;
+      const a = amount == null ? 0.55 : amount;
+      const blur = new Float32Array(w * h);
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          let s = 0;
+          let n = 0;
+          for (let dy = -r; dy <= r; dy++) {
+            const yy = y + dy;
+            if (yy < 0 || yy >= h) continue;
+            for (let dx = -r; dx <= r; dx++) {
+              const xx = x + dx;
+              if (xx < 0 || xx >= w) continue;
+              s += src[(yy * w + xx) * 4];
+              n += 1;
+            }
+          }
+          blur[y * w + x] = s / n;
+        }
+      }
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const i = (y * w + x) * 4;
+          let v = src[i] + a * (src[i] - blur[y * w + x]);
+          if (v < 0) v = 0;
+          if (v > 255) v = 255;
+          src[i] = src[i + 1] = src[i + 2] = v;
+        }
+      }
+      ctx.putImageData(img, 0, 0);
+    } catch (err) { /* ignore */ }
+    return canvas;
+  }
+
+  function analyzeTextRegion(canvas) {
     const w = canvas.width;
     const h = canvas.height;
-    if (w < 16 || h < 16) return canvas;
-    let ctx;
+    if (w < 16 || h < 16) return { cropped: false, top: 0, bottom: h - 1 };
     let data;
     try {
-      ctx = canvas.getContext("2d", { willReadFrequently: true });
-      data = ctx.getImageData(0, 0, w, h).data;
+      data = getCtx(canvas).getImageData(0, 0, w, h).data;
     } catch (err) {
-      return canvas;
+      return { cropped: false, top: 0, bottom: h - 1 };
     }
     const scores = new Float32Array(h);
     for (let y = 0; y < h; y++) {
@@ -550,7 +621,6 @@
         if (Math.abs(g - prev) > 38) edges += 1;
       }
       const inkRatio = ink / w;
-      // Photos and drawings have dense ink; text lines are mid-density with many edges.
       const inkPenalty = (inkRatio > 0.55 || inkRatio < 0.02) ? 0.35 : 1;
       scores[y] = edges * inkPenalty;
     }
@@ -569,7 +639,7 @@
     }
     let maxVal = 0;
     for (let y = 0; y < h; y++) if (smooth[y] > maxVal) maxVal = smooth[y];
-    if (maxVal <= 0) return canvas;
+    if (maxVal <= 0) return { cropped: false, top: 0, bottom: h - 1 };
     const thresh = maxVal * 0.22;
     function lineness(start, end) {
       const peaks = [];
@@ -610,19 +680,18 @@
         });
       }
     }
-    if (!bands.length) return canvas;
-    // Merge neighbouring text lines separated by ordinary line spacing,
-    // but do not jump across a large illustration gap.
+    if (!bands.length) return { cropped: false, top: 0, bottom: h - 1 };
     const merged = [];
     let cur = {
       start: bands[0].start,
       end: bands[0].end,
       score: bands[0].score
     };
-    const smallGap = Math.max(36, Math.round(h * 0.07));
     for (let i = 1; i < bands.length; i++) {
       const gap = bands[i].start - cur.end;
-      if (gap <= smallGap) {
+      const shortH = Math.min(cur.end - cur.start + 1, bands[i].end - bands[i].start + 1);
+      const limit = Math.max(36, Math.round(h * 0.07), Math.round(shortH * 2.4));
+      if (gap <= limit) {
         cur.end = bands[i].end;
         cur.score += bands[i].score;
       } else {
@@ -638,20 +707,183 @@
     const pad = Math.max(8, Math.round(h * 0.015));
     let top = Math.max(0, best.start - pad);
     let bottom = Math.min(h - 1, best.end + pad);
-    if (bottom - top < h * 0.12) return canvas;
-    if (top <= h * 0.03 && bottom >= h * 0.97) return canvas;
-    const out = document.createElement("canvas");
-    out.width = w;
-    out.height = bottom - top + 1;
-    out.getContext("2d").drawImage(canvas, 0, top, w, out.height, 0, 0, w, out.height);
-    return out;
+    const minH = Math.max(64, Math.round(h * 0.06));
+    if (bottom - top < minH) return { cropped: false, top: 0, bottom: h - 1 };
+    if (top <= h * 0.03 && bottom >= h * 0.97) return { cropped: false, top: top, bottom: bottom };
+    return { cropped: true, top: top, bottom: bottom };
+  }
+
+  function estimateLineHeight(canvas, top, bottom) {
+    const w = canvas.width;
+    const h = canvas.height;
+    const y0 = top == null ? 0 : Math.max(0, top);
+    const y1 = bottom == null ? h - 1 : Math.min(h - 1, bottom);
+    let data;
+    try {
+      data = getCtx(canvas).getImageData(0, 0, w, h).data;
+    } catch (err) {
+      return 0;
+    }
+    const span = y1 - y0 + 1;
+    if (span < 16) return 0;
+    const proj = new Float32Array(span);
+    for (let y = y0; y <= y1; y++) {
+      let ink = 0;
+      for (let x = 0; x < w; x++) {
+        if (data[(y * w + x) * 4] < 145) ink += 1;
+      }
+      proj[y - y0] = ink;
+    }
+    let maxTextInk = 0;
+    for (let i = 0; i < span; i++) {
+      if (proj[i] / w < 0.45 && proj[i] > maxTextInk) maxTextInk = proj[i];
+    }
+    if (maxTextInk <= 0) return 0;
+    const rowThresh = Math.max(maxTextInk * 0.22, w * 0.01);
+    const runs = [];
+    let i = 0;
+    while (i < span) {
+      while (i < span && (proj[i] < rowThresh || proj[i] / w >= 0.45)) i += 1;
+      if (i >= span) break;
+      const start = i;
+      while (i < span && proj[i] >= rowThresh && proj[i] / w < 0.45) i += 1;
+      const end = i - 1;
+      if (end - start >= 2) runs.push({ start: start, end: end, mid: (start + end) / 2, height: end - start + 1 });
+    }
+    const mergedRuns = [];
+    for (let r = 0; r < runs.length; r++) {
+      const run = runs[r];
+      if (!mergedRuns.length) {
+        mergedRuns.push({ start: run.start, end: run.end, mid: run.mid, height: run.height });
+        continue;
+      }
+      const prev = mergedRuns[mergedRuns.length - 1];
+      if (run.start - prev.end <= 2) {
+        prev.end = run.end;
+        prev.height = prev.end - prev.start + 1;
+        prev.mid = (prev.start + prev.end) / 2;
+      } else {
+        mergedRuns.push({ start: run.start, end: run.end, mid: run.mid, height: run.height });
+      }
+    }
+    const gaps = [];
+    for (let k = 1; k < mergedRuns.length; k++) {
+      const g = mergedRuns[k].mid - mergedRuns[k - 1].mid;
+      if (g >= 10 && g <= 160) gaps.push(g);
+    }
+    let runLh = 0;
+    if (gaps.length) {
+      const sorted = gaps.slice().sort(function (a, b) { return a - b; });
+      runLh = sorted[Math.floor(sorted.length / 2)];
+    }
+
+    const ac = new Float32Array(span);
+    let mean = 0;
+    let nMean = 0;
+    for (let k = 0; k < span; k++) {
+      if (proj[k] / w >= 0.45) ac[k] = 0;
+      else {
+        ac[k] = proj[k];
+        mean += proj[k];
+        nMean += 1;
+      }
+    }
+    mean = nMean ? mean / nMean : 0;
+    for (let k = 0; k < span; k++) {
+      if (proj[k] / w < 0.45) ac[k] -= mean;
+    }
+    const minLag = 10;
+    const maxLag = Math.min(140, Math.floor(span / 3));
+    let acLh = 0;
+    if (maxLag > minLag + 2) {
+      const corr = [];
+      for (let lag = minLag; lag <= maxLag; lag++) {
+        let s = 0;
+        for (let k = 0; k < span - lag; k++) s += ac[k] * ac[k + lag];
+        corr.push(s);
+      }
+      let peakBest = 0;
+      const local = [];
+      for (let lag = minLag + 1; lag <= maxLag - 1; lag++) {
+        const s = corr[lag - minLag];
+        if (s >= corr[lag - minLag - 1] && s >= corr[lag - minLag + 1]) {
+          local.push({ lag: lag, s: s });
+          if (s > peakBest) peakBest = s;
+        }
+      }
+      if (peakBest > 0) {
+        for (let p = 0; p < local.length; p++) {
+          if (local[p].s >= peakBest * 0.65 && local[p].lag >= 12) {
+            acLh = local[p].lag;
+            break;
+          }
+        }
+      }
+    }
+
+    if (runLh >= 12 && gaps.length >= 1) return Math.round(runLh);
+    if (acLh >= 12) return acLh;
+    if (runLh >= 12) return Math.round(runLh);
+    return 0;
+  }
+
+  function suggestDpi(lineHeight) {
+    const dpi = Math.round((lineHeight || 44) * 72 / 12);
+    return Math.max(160, Math.min(300, dpi || 220));
+  }
+
+  const DETECT_MAX = 3200;
+  const TARGET_LINE = 44;
+  const MAX_SCALE = 3;
+  const MAX_LONG = 3400;
+
+  function prepareOcrCanvas(source) {
+    const dim = sourceSize(source);
+    const srcW = dim.w;
+    const srcH = dim.h;
+    const detectFit = fitLongSide(srcW, srcH, DETECT_MAX);
+    const detect = drawScaled(source, detectFit.w, detectFit.h);
+    grayscaleContrast(detect, 1.2);
+    const region = analyzeTextRegion(detect);
+    const topFrac = region.top / detect.height;
+    const botFrac = (region.bottom + 1) / detect.height;
+    const srcTop = region.cropped ? Math.round(topFrac * srcH) : 0;
+    const srcBot = region.cropped ? Math.round(botFrac * srcH) : srcH;
+    const bandH = Math.max(1, srcBot - srcTop);
+    const detectLine = estimateLineHeight(detect, region.top, region.bottom);
+    const srcLine = detectFit.scale > 0 ? detectLine / detectFit.scale : detectLine;
+
+    let scale = 1;
+    if (srcLine > 0 && srcLine < 40) {
+      scale = Math.min(MAX_SCALE, TARGET_LINE / srcLine);
+    }
+    const bandLong = Math.max(srcW, bandH);
+    if (bandLong * scale > MAX_LONG) {
+      if (srcLine > 0 && srcLine < 40) {
+        scale = Math.max(1, Math.min(scale, MAX_LONG / bandLong));
+      } else {
+        scale = Math.min(1, MAX_LONG / bandLong);
+      }
+    }
+    if (scale > 0.92 && scale < 1.08) scale = 1;
+
+    const outW = Math.max(1, Math.round(srcW * scale));
+    const outH = Math.max(1, Math.round(bandH * scale));
+    const ocr = drawScaled(source, outW, outH, 0, srcTop, srcW, bandH);
+    grayscaleContrast(ocr, 1.2);
+    if (scale > 1) unsharp(ocr, 0.55, 1);
+    const finalLine = srcLine > 0 ? srcLine * scale : 0;
+    return {
+      canvas: ocr,
+      cropped: region.cropped,
+      dpi: suggestDpi(finalLine || TARGET_LINE),
+      firstPsm: region.cropped ? "4" : "6"
+    };
   }
 
   function binarizeCanvas(src) {
-    const canvas = document.createElement("canvas");
-    canvas.width = src.width;
-    canvas.height = src.height;
-    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    const canvas = makeCanvas(src.width, src.height);
+    const ctx = getCtx(canvas);
     ctx.drawImage(src, 0, 0);
     try {
       const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -691,6 +923,13 @@
     return canvas;
   }
 
+  function pickBetterOcr(current, alt) {
+    if (!alt) return current;
+    if (current.bad && alt.score >= current.score) return alt;
+    if (alt.score >= current.score && alt.confidence >= current.confidence + 0.4) return alt;
+    return current;
+  }
+
   function recognizeFile(file, append) {
     if (ocrBusy) return;
     if (!file) return;
@@ -708,19 +947,27 @@
 
     loadOrientedBitmap(file)
       .then(function (bmp) {
-        const base = prepareCanvas(bmp);
+        const prepared = prepareOcrCanvas(bmp);
         if (bmp.close) try { bmp.close(); } catch (err) { /* ignore */ }
-        const crop = cropTextRegion(base);
-        const firstPsm = crop !== base ? "4" : "6";
+        const crop = prepared.canvas;
+        const firstPsm = prepared.firstPsm;
+        const dpi = prepared.dpi;
         setOcrProgress("正在辨認文字，請稍候。第一次使用需要下載辨識資料，請保持網絡連接。", 0.2);
         return getOcrWorker().then(function (worker) {
-          return recognizeCanvas(worker, crop, firstPsm).then(function (result) {
+          return recognizeCanvas(worker, crop, firstPsm, dpi).then(function (result) {
             const first = evaluateOcr(result);
-            if (!first.bad) return first;
-            setOcrProgress("正在再試一次，請稍候。", 0.55);
-            return recognizeCanvas(worker, binarizeCanvas(crop), "3").then(function (result2) {
-              const second = evaluateOcr(result2);
-              return second.score >= first.score ? second : first;
+            const maybeAlt = (!first.bad && first.confidence < 95.5)
+              ? recognizeCanvas(worker, crop, firstPsm === "4" ? "6" : "4", dpi).then(function (altRes) {
+                  return pickBetterOcr(first, evaluateOcr(altRes));
+                })
+              : Promise.resolve(first);
+            return maybeAlt.then(function (picked) {
+              if (!picked.bad) return picked;
+              setOcrProgress("正在再試一次，請稍候。", 0.55);
+              return recognizeCanvas(worker, binarizeCanvas(crop), "3", dpi).then(function (result2) {
+                const second = evaluateOcr(result2);
+                return second.score >= picked.score ? second : picked;
+              });
             });
           });
         });
@@ -758,6 +1005,57 @@
       });
   }
 
+  function applyTextToLessonBoard() {
+    const board = $("lesson-board");
+    if (!board) return;
+    board.textContent = "";
+    lessonSentences = splitSentences(capturedText);
+    if (!lessonSentences.length) lessonSentences = [capturedText.trim()];
+    lessonSentences.forEach(function (s, i) {
+      const span = document.createElement("span");
+      span.className = "sentence";
+      span.dataset.index = String(i);
+      span.textContent = s;
+      board.appendChild(span);
+      board.appendChild(document.createTextNode(" "));
+    });
+  }
+
+  function showLessonPlaybackView(on) {
+    const editor = $("lesson-editor");
+    const board = $("lesson-board");
+    const saveBtn = $("btn-save-edit");
+    const hint = $("ocr-edit-hint");
+    if (editor) editor.hidden = !!on;
+    if (saveBtn) saveBtn.hidden = !!on;
+    if (hint) hint.hidden = !!on;
+    if (board) board.hidden = !on;
+  }
+
+  function commitEditorIfNeeded() {
+    const editor = $("lesson-editor");
+    if (!editor) return true;
+    const next = String(editor.value || "").replace(/^\s+|\s+$/g, "");
+    if (!next || countCjk(next) < 1) {
+      setListenState("請保留文字，或按「清除文字」。");
+      return false;
+    }
+    if (next !== capturedText) {
+      persistText(next);
+      applyTextToLessonBoard();
+    }
+    return true;
+  }
+
+  function saveEditedText() {
+    stopLessonPlayback();
+    showLessonPlaybackView(false);
+    if (!commitEditorIfNeeded()) return;
+    lessonIndex = 0;
+    lessonPaused = false;
+    setListenState("已儲存改正，可按「播放」開始聆聽。");
+  }
+
   function renderListen() {
     if (ocrBusy) {
       showListenMode("progress");
@@ -779,18 +1077,10 @@
       img.hidden = true;
     }
 
-    const board = $("lesson-board");
-    board.textContent = "";
-    lessonSentences = splitSentences(capturedText);
-    if (!lessonSentences.length) lessonSentences = [capturedText.trim()];
-    lessonSentences.forEach((s, i) => {
-      const span = document.createElement("span");
-      span.className = "sentence";
-      span.dataset.index = String(i);
-      span.textContent = s;
-      board.appendChild(span);
-      board.appendChild(document.createTextNode(" "));
-    });
+    const editor = $("lesson-editor");
+    if (editor) editor.value = capturedText;
+    applyTextToLessonBoard();
+    showLessonPlaybackView(false);
     lessonIndex = 0;
     lessonPaused = false;
     lessonPlaying = false;
@@ -1217,11 +1507,15 @@
 
   function bindListen() {
     $("btn-play").addEventListener("click", function () {
+      if (!commitEditorIfNeeded()) return;
+      showLessonPlaybackView(true);
       const from = lessonPaused ? lessonIndex : 0;
       playLessonFrom(from);
     });
     $("btn-pause").addEventListener("click", pauseLesson);
     $("btn-replay").addEventListener("click", function () {
+      if (!commitEditorIfNeeded()) return;
+      showLessonPlaybackView(true);
       lessonPaused = false;
       playLessonFrom(0);
     });
@@ -1252,6 +1546,7 @@
       addPageMode = true;
       openPicker("camera");
     });
+    $("btn-save-edit").addEventListener("click", saveEditedText);
     $("btn-clear-text").addEventListener("click", function () {
       const ok = window.confirm("確定清除已辨認的文字？");
       if (!ok) return;
