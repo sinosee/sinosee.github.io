@@ -320,9 +320,79 @@
   function cleanOcrText(raw) {
     let t = String(raw || "").replace(/\r\n/g, "\n");
     t = t.replace(/[^\u4e00-\u9fff\u3400-\u4dbf0-9。，、．！？!?：:；;「」『』（）()《》—\-·…\n\sA-Za-z]/g, "");
+    t = t.replace(/[-—–_=]{2,}/g, "");
+    t = t.replace(/[A-Za-z]{1,3}/g, "");
     t = t.replace(/[ \t]+/g, "");
+    t = t.replace(/[。，、．！？!?：:；;「」『』（）()《》—\-·…]{3,}/g, "，");
     t = t.replace(/\n{3,}/g, "\n\n").trim();
     return t;
+  }
+
+  function looksLikeGibberish(text, confidence, latinCount, dashCount) {
+    const cjk = countCjk(text);
+    if (cjk < MIN_CJK) return true;
+    if ((Number(confidence) || 0) < 40) return true;
+    if ((latinCount || 0) >= 8 && (latinCount || 0) >= cjk * 0.12) return true;
+    if ((dashCount || 0) >= 8) return true;
+    return false;
+  }
+
+  function assembleFromResult(data) {
+    const rawText = String((data && data.text) || "");
+    const latinCount = (rawText.match(/[A-Za-z]/g) || []).length;
+    const dashCount = (rawText.match(/[-—–_=]{2,}/g) || []).join("").length;
+    const lines = (data && data.lines) || [];
+    if (!lines.length) {
+      return {
+        text: rawText,
+        confidence: Number(data && data.confidence) || 0,
+        latinCount: latinCount,
+        dashCount: dashCount
+      };
+    }
+    const kept = [];
+    let confSum = 0;
+    let confN = 0;
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i] || {};
+      const raw = String(line.text || "");
+      const conf = Number(line.confidence) || 0;
+      const cjk = countCjk(raw);
+      const latin = (raw.match(/[A-Za-z]/g) || []).length;
+      const dashes = (raw.match(/[-—–_=]{2,}/g) || []).join("").length;
+      if (cjk === 0) continue;
+      if (conf < 40 && cjk < 4) continue;
+      if (latin > cjk) continue;
+      if (dashes >= 6 && cjk < 8) continue;
+      kept.push(raw);
+      confSum += conf;
+      confN += 1;
+    }
+    return {
+      text: kept.length ? kept.join("\n") : rawText,
+      confidence: confN ? confSum / confN : (Number(data && data.confidence) || 0),
+      latinCount: latinCount,
+      dashCount: dashCount
+    };
+  }
+
+  function evaluateOcr(result) {
+    const data = (result && result.data) || {};
+    const assembled = assembleFromResult(data);
+    const cleaned = cleanOcrText(assembled.text);
+    const bad = looksLikeGibberish(
+      cleaned,
+      assembled.confidence,
+      assembled.latinCount,
+      assembled.dashCount
+    );
+    const cjk = countCjk(cleaned);
+    let score = Math.min(cjk, 120) * 2 + (assembled.confidence || 0);
+    score -= Math.min(80, (assembled.latinCount || 0) * 3);
+    score -= Math.min(40, (assembled.dashCount || 0) * 2);
+    if (bad) score -= 80;
+    if (cjk < MIN_CJK) score -= 100;
+    return { text: cleaned, confidence: assembled.confidence, bad: bad, score: score };
   }
 
   function setOcrProgress(msg, frac) {
@@ -386,7 +456,7 @@
           if (m.status === "loading tesseract core") setOcrProgress("正在準備辨識工具，請稍候。", 0.15);
           else if (m.status === "loading language traineddata") setOcrProgress("正在下載中文辨識資料，請保持網絡連接。", 0.35);
           else if (m.status === "initializing api" || m.status === "initializing tesseract") setOcrProgress("正在準備辨認文字，請稍候。", 0.55);
-          else if (m.status === "recognizing text") setOcrProgress("正在辨認文字，請稍候。", 0.6 + 0.4 * (Number(m.progress) || 0));
+          else if (m.status === "recognizing text") setOcrProgress("正在辨認文字，請稍候。", 0.6 + 0.35 * (Number(m.progress) || 0));
         }
       });
     }).then(function (worker) {
@@ -397,6 +467,15 @@
       throw err;
     });
     return ocrWorkerPromise;
+  }
+
+  function recognizeCanvas(worker, canvas, psm) {
+    return worker.setParameters({
+      tessedit_pageseg_mode: String(psm),
+      user_defined_dpi: "180"
+    }).then(function () {
+      return worker.recognize(canvas);
+    });
   }
 
   function loadOrientedBitmap(file) {
@@ -423,8 +502,9 @@
   function prepareCanvas(source) {
     const srcW = source.width || source.naturalWidth || source.videoWidth;
     const srcH = source.height || source.naturalHeight || source.videoHeight;
-    const max = 1800;
-    const scale = Math.min(1, max / Math.max(srcW, srcH));
+    const max = 2000;
+    const longSide = Math.max(srcW, srcH);
+    const scale = longSide > max ? max / longSide : 1;
     const w = Math.max(1, Math.round(srcW * scale));
     const h = Math.max(1, Math.round(srcH * scale));
     const canvas = document.createElement("canvas");
@@ -437,13 +517,177 @@
       const d = data.data;
       for (let i = 0; i < d.length; i += 4) {
         const g = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
-        let v = (g - 128) * 1.25 + 128;
+        let v = (g - 128) * 1.2 + 128;
         if (v < 0) v = 0;
         if (v > 255) v = 255;
         d[i] = d[i + 1] = d[i + 2] = v;
       }
       ctx.putImageData(data, 0, 0);
     } catch (err) { /* some browsers may block read; use original draw */ }
+    return canvas;
+  }
+
+  function cropTextRegion(canvas) {
+    const w = canvas.width;
+    const h = canvas.height;
+    if (w < 16 || h < 16) return canvas;
+    let ctx;
+    let data;
+    try {
+      ctx = canvas.getContext("2d", { willReadFrequently: true });
+      data = ctx.getImageData(0, 0, w, h).data;
+    } catch (err) {
+      return canvas;
+    }
+    const scores = new Float32Array(h);
+    for (let y = 0; y < h; y++) {
+      let edges = 0;
+      let ink = 0;
+      for (let x = 1; x < w; x++) {
+        const g = data[(y * w + x) * 4];
+        const prev = data[(y * w + x - 1) * 4];
+        if (g < 145) ink += 1;
+        if (Math.abs(g - prev) > 38) edges += 1;
+      }
+      const inkRatio = ink / w;
+      // Photos and drawings have dense ink; text lines are mid-density with many edges.
+      const inkPenalty = (inkRatio > 0.55 || inkRatio < 0.02) ? 0.35 : 1;
+      scores[y] = edges * inkPenalty;
+    }
+    const smooth = new Float32Array(h);
+    const radius = Math.max(2, Math.round(h / 220));
+    for (let y = 0; y < h; y++) {
+      let sum = 0;
+      let n = 0;
+      for (let k = y - radius; k <= y + radius; k++) {
+        if (k >= 0 && k < h) {
+          sum += scores[k];
+          n += 1;
+        }
+      }
+      smooth[y] = n ? sum / n : 0;
+    }
+    let maxVal = 0;
+    for (let y = 0; y < h; y++) if (smooth[y] > maxVal) maxVal = smooth[y];
+    if (maxVal <= 0) return canvas;
+    const thresh = maxVal * 0.22;
+    function lineness(start, end) {
+      const peaks = [];
+      for (let y = start + 1; y < end - 1; y++) {
+        if (smooth[y] >= thresh && smooth[y] >= smooth[y - 1] && smooth[y] >= smooth[y + 1]) {
+          peaks.push(y);
+        }
+      }
+      if (peaks.length < 2) return peaks.length ? 0.6 : 0.2;
+      const gaps = [];
+      for (let i = 1; i < peaks.length; i++) gaps.push(peaks[i] - peaks[i - 1]);
+      let mean = 0;
+      for (let i = 0; i < gaps.length; i++) mean += gaps[i];
+      mean /= gaps.length;
+      if (mean < 8 || mean > Math.max(80, h * 0.12)) return 0.5 * peaks.length;
+      let v = 0;
+      for (let i = 0; i < gaps.length; i++) v += (gaps[i] - mean) * (gaps[i] - mean);
+      const std = Math.sqrt(v / gaps.length);
+      const regular = std / mean < 0.4 ? 2.2 : 1;
+      return peaks.length * regular;
+    }
+    const bands = [];
+    let y = 0;
+    while (y < h) {
+      while (y < h && smooth[y] < thresh) y += 1;
+      if (y >= h) break;
+      const start = y;
+      while (y < h && smooth[y] >= thresh) y += 1;
+      const end = y - 1;
+      if (end - start >= Math.max(6, Math.round(h * 0.006))) {
+        let energy = 0;
+        for (let i = start; i <= end; i++) energy += smooth[i];
+        const height = end - start + 1;
+        bands.push({
+          start: start,
+          end: end,
+          score: energy * lineness(start, end) * Math.min(1.4, Math.max(1, height / Math.max(16, h * 0.08)))
+        });
+      }
+    }
+    if (!bands.length) return canvas;
+    // Merge neighbouring text lines separated by ordinary line spacing,
+    // but do not jump across a large illustration gap.
+    const merged = [];
+    let cur = {
+      start: bands[0].start,
+      end: bands[0].end,
+      score: bands[0].score
+    };
+    const smallGap = Math.max(36, Math.round(h * 0.07));
+    for (let i = 1; i < bands.length; i++) {
+      const gap = bands[i].start - cur.end;
+      if (gap <= smallGap) {
+        cur.end = bands[i].end;
+        cur.score += bands[i].score;
+      } else {
+        merged.push(cur);
+        cur = { start: bands[i].start, end: bands[i].end, score: bands[i].score };
+      }
+    }
+    merged.push(cur);
+    let best = merged[0];
+    for (let i = 1; i < merged.length; i++) {
+      if (merged[i].score > best.score) best = merged[i];
+    }
+    const pad = Math.max(8, Math.round(h * 0.015));
+    let top = Math.max(0, best.start - pad);
+    let bottom = Math.min(h - 1, best.end + pad);
+    if (bottom - top < h * 0.12) return canvas;
+    if (top <= h * 0.03 && bottom >= h * 0.97) return canvas;
+    const out = document.createElement("canvas");
+    out.width = w;
+    out.height = bottom - top + 1;
+    out.getContext("2d").drawImage(canvas, 0, top, w, out.height, 0, 0, w, out.height);
+    return out;
+  }
+
+  function binarizeCanvas(src) {
+    const canvas = document.createElement("canvas");
+    canvas.width = src.width;
+    canvas.height = src.height;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    ctx.drawImage(src, 0, 0);
+    try {
+      const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const d = image.data;
+      const hist = new Array(256);
+      for (let i = 0; i < 256; i++) hist[i] = 0;
+      const n = canvas.width * canvas.height;
+      for (let i = 0; i < d.length; i += 4) hist[d[i]] += 1;
+      let sum = 0;
+      for (let i = 0; i < 256; i++) sum += i * hist[i];
+      let sumB = 0;
+      let wB = 0;
+      let best = 0;
+      let threshold = 128;
+      for (let t = 0; t < 256; t++) {
+        wB += hist[t];
+        if (wB === 0) continue;
+        const wF = n - wB;
+        if (wF === 0) break;
+        sumB += t * hist[t];
+        const mB = sumB / wB;
+        const mF = (sum - sumB) / wF;
+        const between = wB * wF * (mB - mF) * (mB - mF);
+        if (between > best) {
+          best = between;
+          threshold = t;
+        }
+      }
+      for (let i = 0; i < d.length; i += 4) {
+        const v = d[i] <= threshold ? 0 : 255;
+        d[i] = d[i + 1] = d[i + 2] = v;
+      }
+      ctx.putImageData(image, 0, 0);
+    } catch (err) {
+      return src;
+    }
     return canvas;
   }
 
@@ -459,23 +703,33 @@
     showListenMode("progress");
     setOcrProgress("正在準備照片，請稍候。", 0.08);
 
+    if (!append) setPreview(URL.createObjectURL(file));
+    else if (!previewUrl) setPreview(URL.createObjectURL(file));
+
     loadOrientedBitmap(file)
       .then(function (bmp) {
-        const canvas = prepareCanvas(bmp);
+        const base = prepareCanvas(bmp);
         if (bmp.close) try { bmp.close(); } catch (err) { /* ignore */ }
-        const preview = canvas.toDataURL("image/jpeg", 0.72);
-        if (!append) setPreview(preview);
-        else if (!previewUrl) setPreview(preview);
+        const crop = cropTextRegion(base);
+        const firstPsm = crop !== base ? "4" : "6";
         setOcrProgress("正在辨認文字，請稍候。第一次使用需要下載辨識資料，請保持網絡連接。", 0.2);
         return getOcrWorker().then(function (worker) {
-          return worker.recognize(canvas);
+          return recognizeCanvas(worker, crop, firstPsm).then(function (result) {
+            const first = evaluateOcr(result);
+            if (!first.bad) return first;
+            setOcrProgress("正在再試一次，請稍候。", 0.55);
+            return recognizeCanvas(worker, binarizeCanvas(crop), "3").then(function (result2) {
+              const second = evaluateOcr(result2);
+              return second.score >= first.score ? second : first;
+            });
+          });
         });
       })
-      .then(function (result) {
-        const next = cleanOcrText(result && result.data && result.data.text);
-        if (countCjk(next) < MIN_CJK) {
+      .then(function (picked) {
+        if (!picked || picked.bad || countCjk(picked.text) < MIN_CJK) {
           throw new Error("empty");
         }
+        const next = picked.text;
         const body = append && capturedText
           ? capturedText.replace(/\s+$/, "") + "\n\n" + next
           : next;
@@ -490,7 +744,7 @@
         if (capturedText && countCjk(capturedText) >= MIN_CJK) {
           renderListen();
           setListenState(code === "empty"
-            ? "未能辨認這頁的文字。請拍攝更清晰的照片後再試，現有文字仍可播放。"
+            ? "未能清楚辨認這頁的文字。請靠近文字部分拍攝，避免只拍插圖或反光。現有文字仍可播放。"
             : "辨認失敗，請檢查網絡後再試。現有文字仍可播放。");
           return;
         }
@@ -498,7 +752,7 @@
         const lead = $("listen-empty").querySelector(".lead");
         if (lead) {
           lead.textContent = code === "empty"
-            ? "未能辨認文字。請把課文拍得清楚一些，光線充足，再試一次。"
+            ? "未能清楚辨認文字。請靠近課文的文字部分拍攝，光線充足，避免只拍插圖或反光，再試一次。"
             : "未能辨認文字。請檢查網絡連接後再拍攝一次。照片只在這部裝置處理，不會上載。";
         }
       });
@@ -512,7 +766,7 @@
     if (!capturedText || countCjk(capturedText) < 1) {
       showListenMode("empty");
       const lead = $("listen-empty").querySelector(".lead");
-      if (lead) lead.textContent = "請拍攝課文，辨認文字後會用廣東話朗讀。照片只在這部裝置處理，不會上載。";
+      if (lead) lead.textContent = "請靠近課文的文字部分拍攝，盡量避免只拍插圖，並避免反光。辨認文字後會用廣東話朗讀。照片只在這部裝置處理，不會上載。";
       $("photo-preview").hidden = true;
       return;
     }
