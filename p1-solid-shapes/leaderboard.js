@@ -627,6 +627,144 @@
     }
   }
 
+  function validateClassId(classRaw) {
+    var c = analyze(classRaw);
+    if (c.code === 'cjk') {
+      return { ok: false, code: 'cjk', field: 'classId', fields: ['classId'], message: '班別不可以輸入中文。請用英文字母和數字，例如 1A。' };
+    }
+    if (c.code === 'fullwidth') {
+      return { ok: false, code: 'fullwidth', field: 'classId', fields: ['classId'], message: '請改用半形英文字母和數字，不要使用全形字或中文。' };
+    }
+    if (c.code === 'charset') {
+      return { ok: false, code: 'charset', field: 'classId', fields: ['classId'], message: '只可以輸入英文字母、數字和連字號（-）。' };
+    }
+    if (c.code === 'empty') {
+      return { ok: false, code: 'empty', field: 'classId', fields: ['classId'], message: '請填寫班別，例如 1A。' };
+    }
+    return { ok: true, code: 'ok', field: null, fields: [], message: '', classId: c.value };
+  }
+
+  function formatScoreTime(ts) {
+    var n = Number(ts) || 0;
+    if (!n) return '';
+    if (n < 100000000000) n *= 1000;
+    var d = new Date(n);
+    if (isNaN(d.getTime())) return '';
+    try {
+      var parts = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Hong_Kong',
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }).formatToParts(d);
+      var map = {};
+      parts.forEach(function (part) { map[part.type] = part.value; });
+      var hour = map.hour || '00';
+      var minute = map.minute || '00';
+      if (hour.length < 2) hour = '0' + hour;
+      if (minute.length < 2) minute = '0' + minute;
+      return map.year + '年' + String(parseInt(map.month, 10)) + '月' + String(parseInt(map.day, 10)) + '日 ' + hour + ':' + minute;
+    } catch (err) {
+      return '';
+    }
+  }
+
+  function compareStudentNo(a, b) {
+    var as = String(a || '');
+    var bs = String(b || '');
+    var na = parseInt(as, 10);
+    var nb = parseInt(bs, 10);
+    var aNum = String(na) === as && !isNaN(na);
+    var bNum = String(nb) === bs && !isNaN(nb);
+    if (aNum && bNum && na !== nb) return na - nb;
+    if (aNum !== bNum) return aNum ? -1 : 1;
+    return as.localeCompare(bs, 'en', { numeric: true, sensitivity: 'base' });
+  }
+
+  function presentClassAll(entries, classId) {
+    var want = String(classId || '').toUpperCase();
+    var list = (entries || []).filter(function (e) {
+      return e && String(e.classId || '').toUpperCase() === want;
+    });
+    var map = {};
+    list.forEach(function (e) {
+      var key = String(e.studentNo || '');
+      if (!map[key]) map[key] = [];
+      map[key].push(e);
+    });
+    Object.keys(map).forEach(function (k) {
+      map[k].sort(function (a, b) {
+        var dt = (Number(b.ts) || 0) - (Number(a.ts) || 0);
+        if (dt) return dt;
+        return better(a, b);
+      });
+    });
+    var students = Object.keys(map).sort(compareStudentNo).map(function (no) {
+      var attempts = map[no];
+      var best = attempts[0];
+      attempts.forEach(function (e) {
+        if (better(e, best) < 0) best = e;
+      });
+      return {
+        studentNo: no,
+        classId: want,
+        attempts: attempts,
+        count: attempts.length,
+        best: best,
+        bestScore: best.score,
+        bestStars: best.stars
+      };
+    });
+    return {
+      classId: want,
+      students: students,
+      totalAttempts: list.length,
+      studentCount: students.length
+    };
+  }
+
+  function renderClassInto(container, loadResult, classId) {
+    if (!container) return;
+    var doc = container.ownerDocument;
+    container.textContent = '';
+    var message = (loadResult && loadResult.message) || '';
+    if (message) container.appendChild(el(doc, 'p', 'lbMsg', message));
+    if (!classId) {
+      container.appendChild(el(doc, 'p', 'lbHint', '請先輸入班別，例如 1A，再按「查看」。'));
+      return;
+    }
+    var view = presentClassAll((loadResult && loadResult.entries) || [], classId);
+    if (!view.studentCount) {
+      container.appendChild(el(doc, 'div', 'lbEmpty', '這班暫時未有成績。'));
+      return;
+    }
+    container.appendChild(el(doc, 'p', 'lbMsg', view.classId + ' 的成績：' + view.studentCount + ' 位同學，共 ' + view.totalAttempts + ' 筆。'));
+    container.appendChild(el(doc, 'p', 'lbHint', '列出該班全部成績，每位同學最新的在上。黃色一筆是該同學的最高分。'));
+    view.students.forEach(function (stu) {
+      var card = el(doc, 'section', 'classGroup');
+      card.appendChild(el(doc, 'h3', 'classGroupTitle',
+        stu.studentNo + ' 號　最高 ' + stu.bestScore + ' 分　' + starsText(stu.bestStars) + '　共 ' + stu.count + ' 筆'));
+      var list = el(doc, 'ol', 'lbList');
+      stu.attempts.forEach(function (e) {
+        var isBest = e === stu.best || (e.id && stu.best.id && e.id === stu.best.id);
+        var row = el(doc, 'li', 'lbRow classAttempt' + (isBest ? ' isBest' : ''));
+        var when = formatScoreTime(e.ts) || '沒有時間';
+        var name = el(doc, 'span', 'lbWhen', when);
+        if (isBest) name.appendChild(el(doc, 'span', 'lbTag', '最高'));
+        row.appendChild(name);
+        row.appendChild(el(doc, 'span', 'lbStars', starsText(e.stars)));
+        row.appendChild(el(doc, 'span', 'lbScore', String(e.score)));
+        row.setAttribute('aria-label', stu.studentNo + ' 號 ' + e.score + ' 分 ' + when + (isBest ? ' 最高分' : ''));
+        list.appendChild(row);
+      });
+      card.appendChild(list);
+      container.appendChild(card);
+    });
+  }
+
   return {
     TOP_N: TOP_N,
     MSG: MSG,
@@ -642,6 +780,10 @@
     bestByStudent: bestByStudent,
     renderInto: renderInto,
     renderLoading: renderLoading,
-    readScores: readScores
+    readScores: readScores,
+    validateClassId: validateClassId,
+    presentClassAll: presentClassAll,
+    renderClassInto: renderClassInto,
+    formatScoreTime: formatScoreTime
   };
 });

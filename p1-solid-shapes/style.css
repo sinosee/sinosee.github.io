@@ -997,3 +997,45 @@ input { -webkit-user-select: text; user-select: text; }
     animation-delay: 0s !important;
   }
 }
+
+.classBoardForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-items: flex-end;
+  width: min(520px, 100%);
+  margin: 16px auto 0;
+  text-align: left;
+}
+.classBoardForm .field { flex: 1; min-width: 160px; }
+.classBoardForm .bigbtn {
+  min-height: 64px;
+  min-width: 140px;
+  margin: 0;
+  width: auto;
+}
+.classGroup {
+  background: #fffafd;
+  border: 3px solid #ffe0f0;
+  border-radius: 22px;
+  padding: 12px 12px 14px;
+  box-shadow: 0 4px 0 var(--shadow);
+}
+.classGroupTitle {
+  margin: 0 0 8px;
+  font-size: clamp(18px, 2.8vw, 26px);
+  font-weight: 900;
+  color: var(--ink);
+  line-height: 1.35;
+}
+.lbRow.classAttempt {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  font-size: clamp(15px, 2.2vw, 20px);
+}
+.lbRow.classAttempt.isBest {
+  background: #fff8d6;
+  border-color: var(--gold);
+  box-shadow: 0 4px 0 #ffe29a;
+}
+.lbWhen { color: var(--muted); font-weight: 800; }
