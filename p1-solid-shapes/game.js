@@ -1,6 +1,7 @@
 /* 立體圖形對對碰 — local stars plus the class leaderboard.
    Student mode keeps the class gate and /p1SolidShapes/scores.
-   Teacher projector mode never asks 班別/學號 and never reads or writes the board. */
+   Teacher projector mode never asks 班別/學號 when playing and never writes scores.
+   Teachers can still open 查看一班成績 to read one class's records. */
 (function () {
   'use strict';
 
@@ -22,7 +23,9 @@
     teacherFormOpen: false,
     teacherPin: '',
     teacherBusy: false,
-    boardToken: 0
+    boardToken: 0,
+    classBoardToken: 0,
+    classBoardId: ''
   };
   var audioCtx = null;
 
@@ -365,6 +368,61 @@
     syncTeacherBox();
   }
 
+  var LS_CLASS_LOOKUP = 'p1SolidShapes.classLookup.v1';
+
+  function recallClassLookup() {
+    try {
+      var saved = sessionStorage.getItem(LS_CLASS_LOOKUP);
+      if (saved) return saved;
+    } catch (e) { /* private mode */ }
+    return state.classBoardId || (state.player && state.player.classId) || '';
+  }
+
+  function rememberClassLookup(classId) {
+    state.classBoardId = classId || '';
+    try {
+      if (classId) sessionStorage.setItem(LS_CLASS_LOOKUP, classId);
+    } catch (e) { /* private mode */ }
+  }
+
+  function openClassBoard() {
+    var input = $('classBoardClass');
+    var err = $('classBoardErr');
+    if (err) err.textContent = '';
+    if (input && !input.value) input.value = recallClassLookup();
+    show('classBoard');
+    if (input && input.value) lookupClassBoard(false);
+    else if (input) input.focus();
+  }
+
+  function lookupClassBoard(loud) {
+    var input = $('classBoardClass');
+    var err = $('classBoardErr');
+    var mount = $('classBoardMount');
+    var board = window.SolidLeaderboard;
+    if (!board || !input) return;
+    var result = board.validateClassId(input.value);
+    input.classList.toggle('bad', !!(loud && !result.ok));
+    input.setAttribute('aria-invalid', (loud && !result.ok) ? 'true' : 'false');
+    if (err) err.textContent = (loud && !result.ok) ? (result.message || '') : '';
+    if (!result.ok) {
+      if (loud && mount) {
+        mount.textContent = '';
+      }
+      return;
+    }
+    input.value = result.classId;
+    rememberClassLookup(result.classId);
+    if (!mount) return;
+    var token = ++state.classBoardToken;
+    board.renderLoading(mount);
+    board.load().then(function (loadResult) {
+      if (token !== state.classBoardToken) return;
+      if (!$('classBoard').classList.contains('on')) return;
+      board.renderClassInto(mount, loadResult, result.classId);
+    });
+  }
+
   function openBoard() {
     if (isTeacher()) return;
     syncTeacherBox();
@@ -434,6 +492,23 @@
       openGate('home');
     });
     $('btnOpenBoard').addEventListener('click', openBoard);
+    $('btnOpenClassBoard').addEventListener('click', openClassBoard);
+    $('classBoardForm').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      lookupClassBoard(true);
+    });
+    $('classBoardClass').addEventListener('input', function () {
+      this.classList.remove('bad');
+      var err = $('classBoardErr');
+      if (err) err.textContent = '';
+    });
+    $('btnClassBoardReload').addEventListener('click', function () {
+      lookupClassBoard(true);
+    });
+    $('btnClassBoardBack').addEventListener('click', function () {
+      show('home');
+      paintBest();
+    });
     $('gateClass').addEventListener('input', function () { applyGate(false); });
     $('gateNo').addEventListener('input', function () { applyGate(false); });
     $('gateClass').addEventListener('keydown', function (ev) {

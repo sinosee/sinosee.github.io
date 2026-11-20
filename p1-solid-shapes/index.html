@@ -52,6 +52,7 @@
         <div class="actions">
           <button type="button" class="bigbtn" id="btnStart">開始第一課</button>
           <button type="button" class="bigbtn alt" id="btnOpenBoard">查看龍虎榜</button>
+          <button type="button" class="bigbtn alt" id="btnOpenClassBoard">查看一班成績</button>
         </div>
         <p class="best" id="bestLine"></p>
       </article>
@@ -159,6 +160,25 @@
     <div class="endBtns">
       <button type="button" class="bigbtn alt" id="btnBoardReload">重新載入</button>
       <button type="button" class="bigbtn" id="btnBoardBack">返回主頁</button>
+    </div>
+  </div>
+</div>
+
+<div id="classBoard" class="screen">
+  <div class="wrap boardWrap">
+    <h2>一班成績</h2>
+    <p class="sub">輸入班別，查看該班每一位同學的全部成績，不只是最高分。</p>
+    <form id="classBoardForm" class="classBoardForm" autocomplete="off">
+      <label class="field" for="classBoardClass">班別
+        <input id="classBoardClass" name="classId" type="text" inputmode="text" maxlength="24" placeholder="例如 1A" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off" enterkeyhint="search" aria-describedby="classBoardErr">
+      </label>
+      <button type="submit" class="bigbtn" id="btnClassBoardLook">查看</button>
+    </form>
+    <p class="gateErr" id="classBoardErr" role="alert" aria-live="assertive"></p>
+    <div id="classBoardMount" class="lbPanel" aria-live="polite"></div>
+    <div class="endBtns">
+      <button type="button" class="bigbtn alt" id="btnClassBoardReload">重新載入</button>
+      <button type="button" class="bigbtn" id="btnClassBoardBack">返回主頁</button>
     </div>
   </div>
 </div>
