@@ -395,6 +395,7 @@ img.qr {
   color: #8a5a10;
   box-shadow: 0 4px 0 #ffe29a;
 }
+.choices[hidden] { display: none; }
 .choices {
   display: grid;
   grid-template-columns: 1fr 1fr;
