@@ -1,4 +1,4 @@
-/* Lesson 2: complete the other half on grid paper by marking 對稱點. */
+/* Lesson 2: complete the other half on grid paper by dragging line segments. */
 (function (root) {
   'use strict';
   var G = root.SymmetryGeo || (typeof require === 'function' ? require('./geometry.js') : null);
@@ -12,7 +12,9 @@
     correct: 0,
     locked: false,
     attempts: 0,
-    placed: {}, /* key "x,y" -> true */
+    strokes: [], /* undirected student segments {a, b} */
+    pending: null, /* click-then-click start point */
+    drag: null,
     hintId: null
   };
 
@@ -33,8 +35,8 @@
       vertices: [{ x: 6, y: 2 }, { x: 2, y: 4 }, { x: 3, y: 9 }, { x: 6, y: 10 }, { x: 9, y: 9 }, { x: 10, y: 4 }],
       given: [0, 3],
       givenOff: [1, 2],
-      prompt: '圖形的一半和對稱軸已經畫好。請標出另一半的對稱點。',
-      lead: '先數一數每個頂點到對稱軸有幾格，再在另一邊同樣格數的位置標出對稱點。'
+      prompt: '圖形的一半和對稱軸已經畫好。請畫出圖形的另一半。',
+      lead: '由一個交叉點拖到另一個交叉點來畫線。可以先數一數每個頂點到對稱軸有幾格。'
     },
     {
       id: 'v-quad',
@@ -57,8 +59,8 @@
       ],
       given: [0, 5],
       givenOff: [1, 2, 3, 4],
-      prompt: '請標出全部對稱點，完成這個圖形。',
-      lead: '頂點較多，可以逐個數格來找對稱點。'
+      prompt: '請畫出圖形的另一半，完成這個圖形。',
+      lead: '頂點較多，可以逐個數格，再把對稱點連起來。'
     },
     {
       id: 'h-triangle',
@@ -91,8 +93,8 @@
       ],
       given: [0, 5],
       givenOff: [1, 2, 3, 4],
-      prompt: '請標出全部對稱點，完成這個圖形。',
-      lead: '先找出離對稱軸最遠的頂點，再逐個標出對稱點。'
+      prompt: '請畫出圖形的另一半，完成這個圖形。',
+      lead: '先找出離對稱軸最遠的頂點，數一數有幾格，再畫出對稱的邊。'
     },
     {
       id: 'd-simple',
@@ -101,8 +103,8 @@
       vertices: [{ x: 2, y: 2 }, { x: 2, y: 6 }, { x: 6, y: 6 }, { x: 6, y: 2 }],
       given: [0, 2],
       givenOff: [1],
-      prompt: '對稱軸是傾斜的。請標出對稱點，完成圖形。',
-      lead: '對稱點與原頂點的連線，會垂直於對稱軸，而且兩邊格數相同。'
+      prompt: '對稱軸是傾斜的。請畫出圖形的另一半。',
+      lead: '由一個交叉點拖到另一個交叉點來畫線。對稱點與原頂點到對稱軸的格數相同。'
     },
     {
       id: 'd-quad',
@@ -124,8 +126,8 @@
       ],
       given: [0, 4],
       givenOff: [1, 2, 3],
-      prompt: '請標出全部對稱點，完成這個圖形。',
-      lead: '可以先從離對稱軸最近的頂點開始數。'
+      prompt: '請畫出圖形的另一半，完成這個圖形。',
+      lead: '可以先從離對稱軸最近的頂點開始數格，再畫線。'
     },
     {
       id: 'd2-challenge',
@@ -178,6 +180,54 @@
     return targetPoints(item).some(function (g) { return g.x === p.x && g.y === p.y; });
   }
 
+  function edgeKey(a, b) {
+    var ka = a.x + ',' + a.y;
+    var kb = b.x + ',' + b.y;
+    return ka < kb ? ka + '|' + kb : kb + '|' + ka;
+  }
+
+  function samePoint(a, b) {
+    return a && b && a.x === b.x && a.y === b.y;
+  }
+
+  function polygonEdges(vertices) {
+    var out = [];
+    var n = vertices.length;
+    for (var i = 0; i < n; i++) {
+      out.push({ a: vertices[i], b: vertices[(i + 1) % n] });
+    }
+    return out;
+  }
+
+  /* Edges of the complete polygon whose two ends already belong to the given half. */
+  function givenHalfEdges(item) {
+    var given = givenIndexSet(item);
+    var verts = item.vertices;
+    var out = [];
+    for (var i = 0; i < verts.length; i++) {
+      var j = (i + 1) % verts.length;
+      if (given[i] && given[j]) out.push({ a: verts[i], b: verts[j] });
+    }
+    return out;
+  }
+
+  /* Edges the student must draw: complete-polygon edges not already in the given half. */
+  function expectedStudentEdges(item) {
+    var given = givenIndexSet(item);
+    var verts = item.vertices;
+    var out = [];
+    for (var i = 0; i < verts.length; i++) {
+      var j = (i + 1) % verts.length;
+      if (!(given[i] && given[j])) out.push({ a: verts[i], b: verts[j] });
+    }
+    return out;
+  }
+
+  function isGivenEdge(item, a, b) {
+    var k = edgeKey(a, b);
+    return givenHalfEdges(item).some(function (e) { return edgeKey(e.a, e.b) === k; });
+  }
+
   /* Layout in an SVG viewBox with padding around the 12×12 grid. */
   var PAD = 36;
   var VB = 400;
@@ -196,7 +246,10 @@
   function presentKeys(item) {
     var keys = {};
     givenPoints(item).forEach(function (p) { keys[keyOf(p)] = true; });
-    Object.keys(state.placed).forEach(function (k) { keys[k] = true; });
+    state.strokes.forEach(function (e) {
+      keys[keyOf(e.a)] = true;
+      keys[keyOf(e.b)] = true;
+    });
     return keys;
   }
 
@@ -270,25 +323,25 @@
     return item.vertices;
   }
 
-  function drawPartialPolygon(svg, item, keys, opt) {
+  function drawSegment(svg, a, b, opt) {
     opt = opt || {};
-    var verts = vertexOrderPoints(item);
-    var n = verts.length;
-    /* Draw every edge whose two ends are already present. */
-    for (var i = 0; i < n; i++) {
-      var a = verts[i], b = verts[(i + 1) % n];
-      if (!keys[keyOf(a)] || !keys[keyOf(b)]) continue;
-      var pa = toSvg(a), pb = toSvg(b);
-      var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      line.setAttribute('x1', pa.x); line.setAttribute('y1', pa.y);
-      line.setAttribute('x2', pb.x); line.setAttribute('y2', pb.y);
-      line.setAttribute('stroke', opt.stroke || '#1e2a4a');
-      line.setAttribute('stroke-width', opt.width || 4);
-      line.setAttribute('stroke-linecap', 'round');
-      line.setAttribute('pointer-events', 'none');
-      svg.appendChild(line);
-    }
-    /* Fill the given half as a closed strip along the axis if we can. */
+    var pa = toSvg(a), pb = toSvg(b);
+    var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', pa.x); line.setAttribute('y1', pa.y);
+    line.setAttribute('x2', pb.x); line.setAttribute('y2', pb.y);
+    line.setAttribute('stroke', opt.stroke || '#1e2a4a');
+    line.setAttribute('stroke-width', opt.width || 4);
+    line.setAttribute('stroke-linecap', 'round');
+    if (opt.dash) line.setAttribute('stroke-dasharray', opt.dash);
+    line.setAttribute('pointer-events', 'none');
+    if (opt.cls) line.setAttribute('class', opt.cls);
+    svg.appendChild(line);
+    return line;
+  }
+
+  function drawGivenHalf(svg, item, opt) {
+    opt = opt || {};
+    var verts = item.vertices;
     var givenSet = givenIndexSet(item);
     var half = [];
     verts.forEach(function (p, i) {
@@ -302,55 +355,62 @@
       poly.setAttribute('fill', 'rgba(94,201,168,0.45)');
       poly.setAttribute('stroke', 'none');
       poly.setAttribute('pointer-events', 'none');
-      svg.insertBefore(poly, svg.firstChild.nextSibling || null);
+      svg.appendChild(poly);
     }
-    if (opt.fillAll && keysComplete(item, keys)) {
-      var full = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-      full.setAttribute('points', verts.map(function (p) {
-        var s = toSvg(p); return s.x + ',' + s.y;
-      }).join(' '));
-      full.setAttribute('fill', 'rgba(94,201,168,0.5)');
-      full.setAttribute('stroke', '#1e2a4a');
-      full.setAttribute('stroke-width', 4);
-      full.setAttribute('stroke-linejoin', 'round');
-      full.setAttribute('pointer-events', 'none');
-      svg.appendChild(full);
-    }
-  }
-
-  function keysComplete(item, keys) {
-    return item.vertices.every(function (p) { return keys[keyOf(p)]; });
-  }
-
-  function drawDots(svg, item, review) {
-    givenPoints(item).forEach(function (p) {
-      dot(svg, p, '#1e2a4a', 7, true);
+    givenHalfEdges(item).forEach(function (e) {
+      drawSegment(svg, e.a, e.b, { stroke: '#1e2a4a', width: 4 });
     });
-    Object.keys(state.placed).forEach(function (k) {
-      var p = parseKey(k);
-      var fill = '#d64545';
-      if (review) {
-        if (isTargetPoint(item, p)) fill = '#1a8a5c';
-        else fill = '#d64545';
-      }
-      dot(svg, p, fill, 8, false);
+  }
+
+  function drawStudentStrokes(svg, item, review) {
+    var expected = {};
+    expectedStudentEdges(item).forEach(function (e) {
+      expected[edgeKey(e.a, e.b)] = true;
+    });
+    state.strokes.forEach(function (e) {
+      var k = edgeKey(e.a, e.b);
+      var ok = expected[k];
+      var stroke = '#d64545';
+      if (review && review.complete && ok) stroke = '#1a8a5c';
+      else if (review && !ok) stroke = '#d64545';
+      else if (ok) stroke = '#d64545';
+      drawSegment(svg, e.a, e.b, { stroke: stroke, width: 4.5 });
     });
     if (review && review.missing) {
-      review.missing.forEach(function (p) {
-        var s = toSvg(p);
-        var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        c.setAttribute('cx', s.x); c.setAttribute('cy', s.y); c.setAttribute('r', 8);
-        c.setAttribute('fill', 'none');
-        c.setAttribute('stroke', '#1a8a5c');
-        c.setAttribute('stroke-width', 3);
-        c.setAttribute('stroke-dasharray', '4 3');
-        c.setAttribute('pointer-events', 'none');
-        svg.appendChild(c);
+      review.missing.forEach(function (e) {
+        drawSegment(svg, e.a, e.b, { stroke: '#1a8a5c', width: 4, dash: '6 5' });
       });
     }
   }
 
-  function dot(svg, p, fill, r, given) {
+  function drawDots(svg, item, review) {
+    givenPoints(item).forEach(function (p) {
+      dot(svg, p, '#1e2a4a', 7);
+    });
+    var seen = {};
+    state.strokes.forEach(function (e) {
+      [e.a, e.b].forEach(function (p) {
+        var k = keyOf(p);
+        if (seen[k] || isGivenPoint(item, p)) return;
+        seen[k] = true;
+        var fill = '#d64545';
+        if (review && review.complete) fill = '#1a8a5c';
+        dot(svg, p, fill, 7);
+      });
+    });
+    if (state.pending) {
+      var s = toSvg(state.pending);
+      var halo = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      halo.setAttribute('cx', s.x); halo.setAttribute('cy', s.y); halo.setAttribute('r', 11);
+      halo.setAttribute('fill', 'none');
+      halo.setAttribute('stroke', '#d64545');
+      halo.setAttribute('stroke-width', 3);
+      halo.setAttribute('pointer-events', 'none');
+      svg.appendChild(halo);
+    }
+  }
+
+  function dot(svg, p, fill, r) {
     var s = toSvg(p);
     var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     c.setAttribute('cx', s.x); c.setAttribute('cy', s.y); c.setAttribute('r', r);
@@ -362,12 +422,10 @@
   }
 
   function drawHint(svg, item) {
-    /* Highlight one given off-axis vertex, count squares to the axis, and show the target if attempts>=2? On first miss just the count. */
     var off = (item.givenOff || [])[0];
     if (off == null) return;
     var p = item.vertices[off];
     var foot = G.projectToAxis(p, item.axis);
-    /* Snap foot to a nearby grid point if it is on the grid. */
     var footG = { x: Math.round(foot.x), y: Math.round(foot.y) };
     var a = toSvg(p);
     var b = toSvg(G.pointsEqual(foot, footG, 0.01) ? footG : foot);
@@ -381,13 +439,12 @@
     svg.appendChild(line);
     var n = G.countSquaresToAxis(p, item.axis);
     var mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
-    var t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    t.setAttribute('x', mid.x + 10);
-    t.setAttribute('y', mid.y - 6);
-    t.setAttribute('class', 'hintMark');
-    t.textContent = '有 ' + n + ' 格';
-    svg.appendChild(t);
-    /* Pulse the source vertex. */
+    var tnode = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    tnode.setAttribute('x', mid.x + 10);
+    tnode.setAttribute('y', mid.y - 6);
+    tnode.setAttribute('class', 'hintMark');
+    tnode.textContent = '有 ' + n + ' 格';
+    svg.appendChild(tnode);
     var halo = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     var s = toSvg(p);
     halo.setAttribute('cx', s.x); halo.setAttribute('cy', s.y); halo.setAttribute('r', 12);
@@ -407,7 +464,6 @@
     svg.setAttribute('role', 'img');
     svg.style.touchAction = 'none';
 
-    /* Paper background already on the frame; draw grid, fill, axis, edges, dots. */
     var paper = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
     paper.setAttribute('x', PAD - 8); paper.setAttribute('y', PAD - 8);
     paper.setAttribute('width', SPAN + 16); paper.setAttribute('height', SPAN + 16);
@@ -418,73 +474,215 @@
     svg.appendChild(paper);
 
     drawGrid(svg);
-    var keys = presentKeys(item);
-    drawPartialPolygon(svg, item, keys, { fillAll: review && review.complete, noFill: review && review.complete });
+    if (review && review.complete) {
+      var full = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      full.setAttribute('points', item.vertices.map(function (p) {
+        var s = toSvg(p); return s.x + ',' + s.y;
+      }).join(' '));
+      full.setAttribute('fill', 'rgba(94,201,168,0.5)');
+      full.setAttribute('stroke', 'none');
+      full.setAttribute('pointer-events', 'none');
+      svg.appendChild(full);
+    }
+    drawGivenHalf(svg, item, { noFill: review && review.complete });
+    drawStudentStrokes(svg, item, review);
+    if (review && review.complete) {
+      polygonEdges(item.vertices).forEach(function (e) {
+        drawSegment(svg, e.a, e.b, { stroke: '#1e2a4a', width: 4 });
+      });
+    }
     drawAxis(svg, item);
     if (state.attempts >= 1 && !state.locked && !review) drawHint(svg, item);
     if (review && review.showHint) drawHint(svg, item);
     drawDots(svg, item, review);
 
-    /* Textbook-style lattice dots at every intersection, plus large invisible hit targets. */
     for (var y = 0; y <= GRID; y++) {
       for (var x = 0; x <= GRID; x++) {
-        var p = { x: x, y: y };
-        var s = toSvg(p);
-        if (!isGivenPoint(item, p) && !state.placed[keyOf(p)]) {
-          var lattice = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-          lattice.setAttribute('cx', s.x); lattice.setAttribute('cy', s.y); lattice.setAttribute('r', 2.2);
-          lattice.setAttribute('fill', '#c8b89a');
-          lattice.setAttribute('pointer-events', 'none');
-          svg.appendChild(lattice);
-        }
-        /* Hits are handled on the whole SVG (nearest intersection), so neighbours do not overlap. */
+        var pnt = { x: x, y: y };
+        if (isGivenPoint(item, pnt)) continue;
+        var occupied = state.strokes.some(function (e) {
+          return samePoint(e.a, pnt) || samePoint(e.b, pnt);
+        });
+        if (occupied) continue;
+        var s = toSvg(pnt);
+        var lattice = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        lattice.setAttribute('cx', s.x); lattice.setAttribute('cy', s.y); lattice.setAttribute('r', 2.2);
+        lattice.setAttribute('fill', '#c8b89a');
+        lattice.setAttribute('pointer-events', 'none');
+        svg.appendChild(lattice);
       }
     }
 
+    var rubber = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    rubber.setAttribute('class', 'rubber');
+    rubber.setAttribute('x1', 0); rubber.setAttribute('y1', 0);
+    rubber.setAttribute('x2', 0); rubber.setAttribute('y2', 0);
+    rubber.setAttribute('stroke', '#d64545');
+    rubber.setAttribute('stroke-width', 4);
+    rubber.setAttribute('stroke-linecap', 'round');
+    rubber.setAttribute('stroke-dasharray', '8 6');
+    rubber.setAttribute('pointer-events', 'none');
+    rubber.style.display = 'none';
+    svg.appendChild(rubber);
+    svg._rubber = rubber;
+
+    var catcher = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    catcher.setAttribute('x', 0);
+    catcher.setAttribute('y', 0);
+    catcher.setAttribute('width', VB);
+    catcher.setAttribute('height', VB);
+    catcher.setAttribute('fill', 'transparent');
+    catcher.style.touchAction = 'none';
+    svg.appendChild(catcher);
+
     if (!state.locked) {
-      svg.style.cursor = 'pointer';
-      svg.addEventListener('click', onTapSvg);
+      svg.style.cursor = 'crosshair';
+      svg.addEventListener('pointerdown', onPointerDown);
+      svg.addEventListener('pointermove', onPointerMove);
+      svg.addEventListener('pointerup', onPointerUp);
+      svg.addEventListener('pointercancel', onPointerCancel);
     }
     mount.appendChild(svg);
   }
 
-  function onTapSvg(ev) {
-    if (state.locked) return;
-    var svg = ev.currentTarget;
+  var SNAP = 0.4;
+
+  function pointerToGrid(svg, ev) {
     var rect = svg.getBoundingClientRect();
-    if (!rect.width || !rect.height) return;
+    if (!rect.width || !rect.height) return { ok: false };
     var rawX = (ev.clientX - rect.left) / rect.width * VB;
     var rawY = (ev.clientY - rect.top) / rect.height * VB;
     var gx = (rawX - PAD) / SPAN * GRID;
     var gy = (rawY - PAD) / SPAN * GRID;
-    var p = { x: Math.round(gx), y: Math.round(gy) };
-    if (p.x < 0 || p.x > GRID || p.y < 0 || p.y > GRID) return;
-    if (Math.hypot(gx - p.x, gy - p.y) > 0.4) return;
-    if (isGivenPoint(itemOf(), p)) return;
-    var k = keyOf(p);
-    if (state.placed[k]) delete state.placed[k];
-    else state.placed[k] = true;
-    render();
+    var snapped = { x: Math.round(gx), y: Math.round(gy) };
+    var dist = Math.hypot(gx - snapped.x, gy - snapped.y);
+    var inRange = snapped.x >= 0 && snapped.x <= GRID && snapped.y >= 0 && snapped.y <= GRID && dist <= SNAP;
+    return {
+      ok: inRange,
+      snapped: snapped,
+      rawSvg: { x: rawX, y: rawY },
+      gx: gx,
+      gy: gy,
+      dist: dist
+    };
   }
 
-  function comparePlacement(item) {
-    var targets = targetPoints(item);
-    var targetSet = {};
-    targets.forEach(function (p) { targetSet[keyOf(p)] = true; });
+  function setRubber(svg, a, bSvg, show) {
+    var rubber = svg._rubber;
+    if (!rubber) return;
+    if (!show) {
+      rubber.style.display = 'none';
+      return;
+    }
+    var pa = toSvg(a);
+    rubber.setAttribute('x1', pa.x);
+    rubber.setAttribute('y1', pa.y);
+    rubber.setAttribute('x2', bSvg.x);
+    rubber.setAttribute('y2', bSvg.y);
+    rubber.style.display = '';
+  }
+
+  function addStroke(a, b) {
+    if (samePoint(a, b)) return false;
+    if (isGivenEdge(itemOf(), a, b)) return false;
+    var k = edgeKey(a, b);
+    for (var i = 0; i < state.strokes.length; i++) {
+      if (edgeKey(state.strokes[i].a, state.strokes[i].b) === k) return false;
+    }
+    state.strokes.push({ a: { x: a.x, y: a.y }, b: { x: b.x, y: b.y } });
+    return true;
+  }
+
+  function onPointerDown(ev) {
+    if (state.locked) return;
+    if (ev.button != null && ev.button !== 0) return;
+    ev.preventDefault();
+    var svg = ev.currentTarget;
+    var g = pointerToGrid(svg, ev);
+    if (!g.ok) return;
+    try { svg.setPointerCapture(ev.pointerId); } catch (err) { /* ignore */ }
+    state.drag = {
+      start: g.snapped,
+      pointerId: ev.pointerId,
+      moved: false
+    };
+    setRubber(svg, g.snapped, toSvg(g.snapped), true);
+  }
+
+  function onPointerMove(ev) {
+    if (!state.drag || ev.pointerId !== state.drag.pointerId) return;
+    ev.preventDefault();
+    var svg = ev.currentTarget;
+    var g = pointerToGrid(svg, ev);
+    var follow = g.ok ? toSvg(g.snapped) : (g.rawSvg || toSvg(state.drag.start));
+    var startSvg = toSvg(state.drag.start);
+    if (g.rawSvg && Math.hypot(g.rawSvg.x - startSvg.x, g.rawSvg.y - startSvg.y) > 6) {
+      state.drag.moved = true;
+    }
+    setRubber(svg, state.drag.start, follow, true);
+  }
+
+  function onPointerUp(ev) {
+    if (!state.drag || ev.pointerId !== state.drag.pointerId) return;
+    ev.preventDefault();
+    var svg = ev.currentTarget;
+    var start = state.drag.start;
+    var moved = state.drag.moved;
+    var g = pointerToGrid(svg, ev);
+    state.drag = null;
+    setRubber(svg, start, start, false);
+    try { svg.releasePointerCapture(ev.pointerId); } catch (err) { /* ignore */ }
+
+    if (moved) {
+      state.pending = null;
+      if (g.ok && !samePoint(start, g.snapped)) addStroke(start, g.snapped);
+      render(state.attempts >= 1 ? { showHint: true } : null);
+      return;
+    }
+
+    /* Click without a real drag: click-then-click of two points. */
+    if (g.ok) {
+      if (state.pending && !samePoint(state.pending, g.snapped)) {
+        addStroke(state.pending, g.snapped);
+        state.pending = null;
+        render(state.attempts >= 1 ? { showHint: true } : null);
+        return;
+      }
+      state.pending = g.snapped;
+      render(state.attempts >= 1 ? { showHint: true } : null);
+      return;
+    }
+  }
+
+  function onPointerCancel(ev) {
+    if (!state.drag || ev.pointerId !== state.drag.pointerId) return;
+    state.drag = null;
+    var svg = ev.currentTarget;
+    setRubber(svg, { x: 0, y: 0 }, { x: 0, y: 0 }, false);
+  }
+
+  function compareStrokes(item) {
+    var expected = expectedStudentEdges(item);
+    var expSet = {};
+    expected.forEach(function (e) { expSet[edgeKey(e.a, e.b)] = e; });
+    var gotSet = {};
+    state.strokes.forEach(function (e) { gotSet[edgeKey(e.a, e.b)] = e; });
     var missing = [];
     var extra = [];
-    targets.forEach(function (p) {
-      if (!state.placed[keyOf(p)]) missing.push(p);
+    expected.forEach(function (e) {
+      if (!gotSet[edgeKey(e.a, e.b)]) missing.push(e);
     });
-    Object.keys(state.placed).forEach(function (k) {
-      if (!targetSet[k]) extra.push(parseKey(k));
+    state.strokes.forEach(function (e) {
+      if (!expSet[edgeKey(e.a, e.b)]) extra.push(e);
     });
     return { missing: missing, extra: extra, ok: missing.length === 0 && extra.length === 0 };
   }
 
   function setButtons(which) {
-    $('btnClear2').hidden = which !== 'play';
-    $('btnCheck2').hidden = which !== 'play';
+    var play = which === 'play';
+    $('btnUndo2').hidden = !play;
+    $('btnClear2').hidden = !play;
+    $('btnCheck2').hidden = !play;
     $('btnRetry2').hidden = which !== 'retry';
     $('btnNext2').hidden = which !== 'next';
     if (which === 'next') {
@@ -548,10 +746,11 @@
   function check() {
     if (state.locked) return;
     var item = itemOf();
-    var result = comparePlacement(item);
+    var result = compareStrokes(item);
     state.attempts += 1;
     if (result.ok) {
       state.locked = true;
+      state.pending = null;
       if (state.attempts === 1) state.correct += 1;
       $('scorePill2').textContent = '答對 ' + state.correct;
       App.setFeedback($('feedback2'), 'ok', '答對了！沿對稱軸對摺，兩邊能完全重合。');
@@ -562,11 +761,11 @@
       return;
     }
 
-    var hint = '數一數這個頂點到對稱軸有幾格，再在另一邊同樣格數的位置標出對稱點。';
+    var hint = '數一數這個頂點到對稱軸有幾格，再在另一邊同樣格數的位置畫出對稱的邊。';
     if (result.extra.length && !result.missing.length) {
-      hint = '有些點的位置不正確。數一數這個頂點到對稱軸有幾格，再試一次。';
+      hint = '有些線的位置不正確。數一數這個頂點到對稱軸有幾格，再試一次。';
     } else if (result.missing.length && !result.extra.length) {
-      hint = '還有對稱點未標出。數一數這個頂點到對稱軸有幾格。';
+      hint = '還有一些邊未畫出。數一數這個頂點到對稱軸有幾格。';
     }
 
     if (state.attempts === 1) {
@@ -578,29 +777,47 @@
       return;
     }
 
-    /* Reveal missing / wrong after the second try, then allow next. */
+    /* Later miss: reveal missing edges, then play the fold. */
     state.locked = true;
+    state.pending = null;
     App.setFeedback($('feedback2'), 'bad', hint);
     App.sfxNo();
-    /* Fill in the correct remaining points for the reveal, keep extras visible as red. */
-    render({ missing: result.missing, complete: false });
-    setButtons('next');
+    render({ missing: result.missing, extra: result.extra, complete: true });
+    setButtons('none');
+    foldCompleted(item, function () { setButtons('next'); });
   }
 
   function retry() {
     if (state.locked) return;
-    /* Keep correctly placed points, drop extras. */
     var item = itemOf();
-    var result = comparePlacement(item);
-    result.extra.forEach(function (p) { delete state.placed[keyOf(p)]; });
+    var result = compareStrokes(item);
+    var extraKeys = {};
+    result.extra.forEach(function (e) { extraKeys[edgeKey(e.a, e.b)] = true; });
+    state.strokes = state.strokes.filter(function (e) {
+      return !extraKeys[edgeKey(e.a, e.b)];
+    });
+    state.pending = null;
     setButtons('play');
-    App.setFeedback($('feedback2'), '', '已留下正確的點。請繼續標出其餘的對稱點。');
+    App.setFeedback($('feedback2'), '', '已留下正確的線。請繼續畫出其餘的邊。');
     render({ showHint: true });
+  }
+
+  function undoLast() {
+    if (state.locked) return;
+    if (state.pending) {
+      state.pending = null;
+      render(state.attempts >= 1 ? { showHint: true } : null);
+      return;
+    }
+    if (!state.strokes.length) return;
+    state.strokes.pop();
+    render(state.attempts >= 1 ? { showHint: true } : null);
   }
 
   function clearAll() {
     if (state.locked) return;
-    state.placed = {};
+    state.strokes = [];
+    state.pending = null;
     render(state.attempts >= 1 ? { showHint: true } : null);
   }
 
@@ -608,13 +825,15 @@
     var item = itemOf();
     state.locked = false;
     state.attempts = 0;
-    state.placed = {};
+    state.strokes = [];
+    state.pending = null;
+    state.drag = null;
     $('prog2').textContent = '第 ' + (state.index + 1) + '／' + TOTAL + ' 題';
     $('scorePill2').textContent = '答對 ' + state.correct;
     $('barFill2').style.width = (state.index / TOTAL * 100) + '%';
     $('prompt2').textContent = item.prompt;
     $('lead2').textContent = (item.axisLabel ? item.axisLabel + '。' : '') + (item.lead || '');
-    App.setFeedback($('feedback2'), '', '按交叉點標出對稱點。再按一次可以取消。然後按「完成」。');
+    App.setFeedback($('feedback2'), '', '由一個交叉點拖到另一個交叉點，畫出圖形的另一半。然後按「完成」。');
     setButtons('play');
     render();
   }
@@ -668,6 +887,7 @@
     $('btnMenu2').addEventListener('click', function () { App.goHome(); });
     $('btnAgain2').addEventListener('click', startLesson2);
     $('btnCheck2').addEventListener('click', check);
+    $('btnUndo2').addEventListener('click', undoLast);
     $('btnClear2').addEventListener('click', clearAll);
     $('btnRetry2').addEventListener('click', retry);
     $('btnNext2').addEventListener('click', next);
@@ -679,6 +899,14 @@
   }
 
   if (typeof module === 'object' && module.exports) {
-    module.exports = { ITEMS: ITEMS, GRID: GRID };
+    module.exports = {
+      ITEMS: ITEMS,
+      GRID: GRID,
+      edgeKey: edgeKey,
+      givenHalfEdges: givenHalfEdges,
+      expectedStudentEdges: expectedStudentEdges,
+      givenIndexSet: givenIndexSet,
+      polygonEdges: polygonEdges
+    };
   }
 })(typeof globalThis !== 'undefined' ? globalThis : this);

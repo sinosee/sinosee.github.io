@@ -215,7 +215,7 @@ h1 {
   gap: 12px;
   justify-content: center;
 }
-.btnRow { margin-top: 8px; }
+.btnRow { margin-top: 8px; min-height: 84px; }
 .bigbtn {
   min-height: 72px;
   min-width: min(100%, 240px);
@@ -414,7 +414,6 @@ img.qr {
 .choice:nth-child(5n+3) { border-color: var(--mint); box-shadow: 0 6px 0 #b8f3d8; }
 .choice:nth-child(5n+4) { border-color: var(--lilac); box-shadow: 0 6px 0 #e4dcff; }
 .choice:nth-child(5n+5) { border-color: var(--ink-navy); box-shadow: 0 6px 0 #9aa3bc; }
-.choice.wide { grid-column: 1 / -1; }
 .choice:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 2px 0 var(--shadow); }
 .choice:disabled { cursor: default; }
 .choice.good {
@@ -531,3 +530,20 @@ img.qr {
     animation-iteration-count: 1 !important;
   }
 }
+
+#stage2, #stage2 svg, .gridFrame {
+  touch-action: none;
+}
+#play2 .btnRow .bigbtn {
+  min-width: min(100%, 200px);
+}
+.rubber {
+  pointer-events: none;
+  stroke: #d64545;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 8 6;
+}
+
+#play .choices { margin-bottom: 8px; }
+#play #btnNext { margin-top: 4px; }
