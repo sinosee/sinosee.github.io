@@ -117,7 +117,7 @@
       trialAxis: G.lineAxis({ x: 220, y: 110 }, { x: 190, y: 275 })
     },
     house: {
-      name: '房子外形',
+      name: '房子',
       type: 'polygon',
       fill: PALETTE.lilac,
       vertices: [
@@ -127,7 +127,8 @@
         { x: 290, y: 320 },
         { x: 290, y: 200 }
       ],
-      axes: [G.verticalAxis(200)],
+      axes: [],
+      trialAxis: G.verticalAxis(200),
       decorations: [
         { type: 'rect', x: 128, y: 230, w: 42, h: 36, fill: '#fff6e8', stroke: PALETTE.stroke },
         { type: 'rect', x: 176, y: 268, w: 48, h: 52, fill: '#d64545', stroke: PALETTE.stroke },
@@ -222,6 +223,22 @@
     var node = el('circle', attrs);
     parent.appendChild(node);
     return node;
+  }
+
+  function decorationCenter(d) {
+    if (d.type === 'rect') return { x: d.x + d.w / 2, y: d.y + d.h / 2 };
+    if (d.type === 'circle') return { x: d.cx, y: d.cy };
+    return { x: 0, y: 0 };
+  }
+
+  /* side is the clipPolygonHalf sign used for that piece; on-axis decorations stay put. */
+  function decorationsForSide(list, axis, side) {
+    if (!list) return [];
+    return list.filter(function (d) {
+      var s = G.signedDistance(decorationCenter(d), axis);
+      if (Math.abs(s) < 1) return side < 0;
+      return side < 0 ? s < 0 : s > 0;
+    });
   }
 
   function drawDecorations(parent, list, fade) {
@@ -377,24 +394,34 @@
     mount.innerHTML = '';
     var svg = emptySvg();
     var verts = polygonPoints(shape);
-    var stay = G.clipPolygonHalf(verts, axis, -1);
-    var flap = G.clipPolygonHalf(verts, axis, 1);
-    if (stay.length < 3) stay = G.clipPolygonHalf(verts, axis, 1);
-    if (flap.length < 3) flap = G.clipPolygonHalf(verts, axis, -1);
+    var staySide = -1;
+    var flapSide = 1;
+    var stay = G.clipPolygonHalf(verts, axis, staySide);
+    var flap = G.clipPolygonHalf(verts, axis, flapSide);
+    if (stay.length < 3) {
+      staySide = 1;
+      stay = G.clipPolygonHalf(verts, axis, staySide);
+    }
+    if (flap.length < 3) {
+      flapSide = staySide === 1 ? -1 : 1;
+      flap = G.clipPolygonHalf(verts, axis, flapSide);
+    }
 
     var around = shape.type === 'circle' ? shape.center : { x: CX, y: CY };
 
-    /* Faint original, decorations faded — students watch the outline fold. */
+    /* Faint outline only; decorations travel with the stay / flap so a mismatch is visible. */
     var back = el('g', { opacity: '0.22' });
-    drawShapeFigure(back, shape, { noShadow: true, hideDecorations: false, fadeDecorations: true });
+    drawShapeFigure(back, shape, { noShadow: true, hideDecorations: true });
     svg.appendChild(back);
 
     var stayG = el('g', { class: 'fold-stay' });
     drawPolygon(stayG, stay, coincides ? PALETTE.mint : PALETTE.lilac, { 'stroke-width': 4 });
+    drawDecorations(stayG, decorationsForSide(shape.decorations, axis, staySide), false);
     svg.appendChild(stayG);
 
     var flapG = el('g', { class: 'fold-flap' });
     drawPolygon(flapG, flap, coincides ? PALETTE.goldFill : PALETTE.red, { 'stroke-width': 4 });
+    drawDecorations(flapG, decorationsForSide(shape.decorations, axis, flapSide), false);
     svg.appendChild(flapG);
 
     drawAxisLine(svg, axis, { stroke: PALETTE.gold, width: 5, dash: '12 8' });
@@ -627,12 +654,12 @@
       type: 'judge',
       shapeId: 'house',
       prompt: '這個平面圖形是軸對稱平面圖形嗎？',
-      lead: '先觀察這個平面圖形的外形。',
-      answer: true,
-      foldAxis: function (sh) { return sh.axes[0]; },
-      coincides: true,
-      ok: '答對了！判斷時只看外形，不必理會花紋。這個外形是軸對稱的。',
-      bad: '再想一想。判斷時只看外形，不必理會圖上的花紋。沿中間對摺，外形能夠完全重合。'
+      lead: '仔細看看圖形和裡面的圖案。',
+      answer: false,
+      foldAxis: function (sh) { return sh.trialAxis; },
+      coincides: false,
+      ok: '答對了！這個圖形的外形雖然左右相同，但門窗的位置和形狀不同，對摺後不能完全重合，所以不是軸對稱平面圖形。',
+      bad: '再想一想。判斷時也要看裡面的圖案。門窗左右並不相同，對摺後不能完全重合。'
     },
     {
       id: 'q5-axes-rectangle',

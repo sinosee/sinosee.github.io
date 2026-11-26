@@ -186,6 +186,7 @@
     if (S.cancelFolds) S.cancelFolds();
     hidePlayButtons();
     $('choices').innerHTML = '';
+    $('choices').hidden = false;
     $('prog').textContent = '第 ' + (state.index + 1) + '／' + TOTAL + ' 題';
     $('scorePill').textContent = '答對 ' + state.correct;
     $('barFill').style.width = (state.index / TOTAL * 100) + '%';
@@ -273,6 +274,7 @@
       setFeedback($('feedback'), 'bad', q.bad);
       sfxNo();
     }
+    $('choices').hidden = true;
     afterAnswer(q, ok);
   }
 
@@ -368,7 +370,7 @@
         }
       }
     }
-    var genuine = genuineAxes(q, shape);
+    var genuine = (q.type === 'judge' && q.coincides === false) ? [] : genuineAxes(q, shape);
     genuine.forEach(function (ax) {
       steps.push({ axis: ax, coincides: true });
     });
