@@ -183,6 +183,7 @@
     state.locked = false;
     state.attempts = 0;
     state.marks = null;
+    if (S.cancelFolds) S.cancelFolds();
     hidePlayButtons();
     $('choices').innerHTML = '';
     $('prog').textContent = '第 ' + (state.index + 1) + '／' + TOTAL + ' 題';
@@ -198,12 +199,12 @@
 
     if (q.type === 'judge') {
       S.renderIdle($('stage'), shape, {});
-      addChoice('是', true, false);
-      addChoice('不是', false, false);
+      addChoice('是', true);
+      addChoice('不是', false);
     } else if (q.type === 'count') {
       S.renderIdle($('stage'), shape, {});
       (q.choices || []).forEach(function (label) {
-        addChoice(label, label, label === '無數條');
+        addChoice(label, label);
       });
     } else if (q.type === 'find-axes') {
       var cands = typeof q.candidates === 'function' ? q.candidates() : q.candidates;
@@ -214,10 +215,10 @@
     }
   }
 
-  function addChoice(label, value, wide) {
+  function addChoice(label, value) {
     var btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'choice' + (wide ? ' wide' : '');
+    btn.className = 'choice';
     btn.textContent = label;
     btn.addEventListener('click', function () { choose(value, btn); });
     $('choices').appendChild(btn);
@@ -338,10 +339,17 @@
     afterAnswer(q, false);
   }
 
+  function genuineAxes(q, shape) {
+    if (q.type === 'find-axes' && state.candidates && state.candidates.length) {
+      return state.candidates.filter(function (c) { return c.correct; }).map(function (c) { return c.axis; });
+    }
+    if (shape.axes && shape.axes.length) return shape.axes.slice();
+    return [];
+  }
+
   function afterAnswer(q, ok) {
     hidePlayButtons();
     var shape = currentShape();
-    var axis = q.foldAxis ? q.foldAxis(shape) : null;
     function showNext() {
       $('btnNext').hidden = false;
       if (state.index >= TOTAL - 1) $('btnNext').textContent = '查看成績';
@@ -351,28 +359,35 @@
       S.playCircleReveal($('stage'), shape, showNext);
       return;
     }
-    if (axis) {
-      var coincides = q.coincides;
-      if (q.type === 'find-axes' && !ok) {
-        /* If they picked a wrong axis, fold along one wrong pick to show it fails. */
-        var wrong = null;
-        for (var i = 0; i < state.candidates.length; i++) {
-          if (state.selected[i] && !state.candidates[i].correct) {
-            wrong = state.candidates[i].axis;
-            break;
-          }
-        }
-        if (wrong) {
-          axis = wrong;
-          coincides = false;
-        } else {
-          coincides = true;
+    var steps = [];
+    if (q.type === 'find-axes' && !ok && state.candidates) {
+      for (var i = 0; i < state.candidates.length; i++) {
+        if (state.selected[i] && !state.candidates[i].correct) {
+          steps.push({ axis: state.candidates[i].axis, coincides: false });
+          break;
         }
       }
-      S.playFold($('stage'), shape, axis, coincides, showNext);
+    }
+    var genuine = genuineAxes(q, shape);
+    genuine.forEach(function (ax) {
+      steps.push({ axis: ax, coincides: true });
+    });
+    if (!steps.length && q.foldAxis) {
+      steps.push({ axis: q.foldAxis(shape), coincides: !!q.coincides });
+    }
+    if (!steps.length) {
+      showNext();
       return;
     }
-    showNext();
+    S.playFoldSequence($('stage'), shape, steps, function () {
+      if (genuine.length) {
+        S.renderIdle($('stage'), shape, {
+          axis: genuine[0],
+          extraAxes: genuine.slice(1)
+        });
+      }
+      showNext();
+    });
   }
 
   function retryAxes() {
@@ -425,6 +440,7 @@
   }
 
   function goHome() {
+    if (S.cancelFolds) S.cancelFolds();
     show('home');
     paintBest();
     paintModePill();

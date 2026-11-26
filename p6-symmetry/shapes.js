@@ -366,9 +366,14 @@
     }
   }
 
-  function playFold(mount, shape, axis, coincides, done) {
+  var foldToken = 0;
+  function cancelFolds() { foldToken += 1; }
+
+  function playFold(mount, shape, axis, coincides, done, opts) {
+    opts = opts || {};
     foldSeq += 1;
     var uid = 'f' + foldSeq;
+    var token = foldToken;
     mount.innerHTML = '';
     var svg = emptySvg();
     var verts = polygonPoints(shape);
@@ -409,17 +414,23 @@
       mount.appendChild(doneSvg);
     }
 
-    var duration = 1100;
-    if (prefersReducedMotion()) {
+    function finish() {
+      if (token !== foldToken) return;
       applyScale(-1);
       showSettled();
       if (done) done();
+    }
+
+    var duration = opts.duration != null ? opts.duration : 1100;
+    if (prefersReducedMotion()) {
+      finish();
       return;
     }
 
     applyScale(1);
     var t0 = null;
     function frame(now) {
+      if (token !== foldToken) return;
       if (t0 == null) t0 = now;
       var t = Math.min(1, (now - t0) / duration);
       var eased = 0.5 - 0.5 * Math.cos(Math.PI * t);
@@ -428,34 +439,66 @@
       if (t < 1) {
         root.requestAnimationFrame(frame);
       } else {
-        applyScale(-1);
-        showSettled();
-        if (done) done();
+        finish();
       }
     }
     root.requestAnimationFrame(frame);
   }
 
-  /* After a circle answer, draw many diameters then fold along one. */
-  function playCircleReveal(mount, shape, done) {
+  /* Play several folds in order, then call done. Short folds when there are many axes. */
+  function playFoldSequence(mount, shape, steps, done, opts) {
+    opts = opts || {};
+    var token = foldToken;
+    var list = steps || [];
+    var i = 0;
+    var reduced = prefersReducedMotion();
+    var duration = opts.duration != null ? opts.duration : (list.length > 1 ? 650 : 1100);
+    var pause = reduced ? 50 : (opts.pause != null ? opts.pause : 220);
+
+    function nextStep() {
+      if (token !== foldToken) return;
+      if (i >= list.length) {
+        if (done) done();
+        return;
+      }
+      var step = list[i++];
+      playFold(mount, shape, step.axis, step.coincides, function () {
+        if (token !== foldToken) return;
+        if (i >= list.length) {
+          if (done) done();
+        } else {
+          setTimeout(nextStep, pause);
+        }
+      }, { duration: reduced ? 0 : duration });
+    }
+
+    if (!list.length) {
+      if (done) done();
+      return;
+    }
+    nextStep();
+  }
+
+  function circleSampleDiameters(shape, n) {
+    var list = [];
+    var count = n || 8;
+    for (var i = 0; i < count; i++) {
+      var a = (Math.PI * i) / count;
+      list.push(G.lineAxis(
+        { x: shape.center.x + Math.cos(a), y: shape.center.y + Math.sin(a) },
+        shape.center
+      ));
+    }
+    return list;
+  }
+
+  function drawCircleWithDiameters(mount, shape, diameters) {
     mount.innerHTML = '';
     var svg = emptySvg();
     drawShapeFigure(svg, shape, {});
-    var diameters = [];
-    var n = 8;
-    for (var i = 0; i < n; i++) {
-      var a = (Math.PI * i) / n;
-      var axis = G.lineAxis(
-        { x: shape.center.x + Math.cos(a), y: shape.center.y + Math.sin(a) },
-        shape.center
-      );
-      diameters.push(axis);
-      var drawn = drawAxisLine(svg, axis, { stroke: PALETTE.gold, width: 3, opacity: 0, dash: '8 6' });
-      drawn.line.style.transition = 'opacity 0.35s ease';
-      (function (line, delay) {
-        setTimeout(function () { line.setAttribute('opacity', '0.95'); }, 80 + delay);
-      })(drawn.line, i * 90);
-    }
+    (diameters || []).forEach(function (axis) {
+      drawAxisLine(svg, axis, { stroke: PALETTE.gold, width: 3, dash: '8 6' });
+    });
     var label = el('text', {
       x: CX, y: 28, 'text-anchor': 'middle',
       fill: PALETTE.ink, 'font-size': 22, 'font-weight': 900,
@@ -464,25 +507,32 @@
     label.textContent = '無數條對稱軸';
     svg.appendChild(label);
     mount.appendChild(svg);
-    var wait = prefersReducedMotion() ? 200 : 80 + n * 90 + 350;
+  }
+
+  /* After a circle answer, fold a few diameters in sequence to show 無數條. */
+  function playCircleReveal(mount, shape, done) {
+    var token = foldToken;
+    var cx = shape.center.x, cy = shape.center.y;
+    /* Four folds: vertical, horizontal, and both 45° through the centre. */
+    var foldAxes = [
+      G.verticalAxis(cx),
+      G.horizontalAxis(cy),
+      G.diagonalAxis(1, cy - cx),
+      G.diagonalAxis(-1, cx + cy)
+    ];
+    var diameters = circleSampleDiameters(shape, 8);
+    drawCircleWithDiameters(mount, shape, diameters);
+    var wait = prefersReducedMotion() ? 80 : 450;
     setTimeout(function () {
-      playFold(mount, shape, G.verticalAxis(200), true, function () {
-        mount.innerHTML = '';
-        var end = emptySvg();
-        drawShapeFigure(end, shape, {});
-        diameters.forEach(function (axis) {
-          drawAxisLine(end, axis, { stroke: PALETTE.gold, width: 3, dash: '8 6' });
-        });
-        var endLabel = el('text', {
-          x: CX, y: 28, 'text-anchor': 'middle',
-          fill: PALETTE.ink, 'font-size': 22, 'font-weight': 900,
-          class: 'axisLabel'
-        });
-        endLabel.textContent = '無數條對稱軸';
-        end.appendChild(endLabel);
-        mount.appendChild(end);
-        if (done) done();
+      if (token !== foldToken) return;
+      var steps = foldAxes.map(function (axis) {
+        return { axis: axis, coincides: true };
       });
+      playFoldSequence(mount, shape, steps, function () {
+        if (token !== foldToken) return;
+        drawCircleWithDiameters(mount, shape, diameters);
+        if (done) done();
+      }, { duration: 650, pause: 200 });
     }, wait);
   }
 
@@ -666,7 +716,9 @@
     renderIdle: renderIdle,
     renderFindAxes: renderFindAxes,
     playFold: playFold,
+    playFoldSequence: playFoldSequence,
     playCircleReveal: playCircleReveal,
+    cancelFolds: cancelFolds,
     axisEndpoints: axisEndpoints,
     drawAxisLine: drawAxisLine,
     drawShapeFigure: drawShapeFigure,
